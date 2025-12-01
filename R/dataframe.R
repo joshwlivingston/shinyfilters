@@ -51,8 +51,7 @@
 #'   })
 #' }
 #' shiny::shinyApp(ui, server)
-#'
-#' @export
+#' @keywords internal
 get_input_values <- new_generic(
 	name = "get_input_values",
 	dispatch_args = c("input", "x")

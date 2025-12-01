@@ -1,7 +1,7 @@
 url: https://joshwlivingston.github.io/shinyfilters/
 template:
   bootstrap: 5
-  light-switch: true
+  light-switch: yes
   theme: a11y-light
   theme-dark: a11y-dark
   bootswatch: flatly
@@ -13,18 +13,20 @@ navbar:
       - text: Basic Usage
       - text: Filter Input Catalog
         href: articles/filter-input-catalog.html
-      - text: -------
+      - text: '-------'
       - text: Advanced Usage
       - text: Customizing shinyfilters
         href: articles/customizing-shinyfilters.html
 reference:
-  - title: Basic usage
-  - contents:
-    - filterInput
-  - titles: Use shinyfilters with data.frames
-  - contents:
-    - get_input_values
-  - title: Customize shinyfilters
-  - contents:
-    - args_filter_input
-    - call_filter_input
+- title: Basic usage
+- contents: 
+  - filterInput
+  - updateFilterInput
+- titles: Use shinyfilters with data.frames
+- contents: 
+  - serverFilterInput
+- title: Customize shinyfilters
+- contents:
+  - args_filter_input
+  - call_filter_input
+
