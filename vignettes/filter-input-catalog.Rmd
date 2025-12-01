@@ -1,0 +1,505 @@
+---
+title: "Filter Input Catalog"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Filter Input Catalog}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, echo=FALSE}
+library(shinyfilters)
+library(shiny)
+
+knitr::opts_chunk$set(
+	results = "asis"
+)
+```
+
+# Contents
+
+Return Types:
+
+- [`dateInput`](#dateinput)
+- [`dateRangeInput`](#daterangeinput)
+- [`numericInput`](#numericinput)
+- [`radioButtons`](#radiobuttons)
+- [`selectInput`](#selectinput)
+- [`selectizeInput`](#selectizeinput)
+- [`sliderInput`](#sliderinput)
+- [`textAreaInput`](#textAreainput)
+- [`textInput`](#textinput)
+
+Input Types:
+
+- [character](#character-5)
+- [Date](#date-2)
+- [factor](#factor-3)
+- [list](#list-3)
+- [numeric](#numeric-2)
+- [POSIXt](#posixt-2)
+
+
+# Return Types
+
+## `dateInput`
+
+### Date
+```{r ex-dateInput-date, eval=FALSE}
+filterInput(
+	x = Sys.Date() + 0:9,
+	inputId = "id",
+	label = "Pick a date:"
+)
+```
+
+<br>
+
+### POSIXt
+```{r ex-dateInput-posixt, eval=FALSE}
+filterInput(
+	x = Sys.time() + as.difftime(0:9, units = "days"),
+	inputId = "id",
+	label = "Pick a date:"
+)
+```
+
+<br><br>
+
+## `dateRangeInput`
+
+### Date
+- `range = TRUE`
+```{r ex-dateRangeInput-date, eval=FALSE}
+filterInput(
+	x = Sys.Date() + 0:9,
+	inputId = "id",
+	label = "Pick a date range:",
+	range = TRUE
+)
+```
+
+<br>
+
+### POSIXt
+- `range = TRUE`
+```{r ex-dateRangeInput-posixt, eval=FALSE}
+filterInput(
+	x = Sys.time() + as.difftime(0:9, units = "days"),
+	inputId = "id",
+	label = "Pick a date range:",
+	range = TRUE
+)
+```
+
+<br><br>
+
+## `numericInput`
+
+### numeric
+```{r ex-numericInput-numeric}
+filterInput(
+	x = 0:9,
+	inputId = "id",
+	label = "Pick a number:"
+)
+```
+
+<br><br>
+
+## `radioButtons`
+
+### character
+- `radio = TRUE`
+```{r ex-radioButtons-character}
+filterInput(
+	x = letters[1:10],
+	inputId = "id",
+	label = "Pick a letter:",
+	inline = TRUE,
+	radio = TRUE
+)
+```
+
+<br>
+
+### factor
+- `radio = TRUE`
+```{r ex-radioButtons-factor}
+filterInput(
+	x = as.factor(letters[1:10]),
+	inputId = "id",
+	label = "Pick a letter:",
+	inline = TRUE,
+	radio = TRUE
+)
+```
+
+<br>
+
+### list
+- `radio = TRUE`
+```{r ex-radioButtons-list}
+filterInput(
+	x = as.list(letters[1:10]),
+	inputId = "id",
+	label = "Pick a letter:",
+	inline = TRUE,
+	radio = TRUE
+)
+```
+
+<br><br>
+
+## `selectInput`
+
+### character
+```{r ex-selectInput-character}
+filterInput(
+	x = letters[1:10],
+	inputId = "id",
+	label = "Pick a letter:"
+)
+```
+
+<br>
+
+### factor
+```{r ex-selectInput-factor}
+filterInput(
+	x = as.factor(letters[1:10]),
+	inputId = "id",
+	label = "Pick a letter:"
+)
+```
+
+<br>
+
+### list
+```{r ex-selectInput-list}
+filterInput(
+	x = as.list(letters[1:10]),
+	inputId = "id",
+	label = "Pick a letter:"
+)
+```
+
+<br><br>
+
+## `selectizeInput`
+
+### character
+- `selectize = TRUE`
+```{r ex-selectizeInput-character}
+filterInput(
+	x = letters[1:10],
+	inputId = "id",
+	label = "Pick a letter:",
+	selectize = TRUE
+)
+```
+
+<br>
+
+### factor
+- `selectize = TRUE`
+```{r ex-selectizeInput-factor}
+filterInput(
+	x = as.factor(letters[1:10]),
+	inputId = "id",
+	label = "Pick a letter:",
+	selectize = TRUE
+)
+```
+
+<br>
+
+### list
+- `selectize = TRUE`
+```{r ex-selectizeInput-list}
+filterInput(
+	x = as.list(letters[1:10]),
+	inputId = "id",
+	label = "Pick a letter:",
+	selectize = TRUE
+)
+```
+
+<br><br>
+
+## `sliderInput`
+
+### numeric
+- `slider = TRUE`
+```{r ex-sliderInput-numeric, eval=FALSE}
+filterInput(
+	x = 0:9,
+	inputId = "id",
+	label = "Pick a number:",
+	slider = TRUE
+)
+```
+
+<br><br>
+
+## `textAreaInput`
+
+### character
+- `textbox = TRUE`
+- `area = TRUE`
+```{r ex-textAreaInput-character}
+filterInput(
+	x = letters[1:10],
+	inputId = "id",
+	label = "Type many letters[1:10]:",
+	textbox = TRUE,
+	area = TRUE
+)
+```
+
+<br><br>
+
+## `textInput`
+
+### character
+- `text = TRUE`
+```{r ex-textInput-character}
+filterInput(
+	x = letters[1:10],
+	inputId = "id",
+	label = "Type a letter:",
+	textbox = TRUE
+)
+```
+
+<br>
+
+# Input Types
+
+<br>
+
+## character
+
+### `selectInput`
+```{r ex-character-default}
+filterInput(
+	x = letters[1:10],
+	inputId = "id",
+	label = "Pick a letter:"
+)
+```
+
+<br>
+
+### `selectizeInput`
+- `selectize = TRUE`
+```{r ex-character-selectize}
+filterInput(
+	x = letters[1:10],
+	inputId = "id",
+	label = "Pick a letter:",
+	selectize = TRUE
+)
+```
+
+<br>
+
+### `radioButtons`
+- `radio = TRUE`
+```{r ex-character-radio}
+filterInput(
+	x = letters[1:10],
+	inputId = "id",
+	label = "Pick a letter:",
+	inline = TRUE,
+	radio = TRUE
+)
+```
+
+<br>
+
+### `textInput`
+- `textbox = TRUE`
+```{r ex-character-text}
+filterInput(
+	x = letters[1:10],
+	inputId = "id",
+	label = "Type a letter:",
+	textbox = TRUE
+)
+```
+
+<br>
+
+### `textAreaInput`
+- `textbox = TRUE`
+- `area = TRUE`
+```{r ex-character-textarea}
+filterInput(
+	x = letters[1:10],
+	inputId = "id",
+	label = "Type many letters[1:10]:",
+	textbox = TRUE,
+	area = TRUE
+)
+```
+
+<br><br>
+
+## Date
+
+### `dateInput`
+```{r ex-date-default, eval=FALSE}
+filterInput(
+	x = Sys.Date() + 0:9,
+	inputId = "id",
+	label = "Pick a date:"
+)
+```
+
+<br>
+
+### `dateRangeInput`
+- `range = TRUE`
+```{r ex-date-range, eval=FALSE}
+filterInput(
+	x = Sys.Date() + 0:9,
+	inputId = "id",
+	label = "Pick a date range:",
+	range = TRUE
+)
+```
+
+<br><br>
+
+## factor
+
+### `selectInput`
+```{r ex-factor-default}
+filterInput(
+	x = as.factor(letters[1:10]),
+	inputId = "id",
+	label = "Pick a letter:"
+)
+```
+
+<br>
+
+### `selectizeInput`
+- `selectize = TRUE`
+```{r ex-factor-selectize}
+filterInput(
+	x = as.factor(letters[1:10]),
+	inputId = "id",
+	label = "Pick a letter:",
+	selectize = TRUE
+)
+```
+
+<br>
+
+### `radioButtons`
+- `radio = TRUE`
+```{r ex-factor-radio}
+filterInput(
+	x = as.factor(letters[1:10]),
+	inputId = "id",
+	label = "Pick a letter:",
+	inline = TRUE,
+	radio = TRUE
+)
+```
+
+<br><br>
+
+## list
+
+### `selectInput`
+```{r ex-list-default}
+filterInput(
+	x = as.list(letters[1:10]),
+	inputId = "id",
+	label = "Pick a letter:"
+)
+```
+
+<br>
+
+### `selectizeInput`
+- `selectize = TRUE`
+```{r ex-list-selectize}
+filterInput(
+	x = as.list(letters[1:10]),
+	inputId = "id",
+	label = "Pick a letter:",
+	selectize = TRUE
+)
+```
+
+<br>
+
+### `radioButtons`
+- `radio = TRUE`
+```{r ex-list-radio}
+filterInput(
+	x = as.list(letters[1:10]),
+	inputId = "id",
+	label = "Pick a letter:",
+	inline = TRUE,
+	radio = TRUE
+)
+```
+
+<br><br>
+
+## numeric
+
+### `numericInput`
+```{r ex-numeric-default}
+filterInput(
+	x = 0:9,
+	inputId = "id",
+	label = "Pick a number:"
+)
+```
+
+<br>
+
+### `sliderInput`
+- `slider = TRUE`
+```{r ex-numeric-slider, eval=FALSE}
+filterInput(
+	x = 0:9,
+	inputId = "id",
+	label = "Pick a number:",
+	slider = TRUE
+)
+```
+
+<br><br>
+
+## POSIXt
+
+### `dateInput`
+```{r ex-posixt-default, eval=FALSE}
+filterInput(
+	x = Sys.time() + as.difftime(0:9, units = "days"),
+	inputId = "Id",
+	label = "Pick a date:"
+)
+```
+
+<br>
+
+### `dateRangeInput`
+- `range = TRUE`
+```{r ex-posixt-range, eval=FALSE}
+filterInput(
+	x = Sys.time() + as.difftime(0:9, units = "days"),
+	inputId = "Id",
+	label = "Pick a date range:",
+	range = TRUE
+)
+```
+
+<br>

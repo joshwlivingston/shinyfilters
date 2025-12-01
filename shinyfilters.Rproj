@@ -1,0 +1,25 @@
+Version: 1.0
+ProjectId: ddf1cb61-6c2d-40fd-87fc-f287f5aa47cb
+
+RestoreWorkspace: No
+SaveWorkspace: No
+AlwaysSaveHistory: No
+
+EnableCodeIndexing: Yes
+UseSpacesForTab: No
+NumSpacesForTab: 2
+Encoding: UTF-8
+
+RnwWeave: Sweave
+LaTeX: pdfLaTeX
+
+LineEndingConversion: None
+
+BuildType: Package
+PackageUseDevtools: Yes
+PackageInstallArgs: --no-multiarch --with-keep.source
+PackageRoxygenize: rd,collate,namespace
+
+UseNativePipeOperator: Yes
+
+SpellingDictionary: en_US

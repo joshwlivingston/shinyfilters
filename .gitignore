@@ -1,0 +1,17 @@
+.Rproj.user
+.Rhistory
+.Rdata
+.httr-oauth
+.DS_Store
+.quarto
+docs
+inst/doc
+/doc/
+/Meta/
+
+# renv used in development to isolate package versions in testing
+.Rprofile
+renv
+renv.lock
+
+/.quarto/
