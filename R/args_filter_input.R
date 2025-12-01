@@ -98,7 +98,11 @@ method(args_filter_input, class_POSIXt) <- function(x, ...) {
 #' @rdname args_filter_input
 #' @export
 args_update_filter_input <- function(x, ...) {
-	args <- args_filter_input(x, ...)
+	args_provided <- list(...)
+	if (!is.null(args_provided$server)) {
+		args_provided$server <- FALSE
+	}
+	args <- do.call(args_filter_input, c(list(x = x), args_provided))
 	args[[arg_name_input_id(x)]] <- NULL
 	args[[arg_name_input_value(x)]] <- NULL
 	return(args)
