@@ -84,6 +84,10 @@ method(args_filter_input, class_POSIXt) <- function(x, ...) {
 
 # Function: ._discrete_choice_inputs ####
 ._discrete_choice_inputs <- function(x, asis, ...) {
+	args <- list(...)
+	if (isTRUE(args$server)) {
+		return(list(choices = "loading..."))
+	}
 	if (!isTRUE(asis)) {
 		x <- sort(unique(x))
 	}
