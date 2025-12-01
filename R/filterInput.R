@@ -224,6 +224,9 @@ call_filter_input <- function(x, .f, ...) {
 				!(names(args_provided) %in% names(args_prepared))
 		]
 	)
+	if (isTRUE(args$server)) {
+		args$choices <- NULL
+	}
 	do.call(.f, args)
 }
 
