@@ -31,7 +31,7 @@ filterInput(x = iris)
 ## Shiny modules
 
 ``` r
-df_shared <- tibble::tibble(
+df_shared <- data.frame(
     x = letters,
     y = sample(c("red", "green", "blue"), 26, replace = TRUE),
     z = round(runif(26, 0, 3.5), 2),

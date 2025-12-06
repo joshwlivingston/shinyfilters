@@ -12,8 +12,12 @@
 
   Create a shiny Input
 
+## Usage with data.frames
+
 - [`serverFilterInput()`](https://joshwlivingston.github.io/shinyfilters/reference/serverFilterInput.md)
   : Run the backend server for filterInput
+- [`apply_filters()`](https://joshwlivingston.github.io/shinyfilters/reference/apply_filters.md)
+  : Apply Filters to an object
 
 ## Customize shinyfilters
 
@@ -26,3 +30,6 @@
 - [`call_filter_input()`](https://joshwlivingston.github.io/shinyfilters/reference/call_input_function.md)
   [`call_update_filter_input()`](https://joshwlivingston.github.io/shinyfilters/reference/call_input_function.md)
   : Prepare and Evaluate Input Function and Arguments
+
+- [`get_filter_logical()`](https://joshwlivingston.github.io/shinyfilters/reference/get_filter_logical.md)
+  : Compute a Filter Predicate

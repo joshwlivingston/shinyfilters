@@ -113,7 +113,7 @@ method(filterInput, People) <- function(x, ...) {
 
 It’s recommended that methods for
 [`filterInput()`](https://joshwlivingston.github.io/shinyfilters/reference/filterInput.md)
-call
+use
 [`call_filter_input()`](https://joshwlivingston.github.io/shinyfilters/reference/call_input_function.md),
 as shown above.
 [`call_filter_input()`](https://joshwlivingston.github.io/shinyfilters/reference/call_input_function.md)
