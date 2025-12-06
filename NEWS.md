@@ -1,3 +1,3 @@
-# shinyfilters 0.1.0
+# shinyfilters 0.0.9000
 
-* Initial CRAN submission.
+In development

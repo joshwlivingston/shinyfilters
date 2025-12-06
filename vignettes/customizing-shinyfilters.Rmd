@@ -97,7 +97,7 @@ method(filterInput, People) <- function(x, ...) {
 }
 ```
 
-It's recommended that methods for `filterInput()` call `call_filter_input()`, 
+It's recommended that methods for `filterInput()` use `call_filter_input()`, 
 as shown above. `call_filter_input()` prepares the arguments for the input 
 function, then calls the provided input function with the prepared arguments.
 

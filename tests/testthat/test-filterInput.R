@@ -5,10 +5,9 @@ expect_shiny_input <- function(shiny_input) {
 	function(...) {
 		args <- list(...)
 		res_shinyfilters <- do.call(filterInput, args)
-
-		args_get_filter_input <- list(x = args$x)
+		args_get_filter_input <- args
 		if (is.character(args$x)) {
-			args_get_filter_input <- c(args_get_filter_input, list(textbox = FALSE))
+			args_get_filter_input$textbox <- FALSE
 		}
 		args_shiny <- c(
 			do.call(args_filter_input, args_get_filter_input),
@@ -41,7 +40,8 @@ expect_shiny_dateRangeInput <- expect_shiny_input(shiny::dateRangeInput)
 expect_shiny_dateInput <- expect_shiny_input(shiny::dateInput)
 
 # Setup ####
-choices_fct <- as.factor(letters)
+letters_shuffled <- sample(letters)
+choices_fct <- as.factor(letters_shuffled)
 choices_fct_with_na <- choices_fct
 NA -> choices_fct_with_na[
 	sample(
@@ -50,7 +50,7 @@ NA -> choices_fct_with_na[
 	)
 ]
 
-choices_lst <- as.list(letters)
+choices_lst <- as.list(letters_shuffled)
 choices_lst_with_na <- choices_lst
 NA -> choices_lst_with_na[
 	sample(
@@ -59,7 +59,7 @@ NA -> choices_lst_with_na[
 	)
 ]
 
-choices_chr <- letters
+choices_chr <- letters_shuffled
 choices_chr_with_na <- choices_chr
 NA -> choices_chr_with_na[
 	sample(
@@ -81,7 +81,7 @@ NA -> choices_num_with_na[
 	)
 ]
 
-choices_dte <- Sys.Date() + 0:9
+choices_dte <- sample(Sys.Date() + 0:9)
 choices_dte_with_na <- choices_dte
 NA -> choices_dte_with_na[
 	sample(
@@ -90,7 +90,7 @@ NA -> choices_dte_with_na[
 	)
 ]
 
-choices_psc <- Sys.time() + 0:9
+choices_psc <- sample(Sys.time() + as.difftime(0:9, units = "days"))
 choices_psc_with_na <- choices_psc
 NA -> choices_psc_with_na[
 	sample(
@@ -99,7 +99,7 @@ NA -> choices_psc_with_na[
 	)
 ]
 
-choices_psl <- as.POSIXlt(Sys.time() + 0:9)
+choices_psl <- sample(as.POSIXlt(Sys.time() + as.difftime(0:9, units = "days")))
 choices_psl_with_na <- choices_psl
 NA -> choices_psl_with_na[
 	sample(
@@ -434,33 +434,39 @@ test_that("POSIXlt + `range` not provided -> shiny::dateInput", {
 })
 
 # Filter Input Arguments ####
-## factor, list, logical ####
-test_that("args_filter_input() returns provided vector as choices argument", {
-	expect_identical(
-		args_filter_input(choices_fct_with_na),
-		list(choices = choices_fct_with_na[!is.na(choices_fct_with_na)])
-	)
+## list ####
+test_that("args_filter_input() returns provided list as choices argument", {
 	expect_identical(
 		args_filter_input(choices_lst_with_na),
-		list(choices = choices_lst_with_na[!is.na(choices_lst_with_na)])
+		list(choices = choices_lst_with_na)
+	)
+})
+
+## factor, logical ####
+test_that("args_filter_input() (factor, logical) returns sorted, unique values as choices argument", {
+	expect_identical(
+		args_filter_input(choices_fct_with_na),
+		list(choices = unique(sort(choices_fct_with_na)))
 	)
 	expect_identical(
 		args_filter_input(choices_log_with_na),
-		list(choices = choices_log_with_na[!is.na(choices_log_with_na)])
+		list(choices = unique(sort(choices_log_with_na)))
 	)
 })
+
 
 ## character ####
-test_that("args_filter_input() default returns NULL for character vectors", {
-	expect_null(
-		args_filter_input(choices_chr_with_na)
+test_that("args_filter_input() default returns sorted, unique values as choices argument", {
+	expect_identical(
+		args_filter_input(choices_chr_with_na),
+		list(choices = unique(sort(choices_chr_with_na)))
 	)
 })
 
-test_that("args_filter_input() with textbox = FALSE returns provided vector as choices argument", {
+test_that("args_filter_input() (character) with textbox = FALSE returns sorted, unique values as choices argument", {
 	expect_identical(
 		args_filter_input(choices_chr_with_na, textbox = FALSE),
-		list(choices = choices_chr_with_na[!is.na(choices_chr_with_na)])
+		list(choices = unique(sort(choices_chr_with_na)))
 	)
 })
 
@@ -471,24 +477,25 @@ test_that("args_filter_input() with textbox = TRUE returns NULL for character ve
 })
 
 ## numeric ####
-test_that("args_filter_input() returns min, max, and existing median for numeric vectors", {
+test_that("args_filter_input() returns min, max, and max for numeric vectors", {
 	expect_identical(
 		args_filter_input(choices_num_with_na),
 		list(
 			min = min(choices_num_with_na, na.rm = TRUE),
 			max = max(choices_num_with_na, na.rm = TRUE),
-			value = get_existing_median(choices_num_with_na)
+			value = max(choices_num_with_na, na.rm = TRUE)
 		)
 	)
 })
 
 ## Date ####
-test_that("args_filter_input() returns min and max for Date vectors", {
+test_that("args_filter_input() returns min, max, max for Date vectors", {
 	expect_identical(
 		args_filter_input(choices_dte_with_na),
 		list(
 			min = min(choices_dte_with_na, na.rm = TRUE),
-			max = max(choices_dte_with_na, na.rm = TRUE)
+			max = max(choices_dte_with_na, na.rm = TRUE),
+			value = max(choices_dte_with_na, na.rm = TRUE)
 		)
 	)
 })
@@ -500,7 +507,8 @@ test_that("args_filter_input() returns min and max Dates for POSIXct vectors", {
 		args_filter_input(choices_psc_with_na),
 		list(
 			min = min(as.Date(choices_psc_with_na), na.rm = TRUE),
-			max = max(as.Date(choices_psc_with_na), na.rm = TRUE)
+			max = max(as.Date(choices_psc_with_na), na.rm = TRUE),
+			value = max(as.Date(choices_psc_with_na), na.rm = TRUE)
 		)
 	)
 })
@@ -511,7 +519,8 @@ test_that("args_filter_input() returns min and max Dates for POSIXlt vectors", {
 		args_filter_input(choices_psl_with_na),
 		list(
 			min = min(as.Date(choices_psl_with_na), na.rm = TRUE),
-			max = max(as.Date(choices_psl_with_na), na.rm = TRUE)
+			max = max(as.Date(choices_psl_with_na), na.rm = TRUE),
+			value = max(as.Date(choices_psl_with_na), na.rm = TRUE)
 		)
 	)
 })

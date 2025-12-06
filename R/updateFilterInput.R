@@ -117,6 +117,38 @@ method(._update_df_filter_input, class_any) <- function(col, nm, input, ...) {
 	return(invisible())
 }
 
+method(._update_df_filter_input, class_Date | class_numeric) <- function(
+	col,
+	nm,
+	input,
+	...
+) {
+	val <- input[[nm]]
+	if (!is.null(val) && val[[length(val)]] > max(col, na.rm = TRUE)) {
+		col <- c(col, val)
+	}
+	if (
+		!is.null(val) && length(val) == 2L && val[[1L]] < min(col, na.rm = TRUE)
+	) {
+		col <- c(val, col)
+	}
+	args_value_name <- arg_name_input_value(col, ...)
+	if (is.null(val)) {
+		val <- rep(NULL, length(args_value_name))
+	}
+	if (length(val) == 1L && is.null(val)) {
+		val <- list(val)
+	} else {
+		val <- as.list(val)
+	}
+	args <- c(
+		list(x = col, inputId = nm),
+		args,
+		stats::setNames(val, args_value_name)
+	)
+	do.call(updateFilterInput, args)
+}
+
 method(
 	._update_df_filter_input,
 	class_character | class_factor | class_list
@@ -125,15 +157,17 @@ method(
 	if (isTRUE(args$textbox)) {
 		return(invisible())
 	}
-	if (is.null(input[[nm]])) {
-		val <- list(NULL)
+	args_value_name <- arg_name_input_value(col, ...)
+	val <- input[[nm]]
+	if (is.null(val)) {
+		val <- list(val)
 	} else {
-		val <- as.list(input[[nm]])
+		val <- as.list(val)
 	}
 	args <- c(
 		list(x = col, inputId = nm),
 		args,
-		setNames(val, arg_name_input_value(col, ...))
+		stats::setNames(val, args_value_name)
 	)
 	do.call(updateFilterInput, args)
 }

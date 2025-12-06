@@ -4,7 +4,24 @@
 \alias{serverFilterInput}
 \title{Run the backend server for filterInput}
 \usage{
-serverFilterInput(x, ...)
+serverFilterInput(x, filter_combine_method, input, ...)
+}
+\arguments{
+\item{x}{An object being filtered; typically a data.frame.}
+
+\item{filter_combine_method}{A string or function indicating how to combine
+multiple filters. If a string, it can be "and" (or "&") for logical AND,
+or "or" (or "|") for logical OR. If a function, it should take two logical
+vectors and return a combined logical vector.}
+
+\item{input}{A \pkg{shiny} \code{input} object, or a reactive that resolves to a
+list of named values.}
+
+\item{...}{Additional arguments passed to \code{\link[=updateFilterInput]{updateFilterInput()}}.}
+}
+\value{
+A list with a single element, \code{get_input_values}, which is a reactive
+function that returns the current filter input values as a named list.
 }
 \description{
 Run the backend server for filterInput
@@ -31,9 +48,9 @@ use_radio <- function(x) {
 	 structure(x, class = unique(c("must_use_radio", class(x))))
 }
 
-df_shared <- tibble::tibble(
+df_shared <- data.frame(
 	 x = letters,
-	 y = sample(c("red", "green", "blue"), 26, replace = TRUE) |> use_radio(),
+	 y = use_radio(sample(c("red", "green", "blue"), 26, replace = TRUE)),
 	 z = round(runif(26, 0, 3.5), 2),
 	 q = sample(Sys.Date() - 0:7, 26, replace = TRUE)
 )

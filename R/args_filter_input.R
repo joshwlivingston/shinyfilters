@@ -53,7 +53,7 @@ method(args_filter_input, class_Date) <- function(x, ...) {
 }
 
 ## Method: factor | logical ####
-method(args_filter_input, class_factor) <- function(
+method(args_filter_input, class_factor | class_logical) <- function(
 	x,
 	choices_asis = FALSE,
 	...
@@ -86,7 +86,7 @@ method(args_filter_input, class_POSIXt) <- function(x, ...) {
 ._discrete_choice_inputs <- function(x, asis, ...) {
 	args <- list(...)
 	if (isTRUE(args$server)) {
-		return(list(choices = "loading..."))
+		return(list(choices = ""))
 	}
 	if (!isTRUE(asis)) {
 		x <- sort(unique(x))

@@ -33,21 +33,51 @@ pak("joshwlivingston/shinyfilters")
 
 ## Vectors
 ```r
-filterInput(
-	x = letters,
-	id = "letter",
-	label = "Pick a letter:"
+ui <- shiny::fluidPage(
+	shiny::sidebarLayout(
+		shiny::sidebarPanel(
+			filterInput(
+				x = letters,
+				id = "letter",
+				label = "Pick a letter:"
+			)
+		),
+		shiny::mainPanel(
+			shiny::textOutput("selected_letter")
+		)
+	)
 )
+server <- function(input, output, session) {
+	output$selected_letter <- shiny::renderText({
+		paste("You selected:", input$letter)
+	})
+}
+shiny::shinyApp(ui, server)
 ```
 
 ## Data.frames
 ```r
+ui <- shiny::fluidPage(
+	shiny::sidebarLayout(
+		shiny::sidebarPanel(
+			filterInput(iris)
+		),
+		shiny::mainPanel(
+			DT::DTOutput("filtered_iris")
+		)
+	)
+)
+server <- function(input, output, session) {
+	output$filtered_iris <- DT::renderDT({
+		serverFilterInput(iris, input)
+	})
+}
 filterInput(x = iris)
 ```
 
 ## Shiny modules
 ```r
-df_shared <- tibble::tibble(
+df_shared <- data.frame(
 	x = letters,
 	y = sample(c("red", "green", "blue"), 26, replace = TRUE),
 	z = round(runif(26, 0, 3.5), 2),

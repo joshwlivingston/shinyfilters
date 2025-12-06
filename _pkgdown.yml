@@ -22,11 +22,13 @@ reference:
 - contents: 
   - filterInput
   - updateFilterInput
-- titles: Use shinyfilters with data.frames
+- title: Usage with data.frames
 - contents: 
   - serverFilterInput
+  - apply_filters
 - title: Customize shinyfilters
 - contents:
   - args_filter_input
   - call_filter_input
+  - get_filter_logical
 
