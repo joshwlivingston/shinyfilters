@@ -8,6 +8,8 @@
 #' @param input A \pkg{shiny} `input` object, or a reactive that resolves to a
 #'   list of named values.
 #' @inheritParams apply_filters
+#' @param args_apply_filters A named list of additional arguments passed to
+#'   [apply_filters()].
 #' @param ... Additional arguments passed to [updateFilterInput()].
 #'
 #' @return A list with a single element, `get_input_values`, which is a reactive
@@ -79,20 +81,31 @@
 #'
 #' shinyApp(ui, server)
 #' @export
-serverFilterInput <- function(x, filter_combine_method, input, ...) {
+serverFilterInput <- function(
+	x,
+	input,
+	filter_combine_method = "and",
+	args_apply_filters = NULL,
+	...
+) {
 	out_input <- shiny::reactiveVal(NULL)
 	shiny::observe({
 		input <- ._prepare_input(input, x = x)
-		input_dfs <- apply_filters(
-			x,
-			input,
-			filter_combine_method = filter_combine_method,
-			expanded = TRUE
+		args_apply_filters <- c(
+			list(
+				x = x,
+				filter_list = input,
+				filter_combine_method = filter_combine_method,
+				expanded = TRUE,
+				cols = NULL
+			),
+			args_apply_filters
 		)
-		update_df_input <- function(df) {
-			updateFilterInput(x = df, input = input, ...)
+		x_filt_list <- do.call(apply_filters, args_apply_filters)
+		update_input <- function(x_filt) {
+			updateFilterInput(x = x_filt, input = input, ...)
 		}
-		lapply(input_dfs, update_df_input)
+		lapply(x_filt_list, update_input)
 		out_input(input)
 	})
 	return(list(get_input_values = out_input))
@@ -155,7 +168,7 @@ apply_filters <- function(
 ) {
 	if (isTRUE(expanded)) {
 		return(
-			lapply(stats::setNames(nm = names(filter_list)), function(nm) {
+			lapply(set_names(nm = names(filter_list)), function(nm) {
 				apply_filters(
 					x = x,
 					filter_list = filter_list[names(filter_list) != nm],
@@ -172,38 +185,56 @@ apply_filters <- function(
 	}
 
 	if (is.character(filter_combine_method)) {
-		filter_combine_method <- switch(
-			filter_combine_method,
-			"&" = `&`,
-			"and" = `&`,
-			"|" = `|`,
-			"or" = `|`,
-			stop(sprintf(
-				"Unknown `filter_combine_method` value: %s",
-				filter_combine_method
-			))
-		)
+		filter_combine_method <-
+			switch(
+				filter_combine_method,
+				"&" = `&`,
+				"and" = `&`,
+				"|" = `|`,
+				"or" = `|`,
+				stop(sprintf(
+					"Unknown `filter_combine_method` value: %s",
+					filter_combine_method
+				))
+			)
 	}
 
+	x_length <- len(x)
 	filter_logical <-
 		Reduce(
 			filter_combine_method,
-			lapply(names(filter_list), function(column_name) {
-				get_filter_logical(
-					x,
-					filter_list[[column_name]],
-					column_name,
-					...
-				)
-			})
+			lapply(
+				names(filter_list),
+				function(column_name) {
+					res <-
+						get_filter_logical(
+							x,
+							filter_list[[column_name]],
+							column_name,
+							...
+						)
+					if (!identical(class(res), "logical")) {
+						stop(
+							sprintf(
+								"Filter on column `%s` did not return a logical vector.",
+								column_name
+							)
+						)
+					}
+					if (!identical(length(res), x_length)) {
+						stop(
+							sprintf(
+								"Filter on column `%s` returned a logical vector of length %d, but expected length %d.",
+								column_name,
+								length(res),
+								x_length
+							)
+						)
+					}
+					return(res)
+				}
+			)
 		)
-
-	class_orig_x <- class(x)
-	x_bare <- unclass(x)
-
-	if (is.list(x_bare)) {
-		x_filt <- lapply(x_bare, function(obj) obj[filter_logical])
-	}
 
 	if (is.data.frame(x)) {
 		if (!is.null(cols)) {
@@ -211,12 +242,7 @@ apply_filters <- function(
 		}
 		return(x[filter_logical, , drop = FALSE])
 	}
-
-	attrs_orig <- attributes(x)
-	x_filt <- x[filter_logical]
-	attributes(x_filt) <- attrs_orig
-
-	return(x_filt)
+	return(x[filter_logical])
 }
 
 #' Compute a Filter Predicate
@@ -231,19 +257,18 @@ apply_filters <- function(
 #' @details
 #' The following arguments are supported in `...`:
 #'
-#' When `x` is a `data.frame`:
 #' \tabular{ll}{
-#'   `nm` \tab The name of the column in `x` to filter on. \cr
-#' }
-#'
-#' When `x` is a `data.frame` and `val` is numeric or Date:
-#' \tabular{ll}{
-#'   `.f` \tab When `val` is length-one, `.f` is the function used to compare
-#'     `x` with `val`. The default is `<=`. \cr
-#'   `gte` \tab When `val` is length-two and `gte` is `TRUE`
-#'     (the default), the *lower* bound, determined by `val`, is inclusive. \cr
-#'   `lte` \tab When `val` is length-two and `lte` is `TRUE`
-#'     (the default), the *upper* bound, determined by `val`, is inclusive. \cr
+#'   `column` \tab When `x` is a data.frame, `column` is the name of the
+#'     column intended to be filtered. \cr
+#'   `comparison` \tab When `x` is a numeric or Date and `val` is a
+#'     length-**one** numeric or Date, `comparison` is the function used to
+#'     compare `x` with `val`. The default is `<=`. \cr
+#'   `gte` \tab When `x` is a numeric or Date and `val` is a length-**two**
+#'      numeric or Date, `gte` controls whether to use `>=` (`TRUE`, default)
+#'      or `>` (`FALSE`) on `val[[1]]`. \cr
+#'   `lte` \tab When `x` is a numeric or Date and `val` is a length-**two**
+#'      numeric or Date, `lte` controls whether to use `<=` (`TRUE`, default)
+#'      or `<` (`FALSE`) on `val[[2]]` \cr
 #' }
 #'
 #' @export
@@ -251,7 +276,7 @@ get_filter_logical <- new_generic(
 	name = "get_filter_logical",
 	dispatch_args = c("x", "val"),
 	fun = function(x, val, ...) {
-		if (length(val) == 0L) {
+		if (identical(length(val), 0L)) {
 			return(all_trues(x))
 		}
 		S7_dispatch()
@@ -260,29 +285,40 @@ get_filter_logical <- new_generic(
 
 method(
 	get_filter_logical,
-	list(
-		x = class_data.frame,
-		val = class_character | class_factor
-	)
-) <- function(x, val, nm) {
-	check_is_nonempty_string(nm)
+	list(x = class_data.frame, val = class_any)
+) <- function(
+	x,
+	val,
+	column,
+	...
+) {
+	check_is_nonempty_string(column)
+	get_filter_logical(x[[column]], val, ...)
+}
 
+method(
+	get_filter_logical,
+	list(
+		x = class_character | class_factor | class_logical,
+		val = class_character | class_factor | class_logical
+	)
+) <- function(x, val) {
 	na_bool <- NULL
 	if (any(is.na(val))) {
-		na_bool <- is.na(x[[nm]])
+		na_bool <- is.na(x)
 		val <- val[!is.na(val)]
-		if (length(val) == 0L) {
+		if (identical(length(val), 0L)) {
 			return(na_bool)
 		}
 	}
 
-	if (length(val) == 1L) {
+	if (identical(length(val), 1L)) {
 		._filter <- `==`
 	} else {
 		._filter <- `%in%`
 	}
 
-	logical_out <- ._filter(x[[nm]], val)
+	logical_out <- ._filter(x, val)
 	if (!is.null(na_bool)) {
 		logical_out <- na_bool | logical_out
 	}
@@ -292,29 +328,27 @@ method(
 method(
 	get_filter_logical,
 	list(
-		x = class_data.frame,
+		x = class_numeric | class_Date,
 		val = class_numeric | class_Date
 	)
-) <- function(x, val, nm, .f = `<=`, gte = TRUE, lte = TRUE, ...) {
-	check_is_nonempty_string(nm)
-
+) <- function(x, val, comparison = `<=`, gte = TRUE, lte = TRUE, ...) {
 	na_bool <- NULL
 	if (any(is.na(val))) {
-		na_bool <- is.na(x[[nm]])
+		na_bool <- is.na(x)
 		val <- val[!is.na(val)]
-		if (length(val) == 0L) {
+		if (identical(length(val), 0L)) {
 			return(na_bool)
 		}
 	}
 
-	if (length(val) == 1L) {
-		logical_out <- .f(x[[nm]], val, ...)
-	} else if (length(val) != 2L) {
-		logical_out <- x[[nm]] %in% val
+	if (identical(length(val), 1L)) {
+		logical_out <- comparison(x, val, ...)
+	} else if (!identical(length(val), 2L)) {
+		logical_out <- x %in% val
 	} else {
 		lt <- if (isTRUE(lte)) `<=` else `<`
-		gt <- if (isTRUE(lte)) `>=` else `>`
-		logical_out <- gt(x[[nm]], val[[1]]) & lt(x[[nm]], val[[2]])
+		gt <- if (isTRUE(gte)) `>=` else `>`
+		logical_out <- gt(x, val[[1]]) & lt(x, val[[2]])
 	}
 
 	if (!is.null(na_bool)) {
@@ -323,43 +357,12 @@ method(
 	return(logical_out)
 }
 
-method(get_filter_logical, list(class_data.frame, class_POSIXt)) <- function(
+method(get_filter_logical, list(class_POSIXt, class_POSIXt)) <- function(
 	x,
 	val,
-	nm,
 	...
 ) {
-	get_filter_logical(x, val = as.Date(val), nm, ...)
-}
-
-method(
-	get_filter_logical,
-	list(
-		x = class_data.frame,
-		val = class_logical
-	)
-) <- function(x, val, nm) {
-	check_is_nonempty_string(nm)
-
-	na_bool <- NULL
-	if (any(is.na(val))) {
-		na_bool <- is.na(x[[nm]])
-		val <- val[!is.na(val)]
-		if (length(val) == 0L) {
-			return(na_bool)
-		}
-	}
-
-	val <- unique(val)
-	if (length(val) > 1L) {
-		return(all_trues(x))
-	}
-
-	logical_out <- x[[nm]]
-	if (!is.null(na_bool)) {
-		logical_out <- na_bool | logical_out
-	}
-	return(logical_out)
+	get_filter_logical(x = as.Date(x), val = as.Date(val), ...)
 }
 
 get_input_values <- new_generic(
@@ -378,7 +381,7 @@ method(
 	get_input_values,
 	list(class_reactivevalues, class_character)
 ) <- function(input, x) {
-	lapply(stats::setNames(nm = x), function(nm) input[[nm]])
+	lapply(set_names(nm = x), function(nm) input[[nm]])
 }
 
 all_trues <- function(x) {
@@ -390,17 +393,48 @@ all_falses <- function(x) {
 }
 
 all_something <- function(x, something) {
+	rep(something, len(x))
+}
+
+len <- function(x) {
 	len <- dim(x)[[1]]
 	if (is.null(len)) {
 		len <- length(x)
 	}
-	rep(something, len)
+	return(len)
 }
 
 ._prepare_input <- new_generic("._prepare_input", "input")
 
-method(._prepare_input, class_reactiveExpr) <- function(input, ...) {
-	._prepare_input_list(input())
+method(._prepare_input, class_reactiveExpr) <- function(input, x) {
+	res <- ._prepare_input_list(input())
+	names_res <- names(res)
+	names_x <- names(x)
+	input_not_in_res <- !(names_x %in% names_res)
+	if (any(input_not_in_res)) {
+		stop(
+			sprintf(
+				"Missing required input values: `%s`",
+				paste0(
+					names_x[input_not_in_res],
+					collapse = "`, `"
+				)
+			)
+		)
+	}
+	input_not_in_x <- !(names_res %in% names_x)
+	if (any(input_not_in_x)) {
+		warning(
+			sprintf(
+				"Ignoring unsupported input values: `%s`",
+				paste0(
+					names_res[input_not_in_x],
+					collapse = "`, `"
+				)
+			)
+		)
+	}
+	return(res[!input_not_in_x])
 }
 
 method(._prepare_input, class_reactivevalues) <- function(input, x) {
@@ -415,7 +449,11 @@ method(._prepare_input_list, class_list) <- function(input) {
 
 check_is_nonempty_string <- function(x) {
 	if (
-		length(x) != 1L || is.null(x) || is.na(x) || !is.character(x) || x == ""
+		!identical(length(x), 1L) ||
+			is.null(x) ||
+			is.na(x) ||
+			!is.character(x) ||
+			identical(x, "")
 	) {
 		stop(sprintf("`%s` must be a non-empty string", deparse(substitute(x))))
 	}

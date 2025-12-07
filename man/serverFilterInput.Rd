@@ -4,18 +4,27 @@
 \alias{serverFilterInput}
 \title{Run the backend server for filterInput}
 \usage{
-serverFilterInput(x, filter_combine_method, input, ...)
+serverFilterInput(
+  x,
+  input,
+  filter_combine_method = "and",
+  args_apply_filters = NULL,
+  ...
+)
 }
 \arguments{
 \item{x}{An object being filtered; typically a data.frame.}
+
+\item{input}{A \pkg{shiny} \code{input} object, or a reactive that resolves to a
+list of named values.}
 
 \item{filter_combine_method}{A string or function indicating how to combine
 multiple filters. If a string, it can be "and" (or "&") for logical AND,
 or "or" (or "|") for logical OR. If a function, it should take two logical
 vectors and return a combined logical vector.}
 
-\item{input}{A \pkg{shiny} \code{input} object, or a reactive that resolves to a
-list of named values.}
+\item{args_apply_filters}{A named list of additional arguments passed to
+\code{\link[=apply_filters]{apply_filters()}}.}
 
 \item{...}{Additional arguments passed to \code{\link[=updateFilterInput]{updateFilterInput()}}.}
 }
