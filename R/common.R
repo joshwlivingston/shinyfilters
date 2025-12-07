@@ -28,7 +28,7 @@
 # Function: error_input_args ####
 error_input_args <- function(x, unsupported_args) {
 	vector_class <- class(x)[[1L]]
-	multiple_unsupported_args <- length(unsupported_args) > 1L
+	multiple_unsupported_args <- isTRUE(length(unsupported_args) > 1L)
 	stop(
 		sprintf(
 			paste0(
