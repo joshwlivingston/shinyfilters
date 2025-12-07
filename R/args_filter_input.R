@@ -1,7 +1,7 @@
 # Generic: args_filter_input ####
 #' Derive Arguments for \pkg{shiny} Inputs
 #'
-#' Internal. Provides the appropriate function arguments for the Shiny input
+#' Provides the appropriate function arguments for the Shiny input
 #' selected by [filterInput()].
 #'
 #' @param x The object being passed to [filterInput()].
