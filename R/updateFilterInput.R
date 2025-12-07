@@ -167,7 +167,7 @@ method(
 	args <- c(
 		list(x = col, inputId = nm),
 		args,
-		stats::setNames(val, args_value_name)
+		set_names(val, args_value_name)
 	)
 	do.call(updateFilterInput, args)
 }
