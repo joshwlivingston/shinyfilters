@@ -111,74 +111,26 @@ method(updateFilterInput, class_character) <- function(x, ...) {
 	}
 }
 
-._update_df_filter_input <- new_generic("._update_df_filter_input", "col")
-
-method(._update_df_filter_input, class_any) <- function(col, nm, input, ...) {
-	return(invisible())
-}
-
-method(._update_df_filter_input, class_Date | class_numeric) <- function(
-	col,
-	nm,
-	input,
-	...
-) {
-	val <- input[[nm]]
-	if (!is.null(val) && val[[length(val)]] > max(col, na.rm = TRUE)) {
-		col <- c(col, val)
-	}
-	if (
-		!is.null(val) && length(val) == 2L && val[[1L]] < min(col, na.rm = TRUE)
-	) {
-		col <- c(val, col)
-	}
-	args_value_name <- arg_name_input_value(col, ...)
-	if (is.null(val)) {
-		val <- rep(NULL, length(args_value_name))
-	}
-	if (length(val) == 1L && is.null(val)) {
-		val <- list(val)
-	} else {
-		val <- as.list(val)
-	}
-	args <- c(
-		list(x = col, inputId = nm),
-		args,
-		stats::setNames(val, args_value_name)
-	)
-	do.call(updateFilterInput, args)
-}
-
-method(
-	._update_df_filter_input,
-	class_character | class_factor | class_list
-) <- function(col, nm, input, ...) {
-	args <- list(...)
-	if (isTRUE(args$textbox)) {
-		return(invisible())
-	}
-	args_value_name <- arg_name_input_value(col, ...)
-	val <- input[[nm]]
-	if (is.null(val)) {
-		val <- list(val)
-	} else {
-		val <- as.list(val)
-	}
-	args <- c(
-		list(x = col, inputId = nm),
-		args,
-		set_names(val, args_value_name)
-	)
-	do.call(updateFilterInput, args)
-}
-
 ## Method: data.frame ####
 method(updateFilterInput, class_data.frame) <- function(x, input, ...) {
 	mapply(
-		._update_df_filter_input,
+		function(col, nm) {
+			val <- input[[nm]]
+			if (!is.null(val) || !identical(length(val), 0L)) {
+				return(invisible())
+			}
+
+			do.call(
+				updateFilterInput,
+				c(
+					list(x = col, inputId = nm),
+					list(...),
+					set_names(as_list_(val), arg_name_input_value(col, ...))
+				)
+			)
+		},
 		x,
 		names(x),
-		MoreArgs = c(list(input = input), list(...)),
 		SIMPLIFY = FALSE
 	)
 }
@@ -259,7 +211,7 @@ call_update_filter_input <- function(x, .f, ...) {
 		stop("call_update_filter_input() is not implemented for data.frames.")
 	}
 	args_provided <- list(...)
-	function_args <- methods::formalArgs(.f)
+	function_args <- formalArgs(.f)
 
 	args_prepared <- ._prepare_update_input_args(x, ...)
 	args <- c(
