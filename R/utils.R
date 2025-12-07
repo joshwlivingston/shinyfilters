@@ -36,8 +36,8 @@ s7_check_is_valid_list_dispatch <- function(x, function_name) {
 	if (
 		!is.function(ns) ||
 			!identical(
-				methods::functionBody(shiny::NS("x")),
-				methods::functionBody(ns)
+				functionBody(shiny::NS("x")),
+				functionBody(ns)
 			)
 	) {
 		stop("`ns` must be the result of calling `shiny::NS()`.")

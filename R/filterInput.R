@@ -205,14 +205,14 @@ call_filter_input <- function(x, .f, ...) {
 		stop("call_filter_input() is not implemented for data.frames.")
 	}
 	args_provided <- list(...)
-	function_args <- methods::formalArgs(.f)
+	function_args <- formalArgs(.f)
 	if (
 		requireNamespace("shiny", quietly = TRUE) &&
 			identical(.f, shiny::selectizeInput)
 	) {
 		function_args <- union(
 			function_args,
-			setdiff(methods::formalArgs(shiny::selectInput), "selectize")
+			setdiff(formalArgs(shiny::selectInput), "selectize")
 		)
 	}
 	args_prepared <- ._prepare_input_args(x, ...)
