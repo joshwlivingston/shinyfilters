@@ -48,10 +48,7 @@ s7_check_is_valid_list_dispatch <- function(x, function_name) {
 ._call_provided_f <- new_generic(
 	name = "._call_provided_f",
 	dispatch_args = c(".f", "args"),
-	fun = function(.f, args, x) {
-		if (missing(args)) {
-			return(._call_provided_f(.f, NULL, x))
-		}
+	fun = function(.f, args = NULL, x, ...) {
 		S7_dispatch()
 	}
 )
