@@ -5,7 +5,13 @@ Run the backend server for filterInput
 ## Usage
 
 ``` r
-serverFilterInput(x, filter_combine_method, input, ...)
+serverFilterInput(
+  x,
+  input,
+  filter_combine_method = "and",
+  args_apply_filters = NULL,
+  ...
+)
 ```
 
 ## Arguments
@@ -14,6 +20,11 @@ serverFilterInput(x, filter_combine_method, input, ...)
 
   An object being filtered; typically a data.frame.
 
+- input:
+
+  A shiny `input` object, or a reactive that resolves to a list of named
+  values.
+
 - filter_combine_method:
 
   A string or function indicating how to combine multiple filters. If a
@@ -21,10 +32,10 @@ serverFilterInput(x, filter_combine_method, input, ...)
   for logical OR. If a function, it should take two logical vectors and
   return a combined logical vector.
 
-- input:
+- args_apply_filters:
 
-  A shiny `input` object, or a reactive that resolves to a list of named
-  values.
+  A named list of additional arguments passed to
+  [`apply_filters()`](https://joshwlivingston.github.io/shinyfilters/reference/apply_filters.md).
 
 - ...:
 

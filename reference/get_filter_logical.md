@@ -27,16 +27,9 @@ get_filter_logical(x, val, ...)
 
 The following arguments are supported in `...`:
 
-When `x` is a `data.frame`:
-
-|      |                                             |
-|------|---------------------------------------------|
-| `nm` | The name of the column in `x` to filter on. |
-
-When `x` is a `data.frame` and `val` is numeric or Date:
-
-|       |                                                                                                                   |
-|-------|-------------------------------------------------------------------------------------------------------------------|
-| `.f`  | When `val` is length-one, `.f` is the function used to compare `x` with `val`. The default is `<=`.               |
-| `gte` | When `val` is length-two and `gte` is `TRUE` (the default), the *lower* bound, determined by `val`, is inclusive. |
-| `lte` | When `val` is length-two and `lte` is `TRUE` (the default), the *upper* bound, determined by `val`, is inclusive. |
+|              |                                                                                                                                                                   |
+|--------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `column`     | When `x` is a data.frame, `column` is the name of the column intended to be filtered.                                                                             |
+| `comparison` | When `x` is a numeric or Date and `val` is a length-**one** numeric or Date, `comparison` is the function used to compare `x` with `val`. The default is `<=`.    |
+| `gte`        | When `x` is a numeric or Date and `val` is a length-**two** numeric or Date, `gte` controls whether to use `>=` (`TRUE`, default) or `>` (`FALSE`) on `val[[1]]`. |
+| `lte`        | When `x` is a numeric or Date and `val` is a length-**two** numeric or Date, `lte` controls whether to use `<=` (`TRUE`, default) or `<` (`FALSE`) on `val[[2]]`  |

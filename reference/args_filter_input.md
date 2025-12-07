@@ -1,7 +1,7 @@
 # Derive Arguments for shiny Inputs
 
-Internal. Provides the appropriate function arguments for the Shiny
-input selected by
+Provides the appropriate function arguments for the Shiny input selected
+by
 [`filterInput()`](https://joshwlivingston.github.io/shinyfilters/reference/filterInput.md).
 
 ## Usage
