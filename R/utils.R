@@ -72,10 +72,14 @@ method(
 	do.call(.f, c(list(x = x, args)))
 }
 
-## Method: NULL, NULL ####
-method(
-	._call_provided_f,
-	list(NULL, NULL)
-) <- function(.f, args, x) {
-	return(x)
+set_names <- function(object = nm, nm) {
+	names(object) <- nm
+	return(object)
+}
+
+as_list_ <- function(x) {
+	if (is.null(x)) {
+		return(list(x))
+	}
+	return(as.list(x))
 }

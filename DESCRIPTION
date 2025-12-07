@@ -12,8 +12,7 @@ Description: Provides an interface to shiny inputs used for filtering data.
 License: MIT + file LICENSE
 Imports:
     methods,
-    S7 (>= 0.2.0),
-    stats
+    S7 (>= 0.2.0)
 Suggests:
     bslib,
     DT,
