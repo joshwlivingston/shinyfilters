@@ -12,9 +12,17 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 [![R-CMD-check](https://github.com/joshwlivingston/shinyfilters/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/joshwlivingston/shinyfilters/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-Intro text
+## Overview
 
-# Installation
+*shinyfilters* makes it easy to create Shiny inputs from vectors,
+data.frames, and more.
+
+- `filterInput()`: Create filter inputs on any object
+- `updateFilterInput()`: Update filter inputs
+- `serverFilterInput()`: Server logic to update filter inputs
+- `apply_filters()`: Apply filter inputs to objects
+
+## Installation
 
 You can install the development version from Github:
 
@@ -22,69 +30,110 @@ You can install the development version from Github:
 pak("joshwlivingston/shinyfilters")
 ```
 
-# Usage
+## Usage
 
-## Vectors
+### Vectors
 
 ``` r
-filterInput(
-    x = letters,
-    id = "letter",
-    label = "Pick a letter:"
+library(shinyfilters)
+library(shiny)
+
+ui <- fluidPage(
+    sidebarLayout(
+        sidebarPanel(
+            #############################################
+            # Create a filterInput() inside a shiny app:
+            filterInput(
+                x = letters,
+                id = "letter",
+                label = "Pick a letter:"
+            )
+            #############################################
+        ),
+        mainPanel(
+            textOutput("selected_letter")
+        )
+    )
 )
+server <- function(input, output, session) {
+    output$selected_letter <- shiny::renderText({
+        paste("You selected:", input$letter)
+    })
+}
+shiny::shinyApp(ui, server)
 ```
 
-## Data.frames
+<br>
+
+### Data.frames
 
 ``` r
-filterInput(x = iris)
-```
+library(shinyfilters)
 
-## Shiny modules
+library(DT)
+library(shiny)
 
-``` r
-df_shared <- data.frame(
+df <- data.frame(
     x = letters,
     y = sample(c("red", "green", "blue"), 26, replace = TRUE),
     z = round(runif(26, 0, 3.5), 2),
     q = sample(Sys.Date() - 0:7, 26, replace = TRUE)
 )
 
-filters_ui <- function(id) {
-    ns <- shiny::NS(id)
-    filterInput(
-        x = df_shared,
-        range = TRUE,
-        selectize = TRUE,
-        slider = TRUE,
-        multiple = TRUE,
-        ns = ns
+ui <- fluidPage(
+    sidebarLayout(
+        sidebarPanel(
+            ##########################################################
+            # Create a filterInput() for each column in a data.frame:
+            filterInput(
+                x = df,
+                range = TRUE,
+                selectize = TRUE,
+                slider = TRUE,
+                multiple = TRUE
+            )
+            ##########################################################
+        ),
+        mainPanel(
+            DTOutput("df_full"),
+            verbatimTextOutput("input_values"),
+            DTOutput("df_filt")
+        )
     )
-}
-
-filters_server <- function(id) {
-    moduleServer(id, function(input, output, session) {
-        # serverFilterInput() returns a shiny::observe() expressionc
-        serverFilterInput(df_shared, input = input, range = TRUE)
-    })
-}
-
-ui <- page_sidebar(
-    sidebar = sidebar(filters_ui("demo")),
-    DTOutput("df_full"),
-    verbatimTextOutput("input_values"),
-    DTOutput("df_filt")
 )
 
 server <- function(input, output, session) {
-    res <- filters_server("demo")
-    output$df_full <- renderDT(datatable(df_shared))
+    output$df_full <- renderDT(datatable(df))
+    #####################################
+    # 1. Create a server to manage the data.frame's filterInput()'s
+    res <- serverFilterInput(
+        x = df, 
+        input = input, 
+        range = TRUE
+    )
+    #####################################
+    
+    ###########################################################
+    # 2. Use the server's results
     output$input_values <- renderPrint(res$get_input_values())
-    output$df_filt <- renderDT(datatable(apply_filters(
-        df_shared,
-        res$get_input_values()
-    )))
+    output$df_filt <- renderDT(datatable(
+        apply_filters(mtcars, res$get_input_values())
+    ))
+    ###########################################################
 }
 
 shinyApp(ui, server)
 ```
+
+<br>
+
+## Extending shinyfilters
+
+You can extend `shinyfilters` by adding or overwriting methods to the
+following:
+
+- `filterInput()`, `updateFilterInput()`
+- `args_filter_input()`, `args_update_filter_input()`
+- `get_filter_logical()`
+
+See `vignette("customizing-shinyfilters")` for more.
