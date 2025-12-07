@@ -13,11 +13,11 @@ expect_shiny_input <- function(shiny_input) {
 			do.call(args_filter_input, args_get_filter_input),
 			args[names(args) != "x"]
 		)
-		args_allowed <- methods::formalArgs(shiny_input)
+		args_allowed <- formalArgs(shiny_input)
 		if (identical(shiny_input, shiny::selectizeInput)) {
 			args_allowed_all <- union(
 				args_allowed,
-				methods::formalArgs(shiny::selectInput)
+				formalArgs(shiny::selectInput)
 			)
 			args_in_select_only <- c("selectize")
 			args_allowed <- setdiff(args_allowed_all, args_in_select_only)
