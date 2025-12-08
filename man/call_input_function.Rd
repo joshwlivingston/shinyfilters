@@ -31,14 +31,16 @@ customizing \pkg{shinyfilters}. For more, see
 \code{vignette("customizing-shinyfilters")}.
 }
 \examples{
+\dontshow{if (requireNamespace("shiny")) withAutoprint(\{ # examplesIf}
 library(S7)
 # call_filter_input() is used inside filterInput() methods
-method(filterInput, class_numeric) <- function(x, ...) {#'
+method(filterInput, class_numeric) <- function(x, ...) {
   call_filter_input(x, shiny::sliderInput, ...)
 }
 
 # call_update_filter_input() is used inside updateFilterInput() methods
-method(updateFilterInput, class_numeric) <- function(x, ...) {#'
+method(updateFilterInput, class_numeric) <- function(x, ...) {
   call_update_filter_input(x, shiny::updateSliderInput, ...)
 }
+\dontshow{\}) # examplesIf}
 }

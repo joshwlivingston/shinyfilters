@@ -39,7 +39,6 @@ or \code{<} (\code{FALSE}) on \code{val[[2]]} \cr
 }
 }
 \examples{
-library(S7)
 df <- data.frame(
   category = rep(letters[1:3], each = 4),
   value = 1:12,

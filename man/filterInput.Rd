@@ -67,7 +67,8 @@ Remaining arguments passed to \code{...} are passed to the selected input
 function.
 }
 \examples{
-\dontrun{
+\dontshow{if (requireNamespace("shiny")) withAutoprint(\{ # examplesIf}
+
 # dateInput
 filterInput(
   x = Sys.Date() + 0:9,
@@ -88,6 +89,5 @@ filterInput(
   inputId = "letter",
   label = "Pick a letter:"
 )
-}
-
+\dontshow{\}) # examplesIf}
 }

@@ -68,8 +68,8 @@
 #'   [shiny::textInput]      \tab character                        \tab `textbox = TRUE`                \cr
 #' }
 #'
-#' @examples
-#' \dontrun{
+#' @examplesIf requireNamespace("shiny")
+#'
 #' # dateInput
 #' filterInput(
 #'   x = Sys.Date() + 0:9,
@@ -90,7 +90,6 @@
 #'   inputId = "letter",
 #'   label = "Pick a letter:"
 #' )
-#' }
 #'
 #' @export
 filterInput <- new_generic(
@@ -197,15 +196,15 @@ method(filterInput, class_POSIXt) <- function(x, ...) {
 #'
 #' @return The result of calling the provided input function.
 #'
-#' @examples
+#' @examplesIf requireNamespace("shiny")
 #' library(S7)
 #' # call_filter_input() is used inside filterInput() methods
-#' method(filterInput, class_numeric) <- function(x, ...) {#'
+#' method(filterInput, class_numeric) <- function(x, ...) {
 #'   call_filter_input(x, shiny::sliderInput, ...)
 #' }
 #'
 #' # call_update_filter_input() is used inside updateFilterInput() methods
-#' method(updateFilterInput, class_numeric) <- function(x, ...) {#'
+#' method(updateFilterInput, class_numeric) <- function(x, ...) {
 #'   call_update_filter_input(x, shiny::updateSliderInput, ...)
 #' }
 NULL

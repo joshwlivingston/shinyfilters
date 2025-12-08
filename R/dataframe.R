@@ -15,7 +15,7 @@
 #' @return A list with a single element, `get_input_values`, which is a reactive
 #'   function that returns the current filter input values as a named list.
 #'
-#' @examplesIf interactive()
+#' @examplesIf interactive() && requireNamespace("bslib") && requireNamespace("DT") && requireNamespace("shiny")
 #' library(bslib)
 #' library(DT)
 #' library(S7)
@@ -242,7 +242,6 @@ apply_filters <- function(
 #'   criteria specified by `val`.
 #'
 #' @examples
-#' library(S7)
 #' df <- data.frame(
 #'   category = rep(letters[1:3], each = 4),
 #'   value = 1:12,
