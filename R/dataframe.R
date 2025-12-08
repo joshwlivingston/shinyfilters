@@ -199,42 +199,12 @@ apply_filters <- function(
 			)
 	}
 
-	x_length <- len(x)
-	filter_logical <-
-		Reduce(
-			filter_combine_method,
-			lapply(
-				names(filter_list),
-				function(column_name) {
-					res <-
-						get_filter_logical(
-							x,
-							filter_list[[column_name]],
-							column_name,
-							...
-						)
-					if (!identical(class(res), "logical")) {
-						stop(
-							sprintf(
-								"Filter on column `%s` did not return a logical vector.",
-								column_name
-							)
-						)
-					}
-					if (!identical(length(res), x_length)) {
-						stop(
-							sprintf(
-								"Filter on column `%s` returned a logical vector of length %d, but expected length %d.",
-								column_name,
-								length(res),
-								x_length
-							)
-						)
-					}
-					return(res)
-				}
-			)
-		)
+	filter_logical <- ._prepare_filter_logical(
+		x = x,
+		filter_list = filter_list,
+		filter_combine_method = filter_combine_method,
+		...
+	)
 
 	if (is.data.frame(x)) {
 		if (!is.null(cols)) {
@@ -414,6 +384,49 @@ method(
 	list(class_reactivevalues, class_character)
 ) <- function(input, x) {
 	lapply(set_names(nm = x), function(nm) input[[nm]])
+}
+
+._prepare_filter_logical <- function(
+	x,
+	filter_list,
+	filter_combine_method,
+	...
+) {
+	x_length <- len(x)
+	Reduce(
+		filter_combine_method,
+		lapply(
+			names(filter_list),
+			function(column_name) {
+				res <-
+					get_filter_logical(
+						x,
+						filter_list[[column_name]],
+						column_name,
+						...
+					)
+				if (!identical(class(res), "logical")) {
+					stop(
+						sprintf(
+							"Filter on column `%s` did not return a logical vector.",
+							column_name
+						)
+					)
+				}
+				if (!identical(length(res), x_length)) {
+					stop(
+						sprintf(
+							"Filter on column `%s` returned a logical vector of length %d, but expected length %d.",
+							column_name,
+							length(res),
+							x_length
+						)
+					)
+				}
+				return(res)
+			}
+		)
+	)
 }
 
 all_trues <- function(x) {
