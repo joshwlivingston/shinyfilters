@@ -146,16 +146,13 @@ serverFilterInput <- function(
 #' )
 #'
 #' # Apply filters with logical AND
-#' filtered_df_and <- apply_filters(df, filters, filter_combine_method = "and")
-#' print(filtered_df_and)
+#' apply_filters(df, filters, filter_combine_method = "and")
 #'
 #' # Apply filters with logical OR
-#' filtered_df_or <- apply_filters(df, filters, filter_combine_method = "or")
-#' print(filtered_df_or)
+#' apply_filters(df, filters, filter_combine_method = "or")
 #'
 #' # Get expanded filters
-#' expanded_filters <- apply_filters(df, filters, expanded = TRUE)
-#' print(expanded_filters)
+#' apply_filters(df, filters, expanded = TRUE)
 #'
 #' @export
 apply_filters <- function(
