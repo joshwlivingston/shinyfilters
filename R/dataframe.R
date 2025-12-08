@@ -303,6 +303,14 @@ get_filter_logical <- new_generic(
 	}
 )
 
+method(get_filter_logical, list(x = NULL, val = class_any)) <- function(
+	x,
+	val,
+	...
+) {
+	return(NULL)
+}
+
 method(
 	get_filter_logical,
 	list(x = class_data.frame, val = class_any)
