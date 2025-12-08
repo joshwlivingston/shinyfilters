@@ -196,6 +196,18 @@ method(filterInput, class_POSIXt) <- function(x, ...) {
 #'   input function.
 #'
 #' @return The result of calling the provided input function.
+#'
+#' @examples
+#' library(S7)
+#' # call_filter_input() is used inside filterInput() methods
+#' method(filterInput, class_numeric) <- function(x, ...) {#'
+#'   call_filter_input(x, shiny::sliderInput, ...)
+#' }
+#'
+#' # call_update_filter_input() is used inside updateFilterInput() methods
+#' method(updateFilterInput, class_numeric) <- function(x, ...) {#'
+#'   call_update_filter_input(x, shiny::updateSliderInput, ...)
+#' }
 NULL
 
 #' @rdname call_input_function

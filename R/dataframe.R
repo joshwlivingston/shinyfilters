@@ -271,6 +271,26 @@ apply_filters <- function(
 #'      or `<` (`FALSE`) on `val[[2]]` \cr
 #' }
 #'
+#' @return A logical vector indicating which elements of `x` match the filter
+#'   criteria specified by `val`.
+#'
+#' @examples
+#' library(S7)
+#' df <- data.frame(
+#'   category = rep(letters[1:3], each = 4),
+#'   value = 1:12,
+#'   date = Sys.Date() + 0:11
+#' )
+#'
+#' # Filter character column
+#' get_filter_logical(df, c("a", "b"), column = "category")
+#'
+#' # Filter numeric column with single value
+#' get_filter_logical(df, 5, column = "value", comparison = `<=`)
+#'
+#' # Filter numeric column with range
+#' get_filter_logical(df, c(3, 8), column = "value", gte = TRUE, lte = FALSE)
+#'
 #' @export
 get_filter_logical <- new_generic(
 	name = "get_filter_logical",

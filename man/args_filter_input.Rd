@@ -14,6 +14,9 @@ args_update_filter_input(x, ...)
 
 \item{...}{Additional arguments passed to the method. See details.}
 }
+\value{
+A named list of arguments for the selected Shiny input
+}
 \description{
 Provides the appropriate function arguments for the Shiny input
 selected by \code{\link[=filterInput]{filterInput()}}.

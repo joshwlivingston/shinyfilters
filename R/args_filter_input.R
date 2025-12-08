@@ -15,6 +15,7 @@
 #'      will provide the arguments for select inputs.
 #' }
 #'
+#' @return A named list of arguments for the selected Shiny input
 #'
 #' @examples
 #' args_filter_input(letters, as.factor = TRUE)
