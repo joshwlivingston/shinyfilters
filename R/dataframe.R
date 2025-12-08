@@ -313,7 +313,11 @@ method(
 	...
 ) {
 	check_is_nonempty_string(column)
-	get_filter_logical(x[[column]], val, ...)
+	col <- x[[column]]
+	if (is.null(col)) {
+		stop(sprintf("Column `%s` not found in `x`.", column))
+	}
+	get_filter_logical(col, val, ...)
 }
 
 method(
