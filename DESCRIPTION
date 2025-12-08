@@ -27,4 +27,5 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
 VignetteBuilder: knitr
-URL: https://joshwlivingston.github.io/shinyfilters/
+URL: https://joshwlivingston.github.io/shinyfilters/, https://github.com/joshwlivingston/shinyfilters
+BugReports: https://github.com/joshwlivingston/shinyfilters/issues
