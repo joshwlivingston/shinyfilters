@@ -65,24 +65,46 @@ Remaining arguments passed to \code{...} are passed to the selected input update
 function.
 }
 \examples{
-\dontrun{
-# updateDateInput
-updateFilterInput(
-  x = Sys.Date() + 5:9,
-  inputId = "date"
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
+library(shiny)
+
+fruits <- list(
+	"a" = c("apples", "avocados"),
+	"b" = c("bananas", "blueberries"),
+	"c" = c("cherries", "cantaloupe")
 )
 
-# updateNumericInput
-updateFilterInput(
-  x = 5:9,
-  inputId = "number"
+ui <- fluidPage(
+	sidebarLayout(
+		sidebarPanel(
+			filterInput(
+				x = letters[1:3],
+				inputId = "letter",
+				label = "Pick a letter:",
+       multiple = TRUE
+			),
+			filterInput(
+				x = fruits,
+				inputId = "fruits",
+				label = "Pick a fruit:"
+			)
+		),
+   mainPanel()
+	)
 )
 
-# updateSelectInput
-updateFilterInput(
-  x = letters[5:9],
-  inputId = "letter"
-)
+server <- function(input, output, session) {
+	shiny::observe({
+		fruits_filtered <- fruits
+		if (!is.null(input$letter) && length(input$letter) != 0L) {
+			fruits_filtered <- fruits[input$letter]
+		}
+		#########################################################
+		# 2. Call updateFilterInput() inside the shiny server:
+		updateFilterInput(x = fruits_filtered, inputId = "fruits")
+		#########################################################
+	})
 }
-
+shinyApp(ui, server)
+\dontshow{\}) # examplesIf}
 }

@@ -69,27 +69,33 @@
 #' }
 #'
 #' @examplesIf interactive()
-#' # dateInput
-#' filterInput(
-#'   x = Sys.Date() + 0:9,
-#'   inputId = "date",
-#'   label = "Pick a date"
+#' library(shiny)
+#'
+#' ui <- fluidPage(
+#' 	 sidebarLayout(
+#' 		 sidebarPanel(
+#' 			 #############################################
+#' 			 # Create a filterInput() inside a shiny app:
+#' 			 filterInput(
+#' 				x = letters,
+#' 				id = "letter",
+#' 				label = "Pick a letter:"
+#' 			 )
+#' 			 #############################################
+#' 		 ),
+#' 		 mainPanel(
+#' 			 textOutput("selected_letter")
+#' 		 )
+#' 	 )
 #' )
 #'
-#' # numericInput
-#' filterInput(
-#'   x = 0:9,
-#'   inputId = "number",
-#'   label = "Pick a number:"
-#' )
+#' server <- function(input, output, session) {
+#' 	 output$selected_letter <- renderText({
+#' 		 paste("You selected:", input$letter)
+#' 	 })
+#' }
 #'
-#' # selectInput
-#' filterInput(
-#'   x = letters,
-#'   inputId = "letter",
-#'   label = "Pick a letter:"
-#' )
-#'
+#' shinyApp(ui, server)
 #' @export
 filterInput <- new_generic(
 	name = "filterInput",
