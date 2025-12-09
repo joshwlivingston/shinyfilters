@@ -143,6 +143,10 @@ selected.
 
 For example, let's say you want to use `shinyWidgets` instead of `shiny`:
 
+```{r, echo=FALSE}
+skip_knitr_eval_if_no_pkg("shinyWidgets")
+```
+
 ```{r}
 library(shinyWidgets)
 
@@ -179,6 +183,10 @@ method(args_filter_input, class_numeric) <- function(x, ...) {
 Now, our overwritten `filterInput()` will work as intended:
 ```{r}
 filterInput(0:10, inputId = "number", label = "Pick a number:")
+```
+
+```{r, echo=FALSE}
+knitr::opts_chunk$set(eval = TRUE)
 ```
 
 
