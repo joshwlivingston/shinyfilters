@@ -12,8 +12,8 @@
 #'   [apply_filters()].
 #' @param ... Additional arguments passed to [updateFilterInput()].
 #'
-#' @return A list with a single element, `get_input_values`, which is a reactive
-#'   function that returns the current filter input values as a named list.
+#' @return A reactiveValues list with a single element, `input_values`, which
+#'   contains the current filter input values as a named list.
 #'
 #' @examplesIf interactive() && requireNamespace("bslib") && requireNamespace("DT") && requireNamespace("shiny")
 #' library(bslib)
@@ -72,10 +72,10 @@
 #' server <- function(input, output, session) {
 #' 	 res <- filters_server("demo")
 #' 	 output$df_full <- renderDT(datatable(df_shared))
-#' 	 output$input_values <- renderPrint(res$get_input_values())
+#' 	 output$input_values <- renderPrint(res$input_values)
 #' 	 output$df_filt <- renderDT(datatable(apply_filters(
 #'  		df_shared,
-#'  		res$get_input_values()
+#'  		res$input_values
 #'  	)))
 #' }
 #'
@@ -88,7 +88,7 @@ serverFilterInput <- function(
 	args_apply_filters = NULL,
 	...
 ) {
-	out_input <- shiny::reactiveVal(NULL)
+	out_input <- shiny::reactiveValues()
 	shiny::observe({
 		input <- ._prepare_input(input, x = x)
 		args_apply_filters <- c(
@@ -106,9 +106,9 @@ serverFilterInput <- function(
 			updateFilterInput(x = x_filt, input = input, ...)
 		}
 		lapply(x_filt_list, update_input)
-		out_input(input)
+		out_input$input_values <- input
 	})
-	return(list(get_input_values = out_input))
+	return(out_input)
 }
 
 #' Apply Filters to an object
@@ -361,25 +361,6 @@ method(get_filter_logical, list(class_POSIXt, class_POSIXt)) <- function(
 	...
 ) {
 	get_filter_logical(x = as.Date(x), val = as.Date(val), ...)
-}
-
-get_input_values <- new_generic(
-	name = "get_input_values",
-	dispatch_args = c("input", "x")
-)
-
-method(
-	get_input_values,
-	list(class_reactivevalues, class_data.frame)
-) <- function(input, x) {
-	get_input_values(input, names(x))
-}
-
-method(
-	get_input_values,
-	list(class_reactivevalues, class_character)
-) <- function(input, x) {
-	lapply(set_names(nm = x), function(nm) input[[nm]])
 }
 
 ._prepare_filter_logical <- function(

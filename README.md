@@ -113,9 +113,9 @@ server <- function(input, output, session) {
     
     ###########################################################
     # 2. Use the server's results
-    output$input_values <- renderPrint(res$get_input_values())
+    output$input_values <- renderPrint(res$input_values)
     output$df_filt <- renderDT(datatable(
-        apply_filters(df, res$get_input_values())
+        apply_filters(df, res$input_values)
     ))
     ###########################################################
 }
