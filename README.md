@@ -81,8 +81,8 @@ df <- data.frame(
 ui <- fluidPage(
     sidebarLayout(
         sidebarPanel(
-            ##########################################################
-            # Create a filterInput() for each column in a data.frame:
+            #############################################################
+            # 1. Create a filterInput() for each column in a data.frame:
             filterInput(
                 x = df,
                 range = TRUE,
@@ -90,7 +90,7 @@ ui <- fluidPage(
                 slider = TRUE,
                 multiple = TRUE
             )
-            ##########################################################
+            #############################################################
         ),
         mainPanel(
             DTOutput("df_full"),
@@ -102,22 +102,22 @@ ui <- fluidPage(
 
 server <- function(input, output, session) {
     output$df_full <- renderDT(datatable(df))
-    #####################################
-    # 1. Create a server to manage the data.frame's filterInput()'s
+    ################################################################
+    # 2. Create a server to manage the data.frame's filterInput()'s
     res <- serverFilterInput(
         x = df, 
         input = input, 
         range = TRUE
     )
-    #####################################
+    ################################################################
     
-    ###########################################################
-    # 2. Use the server's results
+    #####################################################
+    # 3. Use the server's results
     output$input_values <- renderPrint(res$input_values)
     output$df_filt <- renderDT(datatable(
         apply_filters(df, res$input_values)
     ))
-    ###########################################################
+    #####################################################
 }
 
 shinyApp(ui, server)
