@@ -61,8 +61,8 @@ The following arguments passed to \code{...} are supported:
 
 }
 
-Remaining arguments passed to \code{...} are passed to the selected input update
-function.
+Remaining arguments passed to \code{...} are passed to
+\code{\link[=args_update_filter_input]{args_update_filter_input()}} or the selected input update function.
 }
 \examples{
 \dontshow{if (interactive()) withAutoprint(\{ # examplesIf}

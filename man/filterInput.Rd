@@ -63,8 +63,8 @@ The following arguments passed to \code{...} are supported:
 
 }
 
-Remaining arguments passed to \code{...} are passed to the selected input
-function.
+Remaining arguments passed to \code{...} are passed to the \code{\link[=args_filter_input]{args_filter_input()}}
+or the selected input function.
 }
 \examples{
 \dontshow{if (interactive()) withAutoprint(\{ # examplesIf}

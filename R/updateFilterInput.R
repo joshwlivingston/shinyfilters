@@ -46,8 +46,8 @@
 #'
 #' }
 #'
-#' Remaining arguments passed to `...` are passed to the selected input update
-#' function.
+#' Remaining arguments passed to `...` are passed to
+#' [args_update_filter_input()] or the selected input update function.
 #'
 #' @return The result of the following \pkg{shiny} input updates is returned,
 #' based on the type of object passed to `x`, and other specified arguments.

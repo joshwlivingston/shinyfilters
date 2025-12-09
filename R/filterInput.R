@@ -47,8 +47,8 @@
 #'
 #' }
 #'
-#' Remaining arguments passed to `...` are passed to the selected input
-#' function.
+#' Remaining arguments passed to `...` are passed to the [args_filter_input()]
+#' or the selected input function.
 #'
 #' @return One of the following \pkg{shiny} inputs is returned, based on the
 #' type of object passed to `x`, and other specified arguments. See

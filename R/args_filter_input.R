@@ -1,24 +1,38 @@
 # Generic: args_filter_input ####
 #' Derive Arguments for \pkg{shiny} Inputs
 #'
-#' Provides the appropriate function arguments for the Shiny input
-#' selected by [filterInput()].
+#' Provides the appropriate function arguments for the input function selected
+#' by [filterInput()] or [updateFilterInput()].
 #'
-#' @param x The object being passed to [filterInput()].
+#' @param x The object being passed to [filterInput()] or [updateFilterInput()].
 #' @param ... Additional arguments passed to the method. See details.
 #'
 #' @details
 #' The following aruguments are supported in `...`:
 #' \tabular{ll}{
+#'   `range` \tab
+#'   *(Date, POSIXt)*. Logical. If `TRUE`, `args_filter_input()` will provide
+#'     the arguments for range date inputs. Only applies when `x` is of class
+#'     `Date` or `POSIXt`. \cr
 #'   `textbox` \tab
 #'    *(character)*. Logical. If `FALSE` (the default), `args_filter_input()`
-#'      will provide the arguments for select inputs.
+#'      will provide the arguments for select inputs. \cr
+#'   `choices_asis` \tab
+#'   *(character, factor, list, logical)*. Logical. If `TRUE`, the choices
+#'     provided to select inputs will not be modified. If `FALSE` (the default),
+#'     duplicate values will be removed and the choices will be sorted. Only
+#'     applies when `x` is of class `character`, `factor`, `list`, or
+#'     `logical`. \cr
+#'   `server` \tab
+#'    If `TRUE`, indicates that the choices will be provided
+#'     server-side. In this case, arguments are not computed for
+#'     `args_filter_input()`. Ignored in `args_update_filter_input()`. \cr
 #' }
 #'
-#' @return A named list of arguments for the selected Shiny input
+#' @return A named list of arguments for a \pkg{shiny} input function
 #'
 #' @examples
-#' args_filter_input(letters, as.factor = TRUE)
+#' args_filter_input(iris$Petal.Length)
 #'
 #' @export
 args_filter_input <- new_generic(
@@ -36,7 +50,7 @@ method(args_filter_input, class_character) <- function(
 	if (isTRUE(textbox)) {
 		return(NULL)
 	}
-	._discrete_choice_inputs(x = x, asis = choices_asis, ...)
+	._discrete_choice_inputs(x = x, choices_asis = choices_asis, ...)
 }
 
 ## Method: Date ####
@@ -59,13 +73,16 @@ method(args_filter_input, class_factor | class_logical) <- function(
 	choices_asis = FALSE,
 	...
 ) {
-	._discrete_choice_inputs(x = x, asis = choices_asis, ...)
+	._discrete_choice_inputs(x = x, choices_asis = choices_asis, ...)
 }
 
 ## Method: list ####
 method(args_filter_input, class_list) <- function(x, choices_asis = TRUE, ...) {
 	s7_check_is_valid_list_dispatch(x, function_name = "args_filter_input")
-	._discrete_choice_inputs(x = x, asis = TRUE, ...)
+	if (isFALSE(choices_asis)) {
+		stop("Argument `choices_asis` must be TRUE when `x` is a list.")
+	}
+	._discrete_choice_inputs(x = x, choices_asis = TRUE, ...)
 }
 
 ## Method: numeric ####
@@ -84,12 +101,12 @@ method(args_filter_input, class_POSIXt) <- function(x, ...) {
 }
 
 # Function: ._discrete_choice_inputs ####
-._discrete_choice_inputs <- function(x, asis, ...) {
+._discrete_choice_inputs <- function(x, choices_asis, ...) {
 	args <- list(...)
 	if (isTRUE(args$server)) {
 		return(list(choices = ""))
 	}
-	if (!isTRUE(asis)) {
+	if (!isTRUE(choices_asis)) {
 		x <- sort(unique(x))
 	}
 	list(choices = x)
