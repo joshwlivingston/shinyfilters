@@ -369,41 +369,53 @@ method(get_filter_logical, list(class_POSIXt, class_POSIXt)) <- function(
 	filter_combine_method,
 	...
 ) {
+	if (!is.function(filter_combine_method)) {
+		stop("Argument `filter_combine_method` must be a function.")
+	}
 	x_length <- len(x)
-	Reduce(
-		filter_combine_method,
-		lapply(
-			names(filter_list),
-			function(column_name) {
-				res <-
-					get_filter_logical(
-						x,
-						filter_list[[column_name]],
-						column_name,
-						...
-					)
-				if (!identical(class(res), "logical")) {
-					stop(
-						sprintf(
-							"Filter on column `%s` did not return a logical vector.",
-							column_name
-						)
-					)
-				}
-				if (!identical(length(res), x_length)) {
-					stop(
-						sprintf(
-							"Filter on column `%s` returned a logical vector of length %d, but expected length %d.",
+	filt_out <-
+		Reduce(
+			filter_combine_method,
+			lapply(
+				names(filter_list),
+				function(column_name) {
+					res <-
+						get_filter_logical(
+							x,
+							filter_list[[column_name]],
 							column_name,
-							length(res),
-							x_length
+							...
 						)
-					)
+					._check_filter_logical(res, x_length, column_name)
+					return(res)
 				}
-				return(res)
-			}
+			)
 		)
-	)
+	._check_filter_logical(filt_out, x_length)
+	return(filt_out)
+}
+
+._check_filter_logical <- function(filter_res, x_length, column_name = NULL) {
+	if (!is.null(column_name)) {
+		column_str <- sprintf("on column `%s` ", column_name)
+	} else {
+		column_str <- ""
+	}
+
+	if (!identical(class(filter_res), "logical")) {
+		stop(sprintf("Filter %sdid not return a logical vector.", column_str))
+	}
+
+	if (!identical(length(filter_res), x_length)) {
+		stop(
+			sprintf(
+				"Filter %sreturned a logical vector of length %d, but expected length %d.",
+				column_str,
+				length(filter_res),
+				x_length
+			)
+		)
+	}
 }
 
 all_trues <- function(x) {
