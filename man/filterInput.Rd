@@ -61,6 +61,10 @@ The following arguments passed to \code{...} are supported:
 \emph{(character)}. Logical. Controls whether to use a text input
 (\code{TRUE}) or a dropdown input (\code{FALSE}, default). \cr
 
+\code{ns} \tab
+An optional namespace created by \code{\link[shiny:NS]{shiny::NS()}}. Useful when using
+\code{filterInput()} on a data.frame inside a \pkg{shiny} module.
+
 }
 
 Remaining arguments passed to \code{...} are passed to the \code{\link[=args_filter_input]{args_filter_input()}}

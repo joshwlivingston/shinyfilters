@@ -45,6 +45,10 @@
 #'   *(character)*. Logical. Controls whether to use a text input
 #'   (`TRUE`) or a dropdown input (`FALSE`, default). \cr
 #'
+#'   `ns` \tab
+#'   An optional namespace created by [shiny::NS()]. Useful when using
+#'   `filterInput()` on a data.frame inside a \pkg{shiny} module.
+#'
 #' }
 #'
 #' Remaining arguments passed to `...` are passed to the [args_filter_input()]
@@ -115,7 +119,6 @@ filterInput <- new_generic(
 method(filterInput, class_character) <- function(x, ...) {
 	args <- list(...)
 	if (isTRUE(args$textbox)) {
-		args$opts_input_args$textbox <- TRUE
 		if (isTRUE(args$area)) {
 			# `textbox = TRUE, area = TRUE`
 			input <- shiny::textAreaInput
