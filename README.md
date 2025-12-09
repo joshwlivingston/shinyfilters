@@ -54,11 +54,11 @@ ui <- fluidPage(
     )
 )
 server <- function(input, output, session) {
-    output$selected_letter <- shiny::renderText({
+    output$selected_letter <- renderText({
         paste("You selected:", input$letter)
     })
 }
-shiny::shinyApp(ui, server)
+shinyApp(ui, server)
 ```
 
 <br>
