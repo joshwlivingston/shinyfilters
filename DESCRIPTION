@@ -12,14 +12,14 @@ Description: Provides an interface to shiny inputs used for filtering data.
 License: MIT + file LICENSE
 Imports:
     methods,
-    S7 (>= 0.2.0)
+    S7 (>= 0.2.0),
+    shiny (>= 0.14)
 Suggests:
     bslib,
     DT,
     htmltools,
     knitr,
     rmarkdown,
-    shiny (>= 0.14),
     shinyWidgets,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
