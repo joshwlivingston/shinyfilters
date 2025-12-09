@@ -117,7 +117,6 @@ updateFilterInput <- new_generic(
 method(updateFilterInput, class_character) <- function(x, ...) {
 	args <- list(...)
 	if (isTRUE(args$textbox)) {
-		args$opts_input_args$textbox <- TRUE
 		if (isTRUE(args$area)) {
 			# `textbox = TRUE, area = TRUE`
 			call_update_filter_input(x, shiny::updateTextAreaInput, ...)
