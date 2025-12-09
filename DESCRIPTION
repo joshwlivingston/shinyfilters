@@ -1,5 +1,5 @@
 Package: shinyfilters
-Title: Use Shiny for Filtering Data
+Title: Use Shiny to Filter Data
 Version: 0.1.0
 Authors@R: 
     person(
@@ -7,8 +7,8 @@ Authors@R:
         email = "joshwlivingston@gmail.com", 
         role = c("cre", "aut")
     )
-Description: Provides an interface to shiny inputs used for filtering data. 
-  S7-based implementation allows for seamless extensibility.
+Description: Provides an interface to 'shiny' inputs used for filtering data.
+  'S7'-based implementation allows for seamless extensibility.
 License: MIT + file LICENSE
 Imports:
     methods,
