@@ -74,10 +74,3 @@ as_list_ <- function(x) {
 	}
 	return(as.list(x))
 }
-
-skip_knitr_eval_if_no_pkg <- function(pkg) {
-	if (!requireNamespace(pkg, quietly = TRUE)) {
-		message(pkg, " not installed; code chunks will not be evaluated.")
-		knitr::opts_chunk$set(eval = FALSE)
-	}
-}

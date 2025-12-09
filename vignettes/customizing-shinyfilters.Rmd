@@ -144,7 +144,10 @@ selected.
 For example, let's say you want to use `shinyWidgets` instead of `shiny`:
 
 ```{r, echo=FALSE}
-skip_knitr_eval_if_no_pkg("shinyWidgets")
+if (!requireNamespace("shinyWidgets", quietly = TRUE)) {
+	message("shinyWidgets not installed; code chunks will not be evaluated.")
+	knitr::opts_chunk$set(eval = FALSE)
+}
 ```
 
 ```{r}
