@@ -68,8 +68,7 @@
 #'   [shiny::textInput]      \tab character                        \tab `textbox = TRUE`                \cr
 #' }
 #'
-#' @examplesIf requireNamespace("shiny")
-#'
+#' @examplesIf interactive()
 #' # dateInput
 #' filterInput(
 #'   x = Sys.Date() + 0:9,
@@ -196,16 +195,17 @@ method(filterInput, class_POSIXt) <- function(x, ...) {
 #'
 #' @return The result of calling the provided input function.
 #'
-#' @examplesIf requireNamespace("shiny")
+#' @examplesIf interactive()
 #' library(S7)
+#' library(shiny)
 #' # call_filter_input() is used inside filterInput() methods
 #' method(filterInput, class_numeric) <- function(x, ...) {
-#'   call_filter_input(x, shiny::sliderInput, ...)
+#'   call_filter_input(x, sliderInput, ...)
 #' }
 #'
 #' # call_update_filter_input() is used inside updateFilterInput() methods
 #' method(updateFilterInput, class_numeric) <- function(x, ...) {
-#'   call_update_filter_input(x, shiny::updateSliderInput, ...)
+#'   call_update_filter_input(x, updateSliderInput, ...)
 #' }
 NULL
 
@@ -217,10 +217,7 @@ call_filter_input <- function(x, .f, ...) {
 	}
 	args_provided <- list(...)
 	function_args <- formalArgs(.f)
-	if (
-		requireNamespace("shiny", quietly = TRUE) &&
-			identical(.f, shiny::selectizeInput)
-	) {
+	if (identical(.f, shiny::selectizeInput)) {
 		function_args <- union(
 			function_args,
 			setdiff(formalArgs(shiny::selectInput), "selectize")

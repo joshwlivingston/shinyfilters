@@ -26,12 +26,6 @@ s7_check_is_valid_list_dispatch <- function(x, function_name) {
 	}
 }
 
-._check_shiny_available <- function() {
-	if (!requireNamespace("shiny", quietly = TRUE)) {
-		stop("Package `shiny` is required.")
-	}
-}
-
 ._check_valid_shiny_ns <- function(ns) {
 	if (
 		!is.function(ns) ||

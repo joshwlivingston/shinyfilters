@@ -67,8 +67,7 @@ Remaining arguments passed to \code{...} are passed to the selected input
 function.
 }
 \examples{
-\dontshow{if (requireNamespace("shiny")) withAutoprint(\{ # examplesIf}
-
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 # dateInput
 filterInput(
   x = Sys.Date() + 0:9,

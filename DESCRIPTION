@@ -13,7 +13,7 @@ License: MIT + file LICENSE
 Imports:
     methods,
     S7 (>= 0.2.0),
-    shiny (>= 0.14)
+    shiny
 Suggests:
     bslib,
     DT,

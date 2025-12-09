@@ -36,7 +36,7 @@ contains the current filter input values as a named list.
 Run the backend server for filterInput
 }
 \examples{
-\dontshow{if (interactive() && requireNamespace("bslib") && requireNamespace("DT") && requireNamespace("shiny")) withAutoprint(\{ # examplesIf}
+\dontshow{if (interactive() && requireNamespace("bslib") && requireNamespace("DT")) withAutoprint(\{ # examplesIf}
 library(bslib)
 library(DT)
 library(S7)

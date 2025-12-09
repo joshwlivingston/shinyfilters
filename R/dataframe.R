@@ -15,7 +15,7 @@
 #' @return A reactiveValues list with a single element, `input_values`, which
 #'   contains the current filter input values as a named list.
 #'
-#' @examplesIf interactive() && requireNamespace("bslib") && requireNamespace("DT") && requireNamespace("shiny")
+#' @examplesIf interactive() && requireNamespace("bslib") && requireNamespace("DT")
 #' library(bslib)
 #' library(DT)
 #' library(S7)
