@@ -8,7 +8,7 @@
 #' @param ... Additional arguments passed to the method. See details.
 #'
 #' @details
-#' The following aruguments are supported in `...`:
+#' The following arguments are supported in `...`:
 #' \tabular{ll}{
 #'   `range` \tab
 #'   *(Date, POSIXt)*. Logical. If `TRUE`, `args_filter_input()` will provide

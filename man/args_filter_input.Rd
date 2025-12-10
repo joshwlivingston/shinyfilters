@@ -22,7 +22,7 @@ Provides the appropriate function arguments for the input function selected
 by \code{\link[=filterInput]{filterInput()}} or \code{\link[=updateFilterInput]{updateFilterInput()}}.
 }
 \details{
-The following aruguments are supported in \code{...}:
+The following arguments are supported in \code{...}:
 \tabular{ll}{
 \code{range} \tab
 \emph{(Date, POSIXt)}. Logical. If \code{TRUE}, \code{args_filter_input()} will provide

@@ -123,7 +123,7 @@ serverFilterInput <- function(
 #'   or "or" (or "|") for logical OR. If a function, it should take two logical
 #'   vectors and return a combined logical vector.
 #' @param expanded Logical; if `TRUE`, returns a named list of data.frames,
-#'   each containg one column, its own, filtered according to the values of
+#'   each containing one column, its own, filtered according to the values of
 #'   all *other* filters.
 #' @param cols Optional character vector of column names to retain in the
 #'   output when `x` is a data.frame. If `NULL` (the default), all columns are
