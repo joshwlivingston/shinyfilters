@@ -10,7 +10,7 @@ permissions:
   contents: write
 
 jobs:
-  pkgdown:
+  air:
     runs-on: ubuntu-latest
 
     steps:
