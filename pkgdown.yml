@@ -4,7 +4,7 @@ pkgdown_sha: ~
 articles:
   customizing-shinyfilters: customizing-shinyfilters.html
   filter-input-catalog: filter-input-catalog.html
-last_built: 2025-12-13T16:56Z
+last_built: 2025-12-13T17:46Z
 urls:
   reference: https://joshwlivingston.github.io/shinyfilters/reference
   article: https://joshwlivingston.github.io/shinyfilters/articles
