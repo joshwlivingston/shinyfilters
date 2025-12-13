@@ -131,7 +131,7 @@ You can extend `shinyfilters` by adding or overwriting methods to the
 following:
 
 - `filterInput()`, `updateFilterInput()`
-- `args_filter_input()`, `args_update_filter_input()`
+- `args_filter_input()`
 - `get_filter_logical()`
 
 See `vignette("customizing-shinyfilters")` for more.

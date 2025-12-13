@@ -1,5 +1,10 @@
 # shinyfilters (development version)
 
+* `args_update_filter_input()` has been removed from the readme's list of 
+  extensible functions.
+  * `args_update_filter_input()` is implemented as a *function* that calls 
+    `args_filter_input()`, the *generic*.
+
 # shinyfilters 0.1.0
 
 Initial release of shinyfilters.
