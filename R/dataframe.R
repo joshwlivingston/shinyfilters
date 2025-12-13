@@ -12,10 +12,10 @@
 #'   [apply_filters()].
 #' @param ... Additional arguments passed to [updateFilterInput()].
 #'
-#' @return A list with a single element, `get_input_values`, which is a reactive
-#'   function that returns the current filter input values as a named list.
+#' @return A reactiveValues list with a single element, `input_values`, which
+#'   contains the current filter input values as a named list.
 #'
-#' @examplesIf interactive()
+#' @examplesIf interactive() && requireNamespace("bslib") && requireNamespace("DT")
 #' library(bslib)
 #' library(DT)
 #' library(S7)
@@ -72,10 +72,10 @@
 #' server <- function(input, output, session) {
 #' 	 res <- filters_server("demo")
 #' 	 output$df_full <- renderDT(datatable(df_shared))
-#' 	 output$input_values <- renderPrint(res$get_input_values())
+#' 	 output$input_values <- renderPrint(res$input_values)
 #' 	 output$df_filt <- renderDT(datatable(apply_filters(
 #'  		df_shared,
-#'  		res$get_input_values()
+#'  		res$input_values
 #'  	)))
 #' }
 #'
@@ -88,7 +88,7 @@ serverFilterInput <- function(
 	args_apply_filters = NULL,
 	...
 ) {
-	out_input <- shiny::reactiveVal(NULL)
+	out_input <- shiny::reactiveValues()
 	shiny::observe({
 		input <- ._prepare_input(input, x = x)
 		args_apply_filters <- c(
@@ -106,9 +106,9 @@ serverFilterInput <- function(
 			updateFilterInput(x = x_filt, input = input, ...)
 		}
 		lapply(x_filt_list, update_input)
-		out_input(input)
+		out_input$input_values <- input
 	})
-	return(list(get_input_values = out_input))
+	return(out_input)
 }
 
 #' Apply Filters to an object
@@ -123,7 +123,7 @@ serverFilterInput <- function(
 #'   or "or" (or "|") for logical OR. If a function, it should take two logical
 #'   vectors and return a combined logical vector.
 #' @param expanded Logical; if `TRUE`, returns a named list of data.frames,
-#'   each containg one column, its own, filtered according to the values of
+#'   each containing one column, its own, filtered according to the values of
 #'   all *other* filters.
 #' @param cols Optional character vector of column names to retain in the
 #'   output when `x` is a data.frame. If `NULL` (the default), all columns are
@@ -146,16 +146,13 @@ serverFilterInput <- function(
 #' )
 #'
 #' # Apply filters with logical AND
-#' filtered_df_and <- apply_filters(df, filters, filter_combine_method = "and")
-#' print(filtered_df_and)
+#' apply_filters(df, filters, filter_combine_method = "and")
 #'
 #' # Apply filters with logical OR
-#' filtered_df_or <- apply_filters(df, filters, filter_combine_method = "or")
-#' print(filtered_df_or)
+#' apply_filters(df, filters, filter_combine_method = "or")
 #'
 #' # Get expanded filters
-#' expanded_filters <- apply_filters(df, filters, expanded = TRUE)
-#' print(expanded_filters)
+#' apply_filters(df, filters, expanded = TRUE)
 #'
 #' @export
 apply_filters <- function(
@@ -199,42 +196,12 @@ apply_filters <- function(
 			)
 	}
 
-	x_length <- len(x)
-	filter_logical <-
-		Reduce(
-			filter_combine_method,
-			lapply(
-				names(filter_list),
-				function(column_name) {
-					res <-
-						get_filter_logical(
-							x,
-							filter_list[[column_name]],
-							column_name,
-							...
-						)
-					if (!identical(class(res), "logical")) {
-						stop(
-							sprintf(
-								"Filter on column `%s` did not return a logical vector.",
-								column_name
-							)
-						)
-					}
-					if (!identical(length(res), x_length)) {
-						stop(
-							sprintf(
-								"Filter on column `%s` returned a logical vector of length %d, but expected length %d.",
-								column_name,
-								length(res),
-								x_length
-							)
-						)
-					}
-					return(res)
-				}
-			)
-		)
+	filter_logical <- ._prepare_filter_logical(
+		x = x,
+		filter_list = filter_list,
+		filter_combine_method = filter_combine_method,
+		...
+	)
 
 	if (is.data.frame(x)) {
 		if (!is.null(cols)) {
@@ -271,6 +238,25 @@ apply_filters <- function(
 #'      or `<` (`FALSE`) on `val[[2]]` \cr
 #' }
 #'
+#' @return A logical vector indicating which elements of `x` match the filter
+#'   criteria specified by `val`.
+#'
+#' @examples
+#' df <- data.frame(
+#'   category = rep(letters[1:3], each = 4),
+#'   value = 1:12,
+#'   date = Sys.Date() + 0:11
+#' )
+#'
+#' # Filter character column
+#' get_filter_logical(df, c("a", "b"), column = "category")
+#'
+#' # Filter numeric column with single value
+#' get_filter_logical(df, 5, column = "value", comparison = `<=`)
+#'
+#' # Filter numeric column with range
+#' get_filter_logical(df, c(3, 8), column = "value", gte = TRUE, lte = FALSE)
+#'
 #' @export
 get_filter_logical <- new_generic(
 	name = "get_filter_logical",
@@ -283,6 +269,14 @@ get_filter_logical <- new_generic(
 	}
 )
 
+method(get_filter_logical, list(x = NULL, val = class_any)) <- function(
+	x,
+	val,
+	...
+) {
+	return(NULL)
+}
+
 method(
 	get_filter_logical,
 	list(x = class_data.frame, val = class_any)
@@ -293,7 +287,11 @@ method(
 	...
 ) {
 	check_is_nonempty_string(column)
-	get_filter_logical(x[[column]], val, ...)
+	col <- x[[column]]
+	if (is.null(col)) {
+		stop(sprintf("Column `%s` not found in `x`.", column))
+	}
+	get_filter_logical(col, val, ...)
 }
 
 method(
@@ -365,23 +363,59 @@ method(get_filter_logical, list(class_POSIXt, class_POSIXt)) <- function(
 	get_filter_logical(x = as.Date(x), val = as.Date(val), ...)
 }
 
-get_input_values <- new_generic(
-	name = "get_input_values",
-	dispatch_args = c("input", "x")
-)
-
-method(
-	get_input_values,
-	list(class_reactivevalues, class_data.frame)
-) <- function(input, x) {
-	get_input_values(input, names(x))
+._prepare_filter_logical <- function(
+	x,
+	filter_list,
+	filter_combine_method,
+	...
+) {
+	if (!is.function(filter_combine_method)) {
+		stop("Argument `filter_combine_method` must be a function.")
+	}
+	x_length <- len(x)
+	filt_out <-
+		Reduce(
+			filter_combine_method,
+			lapply(
+				names(filter_list),
+				function(column_name) {
+					res <-
+						get_filter_logical(
+							x,
+							filter_list[[column_name]],
+							column_name,
+							...
+						)
+					._check_filter_logical(res, x_length, column_name)
+					return(res)
+				}
+			)
+		)
+	._check_filter_logical(filt_out, x_length)
+	return(filt_out)
 }
 
-method(
-	get_input_values,
-	list(class_reactivevalues, class_character)
-) <- function(input, x) {
-	lapply(set_names(nm = x), function(nm) input[[nm]])
+._check_filter_logical <- function(filter_res, x_length, column_name = NULL) {
+	if (!is.null(column_name)) {
+		column_str <- sprintf("on column `%s` ", column_name)
+	} else {
+		column_str <- ""
+	}
+
+	if (!identical(class(filter_res), "logical")) {
+		stop(sprintf("Filter %sdid not return a logical vector.", column_str))
+	}
+
+	if (!identical(length(filter_res), x_length)) {
+		stop(
+			sprintf(
+				"Filter %sreturned a logical vector of length %d, but expected length %d.",
+				column_str,
+				length(filter_res),
+				x_length
+			)
+		)
+	}
 }
 
 all_trues <- function(x) {

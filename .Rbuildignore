@@ -13,3 +13,5 @@
 ^\.Rproj\.user$
 ^doc$
 ^Meta$
+^cran-comments\.md$
+^CRAN-SUBMISSION$

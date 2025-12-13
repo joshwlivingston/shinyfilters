@@ -45,10 +45,14 @@
 #'   *(character)*. Logical. Controls whether to use a text input
 #'   (`TRUE`) or a dropdown input (`FALSE`, default). \cr
 #'
+#'   `ns` \tab
+#'   An optional namespace created by [shiny::NS()]. Useful when using
+#'   `filterInput()` on a data.frame inside a \pkg{shiny} module.
+#'
 #' }
 #'
-#' Remaining arguments passed to `...` are passed to the selected input
-#' function.
+#' Remaining arguments passed to `...` are passed to the [args_filter_input()]
+#' or the selected input function.
 #'
 #' @return One of the following \pkg{shiny} inputs is returned, based on the
 #' type of object passed to `x`, and other specified arguments. See
@@ -68,30 +72,34 @@
 #'   [shiny::textInput]      \tab character                        \tab `textbox = TRUE`                \cr
 #' }
 #'
-#' @examples
-#' \dontrun{
-#' # dateInput
-#' filterInput(
-#'   x = Sys.Date() + 0:9,
-#'   inputId = "date",
-#'   label = "Pick a date"
+#' @examplesIf interactive()
+#' library(shiny)
+#'
+#' ui <- fluidPage(
+#' 	 sidebarLayout(
+#' 		 sidebarPanel(
+#' 			 #############################################
+#' 			 # Create a filterInput() inside a shiny app:
+#' 			 filterInput(
+#' 				x = letters,
+#' 				id = "letter",
+#' 				label = "Pick a letter:"
+#' 			 )
+#' 			 #############################################
+#' 		 ),
+#' 		 mainPanel(
+#' 			 textOutput("selected_letter")
+#' 		 )
+#' 	 )
 #' )
 #'
-#' # numericInput
-#' filterInput(
-#'   x = 0:9,
-#'   inputId = "number",
-#'   label = "Pick a number:"
-#' )
-#'
-#' # selectInput
-#' filterInput(
-#'   x = letters,
-#'   inputId = "letter",
-#'   label = "Pick a letter:"
-#' )
+#' server <- function(input, output, session) {
+#' 	 output$selected_letter <- renderText({
+#' 		 paste("You selected:", input$letter)
+#' 	 })
 #' }
 #'
+#' shinyApp(ui, server)
 #' @export
 filterInput <- new_generic(
 	name = "filterInput",
@@ -111,7 +119,6 @@ filterInput <- new_generic(
 method(filterInput, class_character) <- function(x, ...) {
 	args <- list(...)
 	if (isTRUE(args$textbox)) {
-		args$opts_input_args$textbox <- TRUE
 		if (isTRUE(args$area)) {
 			# `textbox = TRUE, area = TRUE`
 			input <- shiny::textAreaInput
@@ -196,6 +203,19 @@ method(filterInput, class_POSIXt) <- function(x, ...) {
 #'   input function.
 #'
 #' @return The result of calling the provided input function.
+#'
+#' @examplesIf interactive()
+#' library(S7)
+#' library(shiny)
+#' # call_filter_input() is used inside filterInput() methods
+#' method(filterInput, class_numeric) <- function(x, ...) {
+#'   call_filter_input(x, sliderInput, ...)
+#' }
+#'
+#' # call_update_filter_input() is used inside updateFilterInput() methods
+#' method(updateFilterInput, class_numeric) <- function(x, ...) {
+#'   call_update_filter_input(x, updateSliderInput, ...)
+#' }
 NULL
 
 #' @rdname call_input_function
@@ -206,10 +226,7 @@ call_filter_input <- function(x, .f, ...) {
 	}
 	args_provided <- list(...)
 	function_args <- formalArgs(.f)
-	if (
-		requireNamespace("shiny", quietly = TRUE) &&
-			identical(.f, shiny::selectizeInput)
-	) {
+	if (identical(.f, shiny::selectizeInput)) {
 		function_args <- union(
 			function_args,
 			setdiff(formalArgs(shiny::selectInput), "selectize")

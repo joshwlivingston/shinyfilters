@@ -13,6 +13,10 @@ get_filter_logical(x, val, ...)
 
 \item{...}{Arguments passed to methods. See details.}
 }
+\value{
+A logical vector indicating which elements of \code{x} match the filter
+criteria specified by \code{val}.
+}
 \description{
 Computes a logical vector indicating which elements of \code{x} match the filter
 criteria specified by \code{val}.
@@ -33,4 +37,21 @@ or \code{>} (\code{FALSE}) on \code{val[[1]]}. \cr
 numeric or Date, \code{lte} controls whether to use \code{<=} (\code{TRUE}, default)
 or \code{<} (\code{FALSE}) on \code{val[[2]]} \cr
 }
+}
+\examples{
+df <- data.frame(
+  category = rep(letters[1:3], each = 4),
+  value = 1:12,
+  date = Sys.Date() + 0:11
+)
+
+# Filter character column
+get_filter_logical(df, c("a", "b"), column = "category")
+
+# Filter numeric column with single value
+get_filter_logical(df, 5, column = "value", comparison = `<=`)
+
+# Filter numeric column with range
+get_filter_logical(df, c(3, 8), column = "value", gte = TRUE, lte = FALSE)
+
 }

@@ -25,7 +25,7 @@ or "or" (or "|") for logical OR. If a function, it should take two logical
 vectors and return a combined logical vector.}
 
 \item{expanded}{Logical; if \code{TRUE}, returns a named list of data.frames,
-each containg one column, its own, filtered according to the values of
+each containing one column, its own, filtered according to the values of
 all \emph{other} filters.}
 
 \item{cols}{Optional character vector of column names to retain in the
@@ -54,15 +54,12 @@ filters <- list(
 )
 
 # Apply filters with logical AND
-filtered_df_and <- apply_filters(df, filters, filter_combine_method = "and")
-print(filtered_df_and)
+apply_filters(df, filters, filter_combine_method = "and")
 
 # Apply filters with logical OR
-filtered_df_or <- apply_filters(df, filters, filter_combine_method = "or")
-print(filtered_df_or)
+apply_filters(df, filters, filter_combine_method = "or")
 
 # Get expanded filters
-expanded_filters <- apply_filters(df, filters, expanded = TRUE)
-print(expanded_filters)
+apply_filters(df, filters, expanded = TRUE)
 
 }

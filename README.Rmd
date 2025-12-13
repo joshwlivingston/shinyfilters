@@ -17,7 +17,6 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 [![CRAN status](https://www.r-pkg.org/badges/version/shinyfilters)](https://CRAN.R-project.org/package=shinyfilters)
-[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![R-CMD-check](https://github.com/joshwlivingston/shinyfilters/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/joshwlivingston/shinyfilters/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
@@ -61,11 +60,11 @@ ui <- fluidPage(
 	)
 )
 server <- function(input, output, session) {
-	output$selected_letter <- shiny::renderText({
+	output$selected_letter <- renderText({
 		paste("You selected:", input$letter)
 	})
 }
-shiny::shinyApp(ui, server)
+shinyApp(ui, server)
 ```
 <br>
 
@@ -86,8 +85,8 @@ df <- data.frame(
 ui <- fluidPage(
 	sidebarLayout(
 		sidebarPanel(
-			##########################################################
-			# Create a filterInput() for each column in a data.frame:
+			#############################################################
+			# 1. Create a filterInput() for each column in a data.frame:
 			filterInput(
 				x = df,
 				range = TRUE,
@@ -95,7 +94,7 @@ ui <- fluidPage(
 				slider = TRUE,
 				multiple = TRUE
 			)
-			##########################################################
+			#############################################################
 		),
 		mainPanel(
 			DTOutput("df_full"),
@@ -107,22 +106,22 @@ ui <- fluidPage(
 
 server <- function(input, output, session) {
 	output$df_full <- renderDT(datatable(df))
-	#####################################
-	# 1. Create a server to manage the data.frame's filterInput()'s
+	################################################################
+	# 2. Create a server to manage the data.frame's filterInput()'s
 	res <- serverFilterInput(
 		x = df, 
 		input = input, 
 		range = TRUE
 	)
-	#####################################
+	################################################################
 	
-	###########################################################
-	# 2. Use the server's results
-	output$input_values <- renderPrint(res$get_input_values())
+	#####################################################
+	# 3. Use the server's results
+	output$input_values <- renderPrint(res$input_values)
 	output$df_filt <- renderDT(datatable(
-		apply_filters(mtcars, res$get_input_values())
+		apply_filters(df, res$input_values)
 	))
-	###########################################################
+	#####################################################
 }
 
 shinyApp(ui, server)

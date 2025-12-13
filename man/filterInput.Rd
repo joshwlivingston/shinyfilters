@@ -61,33 +61,43 @@ The following arguments passed to \code{...} are supported:
 \emph{(character)}. Logical. Controls whether to use a text input
 (\code{TRUE}) or a dropdown input (\code{FALSE}, default). \cr
 
+\code{ns} \tab
+An optional namespace created by \code{\link[shiny:NS]{shiny::NS()}}. Useful when using
+\code{filterInput()} on a data.frame inside a \pkg{shiny} module.
+
 }
 
-Remaining arguments passed to \code{...} are passed to the selected input
-function.
+Remaining arguments passed to \code{...} are passed to the \code{\link[=args_filter_input]{args_filter_input()}}
+or the selected input function.
 }
 \examples{
-\dontrun{
-# dateInput
-filterInput(
-  x = Sys.Date() + 0:9,
-  inputId = "date",
-  label = "Pick a date"
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
+library(shiny)
+
+ui <- fluidPage(
+	 sidebarLayout(
+		 sidebarPanel(
+			 #############################################
+			 # Create a filterInput() inside a shiny app:
+			 filterInput(
+				x = letters,
+				id = "letter",
+				label = "Pick a letter:"
+			 )
+			 #############################################
+		 ),
+		 mainPanel(
+			 textOutput("selected_letter")
+		 )
+	 )
 )
 
-# numericInput
-filterInput(
-  x = 0:9,
-  inputId = "number",
-  label = "Pick a number:"
-)
-
-# selectInput
-filterInput(
-  x = letters,
-  inputId = "letter",
-  label = "Pick a letter:"
-)
+server <- function(input, output, session) {
+	 output$selected_letter <- renderText({
+		 paste("You selected:", input$letter)
+	 })
 }
 
+shinyApp(ui, server)
+\dontshow{\}) # examplesIf}
 }
