@@ -9,7 +9,7 @@ other arguments."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">shinyfilters</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -29,6 +29,7 @@ other arguments."></head><body>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/joshwlivingston/shinyfilters/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-lightswitch" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true" aria-label="Light switch"><span class="fa fa-sun"></span></button>
   <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown-lightswitch"><li><button class="dropdown-item" data-bs-theme-value="light"><span class="fa fa-sun"></span> Light</button></li>
@@ -44,7 +45,7 @@ other arguments."></head><body>
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Create a <span class="pkg">shiny</span> Input</h1>
-
+      <small class="dont-index">Source: <a href="https://github.com/joshwlivingston/shinyfilters/blob/release-0.1.0/R/filterInput.R" class="external-link"><code>R/filterInput.R</code></a></small>
       <div class="d-none name"><code>filterInput.Rd</code></div>
     </div>
 
@@ -87,35 +88,42 @@ type of object passed to <code>x</code>, and other specified arguments. See
 (<code>FALSE</code>, default). For character vectors, <code>selectize</code> only applies if
 <code>textbox</code> is <code>FALSE</code>, the default.</td></tr><tr><td><code>slider</code></td><td><em>(numeric)</em>. Logical. Controls whether to use <a href="https://rdrr.io/pkg/shiny/man/sliderInput.html" class="external-link">shiny::sliderInput</a>
 (<code>TRUE</code>) or <a href="https://rdrr.io/pkg/shiny/man/numericInput.html" class="external-link">shiny::numericInput</a> (<code>FALSE</code>, default)  .</td></tr><tr><td><code>textbox</code></td><td><em>(character)</em>. Logical. Controls whether to use a text input
-(<code>TRUE</code>) or a dropdown input (<code>FALSE</code>, default).</td></tr></table><p>Remaining arguments passed to <code>...</code> are passed to the selected input
-function.</p>
+(<code>TRUE</code>) or a dropdown input (<code>FALSE</code>, default).</td></tr><tr><td><code>ns</code></td><td>An optional namespace created by <code><a href="https://rdrr.io/pkg/shiny/man/NS.html" class="external-link">shiny::NS()</a></code>. Useful when using
+<code>filterInput()</code> on a data.frame inside a <span class="pkg">shiny</span> module.</td></tr></table><p>Remaining arguments passed to <code>...</code> are passed to the <code><a href="args_filter_input.html">args_filter_input()</a></code>
+or the selected input function.</p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span><span class="co"># dateInput</span></span></span>
-<span class="r-in"><span><span class="fu">filterInput</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fl">0</span><span class="op">:</span><span class="fl">9</span>,</span></span>
-<span class="r-in"><span>  inputId <span class="op">=</span> <span class="st">"date"</span>,</span></span>
-<span class="r-in"><span>  label <span class="op">=</span> <span class="st">"Pick a date"</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># interactive()</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shiny.posit.co/" class="external-link">shiny</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">ui</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/fluidPage.html" class="external-link">fluidPage</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>   <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/sidebarLayout.html" class="external-link">sidebarLayout</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>     <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/sidebarLayout.html" class="external-link">sidebarPanel</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>       <span class="co">#############################################</span></span></span>
+<span class="r-in"><span>       <span class="co"># Create a filterInput() inside a shiny app:</span></span></span>
+<span class="r-in"><span>       <span class="fu">filterInput</span><span class="op">(</span></span></span>
+<span class="r-in"><span>        x <span class="op">=</span> <span class="va">letters</span>,</span></span>
+<span class="r-in"><span>        id <span class="op">=</span> <span class="st">"letter"</span>,</span></span>
+<span class="r-in"><span>        label <span class="op">=</span> <span class="st">"Pick a letter:"</span></span></span>
+<span class="r-in"><span>       <span class="op">)</span></span></span>
+<span class="r-in"><span>       <span class="co">#############################################</span></span></span>
+<span class="r-in"><span>     <span class="op">)</span>,</span></span>
+<span class="r-in"><span>     <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/sidebarLayout.html" class="external-link">mainPanel</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>       <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/textOutput.html" class="external-link">textOutput</a></span><span class="op">(</span><span class="st">"selected_letter"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>     <span class="op">)</span></span></span>
+<span class="r-in"><span>   <span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># numericInput</span></span></span>
-<span class="r-in"><span><span class="fu">filterInput</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  x <span class="op">=</span> <span class="fl">0</span><span class="op">:</span><span class="fl">9</span>,</span></span>
-<span class="r-in"><span>  inputId <span class="op">=</span> <span class="st">"number"</span>,</span></span>
-<span class="r-in"><span>  label <span class="op">=</span> <span class="st">"Pick a number:"</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">server</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">input</span>, <span class="va">output</span>, <span class="va">session</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>   <span class="va">output</span><span class="op">$</span><span class="va">selected_letter</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/shiny/man/renderPrint.html" class="external-link">renderText</a></span><span class="op">(</span><span class="op">{</span></span></span>
+<span class="r-in"><span>     <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"You selected:"</span>, <span class="va">input</span><span class="op">$</span><span class="va">letter</span><span class="op">)</span></span></span>
+<span class="r-in"><span>   <span class="op">}</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># selectInput</span></span></span>
-<span class="r-in"><span><span class="fu">filterInput</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  x <span class="op">=</span> <span class="va">letters</span>,</span></span>
-<span class="r-in"><span>  inputId <span class="op">=</span> <span class="st">"letter"</span>,</span></span>
-<span class="r-in"><span>  label <span class="op">=</span> <span class="st">"Pick a letter:"</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
-<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/shinyApp.html" class="external-link">shinyApp</a></span><span class="op">(</span><span class="va">ui</span>, <span class="va">server</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

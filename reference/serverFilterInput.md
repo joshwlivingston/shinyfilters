@@ -44,13 +44,13 @@ serverFilterInput(
 
 ## Value
 
-A list with a single element, `get_input_values`, which is a reactive
-function that returns the current filter input values as a named list.
+A reactiveValues list with a single element, `input_values`, which
+contains the current filter input values as a named list.
 
 ## Examples
 
 ``` r
-if (FALSE) { # interactive()
+if (FALSE) { # interactive() && requireNamespace("bslib") && requireNamespace("DT")
 library(bslib)
 library(DT)
 library(S7)
@@ -107,10 +107,10 @@ ui <- page_sidebar(
 server <- function(input, output, session) {
    res <- filters_server("demo")
    output$df_full <- renderDT(datatable(df_shared))
-   output$input_values <- renderPrint(res$get_input_values())
+   output$input_values <- renderPrint(res$input_values)
    output$df_filt <- renderDT(datatable(apply_filters(
      df_shared,
-     res$get_input_values()
+     res$input_values
    )))
 }
 

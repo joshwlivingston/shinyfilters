@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">shinyfilters</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -27,6 +27,7 @@
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/joshwlivingston/shinyfilters/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-lightswitch" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true" aria-label="Light switch"><span class="fa fa-sun"></span></button>
   <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown-lightswitch"><li><button class="dropdown-item" data-bs-theme-value="light"><span class="fa fa-sun"></span> Light</button></li>
@@ -42,7 +43,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Apply Filters to an object</h1>
-
+      <small class="dont-index">Source: <a href="https://github.com/joshwlivingston/shinyfilters/blob/release-0.1.0/R/dataframe.R" class="external-link"><code>R/dataframe.R</code></a></small>
       <div class="d-none name"><code>apply_filters.Rd</code></div>
     </div>
 
@@ -84,7 +85,7 @@ vectors and return a combined logical vector.</p></dd>
 
 <dt id="arg-expanded">expanded<a class="anchor" aria-label="anchor" href="#arg-expanded"></a></dt>
 <dd><p>Logical; if <code>TRUE</code>, returns a named list of data.frames,
-each containg one column, its own, filtered according to the values of
+each containing one column, its own, filtered according to the values of
 all <em>other</em> filters.</p></dd>
 
 
@@ -118,8 +119,7 @@ retained.</p></dd>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Apply filters with logical AND</span></span></span>
-<span class="r-in"><span><span class="va">filtered_df_and</span> <span class="op">&lt;-</span> <span class="fu">apply_filters</span><span class="op">(</span><span class="va">df</span>, <span class="va">filters</span>, filter_combine_method <span class="op">=</span> <span class="st">"and"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">filtered_df_and</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">apply_filters</span><span class="op">(</span><span class="va">df</span>, <span class="va">filters</span>, filter_combine_method <span class="op">=</span> <span class="st">"and"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   category value       date</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3        a     3 2024-01-03</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4        a     4 2024-01-04</span>
@@ -129,8 +129,7 @@ retained.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 8        b     8 2024-01-08</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Apply filters with logical OR</span></span></span>
-<span class="r-in"><span><span class="va">filtered_df_or</span> <span class="op">&lt;-</span> <span class="fu">apply_filters</span><span class="op">(</span><span class="va">df</span>, <span class="va">filters</span>, filter_combine_method <span class="op">=</span> <span class="st">"or"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">filtered_df_or</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">apply_filters</span><span class="op">(</span><span class="va">df</span>, <span class="va">filters</span>, filter_combine_method <span class="op">=</span> <span class="st">"or"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    category value       date</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1         a     1 2024-01-01</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2         a     2 2024-01-02</span>
@@ -145,8 +144,7 @@ retained.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 11        c    11 2024-01-11</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Get expanded filters</span></span></span>
-<span class="r-in"><span><span class="va">expanded_filters</span> <span class="op">&lt;-</span> <span class="fu">apply_filters</span><span class="op">(</span><span class="va">df</span>, <span class="va">filters</span>, expanded <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">expanded_filters</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">apply_filters</span><span class="op">(</span><span class="va">df</span>, <span class="va">filters</span>, expanded <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $category</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    category</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3         a</span>

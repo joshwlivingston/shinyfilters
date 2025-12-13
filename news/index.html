@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">shinyfilters</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -27,6 +27,7 @@
 <li class="active nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/joshwlivingston/shinyfilters/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-lightswitch" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true" aria-label="Light switch"><span class="fa fa-sun"></span></button>
   <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown-lightswitch"><li><button class="dropdown-item" data-bs-theme-value="light"><span class="fa fa-sun"></span> Light</button></li>
@@ -42,13 +43,29 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Changelog</h1>
-
+      <small>Source: <a href="https://github.com/joshwlivingston/shinyfilters/blob/release-0.1.0/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.0.9000" id="shinyfilters-009000">shinyfilters 0.0.9000<a class="anchor" aria-label="anchor" href="#shinyfilters-009000"></a></h2>
-<p>In development</p>
-</div>
+<h2 class="pkg-version" data-toc-text="0.1.0" id="shinyfilters-010">shinyfilters 0.1.0<a class="anchor" aria-label="anchor" href="#shinyfilters-010"></a></h2>
+<p>Initial release of shinyfilters.</p>
+<p>The package provides the following functions:</p>
+<ul><li>
+<code><a href="../reference/filterInput.html">filterInput()</a></code>: Create a shiny input from a vector or data.frame, with support for extension</li>
+<li>
+<code><a href="../reference/updateFilterInput.html">updateFilterInput()</a></code>: Update a filter input created by <code><a href="../reference/filterInput.html">filterInput()</a></code>
+</li>
+<li>
+<code><a href="../reference/serverFilterInput.html">serverFilterInput()</a></code>: Server logic to update filter inputs for data.frames</li>
+<li>
+<code><a href="../reference/apply_filters.html">apply_filters()</a></code>: Apply a list of filters to a data.frame</li>
+<li>
+<code><a href="../reference/args_filter_input.html">args_filter_input()</a></code>, <code><a href="../reference/args_filter_input.html">args_update_filter_input()</a></code>: Get default args for <code><a href="../reference/filterInput.html">filterInput()</a></code> and <code><a href="../reference/updateFilterInput.html">updateFilterInput()</a></code>.</li>
+<li>
+<code><a href="../reference/call_input_function.html">call_filter_input()</a></code>, <code><a href="../reference/call_input_function.html">call_update_filter_input()</a></code>: Create calls to <code><a href="../reference/filterInput.html">filterInput()</a></code> and <code><a href="../reference/updateFilterInput.html">updateFilterInput()</a></code>.</li>
+<li>
+<code><a href="../reference/get_filter_logical.html">get_filter_logical()</a></code>: Compute a logical vector for filtering a data.frame column</li>
+</ul></div>
   </main></div>
 
 

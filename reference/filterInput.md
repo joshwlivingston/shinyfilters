@@ -51,33 +51,42 @@ The following arguments passed to `...` are supported:
 | `selectize` | *(character, factor, list, logical)*. Logical. Controls whether to use [shiny::selectizeInput](https://rdrr.io/pkg/shiny/man/selectInput.html) (`TRUE`) or [shiny::selectInput](https://rdrr.io/pkg/shiny/man/selectInput.html) (`FALSE`, default). For character vectors, `selectize` only applies if `textbox` is `FALSE`, the default. |
 | `slider`    | *(numeric)*. Logical. Controls whether to use [shiny::sliderInput](https://rdrr.io/pkg/shiny/man/sliderInput.html) (`TRUE`) or [shiny::numericInput](https://rdrr.io/pkg/shiny/man/numericInput.html) (`FALSE`, default) .                                                                                                                |
 | `textbox`   | *(character)*. Logical. Controls whether to use a text input (`TRUE`) or a dropdown input (`FALSE`, default).                                                                                                                                                                                                                             |
+| `ns`        | An optional namespace created by [`shiny::NS()`](https://rdrr.io/pkg/shiny/man/NS.html). Useful when using `filterInput()` on a data.frame inside a shiny module.                                                                                                                                                                         |
 
-Remaining arguments passed to `...` are passed to the selected input
-function.
+Remaining arguments passed to `...` are passed to the
+[`args_filter_input()`](https://joshwlivingston.github.io/shinyfilters/reference/args_filter_input.md)
+or the selected input function.
 
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
-# dateInput
-filterInput(
-  x = Sys.Date() + 0:9,
-  inputId = "date",
-  label = "Pick a date"
+if (FALSE) { # interactive()
+library(shiny)
+
+ui <- fluidPage(
+   sidebarLayout(
+     sidebarPanel(
+       #############################################
+       # Create a filterInput() inside a shiny app:
+       filterInput(
+        x = letters,
+        id = "letter",
+        label = "Pick a letter:"
+       )
+       #############################################
+     ),
+     mainPanel(
+       textOutput("selected_letter")
+     )
+   )
 )
 
-# numericInput
-filterInput(
-  x = 0:9,
-  inputId = "number",
-  label = "Pick a number:"
-)
+server <- function(input, output, session) {
+   output$selected_letter <- renderText({
+     paste("You selected:", input$letter)
+   })
+}
 
-# selectInput
-filterInput(
-  x = letters,
-  inputId = "letter",
-  label = "Pick a letter:"
-)
-} # }
+shinyApp(ui, server)
+}
 ```

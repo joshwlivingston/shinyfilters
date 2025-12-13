@@ -35,9 +35,9 @@ apply_filters(
 
 - expanded:
 
-  Logical; if `TRUE`, returns a named list of data.frames, each containg
-  one column, its own, filtered according to the values of all *other*
-  filters.
+  Logical; if `TRUE`, returns a named list of data.frames, each
+  containing one column, its own, filtered according to the values of
+  all *other* filters.
 
 - cols:
 
@@ -70,8 +70,7 @@ filters <- list(
 )
 
 # Apply filters with logical AND
-filtered_df_and <- apply_filters(df, filters, filter_combine_method = "and")
-print(filtered_df_and)
+apply_filters(df, filters, filter_combine_method = "and")
 #>   category value       date
 #> 3        a     3 2024-01-03
 #> 4        a     4 2024-01-04
@@ -81,8 +80,7 @@ print(filtered_df_and)
 #> 8        b     8 2024-01-08
 
 # Apply filters with logical OR
-filtered_df_or <- apply_filters(df, filters, filter_combine_method = "or")
-print(filtered_df_or)
+apply_filters(df, filters, filter_combine_method = "or")
 #>    category value       date
 #> 1         a     1 2024-01-01
 #> 2         a     2 2024-01-02
@@ -97,8 +95,7 @@ print(filtered_df_or)
 #> 11        c    11 2024-01-11
 
 # Get expanded filters
-expanded_filters <- apply_filters(df, filters, expanded = TRUE)
-print(expanded_filters)
+apply_filters(df, filters, expanded = TRUE)
 #> $category
 #>    category
 #> 3         a

@@ -49,29 +49,53 @@ The following arguments passed to `...` are supported:
 | `slider`    | *(numeric)*. Logical. Controls whether to use [shiny::updateSliderInput](https://rdrr.io/pkg/shiny/man/updateSliderInput.html) (`TRUE`) or [shiny::updateNumericInput](https://rdrr.io/pkg/shiny/man/updateNumericInput.html) (`FALSE`, default) .                                                                                                                |
 | `textbox`   | *(character)*. Logical. Controls whether to update a text input (`TRUE`) or a dropdown input (`FALSE`, default).                                                                                                                                                                                                                                                  |
 
-Remaining arguments passed to `...` are passed to the selected input
-update function.
+Remaining arguments passed to `...` are passed to
+[`args_update_filter_input()`](https://joshwlivingston.github.io/shinyfilters/reference/args_filter_input.md)
+or the selected input update function.
 
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
-# updateDateInput
-updateFilterInput(
-  x = Sys.Date() + 5:9,
-  inputId = "date"
+if (FALSE) { # interactive()
+library(shiny)
+
+fruits <- list(
+  "a" = c("apples", "avocados"),
+  "b" = c("bananas", "blueberries"),
+  "c" = c("cherries", "cantaloupe")
 )
 
-# updateNumericInput
-updateFilterInput(
-  x = 5:9,
-  inputId = "number"
+ui <- fluidPage(
+  sidebarLayout(
+    sidebarPanel(
+      filterInput(
+        x = letters[1:3],
+        inputId = "letter",
+        label = "Pick a letter:",
+       multiple = TRUE
+      ),
+      filterInput(
+        x = fruits,
+        inputId = "fruits",
+        label = "Pick a fruit:"
+      )
+    ),
+   mainPanel()
+  )
 )
 
-# updateSelectInput
-updateFilterInput(
-  x = letters[5:9],
-  inputId = "letter"
-)
-} # }
+server <- function(input, output, session) {
+  shiny::observe({
+    fruits_filtered <- fruits
+    if (!is.null(input$letter) && length(input$letter) != 0L) {
+      fruits_filtered <- fruits[input$letter]
+    }
+    #########################################################
+    # 2. Call updateFilterInput() inside the shiny server:
+    updateFilterInput(x = fruits_filtered, inputId = "fruits")
+    #########################################################
+  })
+}
+shinyApp(ui, server)
+}
 ```
