@@ -30,9 +30,16 @@ and more.
 - `apply_filters()`: Apply filter inputs to objects
 
 ## Installation
-You can install the development version from Github:
-```{r, eval=FALSE}
-pak("joshwlivingston/shinyfilters")
+
+While CRAN submission is pending, the latest release is available on Github:
+``` r
+# install.packages("pak")
+pak::pak("joshwlivingston/shinyfilters@v0.1.0")
+```
+
+Or, you can install the development version:
+```r
+pak::pak("joshwlivingston/shinyfilters")
 ```
 
 ## Usage

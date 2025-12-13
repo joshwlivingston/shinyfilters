@@ -5,6 +5,7 @@
   * `args_update_filter_input()` is implemented as a *function* that calls 
     `args_filter_input()`, the *generic*.
 * Renames air.yaml Github Action job: "pkgdown" --> "air"
+* Adds to readme instructions on installing release version 
 
 # shinyfilters 0.1.0
 
