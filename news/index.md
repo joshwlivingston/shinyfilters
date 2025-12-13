@@ -1,5 +1,7 @@
 # Changelog
 
+## shinyfilters (development version)
+
 ## shinyfilters 0.1.0
 
 Initial release of shinyfilters.
