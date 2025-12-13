@@ -16,10 +16,18 @@ data.frames, and more.
 
 ## Installation
 
-You can install the development version from Github:
+While CRAN submission is pending, the latest release is available on
+Github:
 
 ``` r
-pak("joshwlivingston/shinyfilters")
+# install.packages("pak")
+pak::pak("joshwlivingston/shinyfilters@v0.1.0")
+```
+
+Or, you can install the development version:
+
+``` r
+pak::pak("joshwlivingston/shinyfilters")
 ```
 
 ## Usage
@@ -126,8 +134,7 @@ following:
 
 - [`filterInput()`](https://joshwlivingston.github.io/shinyfilters/reference/filterInput.md),
   [`updateFilterInput()`](https://joshwlivingston.github.io/shinyfilters/reference/updateFilterInput.md)
-- [`args_filter_input()`](https://joshwlivingston.github.io/shinyfilters/reference/args_filter_input.md),
-  [`args_update_filter_input()`](https://joshwlivingston.github.io/shinyfilters/reference/args_filter_input.md)
+- [`args_filter_input()`](https://joshwlivingston.github.io/shinyfilters/reference/args_filter_input.md)
 - [`get_filter_logical()`](https://joshwlivingston.github.io/shinyfilters/reference/get_filter_logical.md)
 
 See

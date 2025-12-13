@@ -2,6 +2,15 @@
 
 ## shinyfilters (development version)
 
+- [`args_update_filter_input()`](https://joshwlivingston.github.io/shinyfilters/reference/args_filter_input.md)
+  has been removed from the readme’s list of extensible functions.
+  - [`args_update_filter_input()`](https://joshwlivingston.github.io/shinyfilters/reference/args_filter_input.md)
+    is implemented as a *function* that calls
+    [`args_filter_input()`](https://joshwlivingston.github.io/shinyfilters/reference/args_filter_input.md),
+    the *generic*.
+- Renames air.yaml Github Action job: “pkgdown” –\> “air”
+- Adds to readme instructions on installing release version
+
 ## shinyfilters 0.1.0
 
 Initial release of shinyfilters.
