@@ -1,35 +1,33 @@
 # Changelog
 
-## shinyfilters (development version)
+## shinyfilters 0.2.0
 
 ### Additions:
 
 - [`get_input_values()`](https://joshwlivingston.github.io/shinyfilters/reference/get_input_values.md):
   Generic to return multiple values from a shiny input object
+  ([\#11](https://github.com/joshwlivingston/shinyfilters/issues/11))
 - [`get_input_ids()`](https://joshwlivingston.github.io/shinyfilters/reference/get_input_ids.md):
   Generic to return the names of the shiny input ids for an arbitrary
   object `x`. Method provided for data.frames
+  ([\#11](https://github.com/joshwlivingston/shinyfilters/issues/11))
 - [`get_input_labels()`](https://joshwlivingston.github.io/shinyfilters/reference/get_input_labels.md):
   Same as
   [`get_input_ids()`](https://joshwlivingston.github.io/shinyfilters/reference/get_input_ids.md),
-  but returns the `label` instead of `inputId`.
+  but returns the `label` instead of `inputId`
+  ([\#11](https://github.com/joshwlivingston/shinyfilters/issues/11)).
 
 ### Bugfixes
 
-- Fixed issue preventing
+- [`get_input_values()`](https://joshwlivingston.github.io/shinyfilters/reference/get_input_values.md)
+  has been re-added; its erroneous removal was causing an error in
   [`serverFilterInput()`](https://joshwlivingston.github.io/shinyfilters/reference/serverFilterInput.md)
-  from running due to
-  [`get_input_values()`](https://joshwlivingston.github.io/shinyfilters/reference/get_input_values.md)
-  having been erroneously removed.
+  ([\#11](https://github.com/joshwlivingston/shinyfilters/issues/11)).
 
 ### Documentation:
 
 - [`args_update_filter_input()`](https://joshwlivingston.github.io/shinyfilters/reference/args_filter_input.md)
   has been removed from the readme’s list of extensible functions.
-  - [`args_update_filter_input()`](https://joshwlivingston.github.io/shinyfilters/reference/args_filter_input.md)
-    is implemented as a *function* that calls
-    [`args_filter_input()`](https://joshwlivingston.github.io/shinyfilters/reference/args_filter_input.md),
-    the *generic*.
 - Renames air.yaml Github Action job: “pkgdown” –\> “air”
 - Adds to readme instructions on installing release version
 

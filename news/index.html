@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">shinyfilters</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -47,27 +47,25 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="development version" id="shinyfilters-development-version">shinyfilters (development version)<a class="anchor" aria-label="anchor" href="#shinyfilters-development-version"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.2.0" id="shinyfilters-020">shinyfilters 0.2.0<a class="anchor" aria-label="anchor" href="#shinyfilters-020"></a></h2>
 <div class="section level3">
-<h3 id="additions-development-version">Additions:<a class="anchor" aria-label="anchor" href="#additions-development-version"></a></h3>
+<h3 id="additions-0-2-0">Additions:<a class="anchor" aria-label="anchor" href="#additions-0-2-0"></a></h3>
 <ul><li>
-<code><a href="../reference/get_input_values.html">get_input_values()</a></code>: Generic to return multiple values from a shiny input object</li>
+<code><a href="../reference/get_input_values.html">get_input_values()</a></code>: Generic to return multiple values from a shiny input object (<a href="https://github.com/joshwlivingston/shinyfilters/issues/11" class="external-link">#11</a>)</li>
 <li>
-<code><a href="../reference/get_input_ids.html">get_input_ids()</a></code>: Generic to return the names of the shiny input ids for an arbitrary object <code>x</code>. Method provided for data.frames</li>
+<code><a href="../reference/get_input_ids.html">get_input_ids()</a></code>: Generic to return the names of the shiny input ids for an arbitrary object <code>x</code>. Method provided for data.frames (<a href="https://github.com/joshwlivingston/shinyfilters/issues/11" class="external-link">#11</a>)</li>
 <li>
-<code><a href="../reference/get_input_labels.html">get_input_labels()</a></code>: Same as <code><a href="../reference/get_input_ids.html">get_input_ids()</a></code>, but returns the <code>label</code> instead of <code>inputId</code>.</li>
+<code><a href="../reference/get_input_labels.html">get_input_labels()</a></code>: Same as <code><a href="../reference/get_input_ids.html">get_input_ids()</a></code>, but returns the <code>label</code> instead of <code>inputId</code> (<a href="https://github.com/joshwlivingston/shinyfilters/issues/11" class="external-link">#11</a>).</li>
 </ul></div>
 <div class="section level3">
-<h3 id="bugfixes-development-version">Bugfixes<a class="anchor" aria-label="anchor" href="#bugfixes-development-version"></a></h3>
-<ul><li>Fixed issue preventing <code><a href="../reference/serverFilterInput.html">serverFilterInput()</a></code> from running due to <code><a href="../reference/get_input_values.html">get_input_values()</a></code> having been erroneously removed.</li>
+<h3 id="bugfixes-0-2-0">Bugfixes<a class="anchor" aria-label="anchor" href="#bugfixes-0-2-0"></a></h3>
+<ul><li>
+<code><a href="../reference/get_input_values.html">get_input_values()</a></code> has been re-added; its erroneous removal was causing an error in <code><a href="../reference/serverFilterInput.html">serverFilterInput()</a></code> (<a href="https://github.com/joshwlivingston/shinyfilters/issues/11" class="external-link">#11</a>).</li>
 </ul></div>
 <div class="section level3">
-<h3 id="documentation-development-version">Documentation:<a class="anchor" aria-label="anchor" href="#documentation-development-version"></a></h3>
+<h3 id="documentation-0-2-0">Documentation:<a class="anchor" aria-label="anchor" href="#documentation-0-2-0"></a></h3>
 <ul><li>
-<code><a href="../reference/args_filter_input.html">args_update_filter_input()</a></code> has been removed from the readme’s list of extensible functions.
-<ul><li>
-<code><a href="../reference/args_filter_input.html">args_update_filter_input()</a></code> is implemented as a <em>function</em> that calls <code><a href="../reference/args_filter_input.html">args_filter_input()</a></code>, the <em>generic</em>.</li>
-</ul></li>
+<code><a href="../reference/args_filter_input.html">args_update_filter_input()</a></code> has been removed from the readme’s list of extensible functions.</li>
 <li>Renames air.yaml Github Action job: “pkgdown” –&gt; “air”</li>
 <li>Adds to readme instructions on installing release version</li>
 </ul></div>
