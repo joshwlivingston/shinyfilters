@@ -26,9 +26,11 @@ reference:
 - contents: 
   - serverFilterInput
   - apply_filters
+  - get_input_ids
 - title: Customize shinyfilters
 - contents:
   - args_filter_input
   - call_filter_input
   - get_filter_logical
-
+- title: Utilities
+  - get_input_values
