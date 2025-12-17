@@ -1,22 +1,20 @@
-# shinyfilters (development version)
+# shinyfilters 0.2.0
 
 ## Additions:
 * `get_input_values()`: Generic to return multiple values from a shiny input 
-  object
+  object (#11)
 * `get_input_ids()`: Generic to return the names of the shiny input ids for an 
-  arbitrary object `x`. Method provided for data.frames
+  arbitrary object `x`. Method provided for data.frames (#11)
 * `get_input_labels()`: Same as `get_input_ids()`, but returns the `label`
-  instead of `inputId`.
+  instead of `inputId` (#11).
 
 ## Bugfixes
-* Fixed issue preventing `serverFilterInput()` from running due to 
-  `get_input_values()` having been erroneously removed.
+* `get_input_values()` has been re-added; its erroneous removal was causing an 
+  error in `serverFilterInput()` (#11).
 
 ## Documentation:
 * `args_update_filter_input()` has been removed from the readme's list of 
   extensible functions.
-  * `args_update_filter_input()` is implemented as a *function* that calls 
-    `args_filter_input()`, the *generic*.
 * Renames air.yaml Github Action job: "pkgdown" --> "air"
 * Adds to readme instructions on installing release version 
 
