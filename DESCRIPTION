@@ -1,6 +1,6 @@
 Package: shinyfilters
 Title: Use 'shiny' to Filter Data
-Version: 0.2.0
+Version: 0.2.0.9000
 Authors@R: 
     person(
         "Josh", "Livingston",

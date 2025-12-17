@@ -1,3 +1,5 @@
+# shinyfilters (development version)
+
 # shinyfilters 0.2.0
 
 ## Additions:
