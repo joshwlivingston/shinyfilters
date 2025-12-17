@@ -149,7 +149,7 @@ method(updateFilterInput, class_data.frame) <- function(x, input, ...) {
 			)
 		},
 		x,
-		names(x),
+		get_input_ids(x),
 		SIMPLIFY = FALSE
 	)
 }

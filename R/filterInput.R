@@ -134,12 +134,18 @@ method(filterInput, class_character) <- function(x, ...) {
 
 ## Method: data.frame ####
 method(filterInput, class_data.frame) <- function(x, ...) {
-	filter_input <- function(x, nm) {
-		filterInput(x = x, inputId = nm, label = nm, ...)
+	filter_input <- function(x, id, nm) {
+		filterInput(x = x, inputId = id, label = nm, ...)
 	}
 	do.call(
 		htmltools::tagList,
-		mapply(filter_input, x, names(x), SIMPLIFY = FALSE)
+		mapply(
+			filter_input,
+			x,
+			get_input_ids(x),
+			get_input_labels(x),
+			SIMPLIFY = FALSE
+		)
 	)
 }
 
