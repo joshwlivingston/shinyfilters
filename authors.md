@@ -7,16 +7,16 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/joshwlivingston/shinyfilters/blob/v0.2.0/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/joshwlivingston/shinyfilters/blob/main/DESCRIPTION)
 
 Livingston J (2025). *shinyfilters: Use 'shiny' to Filter Data*. R
-package version 0.2.0,
+package version 0.2.0.9000,
 <https://joshwlivingston.github.io/shinyfilters/>.
 
     @Manual{,
       title = {shinyfilters: Use 'shiny' to Filter Data},
       author = {Josh Livingston},
       year = {2025},
-      note = {R package version 0.2.0},
+      note = {R package version 0.2.0.9000},
       url = {https://joshwlivingston.github.io/shinyfilters/},
     }
