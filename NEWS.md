@@ -1,8 +1,10 @@
 # shinyfilters (development version)
 
 ## Additions:
-* `get_input_values()`: Generic to return multiple valus from a shiny input 
+* `get_input_values()`: Generic to return multiple values from a shiny input 
   object
+* `get_input_ids()`: Generic to return the names of the shiny input ids for an 
+  arbitrary object `x`. Method provided for data.frames
 
 ## Documentation:
 * `args_update_filter_input()` has been removed from the readme's list of 
