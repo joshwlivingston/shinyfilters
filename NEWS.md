@@ -8,6 +8,10 @@
 * `get_input_labels()`: Same as `get_input_ids()`, but returns the `label`
   instead of `inputId`.
 
+## Bugfixes
+* Fixed issue preventing `serverFilterInput()` from running due to 
+  `get_input_values()` having been erroneously removed.
+
 ## Documentation:
 * `args_update_filter_input()` has been removed from the readme's list of 
   extensible functions.
