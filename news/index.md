@@ -14,6 +14,14 @@
   [`get_input_ids()`](https://joshwlivingston.github.io/shinyfilters/reference/get_input_ids.md),
   but returns the `label` instead of `inputId`.
 
+### Bugfixes
+
+- Fixed issue preventing
+  [`serverFilterInput()`](https://joshwlivingston.github.io/shinyfilters/reference/serverFilterInput.md)
+  from running due to
+  [`get_input_values()`](https://joshwlivingston.github.io/shinyfilters/reference/get_input_values.md)
+  having been erroneously removed.
+
 ### Documentation:
 
 - [`args_update_filter_input()`](https://joshwlivingston.github.io/shinyfilters/reference/args_filter_input.md)
