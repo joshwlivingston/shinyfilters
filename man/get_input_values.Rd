@@ -7,8 +7,13 @@
 get_input_values(input, x, ...)
 }
 \arguments{
+\item{input}{A \pkg{shiny} \code{input} object, typically a
+\code{shiny::reactiveValues} instance.}
+
 \item{x}{A character vector of input names, or a data.frame whose column
 names are converted to input names via \code{\link[=get_input_ids]{get_input_ids()}}.}
+
+\item{...}{Passed onto methods.}
 }
 \value{
 A named list of input values corresponding to the names in \code{x}.
@@ -16,8 +21,6 @@ A named list of input values corresponding to the names in \code{x}.
 \description{
 Retrieves multiple input values from a \pkg{shiny} \code{input} object based on
 the names provided in \code{x}.
-#' @param input A \pkg{shiny} \code{input} object, typically a
-\code{shiny::reactiveValues} instance.
 }
 \examples{
 \dontshow{if (interactive()) withAutoprint(\{ # examplesIf}

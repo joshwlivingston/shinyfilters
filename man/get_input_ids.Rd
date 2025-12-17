@@ -8,6 +8,8 @@ get_input_ids(x, ...)
 }
 \arguments{
 \item{x}{An object for which to retrieve input ids; typically a data.frame.}
+
+\item{...}{Passed onto methods.}
 }
 \value{
 A character vector of input ids.
