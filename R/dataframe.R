@@ -485,7 +485,7 @@ method(
 	get_input_values,
 	list(class_reactivevalues, class_data.frame)
 ) <- function(input, x) {
-	get_input_values(input, names(x))
+	get_input_values(input, get_input_names(x))
 }
 
 method(
@@ -493,6 +493,12 @@ method(
 	list(class_reactivevalues, class_character)
 ) <- function(input, x) {
 	lapply(set_names(nm = x), function(nm) input[[nm]])
+}
+
+get_input_names <- new_generic("get_input_names", "x")
+
+method(get_input_names, class_data.frame) <- function(x) {
+	return(names(x))
 }
 
 ._prepare_input <- new_generic("._prepare_input", "input")
