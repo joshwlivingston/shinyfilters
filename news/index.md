@@ -27,6 +27,8 @@
 
 ## shinyfilters 0.1.0
 
+CRAN release: 2025-12-17
+
 Initial release of shinyfilters.
 
 The package provides the following functions:
