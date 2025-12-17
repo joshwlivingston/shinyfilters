@@ -7,8 +7,8 @@
 get_input_values(input, x, ...)
 }
 \arguments{
-\item{input}{A \pkg{shiny} \code{input} object, typically a
-\code{shiny::reactiveValues} instance.}
+\item{input}{A \pkg{shiny} \code{input} object, i.e., the \code{input} argument to the
+shiny server.}
 
 \item{x}{A character vector of input names, or a data.frame whose column
 names are converted to input names via \code{\link[=get_input_ids]{get_input_ids()}}.}

@@ -442,10 +442,10 @@ len <- function(x) {
 #'
 #' Retrieves multiple input values from a \pkg{shiny} `input` object based on
 #' the names provided in `x`.
-#' @param input A \pkg{shiny} `input` object, typically a
-#' `shiny::reactiveValues` instance.
+#' @param input A \pkg{shiny} `input` object, i.e., the `input` argument to the
+#'   shiny server.
 #' @param x A character vector of input names, or a data.frame whose column
-#' names are converted to input names via [get_input_ids()].
+#'   names are converted to input names via [get_input_ids()].
 #' @param ... Passed onto methods.
 #'
 #' @return A named list of input values corresponding to the names in `x`.
