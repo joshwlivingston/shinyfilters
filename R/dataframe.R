@@ -445,7 +445,7 @@ len <- function(x) {
 #' #' @param input A \pkg{shiny} `input` object, typically a
 #' `shiny::reactiveValues` instance.
 #' @param x A character vector of input names, or a data.frame whose column
-#' names are converted to input names via [get_input_names()].
+#' names are converted to input names via [get_input_ids()].
 #'
 #' @return A named list of input values corresponding to the names in `x`.
 #' @examplesIf interactive()
@@ -485,7 +485,7 @@ method(
 	get_input_values,
 	list(class_reactivevalues, class_data.frame)
 ) <- function(input, x) {
-	get_input_values(input, get_input_names(x))
+	get_input_values(input, get_input_ids(x))
 }
 
 method(
@@ -495,9 +495,25 @@ method(
 	lapply(set_names(nm = x), function(nm) input[[nm]])
 }
 
-get_input_names <- new_generic("get_input_names", "x")
+#' Retrieve the Ids of Input Objects
+#'
+#' Returns the (unnamespaced) ids of the inputs for the provided object.
+#'
+#' @param x An object for which to retrieve input ids; typically a data.frame.
+#'
+#' @return A character vector of input ids.
+#' @examples
+#' df <- data.frame(
+#'   name = c("Alice", "Bob"),
+#'   age = c(25, 30),
+#'   completed = c(TRUE, FALSE)
+#' )
+#'
+#' get_input_ids(df)
+#' @export
+get_input_ids <- new_generic("get_input_ids", "x")
 
-method(get_input_names, class_data.frame) <- function(x) {
+method(get_input_ids, class_data.frame) <- function(x) {
 	return(names(x))
 }
 

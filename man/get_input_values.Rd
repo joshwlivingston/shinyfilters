@@ -8,7 +8,7 @@ get_input_values(input, x, ...)
 }
 \arguments{
 \item{x}{A character vector of input names, or a data.frame whose column
-names are converted to input names via \code{\link[=get_input_names]{get_input_names()}}.}
+names are converted to input names via \code{\link[=get_input_ids]{get_input_ids()}}.}
 }
 \value{
 A named list of input values corresponding to the names in \code{x}.
