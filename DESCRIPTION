@@ -1,5 +1,5 @@
 Package: shinyfilters
-Title: Use Shiny to Filter Data
+Title: Use 'shiny' to Filter Data
 Version: 0.1.0.9000
 Authors@R: 
     person(
