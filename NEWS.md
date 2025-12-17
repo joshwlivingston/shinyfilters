@@ -1,4 +1,4 @@
-# shinyfilters (development version)
+# shinyfilters 0.2.0
 
 ## Additions:
 * `get_input_values()`: Generic to return multiple values from a shiny input 
