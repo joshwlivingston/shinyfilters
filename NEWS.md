@@ -1,5 +1,10 @@
 # shinyfilters (development version)
 
+## Additions:
+* `get_input_values()`: Generic to return multiple valus from a shiny input 
+  object
+
+## Documentation:
 * `args_update_filter_input()` has been removed from the readme's list of 
   extensible functions.
   * `args_update_filter_input()` is implemented as a *function* that calls 
