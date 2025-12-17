@@ -438,6 +438,44 @@ len <- function(x) {
 	return(len)
 }
 
+#' Get Multiple Values from a \pkg{shiny} Input Object
+#'
+#' Retrieves multiple input values from a \pkg{shiny} `input` object based on
+#' the names provided in `x`.
+#' #' @param input A \pkg{shiny} `input` object, typically a
+#' `shiny::reactiveValues` instance.
+#' @param x A character vector of input names, or a data.frame whose column
+#' names are converted to input names via [get_input_names()].
+#'
+#' @return A named list of input values corresponding to the names in `x`.
+#' @examplesIf interactive()
+#' library(shiny)
+#' df <- data.frame(
+#'   name = c("Alice", "Bob"),
+#'   age = c(25, 30),
+#'   completed = c(TRUE, FALSE)
+#' )
+#' ui <- fluidPage(
+#'   sidebarLayout(
+#'     sidebarPanel(
+#'       filterInput(df)
+#'     ),
+#'     mainPanel(
+#'       verbatimTextOutput("output_all"),
+#'       verbatimTextOutput("output_subset")
+#'     )
+#'   )
+#' )
+#' server <- function(input, output, session) {
+#'   output$output <- renderPrint({
+#'     get_input_values(input, df)
+#'   })
+#'   output$output_subset <- renderPrint({
+#'     get_input_values(input, c("name", "completed"))
+#'   })
+#' }
+#' shinyApp(ui, server)
+#' @export
 get_input_values <- new_generic(
 	name = "get_input_values",
 	dispatch_args = c("input", "x")
