@@ -22,12 +22,11 @@ data.frames, and more.
 
 ## Installation
 
-While CRAN submission is pending, the latest release is available on
-Github:
+The latest release is available on CRAN:
 
 ``` r
 # install.packages("pak")
-pak::pak("joshwlivingston/shinyfilters@v0.1.0")
+pak::pak("shinyfilters")
 ```
 
 Or, you can install the development version:
