@@ -15,8 +15,6 @@
 ## Documentation:
 * `args_update_filter_input()` has been removed from the readme's list of 
   extensible functions.
-  * `args_update_filter_input()` is implemented as a *function* that calls 
-    `args_filter_input()`, the *generic*.
 * Renames air.yaml Github Action job: "pkgdown" --> "air"
 * Adds to readme instructions on installing release version 
 
