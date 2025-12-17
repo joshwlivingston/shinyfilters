@@ -18,6 +18,10 @@
   : Run the backend server for filterInput
 - [`apply_filters()`](https://joshwlivingston.github.io/shinyfilters/reference/apply_filters.md)
   : Apply Filters to an object
+- [`get_input_ids()`](https://joshwlivingston.github.io/shinyfilters/reference/get_input_ids.md)
+  : Retrieve the Ids of Input Objects
+- [`get_input_labels()`](https://joshwlivingston.github.io/shinyfilters/reference/get_input_labels.md)
+  : Retrieve the Labels of Input Objects
 
 ## Customize shinyfilters
 
@@ -33,3 +37,10 @@
 
 - [`get_filter_logical()`](https://joshwlivingston.github.io/shinyfilters/reference/get_filter_logical.md)
   : Compute a Filter Predicate
+
+## Utilities
+
+- [`get_input_values()`](https://joshwlivingston.github.io/shinyfilters/reference/get_input_values.md)
+  :
+
+  Get Multiple Values from a shiny Input Object

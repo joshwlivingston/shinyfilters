@@ -2,6 +2,20 @@
 
 ## shinyfilters (development version)
 
+### Additions:
+
+- [`get_input_values()`](https://joshwlivingston.github.io/shinyfilters/reference/get_input_values.md):
+  Generic to return multiple values from a shiny input object
+- [`get_input_ids()`](https://joshwlivingston.github.io/shinyfilters/reference/get_input_ids.md):
+  Generic to return the names of the shiny input ids for an arbitrary
+  object `x`. Method provided for data.frames
+- [`get_input_labels()`](https://joshwlivingston.github.io/shinyfilters/reference/get_input_labels.md):
+  Same as
+  [`get_input_ids()`](https://joshwlivingston.github.io/shinyfilters/reference/get_input_ids.md),
+  but returns the `label` instead of `inputId`.
+
+### Documentation:
+
 - [`args_update_filter_input()`](https://joshwlivingston.github.io/shinyfilters/reference/args_filter_input.md)
   has been removed from the readme’s list of extensible functions.
   - [`args_update_filter_input()`](https://joshwlivingston.github.io/shinyfilters/reference/args_filter_input.md)

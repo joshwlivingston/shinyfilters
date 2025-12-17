@@ -1,8 +1,7 @@
-# Return A data.frame's filterInput() Values
+# Get Multiple Values from a shiny Input Object
 
-Returns a list of the input values corresponding to the data.frame
-passed to
-[`filterInput()`](https://joshwlivingston.github.io/shinyfilters/reference/filterInput.md).
+Retrieves multiple input values from a shiny `input` object based on the
+names provided in `x`.
 
 ## Usage
 
@@ -14,57 +13,52 @@ get_input_values(input, x, ...)
 
 - input:
 
-  An `input` object from a shiny server.
+  A shiny `input` object, i.e., the `input` argument to the shiny
+  server.
 
 - x:
 
-  Either a `data.frame` or a character vector. If `x` is a `data.frame`,
-  `get_input_values()` is called on the column names of `x`.
+  A character vector of input names, or a data.frame whose column names
+  are converted to input names via
+  [`get_input_ids()`](https://joshwlivingston.github.io/shinyfilters/reference/get_input_ids.md).
+
+- ...:
+
+  Passed onto methods.
 
 ## Value
 
-A `reactivevalues` list of input values.
+A named list of input values corresponding to the names in `x`.
 
 ## Examples
 
 ``` r
 if (FALSE) { # interactive()
-df_shared <- data.frame(
-  x = letters,
-  y = sample(c("red", "green", "blue"), 26, replace = TRUE)
+library(shiny)
+df <- data.frame(
+  name = c("Alice", "Bob"),
+  age = c(25, 30),
+  completed = c(TRUE, FALSE)
 )
-
-ui <- bslib::page_sidebar(
-   sidebar = bslib::sidebar(
-     filterInput(df_shared, selectize = TRUE, slider = TRUE, multiple = TRUE)
-   ),
-  DT::DTOutput("df_full"),
-  shiny::verbatimTextOutput("inputs"),
-  DT::DTOutput("df_filt")
+ui <- fluidPage(
+  sidebarLayout(
+    sidebarPanel(
+      filterInput(df)
+    ),
+    mainPanel(
+      verbatimTextOutput("output_all"),
+      verbatimTextOutput("output_subset")
+    )
+  )
 )
 server <- function(input, output, session) {
-  output$df_full <- DT::renderDT(DT::datatable(df_shared))
-
-  input_values <-
-    shiny::reactive(get_input_values(input, df_shared)) |>
-    shiny::throttle(2000)
-  output$inputs <- shiny::renderPrint(input_values())
-
-  df_filt <- shiny::reactiveVal(df_shared)
-  output$df_filt <- DT::renderDT(DT::datatable(df_filt()))
-
-  shiny::observe({
-    df_now <- df_shared
-    mapply(function(input_value, nm) {
-      df_now <<- apply_filter(df_now, input_value, nm)
-    }, input_values(), names(input_values()))
-    df_filt(df_now)
+  output$output <- renderPrint({
+    get_input_values(input, df)
   })
-
-  shiny::observe({
-    updateFilterInput(df_filt())
+  output$output_subset <- renderPrint({
+    get_input_values(input, c("name", "completed"))
   })
 }
-shiny::shinyApp(ui, server)
+shinyApp(ui, server)
 }
 ```

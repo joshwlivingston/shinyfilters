@@ -13,6 +13,9 @@
 <url><loc>https://joshwlivingston.github.io/shinyfilters/reference/call_input_function.html</loc></url>
 <url><loc>https://joshwlivingston.github.io/shinyfilters/reference/filterInput.html</loc></url>
 <url><loc>https://joshwlivingston.github.io/shinyfilters/reference/get_filter_logical.html</loc></url>
+<url><loc>https://joshwlivingston.github.io/shinyfilters/reference/get_input_ids.html</loc></url>
+<url><loc>https://joshwlivingston.github.io/shinyfilters/reference/get_input_labels.html</loc></url>
+<url><loc>https://joshwlivingston.github.io/shinyfilters/reference/get_input_values.html</loc></url>
 <url><loc>https://joshwlivingston.github.io/shinyfilters/reference/index.html</loc></url>
 <url><loc>https://joshwlivingston.github.io/shinyfilters/reference/serverFilterInput.html</loc></url>
 <url><loc>https://joshwlivingston.github.io/shinyfilters/reference/updateFilterInput.html</loc></url>
