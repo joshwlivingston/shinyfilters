@@ -438,6 +438,25 @@ len <- function(x) {
 	return(len)
 }
 
+get_input_values <- new_generic(
+	name = "get_input_values",
+	dispatch_args = c("input", "x")
+)
+
+method(
+	get_input_values,
+	list(class_reactivevalues, class_data.frame)
+) <- function(input, x) {
+	get_input_values(input, names(x))
+}
+
+method(
+	get_input_values,
+	list(class_reactivevalues, class_character)
+) <- function(input, x) {
+	lapply(set_names(nm = x), function(nm) input[[nm]])
+}
+
 ._prepare_input <- new_generic("._prepare_input", "input")
 
 method(._prepare_input, class_reactiveExpr) <- function(input, x) {
