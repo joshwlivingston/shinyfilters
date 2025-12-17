@@ -27,6 +27,7 @@ reference:
   - serverFilterInput
   - apply_filters
   - get_input_ids
+  - get_input_labels
 - title: Customize shinyfilters
 - contents:
   - args_filter_input

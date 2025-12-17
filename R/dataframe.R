@@ -519,6 +519,29 @@ method(get_input_ids, class_data.frame) <- function(x) {
 	return(names(x))
 }
 
+#' Retrieve the Labels of Input Objects
+#'
+#' Returns the labels of the \pkg{shiny} inputs for the provided object.
+#'
+#' @param x An object for which to retrieve input labels; typically a data.frame.
+#' @param ... Passed onto methods.
+#'
+#' @return A character vector of input labels
+#' @examples
+#' df <- data.frame(
+#'   name = c("Alice", "Bob"),
+#'   age = c(25, 30),
+#'   completed = c(TRUE, FALSE)
+#' )
+#'
+#' get_input_labels(df)
+#' @export
+get_input_labels <- new_generic("get_input_labels", "x")
+
+method(get_input_labels, class_data.frame) <- function(x) {
+	return(names(x))
+}
+
 ._prepare_input <- new_generic("._prepare_input", "input")
 
 method(._prepare_input, class_reactiveExpr) <- function(input, x) {
