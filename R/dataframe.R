@@ -438,6 +438,110 @@ len <- function(x) {
 	return(len)
 }
 
+#' Get Multiple Values from a \pkg{shiny} Input Object
+#'
+#' Retrieves multiple input values from a \pkg{shiny} `input` object based on
+#' the names provided in `x`.
+#' @param input A \pkg{shiny} `input` object, i.e., the `input` argument to the
+#'   shiny server.
+#' @param x A character vector of input names, or a data.frame whose column
+#'   names are converted to input names via [get_input_ids()].
+#' @param ... Passed onto methods.
+#'
+#' @return A named list of input values corresponding to the names in `x`.
+#' @examplesIf interactive()
+#' library(shiny)
+#' df <- data.frame(
+#'   name = c("Alice", "Bob"),
+#'   age = c(25, 30),
+#'   completed = c(TRUE, FALSE)
+#' )
+#' ui <- fluidPage(
+#'   sidebarLayout(
+#'     sidebarPanel(
+#'       filterInput(df)
+#'     ),
+#'     mainPanel(
+#'       verbatimTextOutput("output_all"),
+#'       verbatimTextOutput("output_subset")
+#'     )
+#'   )
+#' )
+#' server <- function(input, output, session) {
+#'   output$output <- renderPrint({
+#'     get_input_values(input, df)
+#'   })
+#'   output$output_subset <- renderPrint({
+#'     get_input_values(input, c("name", "completed"))
+#'   })
+#' }
+#' shinyApp(ui, server)
+#' @export
+get_input_values <- new_generic(
+	name = "get_input_values",
+	dispatch_args = c("input", "x")
+)
+
+method(
+	get_input_values,
+	list(class_reactivevalues, class_data.frame)
+) <- function(input, x) {
+	get_input_values(input, get_input_ids(x))
+}
+
+method(
+	get_input_values,
+	list(class_reactivevalues, class_character)
+) <- function(input, x) {
+	lapply(set_names(nm = x), function(nm) input[[nm]])
+}
+
+#' Retrieve the Ids of Input Objects
+#'
+#' Returns the (unnamespaced) ids of the inputs for the provided object.
+#'
+#' @param x An object for which to retrieve input ids; typically a data.frame.
+#' @param ... Passed onto methods.
+#'
+#' @return A character vector of input ids.
+#' @examples
+#' df <- data.frame(
+#'   name = c("Alice", "Bob"),
+#'   age = c(25, 30),
+#'   completed = c(TRUE, FALSE)
+#' )
+#'
+#' get_input_ids(df)
+#' @export
+get_input_ids <- new_generic("get_input_ids", "x")
+
+method(get_input_ids, class_data.frame) <- function(x) {
+	return(names(x))
+}
+
+#' Retrieve the Labels of Input Objects
+#'
+#' Returns the labels of the \pkg{shiny} inputs for the provided object.
+#'
+#' @param x An object for which to retrieve input labels; typically a data.frame.
+#' @param ... Passed onto methods.
+#'
+#' @return A character vector of input labels
+#' @examples
+#' df <- data.frame(
+#'   name = c("Alice", "Bob"),
+#'   age = c(25, 30),
+#'   completed = c(TRUE, FALSE)
+#' )
+#'
+#' get_input_labels(df)
+#' @export
+get_input_labels <- new_generic("get_input_labels", "x")
+
+method(get_input_labels, class_data.frame) <- function(x) {
+	return(names(x))
+}
+
 ._prepare_input <- new_generic("._prepare_input", "input")
 
 method(._prepare_input, class_reactiveExpr) <- function(input, x) {
