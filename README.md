@@ -50,7 +50,7 @@ ui <- fluidPage(
             # Create a filterInput() inside a shiny app:
             filterInput(
                 x = letters,
-                id = "letter",
+                inputId = "letter",
                 label = "Pick a letter:"
             )
             #############################################
