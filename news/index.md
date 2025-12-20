@@ -2,7 +2,14 @@
 
 ## shinyfilters (development version)
 
+### Documentation:
+
+- All examples now correctly use `inputId`
+  ([\#17](https://github.com/joshwlivingston/shinyfilters/issues/17))
+
 ## shinyfilters 0.2.0
+
+CRAN release: 2025-12-17
 
 ### Additions:
 
