@@ -1,5 +1,8 @@
 # shinyfilters (development version)
 
+## Documentation:
+* All examples now correctly use `inputId` (#17)
+
 # shinyfilters 0.2.0
 
 ## Additions:
