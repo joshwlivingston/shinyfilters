@@ -6,6 +6,10 @@
 
 - All examples now correctly use `inputId`
   ([\#17](https://github.com/joshwlivingston/shinyfilters/issues/17))
+- All outputs now display in
+  [`get_input_values()`](https://joshwlivingston.github.io/shinyfilters/reference/get_input_values.md)
+  example
+  ([\#18](https://github.com/joshwlivingston/shinyfilters/issues/18))
 
 ## shinyfilters 0.2.0
 
