@@ -468,7 +468,7 @@ len <- function(x) {
 #'   )
 #' )
 #' server <- function(input, output, session) {
-#'   output$output <- renderPrint({
+#'   output$output_all <- renderPrint({
 #'     get_input_values(input, df)
 #'   })
 #'   output$output_subset <- renderPrint({
