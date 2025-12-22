@@ -100,10 +100,8 @@
 #' 		if (!is.null(input$letter) && length(input$letter) != 0L) {
 #' 			fruits_filtered <- fruits[input$letter]
 #' 		}
-#' 		#########################################################
-#' 		# 2. Call updateFilterInput() inside the shiny server:
+#' 		# Call updateFilterInput() inside the shiny server:
 #' 		updateFilterInput(x = fruits_filtered, inputId = "fruits")
-#' 		#########################################################
 #' 	})
 #' }
 #' shinyApp(ui, server)
