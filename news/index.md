@@ -12,6 +12,8 @@
   ([\#18](https://github.com/joshwlivingston/shinyfilters/issues/18))
 - Borders have been removed in examples
   ([\#7](https://github.com/joshwlivingston/shinyfilters/issues/7))
+- Hyperlinks added for all issues in NEWS
+  ([\#26](https://github.com/joshwlivingston/shinyfilters/issues/26))
 
 ## shinyfilters 0.2.0
 
@@ -21,23 +23,25 @@ CRAN release: 2025-12-17
 
 - [`get_input_values()`](https://joshwlivingston.github.io/shinyfilters/reference/get_input_values.md):
   Generic to return multiple values from a shiny input object
-  ([\#11](https://github.com/joshwlivingston/shinyfilters/issues/11))
+  ([\#10](https://github.com/joshwlivingston/shinyfilters/issues/10),
+  [\#5](https://github.com/joshwlivingston/shinyfilters/issues/5))
 - [`get_input_ids()`](https://joshwlivingston.github.io/shinyfilters/reference/get_input_ids.md):
   Generic to return the names of the shiny input ids for an arbitrary
   object `x`. Method provided for data.frames
-  ([\#11](https://github.com/joshwlivingston/shinyfilters/issues/11))
+  ([\#12](https://github.com/joshwlivingston/shinyfilters/issues/12))
 - [`get_input_labels()`](https://joshwlivingston.github.io/shinyfilters/reference/get_input_labels.md):
   Same as
   [`get_input_ids()`](https://joshwlivingston.github.io/shinyfilters/reference/get_input_ids.md),
   but returns the `label` instead of `inputId`
-  ([\#11](https://github.com/joshwlivingston/shinyfilters/issues/11)).
+  ([\#10](https://github.com/joshwlivingston/shinyfilters/issues/10)).
 
 ### Bugfixes
 
 - [`get_input_values()`](https://joshwlivingston.github.io/shinyfilters/reference/get_input_values.md)
   has been re-added; its erroneous removal was causing an error in
   [`serverFilterInput()`](https://joshwlivingston.github.io/shinyfilters/reference/serverFilterInput.md)
-  ([\#11](https://github.com/joshwlivingston/shinyfilters/issues/11)).
+  ([\#10](https://github.com/joshwlivingston/shinyfilters/issues/10),
+  [\#5](https://github.com/joshwlivingston/shinyfilters/issues/5)).
 
 ### Documentation:
 
