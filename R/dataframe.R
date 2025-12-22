@@ -302,7 +302,7 @@ method(
 	)
 ) <- function(x, val) {
 	na_bool <- NULL
-	if (any(is.na(val))) {
+	if (anyNA(val)) {
 		na_bool <- is.na(x)
 		val <- val[!is.na(val)]
 		if (identical(length(val), 0L)) {
@@ -331,7 +331,7 @@ method(
 	)
 ) <- function(x, val, comparison = `<=`, gte = TRUE, lte = TRUE, ...) {
 	na_bool <- NULL
-	if (any(is.na(val))) {
+	if (anyNA(val)) {
 		na_bool <- is.na(x)
 		val <- val[!is.na(val)]
 		if (identical(length(val), 0L)) {
@@ -402,7 +402,7 @@ method(get_filter_logical, list(class_POSIXt, class_POSIXt)) <- function(
 		column_str <- ""
 	}
 
-	if (!identical(class(filter_res), "logical")) {
+	if (!inherits(class(filter_res), "logical")) {
 		stop(sprintf("Filter %sdid not return a logical vector.", column_str))
 	}
 
