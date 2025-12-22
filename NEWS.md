@@ -1,23 +1,24 @@
 # shinyfilters (development version)
 
 ## Documentation:
-* All examples now correctly use `inputId` (#17)
-* All outputs now display in `get_input_values()` example (#18)
-* Borders have been removed in examples (#7)
+* All examples now correctly use `inputId` ([#17](https://github.com/joshwlivingston/shinyfilters/issues/17))
+* All outputs now display in `get_input_values()` example ([#18](https://github.com/joshwlivingston/shinyfilters/issues/18))
+* Borders have been removed in examples ([#7](https://github.com/joshwlivingston/shinyfilters/issues/7))
+* Hyperlinks added for all issues in NEWS ([#26](https://github.com/joshwlivingston/shinyfilters/issues/26))
 
 # shinyfilters 0.2.0
 
 ## Additions:
 * `get_input_values()`: Generic to return multiple values from a shiny input 
-  object (#11)
+  object ([#10](https://github.com/joshwlivingston/shinyfilters/issues/10), [#5](https://github.com/joshwlivingston/shinyfilters/issues/5))
 * `get_input_ids()`: Generic to return the names of the shiny input ids for an 
-  arbitrary object `x`. Method provided for data.frames (#11)
+  arbitrary object `x`. Method provided for data.frames ([#12](https://github.com/joshwlivingston/shinyfilters/issues/12))
 * `get_input_labels()`: Same as `get_input_ids()`, but returns the `label`
-  instead of `inputId` (#11).
+  instead of `inputId` ([#10](https://github.com/joshwlivingston/shinyfilters/issues/10)).
 
 ## Bugfixes
 * `get_input_values()` has been re-added; its erroneous removal was causing an 
-  error in `serverFilterInput()` (#11).
+  error in `serverFilterInput()` ([#10](https://github.com/joshwlivingston/shinyfilters/issues/10), [#5](https://github.com/joshwlivingston/shinyfilters/issues/5)).
 
 ## Documentation:
 * `args_update_filter_input()` has been removed from the readme's list of 
