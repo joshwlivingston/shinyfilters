@@ -1,5 +1,8 @@
 # shinyfilters (development version)
 
+## Bugfixes
+* Use `anyNA()` for NA checks and `inherits()` for class checks, per `jarl check .` (thanks @novica!)
+
 ## Documentation:
 * All examples now correctly use `inputId` ([#17](https://github.com/joshwlivingston/shinyfilters/issues/17))
 * All outputs now display in `get_input_values()` example ([#18](https://github.com/joshwlivingston/shinyfilters/issues/18))
