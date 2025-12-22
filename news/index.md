@@ -2,6 +2,12 @@
 
 ## shinyfilters (development version)
 
+### Bugfixes
+
+- Use [`anyNA()`](https://rdrr.io/r/base/NA.html) for NA checks and
+  [`inherits()`](https://rdrr.io/r/base/class.html) for class checks,
+  per `jarl check .` (thanks [@novica](https://github.com/novica)!)
+
 ### Documentation:
 
 - All examples now correctly use `inputId`
