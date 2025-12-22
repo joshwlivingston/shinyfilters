@@ -402,7 +402,7 @@ method(get_filter_logical, list(class_POSIXt, class_POSIXt)) <- function(
 		column_str <- ""
 	}
 
-	if (!inherits(class(filter_res), "logical")) {
+	if (!inherits(filter_res, "logical")) {
 		stop(sprintf("Filter %sdid not return a logical vector.", column_str))
 	}
 
