@@ -40,14 +40,12 @@ library(shiny)
 ui <- fluidPage(
     sidebarLayout(
         sidebarPanel(
-            #############################################
             # Create a filterInput() inside a shiny app:
             filterInput(
                 x = letters,
                 inputId = "letter",
                 label = "Pick a letter:"
             )
-            #############################################
         ),
         mainPanel(
             textOutput("selected_letter")
@@ -82,8 +80,7 @@ df <- data.frame(
 ui <- fluidPage(
     sidebarLayout(
         sidebarPanel(
-            #############################################################
-            # 1. Create a filterInput() for each column in a data.frame:
+            # 1/3. Create a filterInput() for each column in a data.frame:
             filterInput(
                 x = df,
                 range = TRUE,
@@ -91,7 +88,6 @@ ui <- fluidPage(
                 slider = TRUE,
                 multiple = TRUE
             )
-            #############################################################
         ),
         mainPanel(
             DTOutput("df_full"),
@@ -103,22 +99,18 @@ ui <- fluidPage(
 
 server <- function(input, output, session) {
     output$df_full <- renderDT(datatable(df))
-    ################################################################
-    # 2. Create a server to manage the data.frame's filterInput()'s
+    # 2/3. Create a server to manage the data.frame's filterInput()'s
     res <- serverFilterInput(
         x = df, 
         input = input, 
         range = TRUE
     )
-    ################################################################
     
-    #####################################################
-    # 3. Use the server's results
+    # 3/3. Use the server's results
     output$input_values <- renderPrint(res$input_values)
     output$df_filt <- renderDT(datatable(
         apply_filters(df, res$input_values)
     ))
-    #####################################################
 }
 
 shinyApp(ui, server)

@@ -73,7 +73,8 @@ library(shinyfilters)
 library(shiny)
 
 filterInput(people, inputId = "people", label = "Pick a person:")
-#> Error in as.vector(x, "character"): cannot coerce type 'closure' to vector of type 'character'
+#> Error in `as.vector()`:
+#> ! cannot coerce type 'closure' to vector of type 'character'
 ```
 
 To allow
@@ -126,7 +127,8 @@ on `people`…
 
 ``` r
 filterInput(people, inputId = "people", label = "Pick a person:")
-#> Error in as.vector(x, "character"): cannot coerce type 'closure' to vector of type 'character'
+#> Error in `as.vector()`:
+#> ! cannot coerce type 'closure' to vector of type 'character'
 ```
 
 … we’ll still get an error.
@@ -293,7 +295,8 @@ filterInput(
     label = "Pick a person:",
     choices = full_names(people)
 )
-#> Error in selectInput(inputId, ..., selectize = FALSE, width = width): formal argument "choices" matched by multiple actual arguments
+#> Error in `selectInput()`:
+#> ! formal argument "choices" matched by multiple actual arguments
 ```
 
 > Error in … : formal argument “choices” matched by multiple actual
@@ -337,5 +340,6 @@ filterInput(
     label = "Pick a person:",
     choices = full_names(people)
 )
-#> Error in error_input_args(x, names(args)): The argument `choices` is not supported in when used with `People` objects.
+#> Error in `error_input_args()`:
+#> ! The argument `choices` is not supported in when used with `People` objects.
 ```

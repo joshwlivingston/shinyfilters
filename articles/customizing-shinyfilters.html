@@ -147,7 +147,8 @@ error:</p>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shiny.posit.co/" class="external-link">shiny</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/filterInput.html">filterInput</a></span><span class="op">(</span><span class="va">people</span>, inputId <span class="op">=</span> <span class="st">"people"</span>, label <span class="op">=</span> <span class="st">"Pick a person:"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Error in as.vector(x, "character"): cannot coerce type 'closure' to vector of type 'character'</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;"> in `as.vector()`:</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> cannot coerce type 'closure' to vector of type 'character'</span></span></code></pre></div>
 <p>To allow <code><a href="../reference/filterInput.html">filterInput()</a></code> to be called on
 <code>people</code>, you can <em>extend</em>
 <code><a href="../reference/filterInput.html">filterInput()</a></code>.</p>
@@ -181,7 +182,8 @@ arguments.</p>
 <code>people</code>…</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/filterInput.html">filterInput</a></span><span class="op">(</span><span class="va">people</span>, inputId <span class="op">=</span> <span class="st">"people"</span>, label <span class="op">=</span> <span class="st">"Pick a person:"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Error in as.vector(x, "character"): cannot coerce type 'closure' to vector of type 'character'</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;"> in `as.vector()`:</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> cannot coerce type 'closure' to vector of type 'character'</span></span></code></pre></div>
 <p>… we’ll still get an error.</p>
 <p>To fix <em>this</em> error, you need to define a method for
 <code><a href="../reference/args_filter_input.html">args_filter_input()</a></code>.</p>
@@ -321,7 +323,8 @@ opportunity for confusing errors to emerge:</p>
 <span>    label <span class="op">=</span> <span class="st">"Pick a person:"</span>,</span>
 <span>    choices <span class="op">=</span> <span class="fu">full_names</span><span class="op">(</span><span class="va">people</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; Error in selectInput(inputId, ..., selectize = FALSE, width = width): formal argument "choices" matched by multiple actual arguments</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;"> in `selectInput()`:</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> formal argument "choices" matched by multiple actual arguments</span></span></code></pre></div>
 <blockquote>
 <p>Error in … : formal argument “choices” matched by multiple actual
 arguments</p>
@@ -351,7 +354,8 @@ handling the argument prep dynamically (via
 <span>    label <span class="op">=</span> <span class="st">"Pick a person:"</span>,</span>
 <span>    choices <span class="op">=</span> <span class="fu">full_names</span><span class="op">(</span><span class="va">people</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; Error in error_input_args(x, names(args)): The argument `choices` is not supported in when used with `People` objects.</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;"> in `error_input_args()`:</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> The argument `choices` is not supported in when used with `People` objects.</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

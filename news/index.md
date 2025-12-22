@@ -10,6 +10,8 @@
   [`get_input_values()`](https://joshwlivingston.github.io/shinyfilters/reference/get_input_values.md)
   example
   ([\#18](https://github.com/joshwlivingston/shinyfilters/issues/18))
+- Borders have been removed in examples
+  ([\#7](https://github.com/joshwlivingston/shinyfilters/issues/7))
 
 ## shinyfilters 0.2.0
 
