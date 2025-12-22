@@ -78,14 +78,12 @@
 #' ui <- fluidPage(
 #' 	 sidebarLayout(
 #' 		 sidebarPanel(
-#' 			 #############################################
 #' 			 # Create a filterInput() inside a shiny app:
 #' 			 filterInput(
 #' 				x = letters,
 #' 				inputId = "letter",
 #' 				label = "Pick a letter:"
 #' 			 )
-#' 			 #############################################
 #' 		 ),
 #' 		 mainPanel(
 #' 			 textOutput("selected_letter")

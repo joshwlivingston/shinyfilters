@@ -3,6 +3,7 @@
 ## Documentation:
 * All examples now correctly use `inputId` (#17)
 * All outputs now display in `get_input_values()` example (#18)
+* Borders have been removed in examples (#7)
 
 # shinyfilters 0.2.0
 
