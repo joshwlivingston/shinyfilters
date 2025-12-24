@@ -6,7 +6,7 @@
 data.frames, and more.
 
 - [`filterInput()`](https://joshwlivingston.github.io/shinyfilters/reference/filterInput.md):
-  Create filter inputs on any object
+  Create filter inputs from any object
 - [`updateFilterInput()`](https://joshwlivingston.github.io/shinyfilters/reference/updateFilterInput.md):
   Update filter inputs
 - [`serverFilterInput()`](https://joshwlivingston.github.io/shinyfilters/reference/serverFilterInput.md):

@@ -9,12 +9,12 @@
 Source:
 [`DESCRIPTION`](https://github.com/joshwlivingston/shinyfilters/blob/main/DESCRIPTION)
 
-Livingston J (2025). *shinyfilters: Use 'shiny' to Filter Data*. R
-package version 0.2.0.9000,
+Livingston J (2025). *shinyfilters: Create 'shiny' Inputs from Vectors,
+'data.frames', or any R Object*. R package version 0.2.0.9000,
 <https://joshwlivingston.github.io/shinyfilters/>.
 
     @Manual{,
-      title = {shinyfilters: Use 'shiny' to Filter Data},
+      title = {shinyfilters: Create 'shiny' Inputs from Vectors, 'data.frames', or any R Object},
       author = {Josh Livingston},
       year = {2025},
       note = {R package version 0.2.0.9000},
