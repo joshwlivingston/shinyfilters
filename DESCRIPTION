@@ -1,5 +1,5 @@
 Package: shinyfilters
-Title: Use 'shiny' to Filter Data
+Title: Create 'shiny' Inputs from Vectors, 'data.frames', or any R Object
 Version: 0.2.0.9000
 Authors@R: 
     person(
