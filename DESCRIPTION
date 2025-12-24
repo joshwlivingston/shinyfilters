@@ -1,12 +1,8 @@
 Package: shinyfilters
 Title: Create 'shiny' Inputs from Vectors, 'data.frames', or any R Object
 Version: 0.2.0.9000
-Authors@R: 
-    person(
-        "Josh", "Livingston",
-        email = "joshwlivingston@gmail.com", 
-        role = c("cre", "aut")
-    )
+Authors@R: c(
+    person("Josh", "Livingston", email = "joshwlivingston@gmail.com", role = c("cre", "aut")))
 Description: Provides an interface to 'shiny' inputs used for filtering vectors,
   data.frames, and other objects. 'S7'-based implementation allows for seamless 
   extensibility.
