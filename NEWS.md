@@ -8,6 +8,8 @@
 * All outputs now display in `get_input_values()` example ([#18](https://github.com/joshwlivingston/shinyfilters/issues/18))
 * Borders have been removed in examples ([#7](https://github.com/joshwlivingston/shinyfilters/issues/7))
 * Hyperlinks added for all issues in NEWS ([#26](https://github.com/joshwlivingston/shinyfilters/issues/26))
+* Updated package title to be more precise ([#22](https://github.com/joshwlivingston/shinyfilters/issues/22))
+* Updated filterInput() description in README to match new title
 
 # shinyfilters 0.2.0
 
