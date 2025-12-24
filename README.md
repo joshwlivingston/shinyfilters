@@ -15,7 +15,7 @@ status](https://www.r-pkg.org/badges/version/shinyfilters)](https://CRAN.R-proje
 *shinyfilters* makes it easy to create Shiny inputs from vectors,
 data.frames, and more.
 
-- `filterInput()`: Create filter inputs on any object
+- `filterInput()`: Create filter inputs from any object
 - `updateFilterInput()`: Update filter inputs
 - `serverFilterInput()`: Server logic to update filter inputs
 - `apply_filters()`: Apply filter inputs to objects
