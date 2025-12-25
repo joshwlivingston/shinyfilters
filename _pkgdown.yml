@@ -7,8 +7,11 @@ template:
   bootswatch: flatly
 navbar:
   structure:
-    left: [intro, reference, articles, tutorials, news]
+    left: [intro, catalog, reference, articles, tutorials, news]
   components:
+    catalog:
+      text: Catalog
+      href: articles/filter-input-catalog.html
     articles:
       text: Articles
       menu:
