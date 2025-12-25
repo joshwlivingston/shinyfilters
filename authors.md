@@ -4,6 +4,9 @@
 
 - **Josh Livingston**. Maintainer, author.
 
+- **Novica Nakov**. Contributor.
+  [](https://orcid.org/0009-0005-7773-7718)
+
 ## Citation
 
 Source:
