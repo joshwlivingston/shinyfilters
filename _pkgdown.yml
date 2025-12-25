@@ -6,6 +6,8 @@ template:
   theme-dark: a11y-dark
   bootswatch: flatly
 navbar:
+  structure:
+    left: [intro, reference, articles, tutorials, news]
   components:
     articles:
       text: Articles
