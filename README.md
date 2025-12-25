@@ -7,6 +7,8 @@
 
 [![CRAN
 status](https://www.r-pkg.org/badges/version/shinyfilters)](https://CRAN.R-project.org/package=shinyfilters)
+[![r-universe
+status](https://joshwlivingston.r-universe.dev/shinyfilters/badges/version)](https://joshwlivingston.r-universe.dev/shinyfilters)
 [![R-CMD-check](https://github.com/joshwlivingston/shinyfilters/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/joshwlivingston/shinyfilters/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
