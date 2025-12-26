@@ -115,6 +115,34 @@ method(args_filter_input, class_POSIXt) <- function(x, ...) {
 	list(choices = x)
 }
 
+._eval_generic <- function(x, generic_name, ...) {
+	methods_x <- methods(class = x[[1L]])
+	method_idx <- which(attr(methods_x, "info")$generic == generic_name)
+	if (length(method_idx) != 0L) {
+		method_x <- methods_x[[method_idx[[1L]]]]
+		args_method_all <- formalArgs(method_x)
+		if ("..." %in% args_method_all) {
+			return(._eval_generic_default(x, generic_name, ...))
+		}
+		args_provided <- list(...)
+		args_provided_to_method <- args_provided[
+			names(args_provided) %in% args_method_all
+		]
+		first_arg <- args_method_all[[1L]]
+		args_method_length <- length(args_provided_to_method) + 1L
+		args_method <- vector("list", args_method_length)
+		args_method[[1L]] <- x
+		args_method[[2L:args_method_length]] <- args_provided_to_method
+		names(args_method) <- c(first_arg, names(args_provided_to_method))
+		return(do.call(method_x, args_method))
+	}
+	._eval_generic_default(x, generic_name, ...)
+}
+
+._eval_generic_default <- function(x, generic_name, ...) {
+	get(generic_name)(x, ...)
+}
+
 # Function: args_update_filter_input ####
 #' @rdname args_filter_input
 #' @export
