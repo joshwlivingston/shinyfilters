@@ -116,27 +116,31 @@ method(args_filter_input, class_POSIXt) <- function(x, ...) {
 }
 
 ._eval_generic <- function(x, generic_name, ...) {
-	methods_x <- methods(class = x[[1L]])
-	method_idx <- which(attr(methods_x, "info")$generic == generic_name)
-	if (length(method_idx) != 0L) {
-		method_x <- methods_x[[method_idx[[1L]]]]
-		args_method_all <- formalArgs(method_x)
-		if ("..." %in% args_method_all) {
-			return(._eval_generic_default(x, generic_name, ...))
+	class_x_all <- class(x)
+	method_x <- NULL
+	for (class_x in class_x_all) {
+		method_x <- getS3method(generic_name, class_x, optional = TRUE)
+		if (!is.null(method_x)) {
+			break
 		}
-		args_provided <- list(...)
-		args_provided_to_method <- args_provided[
-			names(args_provided) %in% args_method_all
-		]
-		first_arg <- args_method_all[[1L]]
-		args_method_length <- length(args_provided_to_method) + 1L
-		args_method <- vector("list", args_method_length)
-		args_method[[1L]] <- x
-		args_method[[2L:args_method_length]] <- args_provided_to_method
-		names(args_method) <- c(first_arg, names(args_provided_to_method))
-		return(do.call(method_x, args_method))
 	}
-	._eval_generic_default(x, generic_name, ...)
+
+	if (is.null(method_x)) {
+		return(._eval_generic_default(x, generic_name, ...))
+	}
+
+	args_method_all <- formalArgs(method_x)
+	if ("..." %in% args_method_all) {
+		return(._eval_generic_default(x, generic_name, ...))
+	}
+
+	args_provided <- list(...)
+	args_provided_to_method <- args_provided[
+		names(args_provided) %in% args_method_all
+	]
+	args_method <- c(list(x, generic_name), args_provided_to_method)
+	names(args_method)[1:2] <- c("x", "generic_name")
+	do.call(._eval_generic_default, args_method)
 }
 
 ._eval_generic_default <- function(x, generic_name, ...) {
