@@ -50,3 +50,7 @@ choices_chr_na <- rep(NA_character_, 10)
 choices_cpx_na <- rep(NA_complex_, 10)
 choices_rel_na <- rep(NA_real_, 10)
 choices_int_na <- rep(NA_integer_, 10)
+
+# Create test lists for unique.default testing
+test_lst_with_duplicates <- list(a = 1, b = 2, c = 1, d = 3, e = 2)
+test_lst_with_na <- list(a = 1, b = NA, c = 1, d = 3, e = NA)
