@@ -110,7 +110,8 @@ method(args_filter_input, class_POSIXt) <- function(x, ...) {
 		return(list(choices = ""))
 	}
 	if (!isTRUE(choices_asis)) {
-		x <- sort(unique(x))
+		x <- ._eval_generic(x, "unique", ...)
+		x <- ._eval_generic(x, "sort", ...)
 	}
 	list(choices = x)
 }
@@ -126,10 +127,23 @@ method(args_filter_input, class_POSIXt) <- function(x, ...) {
 	}
 
 	if (is.null(method_x)) {
-		return(._eval_generic_default(x, generic_name, ...))
+		method_x <- sprintf("%s.default", generic_name)
+		if (!is.function(get(method_x))) {
+			stop(sprintf(
+				"Default method for s3 generic `%s()` not found",
+				generic_name
+			))
+		}
 	}
 
 	args_method_all <- formalArgs(method_x)
+	if (identical(generic_name, "sort")) {
+		args_method_all <- setdiff(
+			union(args_method_all, formalArgs(sort.int)),
+			"..."
+		)
+	}
+
 	if ("..." %in% args_method_all) {
 		return(._eval_generic_default(x, generic_name, ...))
 	}
