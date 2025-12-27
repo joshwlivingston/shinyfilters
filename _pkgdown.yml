@@ -6,15 +6,15 @@ template:
   theme-dark: a11y-dark
   bootswatch: flatly
 navbar:
+  structure:
+    left: [intro, catalog, reference, articles, tutorials, news]
   components:
+    catalog:
+      text: Catalog
+      href: articles/filter-input-catalog.html
     articles:
       text: Articles
       menu:
-      - text: Basic Usage
-      - text: Filter Input Catalog
-        href: articles/filter-input-catalog.html
-      - text: '-------'
-      - text: Advanced Usage
       - text: Customizing shinyfilters
         href: articles/customizing-shinyfilters.html
 reference:
