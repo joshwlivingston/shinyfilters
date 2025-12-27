@@ -43,70 +43,49 @@ expect_shiny_dateInput <- expect_shiny_input(shiny::dateInput)
 letters_shuffled <- sample(letters)
 choices_fct <- as.factor(letters_shuffled)
 choices_fct_with_na <- choices_fct
-NA -> choices_fct_with_na[
-	sample(
-		1:length(choices_fct),
-		sample(1:(length(choices_fct) - 1), 1)
-	)
-]
+choices_fct_with_na[
+	sample.int(length(choices_fct), sample.int((length(choices_fct) - 1), 1))
+] <- NA
 
 choices_lst <- as.list(letters_shuffled)
 choices_lst_with_na <- choices_lst
-NA -> choices_lst_with_na[
-	sample(
-		1:length(choices_lst),
-		sample(1:(length(choices_lst) - 1), 1)
-	)
-]
+choices_lst_with_na[
+	sample.int(length(choices_lst), sample.int((length(choices_lst) - 1), 1))
+] <- NA
 
 choices_chr <- letters_shuffled
 choices_chr_with_na <- choices_chr
-NA -> choices_chr_with_na[
-	sample(
-		1:length(choices_chr),
-		sample(1:(length(choices_chr) - 1), 1)
-	)
-]
+choices_chr_with_na[
+	sample.int(length(choices_chr), sample.int((length(choices_chr) - 1), 1))
+] <- NA
 
 choices_log <- c(TRUE, FALSE)
 choices_log_with_na <- choices_log
-NA -> choices_log_with_na[sample(1:2, 1)]
+choices_log_with_na[sample.int(2, 1)] <- NA
 
 choices_num <- 1:10
 choices_num_with_na <- choices_num
-NA -> choices_num_with_na[
-	sample(
-		1:length(choices_num),
-		sample(1:(length(choices_num) - 1), 1)
-	)
-]
+choices_num_with_na[
+	sample.int(length(choices_num), sample.int((length(choices_num) - 1), 1))
+] <- NA
 
 choices_dte <- sample(Sys.Date() + 0:9)
 choices_dte_with_na <- choices_dte
-NA -> choices_dte_with_na[
-	sample(
-		1:length(choices_dte),
-		sample(1:(length(choices_dte) - 1), 1)
-	)
-]
+choices_dte_with_na[
+	sample.int(length(choices_dte), sample.int((length(choices_dte) - 1), 1))
+] <- NA
 
 choices_psc <- sample(Sys.time() + as.difftime(0:9, units = "days"))
 choices_psc_with_na <- choices_psc
-NA -> choices_psc_with_na[
-	sample(
-		1:length(choices_psc),
-		sample(1:(length(choices_psc) - 1), 1)
-	)
-]
+choices_psc_with_na[
+	sample.int(length(choices_psc), sample.int((length(choices_psc) - 1), 1))
+] <- NA
 
 choices_psl <- sample(as.POSIXlt(Sys.time() + as.difftime(0:9, units = "days")))
 choices_psl_with_na <- choices_psl
-NA -> choices_psl_with_na[
-	sample(
-		1:length(choices_psl),
-		sample(1:(length(choices_psl) - 1), 1)
-	)
-]
+choices_psl_with_na[
+	sample.int(length(choices_psl), sample.int((length(choices_psl) - 1), 1))
+] <- NA
 
 choices_chr_na <- rep(NA_character_, 10)
 choices_cpx_na <- rep(NA_complex_, 10)
