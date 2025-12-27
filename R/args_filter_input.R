@@ -115,6 +115,38 @@ method(args_filter_input, class_POSIXt) <- function(x, ...) {
 	list(choices = x)
 }
 
+._eval_generic <- function(x, generic_name, ...) {
+	class_x_all <- class(x)
+	method_x <- NULL
+	for (class_x in class_x_all) {
+		method_x <- getS3method(generic_name, class_x, optional = TRUE)
+		if (!is.null(method_x)) {
+			break
+		}
+	}
+
+	if (is.null(method_x)) {
+		return(._eval_generic_default(x, generic_name, ...))
+	}
+
+	args_method_all <- formalArgs(method_x)
+	if ("..." %in% args_method_all) {
+		return(._eval_generic_default(x, generic_name, ...))
+	}
+
+	args_provided <- list(...)
+	args_provided_to_method <- args_provided[
+		names(args_provided) %in% args_method_all
+	]
+	args_method <- c(list(x, generic_name), args_provided_to_method)
+	names(args_method)[1:2] <- c("x", "generic_name")
+	do.call(._eval_generic_default, args_method)
+}
+
+._eval_generic_default <- function(x, generic_name, ...) {
+	get(generic_name)(x, ...)
+}
+
 # Function: args_update_filter_input ####
 #' @rdname args_filter_input
 #' @export
