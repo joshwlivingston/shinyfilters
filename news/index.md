@@ -2,6 +2,15 @@
 
 ## shinyfilters (development version)
 
+### Additions
+
+- Arguments can now be passed to
+  [`unique()`](https://rdrr.io/r/base/unique.html) and
+  [`sort()`](https://rdrr.io/r/base/sort.html) in
+  [`args_filter_input()`](https://joshwlivingston.github.io/shinyfilters/reference/args_filter_input.md)
+  for dropdown inputs
+  ([\#24](https://github.com/joshwlivingston/shinyfilters/issues/24))
+
 ### Bugfixes
 
 - Use [`anyNA()`](https://rdrr.io/r/base/NA.html) for NA checks and

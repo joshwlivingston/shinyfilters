@@ -42,6 +42,12 @@ The following arguments are supported in `...`:
 | `choices_asis` | *(character, factor, list, logical)*. Logical. If `TRUE`, the choices provided to select inputs will not be modified. If `FALSE` (the default), duplicate values will be removed and the choices will be sorted. Only applies when `x` is of class `character`, `factor`, `list`, or `logical`. |
 | `server`       | If `TRUE`, indicates that the choices will be provided server-side. In this case, arguments are not computed for `args_filter_input()`. Ignored in `args_update_filter_input()`.                                                                                                                |
 
+Remaining arguments passed to `...` are passed to
+[`unique()`](https://rdrr.io/r/base/unique.html) or
+[`sort()`](https://rdrr.io/r/base/sort.html), which are both called when
+`x` is a *character*, *factor*, or *logical*, `textbox = FALSE`, and
+`choices_asis = FALSE`.
+
 ## Examples
 
 ``` r
