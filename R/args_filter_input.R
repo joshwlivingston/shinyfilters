@@ -130,8 +130,8 @@ method(args_filter_input, class_POSIXt) <- function(x, ...) {
 	}
 
 	if (is.null(method_x)) {
-		method_x <- sprintf("%s.default", generic_name)
-		if (!is.function(get(method_x))) {
+		method_x <- get0(sprintf("%s.default", generic_name))
+		if (!is.function(method_x)) {
 			stop(sprintf(
 				"Default method for s3 generic `%s()` not found",
 				generic_name
