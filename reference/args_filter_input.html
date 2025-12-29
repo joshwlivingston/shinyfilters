@@ -79,11 +79,10 @@ by <code><a href="filterInput.html">filterInput()</a></code> or <code><a href="u
     <p>The following arguments are supported in <code>...</code>:</p><table class="table table"><tr><td><code>range</code></td><td><em>(Date, POSIXt)</em>. Logical. If <code>TRUE</code>, <code>args_filter_input()</code> will provide
 the arguments for range date inputs. Only applies when <code>x</code> is of class
 <code>Date</code> or <code>POSIXt</code>.</td></tr><tr><td><code>textbox</code></td><td><em>(character)</em>. Logical. If <code>FALSE</code> (the default), <code>args_filter_input()</code>
-will provide the arguments for select inputs.</td></tr><tr><td><code>choices_asis</code></td><td><em>(character, factor, list, logical)</em>. Logical. If <code>TRUE</code>, the choices
+will provide the arguments for select inputs.</td></tr><tr><td><code>choices_asis</code></td><td><em>(character, factor, logical)</em>. Logical. If <code>TRUE</code>, the choices
 provided to select inputs will not be modified. If <code>FALSE</code> (the default),
 duplicate values will be removed and the choices will be sorted. Only
-applies when <code>x</code> is of class <code>character</code>, <code>factor</code>, <code>list</code>, or
-<code>logical</code>.</td></tr><tr><td><code>server</code></td><td>If <code>TRUE</code>, indicates that the choices will be provided server-side. In
+applies when <code>x</code> is of class <code>character</code>, <code>factor</code>, or <code>logical</code>.</td></tr><tr><td><code>server</code></td><td>If <code>TRUE</code>, indicates that the choices will be provided server-side. In
 this case, arguments are not computed for <code>args_filter_input()</code>. Ignored
 in <code>args_update_filter_input()</code>.</td></tr></table><p>Remaining arguments passed to <code>...</code> are passed to <code><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique()</a></code> or <code><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort()</a></code>,
 which are both called when  <code>x</code> is a <em>character</em>, <em>factor</em>, or <em>logical</em>,
