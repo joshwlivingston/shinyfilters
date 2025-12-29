@@ -142,6 +142,18 @@ method(args_filter_input, class_POSIXt) <- function(x, ...) {
 	args_method_all <- formalArgs(method_x)
 
 	if (identical(method_x, sort.default) && !is.object(x)) {
+		# sort.default(), when is.object(x) is FALSE, calls `sort.int()`, using
+		# `...` to pass arguments through. `sort.int()`, however, does not accept
+		# `...` as an argument.
+		#
+		# So, when shinyfilters attempts to pass `...` to `sort.int()`, we get an
+		# invalid argument error (inputId, label, etc).
+		#
+		# The result is the need to be explicit about arguments passed to
+		# `sort.default()`.
+		#
+		# Here, we take the union of the arguments for `sort.default()` and
+		# `sort.int()`, excluding `...`.
 		args_method_all <- setdiff(
 			union(args_method_all, formalArgs(sort.int)),
 			"..."
