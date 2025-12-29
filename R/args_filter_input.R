@@ -140,7 +140,7 @@ method(args_filter_input, class_POSIXt) <- function(x, ...) {
 	}
 
 	args_method_all <- formalArgs(method_x)
-	if (identical(generic_name, "sort")) {
+	if (identical(method_x, sort.default)) {
 		args_method_all <- setdiff(
 			union(args_method_all, formalArgs(sort.int)),
 			"..."
