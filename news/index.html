@@ -47,7 +47,12 @@
 <h2 class="pkg-version" data-toc-text="development version" id="shinyfilters-development-version">shinyfilters (development version)<a class="anchor" aria-label="anchor" href="#shinyfilters-development-version"></a></h2>
 <div class="section level3">
 <h3 id="additions-development-version">Additions<a class="anchor" aria-label="anchor" href="#additions-development-version"></a></h3>
-<ul><li>Arguments can now be passed to <code><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique()</a></code> and <code><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort()</a></code> in <code><a href="../reference/args_filter_input.html">args_filter_input()</a></code> for dropdown inputs (<a href="https://github.com/joshwlivingston/shinyfilters/issues/24" class="external-link">#24</a>)</li>
+<ul><li>Added functions used internally to access argument names needed by <code><a href="../reference/filterInput.html">filterInput()</a></code> (<a href="https://github.com/joshwlivingston/shinyfilters/issues/40" class="external-link">#40</a>):
+<ul><li><code><a href="../reference/arg_name_input_generics.html">arg_name_input_id()</a></code></li>
+<li><code><a href="../reference/arg_name_input_generics.html">arg_name_input_label()</a></code></li>
+<li><code><a href="../reference/arg_name_input_generics.html">arg_name_input_value()</a></code></li>
+</ul></li>
+<li>Arguments can now be passed to <code><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique()</a></code> and <code><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort()</a></code> in <code><a href="../reference/args_filter_input.html">args_filter_input()</a></code> for dropdown inputs (<a href="https://github.com/joshwlivingston/shinyfilters/issues/24" class="external-link">#24</a>)</li>
 </ul></div>
 <div class="section level3">
 <h3 id="bugfixes-development-version">Bugfixes<a class="anchor" aria-label="anchor" href="#bugfixes-development-version"></a></h3>

@@ -4,6 +4,12 @@
 
 ### Additions
 
+- Added functions used internally to access argument names needed by
+  [`filterInput()`](https://joshwlivingston.github.io/shinyfilters/reference/filterInput.md)
+  ([\#40](https://github.com/joshwlivingston/shinyfilters/issues/40)):
+  - [`arg_name_input_id()`](https://joshwlivingston.github.io/shinyfilters/reference/arg_name_input_generics.md)
+  - [`arg_name_input_label()`](https://joshwlivingston.github.io/shinyfilters/reference/arg_name_input_generics.md)
+  - [`arg_name_input_value()`](https://joshwlivingston.github.io/shinyfilters/reference/arg_name_input_generics.md)
 - Arguments can now be passed to
   [`unique()`](https://rdrr.io/r/base/unique.html) and
   [`sort()`](https://rdrr.io/r/base/sort.html) in
