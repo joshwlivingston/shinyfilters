@@ -27,6 +27,8 @@
 NULL
 
 # Generic: arg_name_input_id ####
+#' @rdname arg_name_input_generics
+#' @export
 arg_name_input_id <- new_generic(
 	name = "arg_name_input_id",
 	dispatch_args = c("x")
@@ -52,6 +54,8 @@ method(arg_name_input_id, class_data.frame) <- function(x, ...) {
 }
 
 # Generic: arg_name_input_label ####
+#' @rdname arg_name_input_generics
+#' @export
 arg_name_input_label <- new_generic(
 	name = "arg_name_input_label",
 	dispatch_args = c("x")
@@ -77,6 +81,8 @@ method(arg_name_input_label, class_data.frame) <- function(x, ...) {
 }
 
 # Generic: arg_name_input_value ####
+#' @rdname arg_name_input_generics
+#' @export
 arg_name_input_value <- new_generic(
 	name = "arg_name_input_value",
 	dispatch_args = c("x")
