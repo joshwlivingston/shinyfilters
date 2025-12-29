@@ -133,7 +133,12 @@ method(filterInput, class_character) <- function(x, ...) {
 ## Method: data.frame ####
 method(filterInput, class_data.frame) <- function(x, ...) {
 	filter_input <- function(x, id, nm) {
-		filterInput(x = x, inputId = id, label = nm, ...)
+		arg_name_id <- arg_name_input_id(x, ...)
+		arg_name_label <- arg_name_input_label(x, ...)
+		args <- list(x, id, nm)
+		names(args) <- c("x", arg_name_id, arg_name_label)
+		args <- c(args, list(...))
+		do.call(filterInput, args)
 	}
 	do.call(
 		htmltools::tagList,
