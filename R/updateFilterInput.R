@@ -138,7 +138,7 @@ method(updateFilterInput, class_data.frame) <- function(x, input, ...) {
 			}
 
 			base_args <- list(col, nm)
-			names(base_args) <- c("x", arg_name_input_id(col))
+			names(base_args) <- c("x", arg_name_input_id(col, ...))
 
 			do.call(
 				updateFilterInput,
