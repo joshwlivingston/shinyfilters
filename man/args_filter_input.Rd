@@ -45,6 +45,9 @@ If \code{TRUE}, indicates that the choices will be provided server-side. In
 this case, arguments are not computed for \code{args_filter_input()}. Ignored
 in \code{args_update_filter_input()}. \cr
 }
+Remaining arguments passed to \code{...} are passed to \code{\link[=unique]{unique()}} or \code{\link[=sort]{sort()}},
+which are both called when  \code{x} is a \emph{character}, \emph{factor}, or \emph{logical},
+\code{textbox = FALSE}, and \code{choices_asis = FALSE}.
 }
 \examples{
 args_filter_input(iris$Petal.Length)
