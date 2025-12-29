@@ -1,6 +1,10 @@
 # shinyfilters (development version)
 
 ## Additions
+* Added functions used internally to access argument names needed by `filterInput()` ([#40](https://github.com/joshwlivingston/shinyfilters/issues/40)):
+  * `arg_name_input_id()`
+  * `arg_name_input_label()`
+  * `arg_name_input_value()`
 * Arguments can now be passed to `unique()` and `sort()` in `args_filter_input()` for dropdown inputs ([#24](https://github.com/joshwlivingston/shinyfilters/issues/24))
 
 ## Bugfixes
