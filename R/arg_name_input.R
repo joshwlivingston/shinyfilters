@@ -1,3 +1,31 @@
+# Shared Docs ####
+#' Determine Filter Input Argument Names
+#'
+#' @description
+#' Generics that determine the appropriate argument names for filter input
+#' functions based on the type of object being filtered. These generics
+#' dispatch on `x` and return the \pkg{shiny} input argument name(s) used
+#' internally by \pkg{shinyfilters}.
+#
+#' @param x The object called by [filterInput()].
+#' @param ... Additional arguments passed to methods.
+#'
+#' @return
+#' * `arg_name_input_id()`: Always returns `"inputId"`
+#' * `arg_name_input_label()`: Always returns `"label"`
+#' * `arg_name_input_value()`: Returns the appropriate argument name(s):
+#'   * character: `"selected"` (default), or `"value"` ()`textbox = TRUE`)
+#'   * Date: `"value"` (default), or `c("start", "end")` (`range = TRUE`)
+#'   * factor/list/logical: `"selected"`
+#'   * numeric: `"value"`
+#'   * POSIXt: dispatches to Date method
+#'   * data.frame: list of values for each column
+#'
+#' @keywords internal
+#'
+#' @name arg_name_input_generics
+NULL
+
 # Generic: arg_name_input_id ####
 arg_name_input_id <- new_generic(
 	name = "arg_name_input_id",
