@@ -1,5 +1,8 @@
 # shinyfilters (development version)
 
+## Additions
+* Arguments can now be passed to `unique()` and `sort()` in `args_filter_input()` for dropdown inputs ([#24](https://github.com/joshwlivingston/shinyfilters/issues/24))
+
 ## Bugfixes
 * Use `anyNA()` for NA checks and `inherits()` for class checks, per `jarl check .` (thanks @novica!)
 

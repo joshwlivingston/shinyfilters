@@ -31,6 +31,9 @@
 #'   this case, arguments are not computed for `args_filter_input()`. Ignored
 #'   in `args_update_filter_input()`. \cr
 #' }
+#' Remaining arguments passed to `...` are passed to [unique()] or [sort()],
+#' which are both called when  `x` is a *character*, *factor*, or *logical*,
+#' `textbox = FALSE`, and `choices_asis = FALSE`.
 #'
 #' @return A named list of arguments for a \pkg{shiny} input function
 #'
@@ -110,9 +113,68 @@ method(args_filter_input, class_POSIXt) <- function(x, ...) {
 		return(list(choices = ""))
 	}
 	if (!isTRUE(choices_asis)) {
-		x <- sort(unique(x))
+		x <- ._eval_generic(x, "unique", ...)
+		x <- ._eval_generic(x, "sort", ...)
 	}
 	list(choices = x)
+}
+
+._eval_generic <- function(x, generic_name, ...) {
+	class_x_all <- class(x)
+	method_x <- NULL
+	for (class_x in class_x_all) {
+		method_x <- getS3method(generic_name, class_x, optional = TRUE)
+		if (!is.null(method_x)) {
+			break
+		}
+	}
+
+	if (is.null(method_x)) {
+		method_x <- get0(sprintf("%s.default", generic_name))
+		if (!is.function(method_x)) {
+			stop(sprintf(
+				"Default method for s3 generic `%s()` not found",
+				generic_name
+			))
+		}
+	}
+
+	args_method_all <- formalArgs(method_x)
+
+	if (identical(method_x, sort.default) && !is.object(x)) {
+		# sort.default(), when is.object(x) is FALSE, calls `sort.int()`, using
+		# `...` to pass arguments through. `sort.int()`, however, does not accept
+		# `...` as an argument.
+		#
+		# So, when shinyfilters attempts to pass `...` to `sort.int()`, we get an
+		# invalid argument error (inputId, label, etc).
+		#
+		# The result is the need to be explicit about arguments passed to
+		# `sort.default()`.
+		#
+		# Here, we take the union of the arguments for `sort.default()` and
+		# `sort.int()`, excluding `...`.
+		args_method_all <- setdiff(
+			union(args_method_all, formalArgs(sort.int)),
+			"..."
+		)
+	}
+
+	if ("..." %in% args_method_all) {
+		return(._eval_generic_default(x, generic_name, ...))
+	}
+
+	args_provided <- list(...)
+	args_provided_to_method <- args_provided[
+		names(args_provided) %in% args_method_all
+	]
+	args_method <- c(list(x, generic_name), args_provided_to_method)
+	names(args_method)[1:2] <- c("x", "generic_name")
+	do.call(._eval_generic_default, args_method)
+}
+
+._eval_generic_default <- function(x, generic_name, ...) {
+	get(generic_name)(x, ...)
 }
 
 # Function: args_update_filter_input ####
