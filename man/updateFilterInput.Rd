@@ -41,6 +41,12 @@ The following arguments passed to \code{...} are supported:
 (\code{TRUE}) or \link[shiny:updateTextInput]{shiny::updateTextInput} (\code{FALSE}, default). Only applies when
 \code{textbox} is \code{TRUE}.}
 
+\item{radio}{
+\emph{(character, factor, list, logical)}. Logical. Controls whether to use
+\link[shiny:updateRadioButtons]{shiny::updateRadioButtons} (\code{TRUE}) or a dropdown input update function
+(\code{FALSE}, default). For character vectors, \code{radio} only applies if
+\code{textbox} is \code{FALSE}, the default.}
+
 \item{range}{
 \emph{(Date, POSIXt)}. Logical. Controls whether to use \link[shiny:updateDateRangeInput]{shiny::updateDateRangeInput}
 (\code{TRUE}) or \link[shiny:updateDateInput]{shiny::updateDateInput} (\code{FALSE}, default).}

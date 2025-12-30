@@ -26,6 +26,12 @@
 #'    (`TRUE`) or [shiny::updateTextInput] (`FALSE`, default). Only applies when
 #'    `textbox` is `TRUE`.}
 #'
+#'   \item{radio}{
+#'     *(character, factor, list, logical)*. Logical. Controls whether to use
+#'     [shiny::updateRadioButtons] (`TRUE`) or a dropdown input update function
+#'     (`FALSE`, default). For character vectors, `radio` only applies if
+#'     `textbox` is `FALSE`, the default.}
+#'
 #'   \item{range}{
 #'   *(Date, POSIXt)*. Logical. Controls whether to use [shiny::updateDateRangeInput]
 #'   (`TRUE`) or [shiny::updateDateInput] (`FALSE`, default).}

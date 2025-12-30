@@ -27,6 +27,12 @@
 #'    (`TRUE`) or [shiny::textInput] (`FALSE`, default). Only applies when
 #'    `textbox` is `TRUE`.}
 #'
+#'   \item{radio}{
+#'     *(character, factor, list, logical)*. Logical. Controls whether to use
+#'     [shiny::radioButtons] (`TRUE`) or a dropdown input (`FALSE`, default).
+#'     For character vectors, `radio` only applies if `textbox` is `FALSE`,
+#'     the default.}
+#'
 #'   \item{range}{
 #'   *(Date, POSIXt)*. Logical. Controls whether to use [shiny::dateRangeInput]
 #'   (`TRUE`) or [shiny::dateInput] (`FALSE`, default).}
