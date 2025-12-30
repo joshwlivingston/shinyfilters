@@ -47,11 +47,11 @@ in \code{args_update_filter_input()}. \cr
 \code{args_unique} \tab
 An optional named list of arguments passed to \code{\link[=unique]{unique()}}, called when \code{x}
 is a \emph{character}, \emph{factor}, or \emph{logical}, \code{textbox = FALSE}, and
-\code{choices_asis = FALSE}.
+\code{choices_asis = FALSE}. \cr
 
 \code{args_sort} \tab
 An optional named list of arguments passed to \code{\link[=sort]{sort()}}, which is called
-after \code{\link[=unique]{unique()}}.
+after \code{\link[=unique]{unique()}}. \cr
 }
 }
 \examples{

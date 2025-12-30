@@ -33,11 +33,11 @@
 #'   `args_unique` \tab
 #'   An optional named list of arguments passed to [unique()], called when `x`
 #'   is a *character*, *factor*, or *logical*, `textbox = FALSE`, and
-#'   `choices_asis = FALSE`.
+#'   `choices_asis = FALSE`. \cr
 #'
 #'   `args_sort` \tab
 #'   An optional named list of arguments passed to [sort()], which is called
-#'   after [unique()].
+#'   after [unique()]. \cr
 #' }
 #'
 #' @return A named list of arguments for a \pkg{shiny} input function
