@@ -10,12 +10,14 @@
   - [`arg_name_input_id()`](https://joshwlivingston.github.io/shinyfilters/reference/arg_name_input_generics.md)
   - [`arg_name_input_label()`](https://joshwlivingston.github.io/shinyfilters/reference/arg_name_input_generics.md)
   - [`arg_name_input_value()`](https://joshwlivingston.github.io/shinyfilters/reference/arg_name_input_generics.md)
-- Arguments can now be passed to
-  [`unique()`](https://rdrr.io/r/base/unique.html) and
-  [`sort()`](https://rdrr.io/r/base/sort.html) in
+- Arguments can now be passed to generics used in
   [`args_filter_input()`](https://joshwlivingston.github.io/shinyfilters/reference/args_filter_input.md)
-  for dropdown inputs
-  ([\#24](https://github.com/joshwlivingston/shinyfilters/issues/24))
+  ([\#24](https://github.com/joshwlivingston/shinyfilters/issues/24),
+  [\#56](https://github.com/joshwlivingston/shinyfilters/issues/56)):
+  - `args_unique`: pass arguments to
+    [`unique()`](https://rdrr.io/r/base/unique.html)
+  - `args_sort`: pass arguments to
+    [`sort()`](https://rdrr.io/r/base/sort.html)
 
 ### Bugfixes
 

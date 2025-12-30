@@ -41,12 +41,8 @@ The following arguments are supported in `...`:
 | `textbox`      | *(character)*. Logical. If `FALSE` (the default), `args_filter_input()` will provide the arguments for select inputs.                                                                                                                                                             |
 | `choices_asis` | *(character, factor, logical)*. Logical. If `TRUE`, the choices provided to select inputs will not be modified. If `FALSE` (the default), duplicate values will be removed and the choices will be sorted. Only applies when `x` is of class `character`, `factor`, or `logical`. |
 | `server`       | If `TRUE`, indicates that the choices will be provided server-side. In this case, arguments are not computed for `args_filter_input()`. Ignored in `args_update_filter_input()`.                                                                                                  |
-
-Remaining arguments passed to `...` are passed to
-[`unique()`](https://rdrr.io/r/base/unique.html) or
-[`sort()`](https://rdrr.io/r/base/sort.html), which are both called when
-`x` is a *character*, *factor*, or *logical*, `textbox = FALSE`, and
-`choices_asis = FALSE`.
+| `args_unique`  | An optional named list of arguments passed to [`unique()`](https://rdrr.io/r/base/unique.html), called when `x` is a *character*, *factor*, or *logical*, `textbox = FALSE`, and `choices_asis = FALSE`.                                                                          |
+| `args_sort`    | An optional named list of arguments passed to [`sort()`](https://rdrr.io/r/base/sort.html), which is called after [`unique()`](https://rdrr.io/r/base/unique.html).                                                                                                               |
 
 ## Examples
 
