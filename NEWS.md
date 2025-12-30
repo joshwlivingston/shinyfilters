@@ -5,7 +5,9 @@
   * `arg_name_input_id()`
   * `arg_name_input_label()`
   * `arg_name_input_value()`
-* Arguments can now be passed to `unique()` and `sort()` in `args_filter_input()` for dropdown inputs ([#24](https://github.com/joshwlivingston/shinyfilters/issues/24))
+* Arguments can now be passed to generics used in `args_filter_input()` ([#24](https://github.com/joshwlivingston/shinyfilters/issues/24), [#56](https://github.com/joshwlivingston/shinyfilters/issues/56)):
+  * `args_unique`: pass arguments to `unique()`
+  * `args_sort`: pass arguments to `sort()`
 
 ## Bugfixes
 * Use `anyNA()` for NA checks and `inherits()` for class checks, per `jarl check .` (thanks @novica!)
