@@ -1,4 +1,4 @@
-# Create a shiny Input
+# Update a shiny Input
 
 Updates a shiny input based the type of object `x` and other arguments.
 
