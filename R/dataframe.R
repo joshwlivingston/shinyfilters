@@ -12,7 +12,7 @@
 #'   [apply_filters()].
 #' @param ... Additional arguments passed to [updateFilterInput()].
 #'
-#' @return A reactiveValues list with a single element, `input_values`, which
+#' @returns A reactiveValues list with a single element, `input_values`, which
 #'   contains the current filter input values as a named list.
 #'
 #' @examplesIf interactive() && requireNamespace("bslib") && requireNamespace("DT")
@@ -130,7 +130,7 @@ serverFilterInput <- function(
 #'   retained.
 #' @param ... Additional arguments passed to [get_filter_logical()].
 #'
-#' @return A filtered object, or a named list of filtered objects if
+#' @returns A filtered object, or a named list of filtered objects if
 #'   `expanded = TRUE`.
 #'
 #' @examples
@@ -238,7 +238,7 @@ apply_filters <- function(
 #'      or `<` (`FALSE`) on `val[[2]]`.}
 #' }
 #'
-#' @return A logical vector indicating which elements of `x` match the filter
+#' @returns A logical vector indicating which elements of `x` match the filter
 #'   criteria specified by `val`.
 #'
 #' @examples
@@ -448,7 +448,7 @@ len <- function(x) {
 #'   names are converted to input names via [get_input_ids()].
 #' @param ... Passed onto methods.
 #'
-#' @return A named list of input values corresponding to the names in `x`.
+#' @returns A named list of input values corresponding to the names in `x`.
 #' @examplesIf interactive()
 #' library(shiny)
 #' df <- data.frame(
@@ -503,7 +503,7 @@ method(
 #' @param x An object for which to retrieve input ids; typically a data.frame.
 #' @param ... Passed onto methods.
 #'
-#' @return A character vector of input ids.
+#' @returns A character vector of input ids.
 #' @examples
 #' df <- data.frame(
 #'   name = c("Alice", "Bob"),
@@ -526,7 +526,7 @@ method(get_input_ids, class_data.frame) <- function(x) {
 #' @param x An object for which to retrieve input labels; typically a data.frame.
 #' @param ... Passed onto methods.
 #'
-#' @return A character vector of input labels
+#' @returns A character vector of input labels
 #' @examples
 #' df <- data.frame(
 #'   name = c("Alice", "Bob"),

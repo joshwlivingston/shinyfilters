@@ -10,7 +10,7 @@
 #' @param x The object called by [filterInput()].
 #' @param ... Additional arguments passed to methods.
 #'
-#' @return
+#' @returns
 #' * `arg_name_input_id()`: Always returns `"inputId"`
 #' * `arg_name_input_label()`: Always returns `"label"`
 #' * `arg_name_input_value()`: Returns the appropriate argument name(s):

@@ -60,7 +60,7 @@
 #' Remaining arguments passed to `...` are passed to the [args_filter_input()]
 #' or the selected input function.
 #'
-#' @return One of the following \pkg{shiny} inputs is returned, based on the
+#' @returns One of the following \pkg{shiny} inputs is returned, based on the
 #' type of object passed to `x`, and other specified arguments. See
 #' `vignette("filter-input-catalog")` for the full list of examples.
 #'
@@ -217,7 +217,7 @@ method(filterInput, class_POSIXt) <- function(x, ...) {
 #' @param ... Arguments passed to either [args_filter_input()] or provided
 #'   input function.
 #'
-#' @return The result of calling the provided input function.
+#' @returns The result of calling the provided input function.
 #'
 #' @examplesIf interactive()
 #' library(S7)

@@ -40,7 +40,7 @@
 #'   after [unique()].}
 #' }
 #'
-#' @return A named list of arguments for a \pkg{shiny} input function
+#' @returns A named list of arguments for a \pkg{shiny} input function
 #'
 #' @examples
 #' args_filter_input(iris$Petal.Length)
