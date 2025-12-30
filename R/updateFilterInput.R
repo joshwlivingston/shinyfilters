@@ -20,29 +20,29 @@
 #  @param tags cannot be used for these arguments without a CRAN error, since
 #  they are not named formals of the generic.
 #  ---------
-#' \tabular{ll}{
-#'   `area` \tab
+#' \describe{ll}{
+#'   \item{area}{
 #'    *(character)*. Logical. Controls whether to use  [shiny::updateTextAreaInput]
 #'    (`TRUE`) or [shiny::updateTextInput] (`FALSE`, default). Only applies when
-#'    `textbox` is `TRUE`. \cr
+#'    `textbox` is `TRUE`.}
 #'
-#'   `range` \tab
+#'   \item{range}{
 #'   *(Date, POSIXt)*. Logical. Controls whether to use [shiny::updateDateRangeInput]
-#'   (`TRUE`) or [shiny::updateDateInput] (`FALSE`, default). \cr
+#'   (`TRUE`) or [shiny::updateDateInput] (`FALSE`, default).}
 #'
-#'   `selectize` \tab
+#'   \item{selectize}{
 #'   *(character, factor, list, logical)*. Logical. Controls whether to use
 #'   [shiny::updateSelectizeInput] (`TRUE`) or [shiny::updateSelectInput]
 #'   (`FALSE`, default). For character vectors, `selectize` only applies if
-#'   `textbox` is `FALSE`, the default. \cr
+#'   `textbox` is `FALSE`, the default.}
 #'
-#'   `slider` \tab
+#'   \item{slider}{
 #'   *(numeric)*. Logical. Controls whether to use [shiny::updateSliderInput]
-#'   (`TRUE`) or [shiny::updateNumericInput] (`FALSE`, default)  . \cr
+#'   (`TRUE`) or [shiny::updateNumericInput] (`FALSE`, default).}
 #'
-#'   `textbox` \tab
+#'   \item{textbox}{
 #'   *(character)*. Logical. Controls whether to update a text input
-#'   (`TRUE`) or a dropdown input (`FALSE`, default). \cr
+#'   (`TRUE`) or a dropdown input (`FALSE`, default).}
 #'
 #' }
 #'

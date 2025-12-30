@@ -35,29 +35,29 @@ Updates a \pkg{shiny} input based the type of object \code{x} and other argument
 }
 \details{
 The following arguments passed to \code{...} are supported:
-\tabular{ll}{
-\code{area} \tab
+\describe{ll}{
+\item{area}{
 \emph{(character)}. Logical. Controls whether to use  \link[shiny:updateTextAreaInput]{shiny::updateTextAreaInput}
 (\code{TRUE}) or \link[shiny:updateTextInput]{shiny::updateTextInput} (\code{FALSE}, default). Only applies when
-\code{textbox} is \code{TRUE}. \cr
+\code{textbox} is \code{TRUE}.}
 
-\code{range} \tab
+\item{range}{
 \emph{(Date, POSIXt)}. Logical. Controls whether to use \link[shiny:updateDateRangeInput]{shiny::updateDateRangeInput}
-(\code{TRUE}) or \link[shiny:updateDateInput]{shiny::updateDateInput} (\code{FALSE}, default). \cr
+(\code{TRUE}) or \link[shiny:updateDateInput]{shiny::updateDateInput} (\code{FALSE}, default).}
 
-\code{selectize} \tab
+\item{selectize}{
 \emph{(character, factor, list, logical)}. Logical. Controls whether to use
 \link[shiny:updateSelectInput]{shiny::updateSelectizeInput} (\code{TRUE}) or \link[shiny:updateSelectInput]{shiny::updateSelectInput}
 (\code{FALSE}, default). For character vectors, \code{selectize} only applies if
-\code{textbox} is \code{FALSE}, the default. \cr
+\code{textbox} is \code{FALSE}, the default.}
 
-\code{slider} \tab
+\item{slider}{
 \emph{(numeric)}. Logical. Controls whether to use \link[shiny:updateSliderInput]{shiny::updateSliderInput}
-(\code{TRUE}) or \link[shiny:updateNumericInput]{shiny::updateNumericInput} (\code{FALSE}, default)  . \cr
+(\code{TRUE}) or \link[shiny:updateNumericInput]{shiny::updateNumericInput} (\code{FALSE}, default).}
 
-\code{textbox} \tab
+\item{textbox}{
 \emph{(character)}. Logical. Controls whether to update a text input
-(\code{TRUE}) or a dropdown input (\code{FALSE}, default). \cr
+(\code{TRUE}) or a dropdown input (\code{FALSE}, default).}
 
 }
 

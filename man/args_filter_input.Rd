@@ -23,35 +23,35 @@ by \code{\link[=filterInput]{filterInput()}} or \code{\link[=updateFilterInput]{
 }
 \details{
 The following arguments are supported in \code{...}:
-\tabular{ll}{
-\code{range} \tab
+\describe{
+\item{range}{
 \emph{(Date, POSIXt)}. Logical. If \code{TRUE}, \code{args_filter_input()} will provide
 the arguments for range date inputs. Only applies when \code{x} is of class
-\code{Date} or \code{POSIXt}. \cr
+\code{Date} or \code{POSIXt}.}
 
-\code{textbox} \tab
+\item{textbox}{
 \emph{(character)}. Logical. If \code{FALSE} (the default), \code{args_filter_input()}
-will provide the arguments for select inputs. \cr
+will provide the arguments for select inputs.}
 
-\code{choices_asis} \tab
+\item{choices_asis}{
 \emph{(character, factor, logical)}. Logical. If \code{TRUE}, the choices
 provided to select inputs will not be modified. If \code{FALSE} (the default),
 duplicate values will be removed and the choices will be sorted. Only
-applies when \code{x} is of class \code{character}, \code{factor}, or \code{logical}. \cr
+applies when \code{x} is of class \code{character}, \code{factor}, or \code{logical}.}
 
-\code{server} \tab
+\item{server}{
 If \code{TRUE}, indicates that the choices will be provided server-side. In
 this case, arguments are not computed for \code{args_filter_input()}. Ignored
-in \code{args_update_filter_input()}. \cr
+in \code{args_update_filter_input()}.}
 
-\code{args_unique} \tab
+\item{args_unique}{
 An optional named list of arguments passed to \code{\link[=unique]{unique()}}, called when \code{x}
 is a \emph{character}, \emph{factor}, or \emph{logical}, \code{textbox = FALSE}, and
-\code{choices_asis = FALSE}. \cr
+\code{choices_asis = FALSE}.}
 
-\code{args_sort} \tab
+\item{args_sort}{
 An optional named list of arguments passed to \code{\link[=sort]{sort()}}, which is called
-after \code{\link[=unique]{unique()}}. \cr
+after \code{\link[=unique]{unique()}}.}
 }
 }
 \examples{

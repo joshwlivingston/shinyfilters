@@ -9,35 +9,35 @@
 #'
 #' @details
 #' The following arguments are supported in `...`:
-#' \tabular{ll}{
-#'   `range` \tab
+#' \describe{
+#'   \item{range}{
 #'   *(Date, POSIXt)*. Logical. If `TRUE`, `args_filter_input()` will provide
 #'   the arguments for range date inputs. Only applies when `x` is of class
-#'   `Date` or `POSIXt`. \cr
+#'   `Date` or `POSIXt`.}
 #'
-#'   `textbox` \tab
+#'   \item{textbox}{
 #'   *(character)*. Logical. If `FALSE` (the default), `args_filter_input()`
-#'   will provide the arguments for select inputs. \cr
+#'   will provide the arguments for select inputs.}
 #'
-#'   `choices_asis` \tab
+#'   \item{choices_asis}{
 #'   *(character, factor, logical)*. Logical. If `TRUE`, the choices
 #'   provided to select inputs will not be modified. If `FALSE` (the default),
 #'   duplicate values will be removed and the choices will be sorted. Only
-#'   applies when `x` is of class `character`, `factor`, or `logical`. \cr
+#'   applies when `x` is of class `character`, `factor`, or `logical`.}
 #'
-#'   `server` \tab
+#'   \item{server}{
 #'   If `TRUE`, indicates that the choices will be provided server-side. In
 #'   this case, arguments are not computed for `args_filter_input()`. Ignored
-#'   in `args_update_filter_input()`. \cr
+#'   in `args_update_filter_input()`.}
 #'
-#'   `args_unique` \tab
+#'   \item{args_unique}{
 #'   An optional named list of arguments passed to [unique()], called when `x`
 #'   is a *character*, *factor*, or *logical*, `textbox = FALSE`, and
-#'   `choices_asis = FALSE`. \cr
+#'   `choices_asis = FALSE`.}
 #'
-#'   `args_sort` \tab
+#'   \item{args_sort}{
 #'   An optional named list of arguments passed to [sort()], which is called
-#'   after [unique()]. \cr
+#'   after [unique()].}
 #' }
 #'
 #' @return A named list of arguments for a \pkg{shiny} input function

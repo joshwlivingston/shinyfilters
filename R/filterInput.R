@@ -21,33 +21,33 @@
 #  @param tags cannot be used for these arguments without a CRAN error, since
 #  they are not named formals of the generic.
 #  ---------
-#' \tabular{ll}{
-#'   `area` \tab
+#' \describe{
+#'   \item{area}{
 #'    *(character)*. Logical. Controls whether to use  [shiny::textAreaInput]
 #'    (`TRUE`) or [shiny::textInput] (`FALSE`, default). Only applies when
-#'    `textbox` is `TRUE`. \cr
+#'    `textbox` is `TRUE`.}
 #'
-#'   `range` \tab
+#'   \item{range}{
 #'   *(Date, POSIXt)*. Logical. Controls whether to use [shiny::dateRangeInput]
-#'   (`TRUE`) or [shiny::dateInput] (`FALSE`, default). \cr
+#'   (`TRUE`) or [shiny::dateInput] (`FALSE`, default).}
 #'
-#'   `selectize` \tab
+#'   \item{selectize}{
 #'   *(character, factor, list, logical)*. Logical. Controls whether to use
 #'   [shiny::selectizeInput] (`TRUE`) or [shiny::selectInput]
 #'   (`FALSE`, default). For character vectors, `selectize` only applies if
-#'   `textbox` is `FALSE`, the default. \cr
+#'   `textbox` is `FALSE`, the default.}
 #'
-#'   `slider` \tab
+#'   \item{slider}{
 #'   *(numeric)*. Logical. Controls whether to use [shiny::sliderInput]
-#'   (`TRUE`) or [shiny::numericInput] (`FALSE`, default)  . \cr
+#'   (`TRUE`) or [shiny::numericInput] (`FALSE`, default).}
 #'
-#'   `textbox` \tab
+#'   \item{textbox}{
 #'   *(character)*. Logical. Controls whether to use a text input
-#'   (`TRUE`) or a dropdown input (`FALSE`, default). \cr
+#'   (`TRUE`) or a dropdown input (`FALSE`, default).}
 #'
-#'   `ns` \tab
+#'   \item{ns}{
 #'   An optional namespace created by [shiny::NS()]. Useful when using
-#'   `filterInput()` on a data.frame inside a \pkg{shiny} module.
+#'   `filterInput()` on a data.frame inside a \pkg{shiny} module.}
 #'
 #' }
 #'

@@ -24,18 +24,18 @@ criteria specified by \code{val}.
 \details{
 The following arguments are supported in \code{...}:
 
-\tabular{ll}{
-\code{column} \tab When \code{x} is a data.frame, \code{column} is the name of the
-column intended to be filtered. \cr
-\code{comparison} \tab When \code{x} is a numeric or Date and \code{val} is a
+\describe{
+\item{column}{When \code{x} is a data.frame, \code{column} is the name of the
+column intended to be filtered.}
+\item{comparison}{When \code{x} is a numeric or Date and \code{val} is a
 length-\strong{one} numeric or Date, \code{comparison} is the function used to
-compare \code{x} with \code{val}. The default is \code{<=}. \cr
-\code{gte} \tab When \code{x} is a numeric or Date and \code{val} is a length-\strong{two}
+compare \code{x} with \code{val}. The default is \code{<=}.}
+\item{gte}{When \code{x} is a numeric or Date and \code{val} is a length-\strong{two}
 numeric or Date, \code{gte} controls whether to use \code{>=} (\code{TRUE}, default)
-or \code{>} (\code{FALSE}) on \code{val[[1]]}. \cr
-\code{lte} \tab When \code{x} is a numeric or Date and \code{val} is a length-\strong{two}
+or \code{>} (\code{FALSE}) on \code{val[[1]]}.}
+\item{lte}{When \code{x} is a numeric or Date and \code{val} is a length-\strong{two}
 numeric or Date, \code{lte} controls whether to use \code{<=} (\code{TRUE}, default)
-or \code{<} (\code{FALSE}) on \code{val[[2]]} \cr
+or \code{<} (\code{FALSE}) on \code{val[[2]]}.}
 }
 }
 \examples{
