@@ -16,8 +16,7 @@ BugReports: https://github.com/joshwlivingston/shinyfilters/issues
 Imports:
     methods,
     S7 (>= 0.2.0),
-    shiny,
-    utils
+    shiny
 Suggests:
     bslib,
     DT,

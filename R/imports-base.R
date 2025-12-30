@@ -5,7 +5,4 @@
 # methods ####
 #' @importFrom methods formalArgs
 #' @importFrom methods functionBody
-
-# utils ####
-#' @importFrom utils getS3method
 NULL
