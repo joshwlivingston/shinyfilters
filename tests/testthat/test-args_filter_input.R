@@ -112,7 +112,10 @@ test_that("args_filter_input() respects choices_asis = TRUE prevents sorting", {
 })
 
 test_that("args_filter_input() passes decreasing to sort for character", {
-	result <- args_filter_input(choices_chr_with_na, decreasing = TRUE)
+	result <- args_filter_input(
+		choices_chr_with_na,
+		args_sort = list(decreasing = TRUE)
+	)
 	expected <- list(
 		choices = unique(sort(choices_chr_with_na, decreasing = TRUE))
 	)
@@ -120,7 +123,10 @@ test_that("args_filter_input() passes decreasing to sort for character", {
 })
 
 test_that("args_filter_input() passes decreasing to sort for factor", {
-	result <- args_filter_input(choices_fct_with_na, decreasing = TRUE)
+	result <- args_filter_input(
+		choices_fct_with_na,
+		args_sort = list(decreasing = TRUE)
+	)
 	expected <- list(
 		choices = unique(sort(choices_fct_with_na, decreasing = TRUE))
 	)
@@ -128,13 +134,19 @@ test_that("args_filter_input() passes decreasing to sort for factor", {
 })
 
 test_that("args_filter_input() passes na.last to sort for character with NA", {
-	result <- args_filter_input(choices_chr_with_na, na.last = TRUE)
+	result <- args_filter_input(
+		choices_chr_with_na,
+		args_sort = list(na.last = TRUE)
+	)
 	expected <- list(choices = unique(sort(choices_chr_with_na, na.last = TRUE)))
 	expect_identical(result, expected)
 })
 
 test_that("args_filter_input() passes na.last to sort for factor with NA", {
-	result <- args_filter_input(choices_fct_with_na, na.last = FALSE)
+	result <- args_filter_input(
+		choices_fct_with_na,
+		args_sort = list(na.last = FALSE)
+	)
 	expected <- list(choices = unique(sort(choices_fct_with_na, na.last = FALSE)))
 	expect_identical(result, expected)
 })
@@ -142,8 +154,10 @@ test_that("args_filter_input() passes na.last to sort for factor with NA", {
 test_that("args_filter_input() passes multiple sort args for character with NA", {
 	result <- args_filter_input(
 		choices_chr_with_na,
-		decreasing = TRUE,
-		na.last = FALSE
+		args_sort = list(
+			decreasing = TRUE,
+			na.last = FALSE
+		)
 	)
 	expected <- list(
 		choices = unique(sort(

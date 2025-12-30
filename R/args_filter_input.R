@@ -106,16 +106,39 @@ method(args_filter_input, class_POSIXt) <- function(x, ...) {
 }
 
 # Function: ._discrete_choice_inputs ####
-._discrete_choice_inputs <- function(x, choices_asis, ...) {
+._discrete_choice_inputs <- function(
+	x,
+	choices_asis,
+	args_unique = NULL,
+	args_sort = NULL,
+	...
+) {
+	check_supplied_arguments(args_unique)
+	check_supplied_arguments(args_sort)
 	args <- list(...)
 	if (isTRUE(args$server)) {
 		return(list(choices = ""))
 	}
 	if (!isTRUE(choices_asis)) {
-		x <- ._eval_generic(x, "unique", ...)
-		x <- ._eval_generic(x, "sort", ...)
+		x <- do.call(unique, c(list(x = x), args_unique))
+		x <- do.call(sort, c(list(x = x), args_sort))
 	}
 	list(choices = x)
+}
+
+check_supplied_arguments <- function(args) {
+	if (is.null(args) || identical(args, list())) {
+		return(invisible())
+	}
+	if (!is.list(args)) {
+		stop("Supplied arguments must be a list.")
+	}
+	if (any(names(args) == "")) {
+		stop("All supplied arguments must be named.")
+	}
+	if (!identical(names(args), unique(names(args)))) {
+		stop("All argument names must be unique.")
+	}
 }
 
 ._eval_generic <- function(x, generic_name, ...) {
