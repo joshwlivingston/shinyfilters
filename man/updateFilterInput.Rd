@@ -35,7 +35,7 @@ Updates a \pkg{shiny} input based the type of object \code{x} and other argument
 }
 \details{
 The following arguments passed to \code{...} are supported:
-\describe{ll}{
+\describe{
 \item{area}{
 \emph{(character)}. Logical. Controls whether to use  \link[shiny:updateTextAreaInput]{shiny::updateTextAreaInput}
 (\code{TRUE}) or \link[shiny:updateTextInput]{shiny::updateTextInput} (\code{FALSE}, default). Only applies when

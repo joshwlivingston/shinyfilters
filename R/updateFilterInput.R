@@ -20,7 +20,7 @@
 #  @param tags cannot be used for these arguments without a CRAN error, since
 #  they are not named formals of the generic.
 #  ---------
-#' \describe{ll}{
+#' \describe{
 #'   \item{area}{
 #'    *(character)*. Logical. Controls whether to use  [shiny::updateTextAreaInput]
 #'    (`TRUE`) or [shiny::updateTextInput] (`FALSE`, default). Only applies when
