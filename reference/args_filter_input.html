@@ -76,18 +76,42 @@ by <code><a href="filterInput.html">filterInput()</a></code> or <code><a href="u
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>The following arguments are supported in <code>...</code>:</p><table class="table table"><tr><td><code>range</code></td><td><em>(Date, POSIXt)</em>. Logical. If <code>TRUE</code>, <code>args_filter_input()</code> will provide
+    <p>The following arguments are supported in <code>...</code>:</p><dl><dt>range</dt>
+<dd><p><em>(Date, POSIXt)</em>. Logical. If <code>TRUE</code>, <code>args_filter_input()</code> will provide
 the arguments for range date inputs. Only applies when <code>x</code> is of class
-<code>Date</code> or <code>POSIXt</code>.</td></tr><tr><td><code>textbox</code></td><td><em>(character)</em>. Logical. If <code>FALSE</code> (the default), <code>args_filter_input()</code>
-will provide the arguments for select inputs.</td></tr><tr><td><code>choices_asis</code></td><td><em>(character, factor, logical)</em>. Logical. If <code>TRUE</code>, the choices
+<code>Date</code> or <code>POSIXt</code>.</p></dd>
+
+
+<dt>textbox</dt>
+<dd><p><em>(character)</em>. Logical. If <code>FALSE</code> (the default), <code>args_filter_input()</code>
+will provide the arguments for select inputs.</p></dd>
+
+
+<dt>choices_asis</dt>
+<dd><p><em>(character, factor, logical)</em>. Logical. If <code>TRUE</code>, the choices
 provided to select inputs will not be modified. If <code>FALSE</code> (the default),
 duplicate values will be removed and the choices will be sorted. Only
-applies when <code>x</code> is of class <code>character</code>, <code>factor</code>, or <code>logical</code>.</td></tr><tr><td><code>server</code></td><td>If <code>TRUE</code>, indicates that the choices will be provided server-side. In
+applies when <code>x</code> is of class <code>character</code>, <code>factor</code>, or <code>logical</code>.</p></dd>
+
+
+<dt>server</dt>
+<dd><p>If <code>TRUE</code>, indicates that the choices will be provided server-side. In
 this case, arguments are not computed for <code>args_filter_input()</code>. Ignored
-in <code>args_update_filter_input()</code>.</td></tr><tr><td><code>args_unique</code></td><td>An optional named list of arguments passed to <code><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique()</a></code>, called when <code>x</code>
+in <code>args_update_filter_input()</code>.</p></dd>
+
+
+<dt>args_unique</dt>
+<dd><p>An optional named list of arguments passed to <code><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique()</a></code>, called when <code>x</code>
 is a <em>character</em>, <em>factor</em>, or <em>logical</em>, <code>textbox = FALSE</code>, and
-<code>choices_asis = FALSE</code>.</td></tr><tr><td><code>args_sort</code></td><td>An optional named list of arguments passed to <code><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort()</a></code>, which is called
-after <code><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique()</a></code>.</td></tr></table></div>
+<code>choices_asis = FALSE</code>.</p></dd>
+
+
+<dt>args_sort</dt>
+<dd><p>An optional named list of arguments passed to <code><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort()</a></code>, which is called
+after <code><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique()</a></code>.</p></dd>
+
+
+</dl></div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>

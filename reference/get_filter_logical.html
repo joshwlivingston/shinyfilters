@@ -80,14 +80,27 @@ criteria specified by <code>val</code>.</p>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>The following arguments are supported in <code>...</code>:</p>
-<table class="table table"><tr><td><code>column</code></td><td>When <code>x</code> is a data.frame, <code>column</code> is the name of the
-column intended to be filtered.</td></tr><tr><td><code>comparison</code></td><td>When <code>x</code> is a numeric or Date and <code>val</code> is a
+<dl><dt>column</dt>
+<dd><p>When <code>x</code> is a data.frame, <code>column</code> is the name of the
+column intended to be filtered.</p></dd>
+
+<dt>comparison</dt>
+<dd><p>When <code>x</code> is a numeric or Date and <code>val</code> is a
 length-<strong>one</strong> numeric or Date, <code>comparison</code> is the function used to
-compare <code>x</code> with <code>val</code>. The default is <code>&lt;=</code>.</td></tr><tr><td><code>gte</code></td><td>When <code>x</code> is a numeric or Date and <code>val</code> is a length-<strong>two</strong>
+compare <code>x</code> with <code>val</code>. The default is <code>&lt;=</code>.</p></dd>
+
+<dt>gte</dt>
+<dd><p>When <code>x</code> is a numeric or Date and <code>val</code> is a length-<strong>two</strong>
 numeric or Date, <code>gte</code> controls whether to use <code>&gt;=</code> (<code>TRUE</code>, default)
-or <code>&gt;</code> (<code>FALSE</code>) on <code>val[[1]]</code>.</td></tr><tr><td><code>lte</code></td><td>When <code>x</code> is a numeric or Date and <code>val</code> is a length-<strong>two</strong>
+or <code>&gt;</code> (<code>FALSE</code>) on <code>val[[1]]</code>.</p></dd>
+
+<dt>lte</dt>
+<dd><p>When <code>x</code> is a numeric or Date and <code>val</code> is a length-<strong>two</strong>
 numeric or Date, <code>lte</code> controls whether to use <code>&lt;=</code> (<code>TRUE</code>, default)
-or <code>&lt;</code> (<code>FALSE</code>) on <code>val[[2]]</code></td></tr></table></div>
+or <code>&lt;</code> (<code>FALSE</code>) on <code>val[[2]]</code>.</p></dd>
+
+
+</dl></div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>

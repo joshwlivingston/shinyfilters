@@ -73,15 +73,43 @@ based on the type of object passed to <code>x</code>, and other specified argume
 <table class="table table"><tr><td><strong>Value</strong></td><td><strong><code>x</code></strong></td><td><strong>Arguments</strong></td></tr><tr><td><a href="https://rdrr.io/pkg/shiny/man/updateDateInput.html" class="external-link">shiny::updateDateInput</a></td><td>Date, POSIXt</td><td><em>default</em></td></tr><tr><td><a href="https://rdrr.io/pkg/shiny/man/updateDateRangeInput.html" class="external-link">shiny::updateDateRangeInput</a></td><td>Date, POSIXt</td><td><code>range = TRUE</code></td></tr><tr><td><a href="https://rdrr.io/pkg/shiny/man/updateNumericInput.html" class="external-link">shiny::updateNumericInput</a></td><td>numeric</td><td><em>default</em></td></tr><tr><td><a href="https://rdrr.io/pkg/shiny/man/updateRadioButtons.html" class="external-link">shiny::updateRadioButtons</a></td><td>character, factor, list, logical</td><td><code>radio = TRUE</code></td></tr><tr><td><a href="https://rdrr.io/pkg/shiny/man/updateSelectInput.html" class="external-link">shiny::updateSelectInput</a></td><td>character, factor, list, logical</td><td><em>default</em></td></tr><tr><td><a href="https://rdrr.io/pkg/shiny/man/updateSelectInput.html" class="external-link">shiny::updateSelectizeInput</a></td><td>character, factor, list, logical</td><td><code>selectize = TRUE</code></td></tr><tr><td><a href="https://rdrr.io/pkg/shiny/man/updateSliderInput.html" class="external-link">shiny::updateSliderInput</a></td><td>numeric</td><td><code>slider = TRUE</code></td></tr><tr><td><a href="https://rdrr.io/pkg/shiny/man/updateTextAreaInput.html" class="external-link">shiny::updateTextAreaInput</a></td><td>character</td><td><code>textbox = TRUE</code>, <code>area = TRUE</code></td></tr><tr><td><a href="https://rdrr.io/pkg/shiny/man/updateTextInput.html" class="external-link">shiny::updateTextInput</a></td><td>character</td><td><code>textbox = TRUE</code></td></tr></table></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>The following arguments passed to <code>...</code> are supported:</p><table class="table table"><tr><td><code>area</code></td><td><em>(character)</em>. Logical. Controls whether to use  <a href="https://rdrr.io/pkg/shiny/man/updateTextAreaInput.html" class="external-link">shiny::updateTextAreaInput</a>
+    <p>The following arguments passed to <code>...</code> are supported:</p><dl><dt>area</dt>
+<dd><p><em>(character)</em>. Logical. Controls whether to use  <a href="https://rdrr.io/pkg/shiny/man/updateTextAreaInput.html" class="external-link">shiny::updateTextAreaInput</a>
 (<code>TRUE</code>) or <a href="https://rdrr.io/pkg/shiny/man/updateTextInput.html" class="external-link">shiny::updateTextInput</a> (<code>FALSE</code>, default). Only applies when
-<code>textbox</code> is <code>TRUE</code>.</td></tr><tr><td><code>range</code></td><td><em>(Date, POSIXt)</em>. Logical. Controls whether to use <a href="https://rdrr.io/pkg/shiny/man/updateDateRangeInput.html" class="external-link">shiny::updateDateRangeInput</a>
-(<code>TRUE</code>) or <a href="https://rdrr.io/pkg/shiny/man/updateDateInput.html" class="external-link">shiny::updateDateInput</a> (<code>FALSE</code>, default).</td></tr><tr><td><code>selectize</code></td><td><em>(character, factor, list, logical)</em>. Logical. Controls whether to use
+<code>textbox</code> is <code>TRUE</code>.</p></dd>
+
+
+<dt>radio</dt>
+<dd><p><em>(character, factor, list, logical)</em>. Logical. Controls whether to use
+<a href="https://rdrr.io/pkg/shiny/man/updateRadioButtons.html" class="external-link">shiny::updateRadioButtons</a> (<code>TRUE</code>) or a dropdown input update function
+(<code>FALSE</code>, default). For character vectors, <code>radio</code> only applies if
+<code>textbox</code> is <code>FALSE</code>, the default.</p></dd>
+
+
+<dt>range</dt>
+<dd><p><em>(Date, POSIXt)</em>. Logical. Controls whether to use <a href="https://rdrr.io/pkg/shiny/man/updateDateRangeInput.html" class="external-link">shiny::updateDateRangeInput</a>
+(<code>TRUE</code>) or <a href="https://rdrr.io/pkg/shiny/man/updateDateInput.html" class="external-link">shiny::updateDateInput</a> (<code>FALSE</code>, default).</p></dd>
+
+
+<dt>selectize</dt>
+<dd><p><em>(character, factor, list, logical)</em>. Logical. Controls whether to use
 <a href="https://rdrr.io/pkg/shiny/man/updateSelectInput.html" class="external-link">shiny::updateSelectizeInput</a> (<code>TRUE</code>) or <a href="https://rdrr.io/pkg/shiny/man/updateSelectInput.html" class="external-link">shiny::updateSelectInput</a>
 (<code>FALSE</code>, default). For character vectors, <code>selectize</code> only applies if
-<code>textbox</code> is <code>FALSE</code>, the default.</td></tr><tr><td><code>slider</code></td><td><em>(numeric)</em>. Logical. Controls whether to use <a href="https://rdrr.io/pkg/shiny/man/updateSliderInput.html" class="external-link">shiny::updateSliderInput</a>
-(<code>TRUE</code>) or <a href="https://rdrr.io/pkg/shiny/man/updateNumericInput.html" class="external-link">shiny::updateNumericInput</a> (<code>FALSE</code>, default)  .</td></tr><tr><td><code>textbox</code></td><td><em>(character)</em>. Logical. Controls whether to update a text input
-(<code>TRUE</code>) or a dropdown input (<code>FALSE</code>, default).</td></tr></table><p>Remaining arguments passed to <code>...</code> are passed to
+<code>textbox</code> is <code>FALSE</code>, the default.</p></dd>
+
+
+<dt>slider</dt>
+<dd><p><em>(numeric)</em>. Logical. Controls whether to use <a href="https://rdrr.io/pkg/shiny/man/updateSliderInput.html" class="external-link">shiny::updateSliderInput</a>
+(<code>TRUE</code>) or <a href="https://rdrr.io/pkg/shiny/man/updateNumericInput.html" class="external-link">shiny::updateNumericInput</a> (<code>FALSE</code>, default).</p></dd>
+
+
+<dt>textbox</dt>
+<dd><p><em>(character)</em>. Logical. Controls whether to update a text input
+(<code>TRUE</code>) or a dropdown input (<code>FALSE</code>, default).</p></dd>
+
+
+
+</dl><p>Remaining arguments passed to <code>...</code> are passed to
 <code><a href="args_filter_input.html">args_update_filter_input()</a></code> or the selected input update function.</p>
     </div>
 

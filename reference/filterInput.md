@@ -44,14 +44,56 @@ for the full list of examples.
 
 The following arguments passed to `...` are supported:
 
-|             |                                                                                                                                                                                                                                                                                                                                           |
-|-------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `area`      | *(character)*. Logical. Controls whether to use [shiny::textAreaInput](https://rdrr.io/pkg/shiny/man/textAreaInput.html) (`TRUE`) or [shiny::textInput](https://rdrr.io/pkg/shiny/man/textInput.html) (`FALSE`, default). Only applies when `textbox` is `TRUE`.                                                                          |
-| `range`     | *(Date, POSIXt)*. Logical. Controls whether to use [shiny::dateRangeInput](https://rdrr.io/pkg/shiny/man/dateRangeInput.html) (`TRUE`) or [shiny::dateInput](https://rdrr.io/pkg/shiny/man/dateInput.html) (`FALSE`, default).                                                                                                            |
-| `selectize` | *(character, factor, list, logical)*. Logical. Controls whether to use [shiny::selectizeInput](https://rdrr.io/pkg/shiny/man/selectInput.html) (`TRUE`) or [shiny::selectInput](https://rdrr.io/pkg/shiny/man/selectInput.html) (`FALSE`, default). For character vectors, `selectize` only applies if `textbox` is `FALSE`, the default. |
-| `slider`    | *(numeric)*. Logical. Controls whether to use [shiny::sliderInput](https://rdrr.io/pkg/shiny/man/sliderInput.html) (`TRUE`) or [shiny::numericInput](https://rdrr.io/pkg/shiny/man/numericInput.html) (`FALSE`, default) .                                                                                                                |
-| `textbox`   | *(character)*. Logical. Controls whether to use a text input (`TRUE`) or a dropdown input (`FALSE`, default).                                                                                                                                                                                                                             |
-| `ns`        | An optional namespace created by [`shiny::NS()`](https://rdrr.io/pkg/shiny/man/NS.html). Useful when using `filterInput()` on a data.frame inside a shiny module.                                                                                                                                                                         |
+- area:
+
+  *(character)*. Logical. Controls whether to use
+  [shiny::textAreaInput](https://rdrr.io/pkg/shiny/man/textAreaInput.html)
+  (`TRUE`) or
+  [shiny::textInput](https://rdrr.io/pkg/shiny/man/textInput.html)
+  (`FALSE`, default). Only applies when `textbox` is `TRUE`.
+
+- radio:
+
+  *(character, factor, list, logical)*. Logical. Controls whether to use
+  [shiny::radioButtons](https://rdrr.io/pkg/shiny/man/radioButtons.html)
+  (`TRUE`) or a dropdown input (`FALSE`, default). For character
+  vectors, `radio` only applies if `textbox` is `FALSE`, the default.
+
+- range:
+
+  *(Date, POSIXt)*. Logical. Controls whether to use
+  [shiny::dateRangeInput](https://rdrr.io/pkg/shiny/man/dateRangeInput.html)
+  (`TRUE`) or
+  [shiny::dateInput](https://rdrr.io/pkg/shiny/man/dateInput.html)
+  (`FALSE`, default).
+
+- selectize:
+
+  *(character, factor, list, logical)*. Logical. Controls whether to use
+  [shiny::selectizeInput](https://rdrr.io/pkg/shiny/man/selectInput.html)
+  (`TRUE`) or
+  [shiny::selectInput](https://rdrr.io/pkg/shiny/man/selectInput.html)
+  (`FALSE`, default). For character vectors, `selectize` only applies if
+  `textbox` is `FALSE`, the default.
+
+- slider:
+
+  *(numeric)*. Logical. Controls whether to use
+  [shiny::sliderInput](https://rdrr.io/pkg/shiny/man/sliderInput.html)
+  (`TRUE`) or
+  [shiny::numericInput](https://rdrr.io/pkg/shiny/man/numericInput.html)
+  (`FALSE`, default).
+
+- textbox:
+
+  *(character)*. Logical. Controls whether to use a text input (`TRUE`)
+  or a dropdown input (`FALSE`, default).
+
+- ns:
+
+  An optional namespace created by
+  [`shiny::NS()`](https://rdrr.io/pkg/shiny/man/NS.html). Useful when
+  using `filterInput()` on a data.frame inside a shiny module.
 
 Remaining arguments passed to `...` are passed to the
 [`args_filter_input()`](https://joshwlivingston.github.io/shinyfilters/reference/args_filter_input.md)

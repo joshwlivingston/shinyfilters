@@ -41,13 +41,51 @@ the type of object passed to `x`, and other specified arguments.
 
 The following arguments passed to `...` are supported:
 
-|             |                                                                                                                                                                                                                                                                                                                                                                   |
-|-------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `area`      | *(character)*. Logical. Controls whether to use [shiny::updateTextAreaInput](https://rdrr.io/pkg/shiny/man/updateTextAreaInput.html) (`TRUE`) or [shiny::updateTextInput](https://rdrr.io/pkg/shiny/man/updateTextInput.html) (`FALSE`, default). Only applies when `textbox` is `TRUE`.                                                                          |
-| `range`     | *(Date, POSIXt)*. Logical. Controls whether to use [shiny::updateDateRangeInput](https://rdrr.io/pkg/shiny/man/updateDateRangeInput.html) (`TRUE`) or [shiny::updateDateInput](https://rdrr.io/pkg/shiny/man/updateDateInput.html) (`FALSE`, default).                                                                                                            |
-| `selectize` | *(character, factor, list, logical)*. Logical. Controls whether to use [shiny::updateSelectizeInput](https://rdrr.io/pkg/shiny/man/updateSelectInput.html) (`TRUE`) or [shiny::updateSelectInput](https://rdrr.io/pkg/shiny/man/updateSelectInput.html) (`FALSE`, default). For character vectors, `selectize` only applies if `textbox` is `FALSE`, the default. |
-| `slider`    | *(numeric)*. Logical. Controls whether to use [shiny::updateSliderInput](https://rdrr.io/pkg/shiny/man/updateSliderInput.html) (`TRUE`) or [shiny::updateNumericInput](https://rdrr.io/pkg/shiny/man/updateNumericInput.html) (`FALSE`, default) .                                                                                                                |
-| `textbox`   | *(character)*. Logical. Controls whether to update a text input (`TRUE`) or a dropdown input (`FALSE`, default).                                                                                                                                                                                                                                                  |
+- area:
+
+  *(character)*. Logical. Controls whether to use
+  [shiny::updateTextAreaInput](https://rdrr.io/pkg/shiny/man/updateTextAreaInput.html)
+  (`TRUE`) or
+  [shiny::updateTextInput](https://rdrr.io/pkg/shiny/man/updateTextInput.html)
+  (`FALSE`, default). Only applies when `textbox` is `TRUE`.
+
+- radio:
+
+  *(character, factor, list, logical)*. Logical. Controls whether to use
+  [shiny::updateRadioButtons](https://rdrr.io/pkg/shiny/man/updateRadioButtons.html)
+  (`TRUE`) or a dropdown input update function (`FALSE`, default). For
+  character vectors, `radio` only applies if `textbox` is `FALSE`, the
+  default.
+
+- range:
+
+  *(Date, POSIXt)*. Logical. Controls whether to use
+  [shiny::updateDateRangeInput](https://rdrr.io/pkg/shiny/man/updateDateRangeInput.html)
+  (`TRUE`) or
+  [shiny::updateDateInput](https://rdrr.io/pkg/shiny/man/updateDateInput.html)
+  (`FALSE`, default).
+
+- selectize:
+
+  *(character, factor, list, logical)*. Logical. Controls whether to use
+  [shiny::updateSelectizeInput](https://rdrr.io/pkg/shiny/man/updateSelectInput.html)
+  (`TRUE`) or
+  [shiny::updateSelectInput](https://rdrr.io/pkg/shiny/man/updateSelectInput.html)
+  (`FALSE`, default). For character vectors, `selectize` only applies if
+  `textbox` is `FALSE`, the default.
+
+- slider:
+
+  *(numeric)*. Logical. Controls whether to use
+  [shiny::updateSliderInput](https://rdrr.io/pkg/shiny/man/updateSliderInput.html)
+  (`TRUE`) or
+  [shiny::updateNumericInput](https://rdrr.io/pkg/shiny/man/updateNumericInput.html)
+  (`FALSE`, default).
+
+- textbox:
+
+  *(character)*. Logical. Controls whether to update a text input
+  (`TRUE`) or a dropdown input (`FALSE`, default).
 
 Remaining arguments passed to `...` are passed to
 [`args_update_filter_input()`](https://joshwlivingston.github.io/shinyfilters/reference/args_filter_input.md)

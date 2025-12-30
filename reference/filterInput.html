@@ -77,16 +77,48 @@ type of object passed to <code>x</code>, and other specified arguments. See
 <table class="table table"><tr><td><strong>Value</strong></td><td><strong><code>x</code></strong></td><td><strong>Arguments</strong></td></tr><tr><td><a href="https://rdrr.io/pkg/shiny/man/dateInput.html" class="external-link">shiny::dateInput</a></td><td>Date, POSIXt</td><td><em>default</em></td></tr><tr><td><a href="https://rdrr.io/pkg/shiny/man/dateRangeInput.html" class="external-link">shiny::dateRangeInput</a></td><td>Date, POSIXt</td><td><code>range = TRUE</code></td></tr><tr><td><a href="https://rdrr.io/pkg/shiny/man/numericInput.html" class="external-link">shiny::numericInput</a></td><td>numeric</td><td><em>default</em></td></tr><tr><td><a href="https://rdrr.io/pkg/shiny/man/radioButtons.html" class="external-link">shiny::radioButtons</a></td><td>character, factor, list, logical</td><td><code>radio = TRUE</code></td></tr><tr><td><a href="https://rdrr.io/pkg/shiny/man/selectInput.html" class="external-link">shiny::selectInput</a></td><td>character, factor, list, logical</td><td><em>default</em></td></tr><tr><td><a href="https://rdrr.io/pkg/shiny/man/selectInput.html" class="external-link">shiny::selectizeInput</a></td><td>character, factor, list, logical</td><td><code>selectize = TRUE</code></td></tr><tr><td><a href="https://rdrr.io/pkg/shiny/man/sliderInput.html" class="external-link">shiny::sliderInput</a></td><td>numeric</td><td><code>slider = TRUE</code></td></tr><tr><td><a href="https://rdrr.io/pkg/shiny/man/textAreaInput.html" class="external-link">shiny::textAreaInput</a></td><td>character</td><td><code>textbox = TRUE</code>, <code>area = TRUE</code></td></tr><tr><td><a href="https://rdrr.io/pkg/shiny/man/textInput.html" class="external-link">shiny::textInput</a></td><td>character</td><td><code>textbox = TRUE</code></td></tr></table></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>The following arguments passed to <code>...</code> are supported:</p><table class="table table"><tr><td><code>area</code></td><td><em>(character)</em>. Logical. Controls whether to use  <a href="https://rdrr.io/pkg/shiny/man/textAreaInput.html" class="external-link">shiny::textAreaInput</a>
+    <p>The following arguments passed to <code>...</code> are supported:</p><dl><dt>area</dt>
+<dd><p><em>(character)</em>. Logical. Controls whether to use  <a href="https://rdrr.io/pkg/shiny/man/textAreaInput.html" class="external-link">shiny::textAreaInput</a>
 (<code>TRUE</code>) or <a href="https://rdrr.io/pkg/shiny/man/textInput.html" class="external-link">shiny::textInput</a> (<code>FALSE</code>, default). Only applies when
-<code>textbox</code> is <code>TRUE</code>.</td></tr><tr><td><code>range</code></td><td><em>(Date, POSIXt)</em>. Logical. Controls whether to use <a href="https://rdrr.io/pkg/shiny/man/dateRangeInput.html" class="external-link">shiny::dateRangeInput</a>
-(<code>TRUE</code>) or <a href="https://rdrr.io/pkg/shiny/man/dateInput.html" class="external-link">shiny::dateInput</a> (<code>FALSE</code>, default).</td></tr><tr><td><code>selectize</code></td><td><em>(character, factor, list, logical)</em>. Logical. Controls whether to use
+<code>textbox</code> is <code>TRUE</code>.</p></dd>
+
+
+<dt>radio</dt>
+<dd><p><em>(character, factor, list, logical)</em>. Logical. Controls whether to use
+<a href="https://rdrr.io/pkg/shiny/man/radioButtons.html" class="external-link">shiny::radioButtons</a> (<code>TRUE</code>) or a dropdown input (<code>FALSE</code>, default).
+For character vectors, <code>radio</code> only applies if <code>textbox</code> is <code>FALSE</code>,
+the default.</p></dd>
+
+
+<dt>range</dt>
+<dd><p><em>(Date, POSIXt)</em>. Logical. Controls whether to use <a href="https://rdrr.io/pkg/shiny/man/dateRangeInput.html" class="external-link">shiny::dateRangeInput</a>
+(<code>TRUE</code>) or <a href="https://rdrr.io/pkg/shiny/man/dateInput.html" class="external-link">shiny::dateInput</a> (<code>FALSE</code>, default).</p></dd>
+
+
+<dt>selectize</dt>
+<dd><p><em>(character, factor, list, logical)</em>. Logical. Controls whether to use
 <a href="https://rdrr.io/pkg/shiny/man/selectInput.html" class="external-link">shiny::selectizeInput</a> (<code>TRUE</code>) or <a href="https://rdrr.io/pkg/shiny/man/selectInput.html" class="external-link">shiny::selectInput</a>
 (<code>FALSE</code>, default). For character vectors, <code>selectize</code> only applies if
-<code>textbox</code> is <code>FALSE</code>, the default.</td></tr><tr><td><code>slider</code></td><td><em>(numeric)</em>. Logical. Controls whether to use <a href="https://rdrr.io/pkg/shiny/man/sliderInput.html" class="external-link">shiny::sliderInput</a>
-(<code>TRUE</code>) or <a href="https://rdrr.io/pkg/shiny/man/numericInput.html" class="external-link">shiny::numericInput</a> (<code>FALSE</code>, default)  .</td></tr><tr><td><code>textbox</code></td><td><em>(character)</em>. Logical. Controls whether to use a text input
-(<code>TRUE</code>) or a dropdown input (<code>FALSE</code>, default).</td></tr><tr><td><code>ns</code></td><td>An optional namespace created by <code><a href="https://rdrr.io/pkg/shiny/man/NS.html" class="external-link">shiny::NS()</a></code>. Useful when using
-<code>filterInput()</code> on a data.frame inside a <span class="pkg">shiny</span> module.</td></tr></table><p>Remaining arguments passed to <code>...</code> are passed to the <code><a href="args_filter_input.html">args_filter_input()</a></code>
+<code>textbox</code> is <code>FALSE</code>, the default.</p></dd>
+
+
+<dt>slider</dt>
+<dd><p><em>(numeric)</em>. Logical. Controls whether to use <a href="https://rdrr.io/pkg/shiny/man/sliderInput.html" class="external-link">shiny::sliderInput</a>
+(<code>TRUE</code>) or <a href="https://rdrr.io/pkg/shiny/man/numericInput.html" class="external-link">shiny::numericInput</a> (<code>FALSE</code>, default).</p></dd>
+
+
+<dt>textbox</dt>
+<dd><p><em>(character)</em>. Logical. Controls whether to use a text input
+(<code>TRUE</code>) or a dropdown input (<code>FALSE</code>, default).</p></dd>
+
+
+<dt>ns</dt>
+<dd><p>An optional namespace created by <code><a href="https://rdrr.io/pkg/shiny/man/NS.html" class="external-link">shiny::NS()</a></code>. Useful when using
+<code>filterInput()</code> on a data.frame inside a <span class="pkg">shiny</span> module.</p></dd>
+
+
+
+</dl><p>Remaining arguments passed to <code>...</code> are passed to the <code><a href="args_filter_input.html">args_filter_input()</a></code>
 or the selected input function.</p>
     </div>
 
