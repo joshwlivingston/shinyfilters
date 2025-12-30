@@ -38,10 +38,6 @@
   [`arg_name_input_value()`](https://joshwlivingston.github.io/shinyfilters/reference/arg_name_input_generics.md)
   : Determine Filter Input Argument Names
 
-- [`call_filter_input()`](https://joshwlivingston.github.io/shinyfilters/reference/call_input_function.md)
-  [`call_update_filter_input()`](https://joshwlivingston.github.io/shinyfilters/reference/call_input_function.md)
-  : Prepare and Evaluate Input Function and Arguments
-
 - [`get_filter_logical()`](https://joshwlivingston.github.io/shinyfilters/reference/get_filter_logical.md)
   : Compute a Filter Predicate
 
@@ -50,3 +46,9 @@
 
 - [`get_input_labels()`](https://joshwlivingston.github.io/shinyfilters/reference/get_input_labels.md)
   : Retrieve the Labels of Input Objects
+
+## Internal functions
+
+- [`call_filter_input()`](https://joshwlivingston.github.io/shinyfilters/reference/call_input_function.md)
+  [`call_update_filter_input()`](https://joshwlivingston.github.io/shinyfilters/reference/call_input_function.md)
+  : Prepare and Evaluate Input Function and Arguments
