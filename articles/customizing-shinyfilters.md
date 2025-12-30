@@ -73,8 +73,8 @@ library(shinyfilters)
 library(shiny)
 
 filterInput(people, inputId = "people", label = "Pick a person:")
-#> Error in `as.vector()`:
-#> ! cannot coerce type 'closure' to vector of type 'character'
+#> Error in `s7_check_is_valid_list_dispatch()`:
+#> ! No method found for `filterInput()` for class `People`.
 ```
 
 To allow
@@ -127,8 +127,8 @@ on `people`…
 
 ``` r
 filterInput(people, inputId = "people", label = "Pick a person:")
-#> Error in `as.vector()`:
-#> ! cannot coerce type 'closure' to vector of type 'character'
+#> Error in `s7_check_is_valid_list_dispatch()`:
+#> ! No method found for `args_filter_input()` for class `People`.
 ```
 
 … we’ll still get an error.

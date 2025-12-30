@@ -24,6 +24,10 @@
 - Use [`anyNA()`](https://rdrr.io/r/base/NA.html) for NA checks and
   [`inherits()`](https://rdrr.io/r/base/class.html) for class checks,
   per `jarl check .` (thanks [@novica](https://github.com/novica)!)
+- The error message now displays for invalid s7 list dispatches
+- An error is now thrown when an implementation of
+  [`args_filter_input()`](https://joshwlivingston.github.io/shinyfilters/reference/args_filter_input.md)
+  returns a completely unnamed list
 
 ### Documentation:
 
