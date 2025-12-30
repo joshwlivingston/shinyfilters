@@ -29,10 +29,16 @@
 #'   If `TRUE`, indicates that the choices will be provided server-side. In
 #'   this case, arguments are not computed for `args_filter_input()`. Ignored
 #'   in `args_update_filter_input()`. \cr
+#'
+#'   `args_unique` \tab
+#'   An optional named list of arguments passed to [unique()], called when `x`
+#'   is a *character*, *factor*, or *logical*, `textbox = FALSE`, and
+#'   `choices_asis = FALSE`.
+#'
+#'   `args_sort` \tab
+#'   An optional named list of arguments passed to [sort()], which is called
+#'   after [unique()].
 #' }
-#' Remaining arguments passed to `...` are passed to [unique()] or [sort()],
-#' which are both called when  `x` is a *character*, *factor*, or *logical*,
-#' `textbox = FALSE`, and `choices_asis = FALSE`.
 #'
 #' @return A named list of arguments for a \pkg{shiny} input function
 #'
