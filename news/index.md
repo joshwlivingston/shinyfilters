@@ -28,6 +28,8 @@
 - An error is now thrown when an implementation of
   [`args_filter_input()`](https://joshwlivingston.github.io/shinyfilters/reference/args_filter_input.md)
   returns a completely unnamed list
+- [`updateFilterInput()`](https://joshwlivingston.github.io/shinyfilters/reference/updateFilterInput.md)
+  now works when passing `selected` (or equivalent) as an argument
 
 ### Documentation:
 
