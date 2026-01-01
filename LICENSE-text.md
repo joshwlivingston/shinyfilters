@@ -1,4 +1,4 @@
 # License
 
-    YEAR: 2026
+    YEAR: 2025
     COPYRIGHT HOLDER: shinyfilters authors
