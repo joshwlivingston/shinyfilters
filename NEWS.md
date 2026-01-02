@@ -8,6 +8,7 @@
 * Arguments can now be passed to generics used in `args_filter_input()` ([#24](https://github.com/joshwlivingston/shinyfilters/issues/24), [#56](https://github.com/joshwlivingston/shinyfilters/issues/56)):
   * `args_unique`: pass arguments to `unique()`
   * `args_sort`: pass arguments to `sort()`
+* Implementations of `args_update_filter_input()` can now return a value for `inputId` (or equivalent) ([[#87](https://github.com/joshwlivingston/shinyfilters/issues/87)])
 
 ## Bugfixes
 * Use `anyNA()` for NA checks and `inherits()` for class checks, per `jarl check .` (thanks @novica!)
