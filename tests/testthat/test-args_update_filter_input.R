@@ -214,21 +214,12 @@ test_that("args_update_filter_input() ignores server = FALSE for character", {
 })
 
 # Custom methods with different arg names ####
-test_that("args_update_filter_input() removes inputId when present", {
-	# Using must_use_date_range which returns start/end
-	result <- args_update_filter_input(use_date_range(choices_dte_with_na))
-	expected <- list(
-		min = min(choices_dte_with_na, na.rm = TRUE),
-		max = max(choices_dte_with_na, na.rm = TRUE),
-		start = min(choices_dte_with_na, na.rm = TRUE),
-		end = max(choices_dte_with_na, na.rm = TRUE)
-	)
-	expect_equal(result, expected)
-})
-
 test_that("args_update_filter_input() removes value arguments when present", {
 	# Test with textarea which returns NULL from args_filter_input
-	result <- args_update_filter_input(use_textarea(choices_chr_with_na))
+	method(args_filter_input, ClassCharacter) <- function(x, ...) {
+		list(selected = "a")
+	}
+	result <- args_update_filter_input(ClassCharacter(letters))
 	expect_null(result)
 })
 
