@@ -8,12 +8,14 @@
 * Arguments can now be passed to generics used in `args_filter_input()` ([#24](https://github.com/joshwlivingston/shinyfilters/issues/24), [#56](https://github.com/joshwlivingston/shinyfilters/issues/56)):
   * `args_unique`: pass arguments to `unique()`
   * `args_sort`: pass arguments to `sort()`
+* Implementations of `args_update_filter_input()` can now return a value for `inputId` (or equivalent) ([[#87](https://github.com/joshwlivingston/shinyfilters/issues/87)])
 
 ## Bugfixes
 * Use `anyNA()` for NA checks and `inherits()` for class checks, per `jarl check .` (thanks @novica!)
 * The error message now displays for invalid s7 list dispatches
 * An error is now thrown when an implementation of `args_filter_input()` returns a completely unnamed list
 * `updateFilterInput()` now works when passing `selected` (or equivalent) as an argument
+* `selected` argument (or equivalent) is now always removed from the result of `args_update_filter_input()` ([#90](https://github.com/joshwlivingston/shinyfilters/issues/90))
 
 ## Documentation:
 * All examples now correctly use `inputId` ([#17](https://github.com/joshwlivingston/shinyfilters/issues/17))
