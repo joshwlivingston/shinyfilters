@@ -34,6 +34,10 @@
   returns a completely unnamed list
 - [`updateFilterInput()`](https://joshwlivingston.github.io/shinyfilters/reference/updateFilterInput.md)
   now works when passing `selected` (or equivalent) as an argument
+- `selected` argument (or equivalent) is now always removed from the
+  result of
+  [`args_update_filter_input()`](https://joshwlivingston.github.io/shinyfilters/reference/args_filter_input.md)
+  ([\#90](https://github.com/joshwlivingston/shinyfilters/issues/90))
 
 ### Documentation:
 
