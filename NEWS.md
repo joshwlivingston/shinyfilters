@@ -15,6 +15,7 @@
 * The error message now displays for invalid s7 list dispatches
 * An error is now thrown when an implementation of `args_filter_input()` returns a completely unnamed list
 * `updateFilterInput()` now works when passing `selected` (or equivalent) as an argument
+* `selected` argument (or equivalent) is now always removed from the result of `args_update_filter_input()` ([#90](https://github.com/joshwlivingston/shinyfilters/issues/90))
 
 ## Documentation:
 * All examples now correctly use `inputId` ([#17](https://github.com/joshwlivingston/shinyfilters/issues/17))
