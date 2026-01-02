@@ -261,11 +261,10 @@ test_that("ns requires inputId argument", {
 
 # serverFilterInput ####
 test_that("serverFilterInput() with reactive() throws error when missing required columns", {
-	skip_on_ci()
 	skip_on_cran()
 	expect_error(
 		AppDriver$new(
-			load_timeout = 1000L,
+			load_timeout = 5000L,
 			shinyApp(
 				ui = fluidPage(
 					sidebarLayout(
