@@ -18,6 +18,10 @@
     [`unique()`](https://rdrr.io/r/base/unique.html)
   - `args_sort`: pass arguments to
     [`sort()`](https://rdrr.io/r/base/sort.html)
+- Implementations of
+  [`args_update_filter_input()`](https://joshwlivingston.github.io/shinyfilters/reference/args_filter_input.md)
+  can now return a value for `inputId` (or equivalent)
+  (\[[\#87](https://github.com/joshwlivingston/shinyfilters/issues/87)\])
 
 ### Bugfixes
 
