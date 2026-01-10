@@ -18,7 +18,7 @@
 * `selected` argument (or equivalent) is now always removed from the result of `args_update_filter_input()` ([#90](https://github.com/joshwlivingston/shinyfilters/issues/90))
 
 ## Performance
-* Unnecessarily repeated calls to `apply_filters()` removed in `serverFilterInput()` ([#92](https://github.com/joshwlivingston/shinyfilters/issues/92))
+* Unnecessarily repeated calls to `apply_filters()` were removed in `serverFilterInput()` ([#92](https://github.com/joshwlivingston/shinyfilters/issues/92))
 
 ## Documentation:
 * All examples now correctly use `inputId` ([#17](https://github.com/joshwlivingston/shinyfilters/issues/17))
