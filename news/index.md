@@ -39,6 +39,14 @@
   [`args_update_filter_input()`](https://joshwlivingston.github.io/shinyfilters/reference/args_filter_input.md)
   ([\#90](https://github.com/joshwlivingston/shinyfilters/issues/90))
 
+### Performance
+
+- Unnecessarily repeated calls to
+  [`apply_filters()`](https://joshwlivingston.github.io/shinyfilters/reference/apply_filters.md)
+  were removed in
+  [`serverFilterInput()`](https://joshwlivingston.github.io/shinyfilters/reference/serverFilterInput.md)
+  ([\#92](https://github.com/joshwlivingston/shinyfilters/issues/92))
+
 ### Documentation:
 
 - All examples now correctly use `inputId`
