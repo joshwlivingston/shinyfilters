@@ -96,20 +96,22 @@ serverFilterInput <- function(
 				x = x,
 				filter_list = input,
 				filter_combine_method = filter_combine_method,
-				expanded = TRUE,
+				expanded = FALSE,
 				cols = NULL
 			),
 			args_apply_filters
 		)
-		x_filt_list <- do.call(apply_filters, args_apply_filters)
-		update_input <- function(x_filt) {
-			val <- input[[get_input_ids(x_filt)]]
+		x_filt <- do.call(apply_filters, args_apply_filters)
+		update_input <- function(col, id) {
+			val <- input[[id]]
 			if (!is.null(val) || !identical(length(val), 0L)) {
 				return(invisible())
 			}
-			updateFilterInput(x = x_filt, input = input, ...)
+			args <- list(col, id)
+			names(args) <- c("x", arg_name_input_id(col))
+			do.call(updateFilterInput, args)
 		}
-		lapply(x_filt_list, update_input)
+		mapply(update_input, x_filt, get_input_ids(x_filt))
 		out_input$input_values <- input
 	})
 	return(out_input)
