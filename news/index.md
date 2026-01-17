@@ -1,6 +1,6 @@
 # Changelog
 
-## shinyfilters (development version)
+## shinyfilters 0.3.0
 
 ### Additions
 
@@ -27,8 +27,8 @@
 
 - Use [`anyNA()`](https://rdrr.io/r/base/NA.html) for NA checks and
   [`inherits()`](https://rdrr.io/r/base/class.html) for class checks,
-  per `jarl check .` (thanks [@novica](https://github.com/novica)!)
-- The error message now displays for invalid s7 list dispatches
+  per `jarl check .` ([@novica](https://github.com/novica))
+- The error message now displays for invalid S7 list dispatches
 - An error is now thrown when an implementation of
   [`args_filter_input()`](https://joshwlivingston.github.io/shinyfilters/reference/args_filter_input.md)
   returns a completely unnamed list
@@ -94,9 +94,9 @@ CRAN release: 2025-12-17
 ### Documentation:
 
 - [`args_update_filter_input()`](https://joshwlivingston.github.io/shinyfilters/reference/args_filter_input.md)
-  has been removed from the readme’s list of extensible functions.
+  has been removed from the README’s list of extensible functions.
 - Renames air.yaml Github Action job: “pkgdown” –\> “air”
-- Adds to readme instructions on installing release version
+- Adds to README instructions on installing release version
 
 ## shinyfilters 0.1.0
 

@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">shinyfilters</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -40,13 +40,13 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/joshwlivingston/shinyfilters/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/joshwlivingston/shinyfilters/blob/v0.3.0/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="development version" id="shinyfilters-development-version">shinyfilters (development version)<a class="anchor" aria-label="anchor" href="#shinyfilters-development-version"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.3.0" id="shinyfilters-030">shinyfilters 0.3.0<a class="anchor" aria-label="anchor" href="#shinyfilters-030"></a></h2>
 <div class="section level3">
-<h3 id="additions-development-version">Additions<a class="anchor" aria-label="anchor" href="#additions-development-version"></a></h3>
+<h3 id="additions-0-3-0">Additions<a class="anchor" aria-label="anchor" href="#additions-0-3-0"></a></h3>
 <ul><li>Added functions used internally to access argument names needed by <code><a href="../reference/filterInput.html">filterInput()</a></code> (<a href="https://github.com/joshwlivingston/shinyfilters/issues/40" class="external-link">#40</a>):
 <ul><li><code><a href="../reference/arg_name_input_generics.html">arg_name_input_id()</a></code></li>
 <li><code><a href="../reference/arg_name_input_generics.html">arg_name_input_label()</a></code></li>
@@ -63,9 +63,9 @@
 <li>Implementations of <code><a href="../reference/args_filter_input.html">args_update_filter_input()</a></code> can now return a value for <code>inputId</code> (or equivalent) ([<a href="https://github.com/joshwlivingston/shinyfilters/issues/87" class="external-link">#87</a>])</li>
 </ul></div>
 <div class="section level3">
-<h3 id="bugfixes-development-version">Bugfixes<a class="anchor" aria-label="anchor" href="#bugfixes-development-version"></a></h3>
-<ul><li>Use <code><a href="https://rdrr.io/r/base/NA.html" class="external-link">anyNA()</a></code> for NA checks and <code><a href="https://rdrr.io/r/base/class.html" class="external-link">inherits()</a></code> for class checks, per <code>jarl check .</code> (thanks <a href="https://github.com/novica" class="external-link">@novica</a>!)</li>
-<li>The error message now displays for invalid s7 list dispatches</li>
+<h3 id="bugfixes-0-3-0">Bugfixes<a class="anchor" aria-label="anchor" href="#bugfixes-0-3-0"></a></h3>
+<ul><li>Use <code><a href="https://rdrr.io/r/base/NA.html" class="external-link">anyNA()</a></code> for NA checks and <code><a href="https://rdrr.io/r/base/class.html" class="external-link">inherits()</a></code> for class checks, per <code>jarl check .</code> (<a href="https://github.com/novica" class="external-link">@novica</a>)</li>
+<li>The error message now displays for invalid S7 list dispatches</li>
 <li>An error is now thrown when an implementation of <code><a href="../reference/args_filter_input.html">args_filter_input()</a></code> returns a completely unnamed list</li>
 <li>
 <code><a href="../reference/updateFilterInput.html">updateFilterInput()</a></code> now works when passing <code>selected</code> (or equivalent) as an argument</li>
@@ -73,11 +73,11 @@
 <code>selected</code> argument (or equivalent) is now always removed from the result of <code><a href="../reference/args_filter_input.html">args_update_filter_input()</a></code> (<a href="https://github.com/joshwlivingston/shinyfilters/issues/90" class="external-link">#90</a>)</li>
 </ul></div>
 <div class="section level3">
-<h3 id="performance-development-version">Performance<a class="anchor" aria-label="anchor" href="#performance-development-version"></a></h3>
+<h3 id="performance-0-3-0">Performance<a class="anchor" aria-label="anchor" href="#performance-0-3-0"></a></h3>
 <ul><li>Unnecessarily repeated calls to <code><a href="../reference/apply_filters.html">apply_filters()</a></code> were removed in <code><a href="../reference/serverFilterInput.html">serverFilterInput()</a></code> (<a href="https://github.com/joshwlivingston/shinyfilters/issues/92" class="external-link">#92</a>)</li>
 </ul></div>
 <div class="section level3">
-<h3 id="documentation-development-version">Documentation:<a class="anchor" aria-label="anchor" href="#documentation-development-version"></a></h3>
+<h3 id="documentation-0-3-0">Documentation:<a class="anchor" aria-label="anchor" href="#documentation-0-3-0"></a></h3>
 <ul><li>All examples now correctly use <code>inputId</code> (<a href="https://github.com/joshwlivingston/shinyfilters/issues/17" class="external-link">#17</a>)</li>
 <li>All outputs now display in <code><a href="../reference/get_input_values.html">get_input_values()</a></code> example (<a href="https://github.com/joshwlivingston/shinyfilters/issues/18" class="external-link">#18</a>)</li>
 <li>Borders have been removed in examples (<a href="https://github.com/joshwlivingston/shinyfilters/issues/7" class="external-link">#7</a>)</li>
@@ -105,9 +105,9 @@
 <div class="section level3">
 <h3 id="documentation-0-2-0">Documentation:<a class="anchor" aria-label="anchor" href="#documentation-0-2-0"></a></h3>
 <ul><li>
-<code><a href="../reference/args_filter_input.html">args_update_filter_input()</a></code> has been removed from the readme’s list of extensible functions.</li>
+<code><a href="../reference/args_filter_input.html">args_update_filter_input()</a></code> has been removed from the README’s list of extensible functions.</li>
 <li>Renames air.yaml Github Action job: “pkgdown” –&gt; “air”</li>
-<li>Adds to readme instructions on installing release version</li>
+<li>Adds to README instructions on installing release version</li>
 </ul></div>
 </div>
     <div class="section level2">

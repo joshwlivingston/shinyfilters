@@ -10,16 +10,16 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/joshwlivingston/shinyfilters/blob/main/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/joshwlivingston/shinyfilters/blob/v0.3.0/DESCRIPTION)
 
 Livingston J (2026). *shinyfilters: Create 'shiny' Inputs from Vectors,
-'data.frames', or any R Object*. R package version 0.2.0.9000,
+'data.frames', or any R Object*. R package version 0.3.0,
 <https://joshwlivingston.github.io/shinyfilters/>.
 
     @Manual{,
       title = {shinyfilters: Create 'shiny' Inputs from Vectors, 'data.frames', or any R Object},
       author = {Josh Livingston},
       year = {2026},
-      note = {R package version 0.2.0.9000},
+      note = {R package version 0.3.0},
       url = {https://joshwlivingston.github.io/shinyfilters/},
     }
