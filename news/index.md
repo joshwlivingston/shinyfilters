@@ -1,5 +1,7 @@
 # Changelog
 
+## shinyfilters (development version)
+
 ## shinyfilters 0.3.0
 
 ### Additions
