@@ -12,7 +12,7 @@
 
 ## Bugfixes
 * Use `anyNA()` for NA checks and `inherits()` for class checks, per `jarl check .` ([@novica](https://github.com/novica))
-* The error message now displays for invalid s7 list dispatches
+* The error message now displays for invalid S7 list dispatches
 * An error is now thrown when an implementation of `args_filter_input()` returns a completely unnamed list
 * `updateFilterInput()` now works when passing `selected` (or equivalent) as an argument
 * `selected` argument (or equivalent) is now always removed from the result of `args_update_filter_input()` ([#90](https://github.com/joshwlivingston/shinyfilters/issues/90))
@@ -43,10 +43,10 @@
   error in `serverFilterInput()` ([#10](https://github.com/joshwlivingston/shinyfilters/issues/10), [#5](https://github.com/joshwlivingston/shinyfilters/issues/5)).
 
 ## Documentation:
-* `args_update_filter_input()` has been removed from the readme's list of 
+* `args_update_filter_input()` has been removed from the README's list of 
   extensible functions.
 * Renames air.yaml Github Action job: "pkgdown" --> "air"
-* Adds to readme instructions on installing release version 
+* Adds to README instructions on installing release version 
 
 # shinyfilters 0.1.0
 
