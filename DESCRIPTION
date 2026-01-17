@@ -1,6 +1,6 @@
 Package: shinyfilters
 Title: Create 'shiny' Inputs from Vectors, 'data.frames', or any R Object
-Version: 0.2.0.9000
+Version: 0.3.0
 Authors@R: c(
     person("Josh", "Livingston", , "joshwlivingston@gmail.com", role = c("cre", "aut")),
     person("Novica", "Nakov", , "nnovica@gmail.com", role = "ctb",

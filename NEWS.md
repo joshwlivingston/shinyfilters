@@ -1,4 +1,4 @@
-# shinyfilters (development version)
+# shinyfilters 0.3.0
 
 ## Additions
 * Added functions used internally to access argument names needed by `filterInput()` ([#40](https://github.com/joshwlivingston/shinyfilters/issues/40)):
