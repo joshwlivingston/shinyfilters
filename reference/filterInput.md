@@ -27,18 +27,18 @@ object passed to `x`, and other specified arguments. See
 [`vignette("filter-input-catalog")`](https://joshwlivingston.github.io/shinyfilters/articles/filter-input-catalog.md)
 for the full list of examples.
 
-|                                                                            |                                  |                                 |
-|----------------------------------------------------------------------------|----------------------------------|---------------------------------|
-| **Value**                                                                  | **`x`**                          | **Arguments**                   |
-| [shiny::dateInput](https://rdrr.io/pkg/shiny/man/dateInput.html)           | Date, POSIXt                     | *default*                       |
-| [shiny::dateRangeInput](https://rdrr.io/pkg/shiny/man/dateRangeInput.html) | Date, POSIXt                     | `range = TRUE`                  |
-| [shiny::numericInput](https://rdrr.io/pkg/shiny/man/numericInput.html)     | numeric                          | *default*                       |
-| [shiny::radioButtons](https://rdrr.io/pkg/shiny/man/radioButtons.html)     | character, factor, list, logical | `radio = TRUE`                  |
-| [shiny::selectInput](https://rdrr.io/pkg/shiny/man/selectInput.html)       | character, factor, list, logical | *default*                       |
-| [shiny::selectizeInput](https://rdrr.io/pkg/shiny/man/selectInput.html)    | character, factor, list, logical | `selectize = TRUE`              |
-| [shiny::sliderInput](https://rdrr.io/pkg/shiny/man/sliderInput.html)       | numeric                          | `slider = TRUE`                 |
-| [shiny::textAreaInput](https://rdrr.io/pkg/shiny/man/textAreaInput.html)   | character                        | `textbox = TRUE`, `area = TRUE` |
-| [shiny::textInput](https://rdrr.io/pkg/shiny/man/textInput.html)           | character                        | `textbox = TRUE`                |
+|  |  |  |
+|----|----|----|
+| **Value** | **`x`** | **Arguments** |
+| [shiny::dateInput](https://rdrr.io/pkg/shiny/man/dateInput.html) | Date, POSIXt | *default* |
+| [shiny::dateRangeInput](https://rdrr.io/pkg/shiny/man/dateRangeInput.html) | Date, POSIXt | `range = TRUE` |
+| [shiny::numericInput](https://rdrr.io/pkg/shiny/man/numericInput.html) | numeric | *default* |
+| [shiny::radioButtons](https://rdrr.io/pkg/shiny/man/radioButtons.html) | character, factor, list, logical | `radio = TRUE` |
+| [shiny::selectInput](https://rdrr.io/pkg/shiny/man/selectInput.html) | character, factor, list, logical | *default* |
+| [shiny::selectizeInput](https://rdrr.io/pkg/shiny/man/selectInput.html) | character, factor, list, logical | `selectize = TRUE` |
+| [shiny::sliderInput](https://rdrr.io/pkg/shiny/man/sliderInput.html) | numeric | `slider = TRUE` |
+| [shiny::textAreaInput](https://rdrr.io/pkg/shiny/man/textAreaInput.html) | character | `textbox = TRUE`, `area = TRUE` |
+| [shiny::textInput](https://rdrr.io/pkg/shiny/man/textInput.html) | character | `textbox = TRUE` |
 
 ## Details
 

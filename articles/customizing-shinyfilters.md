@@ -14,6 +14,7 @@ Let’s say you have an S7 class,
 [`Person`](https://github.com/RConsortium/S7/blob/v0.2.0/vignettes/classes-objects.Rmd#L324):
 
 ``` r
+
 library(S7)
 
 StringNonEmpty <- new_property(
@@ -37,6 +38,7 @@ Person <- new_class(
 And you want to combine a list of `Person`’s into a new class, `People`:
 
 ``` r
+
 People <- new_class(
     name = "People",
     parent = class_list,
@@ -69,6 +71,7 @@ to select a `Person` from `people`; however, if you call
 on `people`, you will get an error:
 
 ``` r
+
 library(shinyfilters)
 library(shiny)
 
@@ -107,6 +110,7 @@ to dispatch to a
 for `People`:
 
 ``` r
+
 method(filterInput, People) <- function(x, ...) {
     call_filter_input(x, shiny::selectizeInput, ...)
 }
@@ -126,6 +130,7 @@ input function with the prepared arguments.
 on `people`…
 
 ``` r
+
 filterInput(people, inputId = "people", label = "Pick a person:")
 #> Error in `s7_check_is_valid_list_dispatch()`:
 #> ! No method found for `args_filter_input()` for class `People`.
@@ -150,6 +155,7 @@ write a method that returns a named list, representing the arguments
 passed to the selected input:
 
 ``` r
+
 full_names <- new_generic("full_names", "x")
 method(full_names, People) <- function(x) vapply(x, full_names, character(1))
 method(full_names, Person) <- function(x) paste(x@first_name, x@last_name)
@@ -163,6 +169,7 @@ Now you can call
 [`filterInput()`](https://joshwlivingston.github.io/shinyfilters/reference/filterInput.md):
 
 ``` r
+
 filterInput(people, inputId = "people", label = "Pick a person:")
 ```
 
@@ -189,6 +196,7 @@ For example, let’s say you want to use `shinyWidgets` instead of
 `shiny`:
 
 ``` r
+
 library(shinyWidgets)
 
 method(filterInput, class_numeric) <- function(x, ...) {
@@ -205,6 +213,7 @@ on a `character` vector,
 will call `shinyWidgets` instead of `shiny`:
 
 ``` r
+
 filterInput(0:10, inputId = "number", label = "Pick a number:")
 ```
 
@@ -227,6 +236,7 @@ For example, to allow numeric vectors to work with the shinyWidgets
 input function, we need to pass `value` as a length-two numeric vector:
 
 ``` r
+
 method(args_filter_input, class_numeric) <- function(x, ...) {
     list(
         # Value should be a length-two vector, per ?numericRangeInput
@@ -242,6 +252,7 @@ Now, our overwritten
 will work as intended:
 
 ``` r
+
 filterInput(0:10, inputId = "number", label = "Pick a number:")
 ```
 
@@ -268,6 +279,7 @@ So, you’d need to handle the argument preparation inside your
 method:
 
 ``` r
+
 method(filterInput, People) <- function(x, ...) {
     shiny::selectizeInput(
         choices = full_names(x),
@@ -289,6 +301,7 @@ However, such an implementation is more bug-prone, and, increases the
 opportunity for confusing errors to emerge:
 
 ``` r
+
 filterInput(
     people,
     inputId = "people",
@@ -329,6 +342,7 @@ exists for this purpose, handling the argument prep dynamically (via
 and sending informative errors:
 
 ``` r
+
 method(filterInput, People) <- function(x, ...) {
     call_filter_input(x, shiny::selectizeInput, ...)
 }

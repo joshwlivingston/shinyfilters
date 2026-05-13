@@ -30,6 +30,7 @@ Input Types:
 #### Date
 
 ``` r
+
 filterInput(
     x = Sys.Date() + 0:9,
     inputId = "id",
@@ -42,6 +43,7 @@ filterInput(
 #### POSIXt
 
 ``` r
+
 filterInput(
     x = Sys.time() + as.difftime(0:9, units = "days"),
     inputId = "id",
@@ -59,6 +61,7 @@ filterInput(
 - `range = TRUE`
 
 ``` r
+
 filterInput(
     x = Sys.Date() + 0:9,
     inputId = "id",
@@ -74,6 +77,7 @@ filterInput(
 - `range = TRUE`
 
 ``` r
+
 filterInput(
     x = Sys.time() + as.difftime(0:9, units = "days"),
     inputId = "id",
@@ -90,6 +94,7 @@ filterInput(
 #### numeric
 
 ``` r
+
 filterInput(
     x = 0:9,
     inputId = "id",
@@ -109,6 +114,7 @@ Pick a number:
 - `radio = TRUE`
 
 ``` r
+
 filterInput(
     x = letters[1:10],
     inputId = "id",
@@ -129,6 +135,7 @@ a b c d e f g h i j
 - `radio = TRUE`
 
 ``` r
+
 filterInput(
     x = as.factor(letters[1:10]),
     inputId = "id",
@@ -149,6 +156,7 @@ a b c d e f g h i j
 - `radio = TRUE`
 
 ``` r
+
 filterInput(
     x = as.list(letters[1:10]),
     inputId = "id",
@@ -170,6 +178,7 @@ a b c d e f g h i j
 #### character
 
 ``` r
+
 filterInput(
     x = letters[1:10],
     inputId = "id",
@@ -186,6 +195,7 @@ a b c d e f g h i j
 #### factor
 
 ``` r
+
 filterInput(
     x = as.factor(letters[1:10]),
     inputId = "id",
@@ -202,6 +212,7 @@ a b c d e f g h i j
 #### list
 
 ``` r
+
 filterInput(
     x = as.list(letters[1:10]),
     inputId = "id",
@@ -223,6 +234,7 @@ a b c d e f g h i j
 - `selectize = TRUE`
 
 ``` r
+
 filterInput(
     x = letters[1:10],
     inputId = "id",
@@ -242,6 +254,7 @@ a b c d e f g h i j
 - `selectize = TRUE`
 
 ``` r
+
 filterInput(
     x = as.factor(letters[1:10]),
     inputId = "id",
@@ -261,6 +274,7 @@ a b c d e f g h i j
 - `selectize = TRUE`
 
 ``` r
+
 filterInput(
     x = as.list(letters[1:10]),
     inputId = "id",
@@ -283,6 +297,7 @@ a b c d e f g h i j
 - `slider = TRUE`
 
 ``` r
+
 filterInput(
     x = 0:9,
     inputId = "id",
@@ -302,6 +317,7 @@ filterInput(
 - `area = TRUE`
 
 ``` r
+
 filterInput(
     x = letters[1:10],
     inputId = "id",
@@ -323,6 +339,7 @@ Type many letters\[1:10\]:
 - `text = TRUE`
 
 ``` r
+
 filterInput(
     x = letters[1:10],
     inputId = "id",
@@ -344,6 +361,7 @@ Type a letter:
 #### `selectInput`
 
 ``` r
+
 filterInput(
     x = letters[1:10],
     inputId = "id",
@@ -362,6 +380,7 @@ a b c d e f g h i j
 - `selectize = TRUE`
 
 ``` r
+
 filterInput(
     x = letters[1:10],
     inputId = "id",
@@ -381,6 +400,7 @@ a b c d e f g h i j
 - `radio = TRUE`
 
 ``` r
+
 filterInput(
     x = letters[1:10],
     inputId = "id",
@@ -401,6 +421,7 @@ a b c d e f g h i j
 - `textbox = TRUE`
 
 ``` r
+
 filterInput(
     x = letters[1:10],
     inputId = "id",
@@ -419,6 +440,7 @@ Type a letter:
 - `area = TRUE`
 
 ``` r
+
 filterInput(
     x = letters[1:10],
     inputId = "id",
@@ -438,6 +460,7 @@ Type many letters\[1:10\]:
 #### `dateInput`
 
 ``` r
+
 filterInput(
     x = Sys.Date() + 0:9,
     inputId = "id",
@@ -452,6 +475,7 @@ filterInput(
 - `range = TRUE`
 
 ``` r
+
 filterInput(
     x = Sys.Date() + 0:9,
     inputId = "id",
@@ -468,6 +492,7 @@ filterInput(
 #### `selectInput`
 
 ``` r
+
 filterInput(
     x = as.factor(letters[1:10]),
     inputId = "id",
@@ -486,6 +511,7 @@ a b c d e f g h i j
 - `selectize = TRUE`
 
 ``` r
+
 filterInput(
     x = as.factor(letters[1:10]),
     inputId = "id",
@@ -505,6 +531,7 @@ a b c d e f g h i j
 - `radio = TRUE`
 
 ``` r
+
 filterInput(
     x = as.factor(letters[1:10]),
     inputId = "id",
@@ -526,6 +553,7 @@ a b c d e f g h i j
 #### `selectInput`
 
 ``` r
+
 filterInput(
     x = as.list(letters[1:10]),
     inputId = "id",
@@ -544,6 +572,7 @@ a b c d e f g h i j
 - `selectize = TRUE`
 
 ``` r
+
 filterInput(
     x = as.list(letters[1:10]),
     inputId = "id",
@@ -563,6 +592,7 @@ a b c d e f g h i j
 - `radio = TRUE`
 
 ``` r
+
 filterInput(
     x = as.list(letters[1:10]),
     inputId = "id",
@@ -584,6 +614,7 @@ a b c d e f g h i j
 #### `numericInput`
 
 ``` r
+
 filterInput(
     x = 0:9,
     inputId = "id",
@@ -600,6 +631,7 @@ Pick a number:
 - `slider = TRUE`
 
 ``` r
+
 filterInput(
     x = 0:9,
     inputId = "id",
@@ -616,6 +648,7 @@ filterInput(
 #### `dateInput`
 
 ``` r
+
 filterInput(
     x = Sys.time() + as.difftime(0:9, units = "days"),
     inputId = "Id",
@@ -630,6 +663,7 @@ filterInput(
 - `range = TRUE`
 
 ``` r
+
 filterInput(
     x = Sys.time() + as.difftime(0:9, units = "days"),
     inputId = "Id",

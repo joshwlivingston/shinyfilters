@@ -19,6 +19,7 @@ data.frames, and more.
 The latest release is available on CRAN:
 
 ``` r
+
 # install.packages("pak")
 pak::pak("shinyfilters")
 ```
@@ -26,6 +27,7 @@ pak::pak("shinyfilters")
 Or, you can install the development version:
 
 ``` r
+
 pak::pak("joshwlivingston/shinyfilters")
 ```
 
@@ -34,6 +36,7 @@ pak::pak("joshwlivingston/shinyfilters")
 ### Vectors
 
 ``` r
+
 library(shinyfilters)
 library(shiny)
 
@@ -65,6 +68,7 @@ shinyApp(ui, server)
 ### Data.frames
 
 ``` r
+
 library(shinyfilters)
 
 library(DT)

@@ -4,6 +4,8 @@
 
 ## shinyfilters 0.3.0
 
+CRAN release: 2026-01-17
+
 ### Additions
 
 - Added functions used internally to access argument names needed by

@@ -24,18 +24,18 @@ updateFilterInput(x, ...)
 The result of the following shiny input updates is returned, based on
 the type of object passed to `x`, and other specified arguments.
 
-|                                                                                        |                                  |                                 |
-|----------------------------------------------------------------------------------------|----------------------------------|---------------------------------|
-| **Value**                                                                              | **`x`**                          | **Arguments**                   |
-| [shiny::updateDateInput](https://rdrr.io/pkg/shiny/man/updateDateInput.html)           | Date, POSIXt                     | *default*                       |
-| [shiny::updateDateRangeInput](https://rdrr.io/pkg/shiny/man/updateDateRangeInput.html) | Date, POSIXt                     | `range = TRUE`                  |
-| [shiny::updateNumericInput](https://rdrr.io/pkg/shiny/man/updateNumericInput.html)     | numeric                          | *default*                       |
-| [shiny::updateRadioButtons](https://rdrr.io/pkg/shiny/man/updateRadioButtons.html)     | character, factor, list, logical | `radio = TRUE`                  |
-| [shiny::updateSelectInput](https://rdrr.io/pkg/shiny/man/updateSelectInput.html)       | character, factor, list, logical | *default*                       |
-| [shiny::updateSelectizeInput](https://rdrr.io/pkg/shiny/man/updateSelectInput.html)    | character, factor, list, logical | `selectize = TRUE`              |
-| [shiny::updateSliderInput](https://rdrr.io/pkg/shiny/man/updateSliderInput.html)       | numeric                          | `slider = TRUE`                 |
-| [shiny::updateTextAreaInput](https://rdrr.io/pkg/shiny/man/updateTextAreaInput.html)   | character                        | `textbox = TRUE`, `area = TRUE` |
-| [shiny::updateTextInput](https://rdrr.io/pkg/shiny/man/updateTextInput.html)           | character                        | `textbox = TRUE`                |
+|  |  |  |
+|----|----|----|
+| **Value** | **`x`** | **Arguments** |
+| [shiny::updateDateInput](https://rdrr.io/pkg/shiny/man/updateDateInput.html) | Date, POSIXt | *default* |
+| [shiny::updateDateRangeInput](https://rdrr.io/pkg/shiny/man/updateDateRangeInput.html) | Date, POSIXt | `range = TRUE` |
+| [shiny::updateNumericInput](https://rdrr.io/pkg/shiny/man/updateNumericInput.html) | numeric | *default* |
+| [shiny::updateRadioButtons](https://rdrr.io/pkg/shiny/man/updateRadioButtons.html) | character, factor, list, logical | `radio = TRUE` |
+| [shiny::updateSelectInput](https://rdrr.io/pkg/shiny/man/updateSelectInput.html) | character, factor, list, logical | *default* |
+| [shiny::updateSelectizeInput](https://rdrr.io/pkg/shiny/man/updateSelectInput.html) | character, factor, list, logical | `selectize = TRUE` |
+| [shiny::updateSliderInput](https://rdrr.io/pkg/shiny/man/updateSliderInput.html) | numeric | `slider = TRUE` |
+| [shiny::updateTextAreaInput](https://rdrr.io/pkg/shiny/man/updateTextAreaInput.html) | character | `textbox = TRUE`, `area = TRUE` |
+| [shiny::updateTextInput](https://rdrr.io/pkg/shiny/man/updateTextInput.html) | character | `textbox = TRUE` |
 
 ## Details
 
