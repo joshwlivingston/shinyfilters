@@ -9,6 +9,7 @@
 status](https://www.r-pkg.org/badges/version/shinyfilters)](https://CRAN.R-project.org/package=shinyfilters)
 [![Codecov test
 coverage](https://codecov.io/gh/joshwlivingston/shinyfilters/graph/badge.svg)](https://app.codecov.io/gh/joshwlivingston/shinyfilters)
+[![tinyverse-status](https://tinyverse.netlify.app/badge/shinyfilters)](https://CRAN.R-project.org/package=shinyfilters)
 [![r-universe
 status](https://joshwlivingston.r-universe.dev/shinyfilters/badges/version)](https://joshwlivingston.r-universe.dev/shinyfilters)
 [![R-CMD-check](https://github.com/joshwlivingston/shinyfilters/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/joshwlivingston/shinyfilters/actions/workflows/R-CMD-check.yaml)
