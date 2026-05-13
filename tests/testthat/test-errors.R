@@ -120,7 +120,8 @@ test_that("args_filter_input: extension does not return named list", {
 ### list is not uniquely named
 test_that("args_filter_input: extension does not return uniquely named list", {
 	method(args_filter_input, ClassCharacter) <- function(x) {
-		list(entry = "a", entry = "b") # nolint
+		# jarl-ignore duplicated_arguments: testing for error
+		list(entry = "a", entry = "b")
 	}
 	expect_error(
 		filterInput(ClassCharacter(letters)),
