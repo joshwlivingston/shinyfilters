@@ -7,6 +7,8 @@
 
 [![CRAN
 status](https://www.r-pkg.org/badges/version/shinyfilters)](https://CRAN.R-project.org/package=shinyfilters)
+[![Ask
+DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/joshwlivingston/shinyfilters)
 [![Codecov test
 coverage](https://codecov.io/gh/joshwlivingston/shinyfilters/graph/badge.svg)](https://app.codecov.io/gh/joshwlivingston/shinyfilters)
 [![tinyverse-status](https://tinyverse.netlify.app/badge/shinyfilters)](https://CRAN.R-project.org/package=shinyfilters)
