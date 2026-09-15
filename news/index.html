@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">shinyfilters</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -44,7 +44,7 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="development version" id="shinyfilters-development-version">shinyfilters (development version)<a class="anchor" aria-label="anchor" href="#shinyfilters-development-version"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.3.1" id="shinyfilters-031">shinyfilters 0.3.1<a class="anchor" aria-label="anchor" href="#shinyfilters-031"></a></h2>
 <ul><li>
 <code><a href="../reference/get_filter_logical.html">get_filter_logical()</a></code> now returns <code>rep(T, length(x))</code> when a method is not defined. This behavior is a bandaid for the underlying issue: <code><a href="https://rdrr.io/pkg/shiny/man/numericInput.html" class="external-link">numericInput()</a></code> returns a logical when the user blanks out the input.</li>
 <li>Fixes issue in <code><a href="../reference/get_filter_logical.html">get_filter_logical()</a></code> that caused an error when an argument was provided to <code><a href="../reference/apply_filters.html">apply_filters()</a></code> and a categorical filter had an active selection.</li>
