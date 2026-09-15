@@ -63,6 +63,15 @@ method(get_filter_logical, list(x = NULL, val = class_any)) <- function(
 	return(NULL)
 }
 
+method(get_filter_logical, list(x = class_any, val = class_any)) <- function(
+	x,
+	val,
+	...
+) {
+	warning("Fallback method called for mismatched types. Returning TRUE")
+	return(rep(TRUE, length(x)))
+}
+
 method(
 	get_filter_logical,
 	list(x = class_data.frame, val = class_any)
