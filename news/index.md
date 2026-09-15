@@ -7,6 +7,11 @@
   behavior is a bandaid for the underlying issue:
   [`numericInput()`](https://rdrr.io/pkg/shiny/man/numericInput.html)
   returns a logical when the user blanks out the input.
+- Fixes issue in
+  [`get_filter_logical()`](https://joshwlivingston.github.io/shinyfilters/reference/get_filter_logical.md)
+  that caused an error when an argument was provided to
+  [`apply_filters()`](https://joshwlivingston.github.io/shinyfilters/reference/apply_filters.md)
+  and a categorical filter had an active selection.
 
 ## shinyfilters 0.3.0
 
