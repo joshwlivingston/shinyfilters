@@ -2,6 +2,12 @@
 
 ## shinyfilters (development version)
 
+- [`get_filter_logical()`](https://joshwlivingston.github.io/shinyfilters/reference/get_filter_logical.md)
+  now returns `rep(T, length(x))` when a method is not defined. This
+  behavior is a bandaid for the underlying issue:
+  [`numericInput()`](https://rdrr.io/pkg/shiny/man/numericInput.html)
+  returns a logical when the user blanks out the input.
+
 ## shinyfilters 0.3.0
 
 CRAN release: 2026-01-17

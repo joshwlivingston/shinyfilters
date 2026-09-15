@@ -45,7 +45,9 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="shinyfilters-development-version">shinyfilters (development version)<a class="anchor" aria-label="anchor" href="#shinyfilters-development-version"></a></h2>
-</div>
+<ul><li>
+<code><a href="../reference/get_filter_logical.html">get_filter_logical()</a></code> now returns <code>rep(T, length(x))</code> when a method is not defined. This behavior is a bandaid for the underlying issue: <code><a href="https://rdrr.io/pkg/shiny/man/numericInput.html" class="external-link">numericInput()</a></code> returns a logical when the user blanks out the input.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.3.0" id="shinyfilters-030">shinyfilters 0.3.0<a class="anchor" aria-label="anchor" href="#shinyfilters-030"></a></h2><p class="text-muted">CRAN release: 2026-01-17</p>
 <div class="section level3">
