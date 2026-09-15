@@ -232,23 +232,47 @@ test_that("get_filter_logical() filters POSIXlt vectors", {
 	)
 })
 
-# Type mismatches ####
-test_that("get_filter_logical() handles type mismatches appropriately", {
-	# This should trigger an S7 dispatch error
-	x <- 1:5
-	val <- "not_a_number"
-	expect_error(
-		get_filter_logical(x, val),
-		class = "error"
+# Fallback method ####
+test_that("get_filter_logical() falls back to all TRUE for every unsupported x/val combination", {
+	# One exemplar per class; data.frame and NULL x are excluded since their
+	# methods have dedicated tests above
+	xs <- list(
+		character = c("a", "b", "c"),
+		factor = factor(c("a", "b", "c")),
+		logical = c(TRUE, FALSE, TRUE),
+		numeric = 1:3,
+		Date = Sys.Date() + 0:2,
+		POSIXct = Sys.time() + 0:2,
+		POSIXlt = as.POSIXlt(Sys.time() + 0:2),
+		list = list(1, 2, 3)
 	)
 
-	# Character x with numeric val
-	x <- c("a", "b", "c")
-	val <- 1:2
-	expect_error(
-		get_filter_logical(x, val),
-		class = "error"
-	)
+	# Combinations covered by a specific method; mirrors the method signatures
+	chr_like <- c("character", "factor", "logical")
+	date_like <- c("numeric", "Date")
+	time_like <- c("POSIXct", "POSIXlt")
+	is_supported <- function(x, val) {
+		(x %in% chr_like && val %in% chr_like) ||
+			(x %in% date_like && val %in% date_like) ||
+			(x %in% time_like && val %in% time_like)
+	}
+
+	for (x_type in names(xs)) {
+		for (val_type in names(xs)) {
+			if (is_supported(x_type, val_type)) {
+				next
+			}
+			result <- get_filter_logical(xs[[x_type]], xs[[val_type]])
+			expect(
+				identical(result, rep(TRUE, length(xs[[x_type]]))),
+				sprintf(
+					"x = %s, val = %s did not return all TRUE",
+					x_type,
+					val_type
+				)
+			)
+		}
+	}
 })
 
 # Empty inputs ####
