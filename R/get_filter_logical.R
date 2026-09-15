@@ -95,7 +95,7 @@ method(
 		x = class_character | class_factor | class_logical,
 		val = class_character | class_factor | class_logical
 	)
-) <- function(x, val) {
+) <- function(x, val, ...) {
 	na_bool <- NULL
 	if (anyNA(val)) {
 		na_bool <- is.na(x)
