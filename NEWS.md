@@ -1,3 +1,5 @@
+# shinyfilters (development version)
+
 # shinyfilters 0.3.1
 
 * `get_filter_logical()` now returns `rep(T, length(x))` when a method is not 
