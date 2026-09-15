@@ -1,5 +1,7 @@
 # Changelog
 
+## shinyfilters (development version)
+
 ## shinyfilters 0.3.1
 
 - [`get_filter_logical()`](https://joshwlivingston.github.io/shinyfilters/reference/get_filter_logical.md)
