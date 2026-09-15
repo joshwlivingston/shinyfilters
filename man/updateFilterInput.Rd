@@ -24,7 +24,7 @@ based on the type of object passed to \code{x}, and other specified arguments.
 \link[shiny:updateNumericInput]{shiny::updateNumericInput}   \tab numeric                          \tab \emph{default}                       \cr
 \link[shiny:updateRadioButtons]{shiny::updateRadioButtons}   \tab character, factor, list, logical \tab \code{radio = TRUE}                  \cr
 \link[shiny:updateSelectInput]{shiny::updateSelectInput}    \tab character, factor, list, logical \tab \emph{default}                       \cr
-\link[shiny:updateSelectInput]{shiny::updateSelectizeInput} \tab character, factor, list, logical \tab \code{selectize = TRUE}              \cr
+\link[shiny:updateSelectizeInput]{shiny::updateSelectizeInput} \tab character, factor, list, logical \tab \code{selectize = TRUE}              \cr
 \link[shiny:updateSliderInput]{shiny::updateSliderInput}    \tab numeric                          \tab \code{slider = TRUE}                 \cr
 \link[shiny:updateTextAreaInput]{shiny::updateTextAreaInput}  \tab character                        \tab \code{textbox = TRUE}, \code{area = TRUE} \cr
 \link[shiny:updateTextInput]{shiny::updateTextInput}      \tab character                        \tab \code{textbox = TRUE}                \cr
@@ -53,7 +53,7 @@ The following arguments passed to \code{...} are supported:
 
 \item{selectize}{
 \emph{(character, factor, list, logical)}. Logical. Controls whether to use
-\link[shiny:updateSelectInput]{shiny::updateSelectizeInput} (\code{TRUE}) or \link[shiny:updateSelectInput]{shiny::updateSelectInput}
+\link[shiny:updateSelectizeInput]{shiny::updateSelectizeInput} (\code{TRUE}) or \link[shiny:updateSelectInput]{shiny::updateSelectInput}
 (\code{FALSE}, default). For character vectors, \code{selectize} only applies if
 \code{textbox} is \code{FALSE}, the default.}
 

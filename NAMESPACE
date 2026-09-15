@@ -15,25 +15,29 @@ export(get_input_labels)
 export(get_input_values)
 export(serverFilterInput)
 export(updateFilterInput)
-importFrom(S7,"method<-")
-importFrom(S7,S7_class)
-importFrom(S7,S7_dispatch)
-importFrom(S7,S7_inherits)
-importFrom(S7,S7_object)
-importFrom(S7,class_Date)
-importFrom(S7,class_POSIXt)
-importFrom(S7,class_any)
-importFrom(S7,class_character)
-importFrom(S7,class_data.frame)
-importFrom(S7,class_factor)
-importFrom(S7,class_function)
-importFrom(S7,class_integer)
-importFrom(S7,class_list)
-importFrom(S7,class_logical)
-importFrom(S7,class_numeric)
-importFrom(S7,methods_register)
-importFrom(S7,new_S3_class)
-importFrom(S7,new_generic)
-importFrom(S7,super)
-importFrom(methods,formalArgs)
-importFrom(methods,functionBody)
+importFrom(S7,
+  "method<-",
+  S7_class,
+  S7_dispatch,
+  S7_inherits,
+  S7_object,
+  class_Date,
+  class_POSIXt,
+  class_any,
+  class_character,
+  class_data.frame,
+  class_factor,
+  class_function,
+  class_integer,
+  class_list,
+  class_logical,
+  class_numeric,
+  methods_register,
+  new_S3_class,
+  new_generic,
+  super
+)
+importFrom(methods,
+  formalArgs,
+  functionBody
+)

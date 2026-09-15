@@ -25,7 +25,7 @@ type of object passed to \code{x}, and other specified arguments. See
 \link[shiny:numericInput]{shiny::numericInput}   \tab numeric                          \tab \emph{default}                       \cr
 \link[shiny:radioButtons]{shiny::radioButtons}   \tab character, factor, list, logical \tab \code{radio = TRUE}                  \cr
 \link[shiny:selectInput]{shiny::selectInput}    \tab character, factor, list, logical \tab \emph{default}                       \cr
-\link[shiny:selectInput]{shiny::selectizeInput} \tab character, factor, list, logical \tab \code{selectize = TRUE}              \cr
+\link[shiny:selectizeInput]{shiny::selectizeInput} \tab character, factor, list, logical \tab \code{selectize = TRUE}              \cr
 \link[shiny:sliderInput]{shiny::sliderInput}    \tab numeric                          \tab \code{slider = TRUE}                 \cr
 \link[shiny:textAreaInput]{shiny::textAreaInput}  \tab character                        \tab \code{textbox = TRUE}, \code{area = TRUE} \cr
 \link[shiny:textInput]{shiny::textInput}      \tab character                        \tab \code{textbox = TRUE}                \cr
@@ -55,7 +55,7 @@ the default.}
 
 \item{selectize}{
 \emph{(character, factor, list, logical)}. Logical. Controls whether to use
-\link[shiny:selectInput]{shiny::selectizeInput} (\code{TRUE}) or \link[shiny:selectInput]{shiny::selectInput}
+\link[shiny:selectizeInput]{shiny::selectizeInput} (\code{TRUE}) or \link[shiny:selectInput]{shiny::selectInput}
 (\code{FALSE}, default). For character vectors, \code{selectize} only applies if
 \code{textbox} is \code{FALSE}, the default.}
 
