@@ -3,6 +3,9 @@
 * `get_filter_logical()` now returns `rep(T, length(x))` when a method is not 
    defined. This behavior is a bandaid for the underlying issue:
    `numericInput()` returns a logical when the user blanks out the input.
+* Fixes issue in `get_filter_logical()` that caused an error when an argument 
+  was provided to `apply_filters()` and a categorical filter had an active 
+  selection.
 
 # shinyfilters 0.3.0
 
