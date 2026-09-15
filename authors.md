@@ -10,7 +10,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/joshwlivingston/shinyfilters/blob/main/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/joshwlivingston/shinyfilters/blob/v0.3.1/DESCRIPTION)
 
 Livingston J (2026). *shinyfilters: Create 'shiny' Inputs from Vectors,
 'data.frames', or any R Object*. R package version 0.3.1,
