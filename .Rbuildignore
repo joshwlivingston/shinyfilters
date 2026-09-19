@@ -15,3 +15,5 @@
 ^Meta$
 ^cran-comments\.md$
 ^CRAN-SUBMISSION$
+^AGENTS\.md$
+^\.claude$
