@@ -6,12 +6,10 @@
 
 # shinyfilters 0.3.1
 
-* `get_filter_logical()` now returns `rep(T, length(x))` when a method is not 
-   defined. This behavior is a bandaid for the underlying issue:
-   `numericInput()` returns a logical when the user blanks out the input.
-* Fixes issue in `get_filter_logical()` that caused an error when an argument 
-  was provided to `apply_filters()` and a categorical filter had an active 
-  selection.
+## Bugfixes
+
+* `get_filter_logical()` now returns `rep(T, length(x))` when a method is not defined. This behavior is a bandaid for the underlying issue: `numericInput()` returns a logical when the user blanks out the input.
+* Fixes issue in `get_filter_logical()` that caused an error when an argument was provided to `apply_filters()` and a categorical filter had an active selection.
 
 # shinyfilters 0.3.0
 
@@ -46,20 +44,15 @@
 # shinyfilters 0.2.0
 
 ## Additions:
-* `get_input_values()`: Generic to return multiple values from a shiny input 
-  object ([#10](https://github.com/joshwlivingston/shinyfilters/issues/10), [#5](https://github.com/joshwlivingston/shinyfilters/issues/5))
-* `get_input_ids()`: Generic to return the names of the shiny input ids for an 
-  arbitrary object `x`. Method provided for data.frames ([#12](https://github.com/joshwlivingston/shinyfilters/issues/12))
-* `get_input_labels()`: Same as `get_input_ids()`, but returns the `label`
-  instead of `inputId` ([#10](https://github.com/joshwlivingston/shinyfilters/issues/10)).
+* `get_input_values()`: Generic to return multiple values from a shiny input object ([#10](https://github.com/joshwlivingston/shinyfilters/issues/10), [#5](https://github.com/joshwlivingston/shinyfilters/issues/5))
+* `get_input_ids()`: Generic to return the names of the shiny input ids for an arbitrary object `x`. Method provided for data.frames ([#12](https://github.com/joshwlivingston/shinyfilters/issues/12))
+* `get_input_labels()`: Same as `get_input_ids()`, but returns the `label` instead of `inputId` ([#10](https://github.com/joshwlivingston/shinyfilters/issues/10)).
 
 ## Bugfixes
-* `get_input_values()` has been re-added; its erroneous removal was causing an 
-  error in `serverFilterInput()` ([#10](https://github.com/joshwlivingston/shinyfilters/issues/10), [#5](https://github.com/joshwlivingston/shinyfilters/issues/5)).
+* `get_input_values()` has been re-added; its erroneous removal was causing an error in `serverFilterInput()` ([#10](https://github.com/joshwlivingston/shinyfilters/issues/10), [#5](https://github.com/joshwlivingston/shinyfilters/issues/5)).
 
 ## Documentation:
-* `args_update_filter_input()` has been removed from the README's list of 
-  extensible functions.
+* `args_update_filter_input()` has been removed from the README's list of extensible functions.
 * Renames air.yaml Github Action job: "pkgdown" --> "air"
 * Adds to README instructions on installing release version 
 
@@ -69,14 +62,10 @@ Initial release of shinyfilters.
 
 The package provides the following functions:
 
-* `filterInput()`: Create a shiny input from a vector or data.frame, with
-  support for extension
+* `filterInput()`: Create a shiny input from a vector or data.frame, with support for extension
 * `updateFilterInput()`: Update a filter input created by `filterInput()`
 * `serverFilterInput()`: Server logic to update filter inputs for data.frames
 * `apply_filters()`: Apply a list of filters to a data.frame
-* `args_filter_input()`, `args_update_filter_input()`: Get default args for
-  `filterInput()` and `updateFilterInput()`.
-* `call_filter_input()`, `call_update_filter_input()`: Create calls to
-  `filterInput()` and `updateFilterInput()`.
-* `get_filter_logical()`: Compute a logical vector for filtering a data.frame 
-  column
+* `args_filter_input()`, `args_update_filter_input()`: Get default args for `filterInput()` and `updateFilterInput()`.
+* `call_filter_input()`, `call_update_filter_input()`: Create calls to `filterInput()` and `updateFilterInput()`.
+* `get_filter_logical()`: Compute a logical vector for filtering a data.frame column
