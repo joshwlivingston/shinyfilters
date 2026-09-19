@@ -2,7 +2,16 @@
 
 ## shinyfilters (development version)
 
+### Bugfixes
+
+- [`filterInput()`](https://joshwlivingston.github.io/shinyfilters/reference/filterInput.md)
+  now throws an error when the provided object is all missing.
+
 ## shinyfilters 0.3.1
+
+CRAN release: 2026-09-15
+
+### Bugfixes
 
 - [`get_filter_logical()`](https://joshwlivingston.github.io/shinyfilters/reference/get_filter_logical.md)
   now returns `rep(T, length(x))` when a method is not defined. This
