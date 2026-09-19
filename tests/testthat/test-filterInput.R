@@ -43,7 +43,10 @@ expect_shiny_dateInput <- expect_shiny_input(shiny::dateInput)
 
 ## All NA's
 expect_all_na_error <- function(x) {
-	expect_error(filterInput(x = x))
+	expect_error(
+		filterInput(x = x, inputId = "", label = ""),
+		regexp = "No nonmissing elements found"
+	)
 }
 test_that("filterInput() throws error when supplied vector is all NA", {
 	expect_all_na_error(choices_chr_na)

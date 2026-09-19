@@ -1,5 +1,9 @@
 # shinyfilters (development version)
 
+## Bugfixes
+
+* `filterInput()` now throws an error when the provided object is all missing.
+
 # shinyfilters 0.3.1
 
 * `get_filter_logical()` now returns `rep(T, length(x))` when a method is not 

@@ -109,6 +109,9 @@ filterInput <- new_generic(
 	name = "filterInput",
 	dispatch_args = c("x"),
 	fun = function(x, ...) {
+		if (all(is.na(x))) {
+			stop("No nonmissing elements found")
+		}
 		args <- list(...)
 		if (!is.data.frame(x) && !is.null(args$ns)) {
 			args <- c(list(x = x), args)
