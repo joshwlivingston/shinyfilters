@@ -262,7 +262,10 @@ test_that("get_filter_logical() falls back to all TRUE for every unsupported x/v
 			if (is_supported(x_type, val_type)) {
 				next
 			}
-			result <- suppressWarnings(get_filter_logical(xs[[x_type]], xs[[val_type]]))
+			result <- suppressWarnings(get_filter_logical(
+				xs[[x_type]],
+				xs[[val_type]]
+			))
 			expect(
 				identical(result, rep(TRUE, length(xs[[x_type]]))),
 				sprintf(
