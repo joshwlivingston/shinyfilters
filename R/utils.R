@@ -34,7 +34,7 @@ s7_check_is_valid_list_dispatch <- function(x, function_name) {
 	if (
 		!is.function(ns) ||
 			!identical(
-				functionBody(shiny::NS("x")),
+				functionBody(NS("x")),
 				functionBody(ns)
 			)
 	) {

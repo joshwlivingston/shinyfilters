@@ -23,36 +23,36 @@
 #  ---------
 #' \describe{
 #'   \item{area}{
-#'    *(character)*. Logical. Controls whether to use  [shiny::textAreaInput]
-#'    (`TRUE`) or [shiny::textInput] (`FALSE`, default). Only applies when
+#'    *(character)*. Logical. Controls whether to use  [textAreaInput]
+#'    (`TRUE`) or [textInput] (`FALSE`, default). Only applies when
 #'    `textbox` is `TRUE`.}
 #'
 #'   \item{radio}{
 #'     *(character, factor, list, logical)*. Logical. Controls whether to use
-#'     [shiny::radioButtons] (`TRUE`) or a dropdown input (`FALSE`, default).
+#'     [radioButtons] (`TRUE`) or a dropdown input (`FALSE`, default).
 #'     For character vectors, `radio` only applies if `textbox` is `FALSE`,
 #'     the default.}
 #'
 #'   \item{range}{
-#'   *(Date, POSIXt)*. Logical. Controls whether to use [shiny::dateRangeInput]
-#'   (`TRUE`) or [shiny::dateInput] (`FALSE`, default).}
+#'   *(Date, POSIXt)*. Logical. Controls whether to use [dateRangeInput]
+#'   (`TRUE`) or [dateInput] (`FALSE`, default).}
 #'
 #'   \item{selectize}{
 #'   *(character, factor, list, logical)*. Logical. Controls whether to use
-#'   [shiny::selectizeInput] (`TRUE`) or [shiny::selectInput]
+#'   [selectizeInput] (`TRUE`) or [selectInput]
 #'   (`FALSE`, default). For character vectors, `selectize` only applies if
 #'   `textbox` is `FALSE`, the default.}
 #'
 #'   \item{slider}{
-#'   *(numeric)*. Logical. Controls whether to use [shiny::sliderInput]
-#'   (`TRUE`) or [shiny::numericInput] (`FALSE`, default).}
+#'   *(numeric)*. Logical. Controls whether to use [sliderInput]
+#'   (`TRUE`) or [numericInput] (`FALSE`, default).}
 #'
 #'   \item{textbox}{
 #'   *(character)*. Logical. Controls whether to use a text input
 #'   (`TRUE`) or a dropdown input (`FALSE`, default).}
 #'
 #'   \item{ns}{
-#'   An optional namespace created by [shiny::NS()]. Useful when using
+#'   An optional namespace created by [NS()]. Useful when using
 #'   `filterInput()` on a data.frame inside a \pkg{shiny} module.}
 #'
 #' }
@@ -67,15 +67,15 @@
 #' \tabular{lll}{
 #'   \strong{Value}          \tab \strong{`x`}                     \tab \strong{Arguments}              \cr
 #'
-#'   [shiny::dateInput]      \tab Date, POSIXt                     \tab *default*                       \cr
-#'   [shiny::dateRangeInput] \tab Date, POSIXt                     \tab `range = TRUE`                  \cr
-#'   [shiny::numericInput]   \tab numeric                          \tab *default*                       \cr
-#'   [shiny::radioButtons]   \tab character, factor, list, logical \tab `radio = TRUE`                  \cr
-#'   [shiny::selectInput]    \tab character, factor, list, logical \tab *default*                       \cr
-#'   [shiny::selectizeInput] \tab character, factor, list, logical \tab `selectize = TRUE`              \cr
-#'   [shiny::sliderInput]    \tab numeric                          \tab `slider = TRUE`                 \cr
-#'   [shiny::textAreaInput]  \tab character                        \tab `textbox = TRUE`, `area = TRUE` \cr
-#'   [shiny::textInput]      \tab character                        \tab `textbox = TRUE`                \cr
+#'   [dateInput]      \tab Date, POSIXt                     \tab *default*                       \cr
+#'   [dateRangeInput] \tab Date, POSIXt                     \tab `range = TRUE`                  \cr
+#'   [numericInput]   \tab numeric                          \tab *default*                       \cr
+#'   [radioButtons]   \tab character, factor, list, logical \tab `radio = TRUE`                  \cr
+#'   [selectInput]    \tab character, factor, list, logical \tab *default*                       \cr
+#'   [selectizeInput] \tab character, factor, list, logical \tab `selectize = TRUE`              \cr
+#'   [sliderInput]    \tab numeric                          \tab `slider = TRUE`                 \cr
+#'   [textAreaInput]  \tab character                        \tab `textbox = TRUE`, `area = TRUE` \cr
+#'   [textInput]      \tab character                        \tab `textbox = TRUE`                \cr
 #' }
 #'
 #' @examplesIf interactive()
@@ -128,10 +128,10 @@ method(filterInput, class_character) <- function(x, ...) {
 	if (isTRUE(args$textbox)) {
 		if (isTRUE(args$area)) {
 			# `textbox = TRUE, area = TRUE`
-			input <- shiny::textAreaInput
+			input <- textAreaInput
 		} else {
 			# `textbox = TRUE`
-			input <- shiny::textInput
+			input <- textInput
 		}
 		return(do.call(call_filter_input, c(list(x = x, .f = input), args)))
 	}
@@ -150,7 +150,7 @@ method(filterInput, class_data.frame) <- function(x, ...) {
 		do.call(filterInput, args)
 	}
 	do.call(
-		htmltools::tagList,
+		tagList,
 		mapply(
 			filter_input,
 			x,
@@ -166,10 +166,10 @@ method(filterInput, class_Date) <- function(x, ...) {
 	args <- list(...)
 	if (isTRUE(args$range)) {
 		# `range = TRUE`
-		input <- shiny::dateRangeInput
+		input <- dateRangeInput
 	} else {
 		# default
-		input <- shiny::dateInput
+		input <- dateInput
 	}
 	do.call(call_filter_input, c(list(x = x, .f = input), args))
 }
@@ -190,10 +190,10 @@ method(filterInput, class_numeric) <- function(x, ...) {
 	args <- list(...)
 	if (isTRUE(args$slider)) {
 		# `slider = TRUE`
-		input <- shiny::sliderInput
+		input <- sliderInput
 	} else {
 		# default
-		input <- shiny::numericInput
+		input <- numericInput
 	}
 	do.call(call_filter_input, c(list(x = x, .f = input), args))
 }
@@ -244,10 +244,10 @@ call_filter_input <- function(x, .f, ...) {
 	}
 	args_provided <- list(...)
 	function_args <- formalArgs(.f)
-	if (identical(.f, shiny::selectizeInput)) {
+	if (identical(.f, selectizeInput)) {
 		function_args <- union(
 			function_args,
-			setdiff(formalArgs(shiny::selectInput), "selectize")
+			setdiff(formalArgs(selectInput), "selectize")
 		)
 	}
 	args_prepared <- ._prepare_input_args(x, ...)
@@ -297,13 +297,13 @@ call_filter_input <- function(x, .f, ...) {
 
 	if (isTRUE(args$selectize)) {
 		# `selectize = TRUE`
-		input <- shiny::selectizeInput
+		input <- selectizeInput
 	} else if (isTRUE(args$radio)) {
 		# `radio = TRUE`
-		input <- shiny::radioButtons
+		input <- radioButtons
 	} else {
 		# default
-		input <- shiny::selectInput
+		input <- selectInput
 	}
 	do.call(call_filter_input, c(list(x = x, .f = input), args))
 }
