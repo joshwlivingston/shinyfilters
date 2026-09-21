@@ -115,7 +115,7 @@ method(
 
 method(
 	filter_input_override,
-	list(class_atomic, class_function)
+	list(class_atomic | class_list, class_function)
 ) <- function(x, override, id, args) {
 	fun_transform <- TRANSFORMS_BY_FUN[[obj_address(override)]]
 	if (!is.null(fun_transform)) {
