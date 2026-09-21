@@ -14,13 +14,13 @@ URL: https://joshwlivingston.github.io/shinyfilters/,
     https://github.com/joshwlivingston/shinyfilters
 BugReports: https://github.com/joshwlivingston/shinyfilters/issues
 Imports:
+    htmltools,
     methods,
     S7 (>= 0.2.0),
     shiny
 Suggests:
     bslib,
     DT,
-    htmltools,
     knitr,
     rmarkdown,
     shinytest2 (>= 0.4.1),

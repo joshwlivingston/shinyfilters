@@ -22,29 +22,29 @@
 #  ---------
 #' \describe{
 #'   \item{area}{
-#'    *(character)*. Logical. Controls whether to use  [shiny::updateTextAreaInput]
-#'    (`TRUE`) or [shiny::updateTextInput] (`FALSE`, default). Only applies when
+#'    *(character)*. Logical. Controls whether to use  [updateTextAreaInput]
+#'    (`TRUE`) or [updateTextInput] (`FALSE`, default). Only applies when
 #'    `textbox` is `TRUE`.}
 #'
 #'   \item{radio}{
 #'     *(character, factor, list, logical)*. Logical. Controls whether to use
-#'     [shiny::updateRadioButtons] (`TRUE`) or a dropdown input update function
+#'     [updateRadioButtons] (`TRUE`) or a dropdown input update function
 #'     (`FALSE`, default). For character vectors, `radio` only applies if
 #'     `textbox` is `FALSE`, the default.}
 #'
 #'   \item{range}{
-#'   *(Date, POSIXt)*. Logical. Controls whether to use [shiny::updateDateRangeInput]
-#'   (`TRUE`) or [shiny::updateDateInput] (`FALSE`, default).}
+#'   *(Date, POSIXt)*. Logical. Controls whether to use [updateDateRangeInput]
+#'   (`TRUE`) or [updateDateInput] (`FALSE`, default).}
 #'
 #'   \item{selectize}{
 #'   *(character, factor, list, logical)*. Logical. Controls whether to use
-#'   [shiny::updateSelectizeInput] (`TRUE`) or [shiny::updateSelectInput]
+#'   [updateSelectizeInput] (`TRUE`) or [updateSelectInput]
 #'   (`FALSE`, default). For character vectors, `selectize` only applies if
 #'   `textbox` is `FALSE`, the default.}
 #'
 #'   \item{slider}{
-#'   *(numeric)*. Logical. Controls whether to use [shiny::updateSliderInput]
-#'   (`TRUE`) or [shiny::updateNumericInput] (`FALSE`, default).}
+#'   *(numeric)*. Logical. Controls whether to use [updateSliderInput]
+#'   (`TRUE`) or [updateNumericInput] (`FALSE`, default).}
 #'
 #'   \item{textbox}{
 #'   *(character)*. Logical. Controls whether to update a text input
@@ -61,15 +61,15 @@
 #' \tabular{lll}{
 #'   \strong{Value}          \tab \strong{`x`}                     \tab \strong{Arguments}              \cr
 #'
-#'   [shiny::updateDateInput]      \tab Date, POSIXt                     \tab *default*                       \cr
-#'   [shiny::updateDateRangeInput] \tab Date, POSIXt                     \tab `range = TRUE`                  \cr
-#'   [shiny::updateNumericInput]   \tab numeric                          \tab *default*                       \cr
-#'   [shiny::updateRadioButtons]   \tab character, factor, list, logical \tab `radio = TRUE`                  \cr
-#'   [shiny::updateSelectInput]    \tab character, factor, list, logical \tab *default*                       \cr
-#'   [shiny::updateSelectizeInput] \tab character, factor, list, logical \tab `selectize = TRUE`              \cr
-#'   [shiny::updateSliderInput]    \tab numeric                          \tab `slider = TRUE`                 \cr
-#'   [shiny::updateTextAreaInput]  \tab character                        \tab `textbox = TRUE`, `area = TRUE` \cr
-#'   [shiny::updateTextInput]      \tab character                        \tab `textbox = TRUE`                \cr
+#'   [updateDateInput]      \tab Date, POSIXt                     \tab *default*                       \cr
+#'   [updateDateRangeInput] \tab Date, POSIXt                     \tab `range = TRUE`                  \cr
+#'   [updateNumericInput]   \tab numeric                          \tab *default*                       \cr
+#'   [updateRadioButtons]   \tab character, factor, list, logical \tab `radio = TRUE`                  \cr
+#'   [updateSelectInput]    \tab character, factor, list, logical \tab *default*                       \cr
+#'   [updateSelectizeInput] \tab character, factor, list, logical \tab `selectize = TRUE`              \cr
+#'   [updateSliderInput]    \tab numeric                          \tab `slider = TRUE`                 \cr
+#'   [updateTextAreaInput]  \tab character                        \tab `textbox = TRUE`, `area = TRUE` \cr
+#'   [updateTextInput]      \tab character                        \tab `textbox = TRUE`                \cr
 #' }
 #'
 #' @examplesIf interactive()
@@ -101,7 +101,7 @@
 #' )
 #'
 #' server <- function(input, output, session) {
-#' 	shiny::observe({
+#' 	observe({
 #' 		fruits_filtered <- fruits
 #' 		if (!is.null(input$letter) && length(input$letter) != 0L) {
 #' 			fruits_filtered <- fruits[input$letter]
@@ -123,10 +123,10 @@ method(updateFilterInput, class_character) <- function(x, ...) {
 	if (isTRUE(args$textbox)) {
 		if (isTRUE(args$area)) {
 			# `textbox = TRUE, area = TRUE`
-			call_update_filter_input(x, shiny::updateTextAreaInput, ...)
+			call_update_filter_input(x, updateTextAreaInput, ...)
 		} else {
 			# `textbox = TRUE`
-			call_update_filter_input(x, shiny::updateTextInput, ...)
+			call_update_filter_input(x, updateTextInput, ...)
 		}
 	} else {
 		# Default: select / radio input
@@ -160,10 +160,10 @@ method(updateFilterInput, class_Date) <- function(x, ...) {
 	args <- list(...)
 	if (isTRUE(args$range)) {
 		# `range = TRUE`
-		call_update_filter_input(x, shiny::updateDateRangeInput, ...)
+		call_update_filter_input(x, updateDateRangeInput, ...)
 	} else {
 		# default
-		call_update_filter_input(x, shiny::updateDateInput, ...)
+		call_update_filter_input(x, updateDateInput, ...)
 	}
 }
 
@@ -187,10 +187,10 @@ method(updateFilterInput, class_numeric) <- function(x, ...) {
 	args <- list(...)
 	if (isTRUE(args$slider)) {
 		# `slider = TRUE`
-		call_update_filter_input(x, shiny::updateSliderInput, ...)
+		call_update_filter_input(x, updateSliderInput, ...)
 	} else {
 		# default
-		call_update_filter_input(x, shiny::updateNumericInput, ...)
+		call_update_filter_input(x, updateNumericInput, ...)
 	}
 }
 
@@ -214,13 +214,13 @@ method(updateFilterInput, class_POSIXt) <- function(
 
 	if (isTRUE(args$selectize)) {
 		# `selectize = TRUE`
-		call_update_filter_input(x, shiny::updateSelectizeInput, ...)
+		call_update_filter_input(x, updateSelectizeInput, ...)
 	} else if (isTRUE(args$radio)) {
 		# `radio = TRUE`
-		call_update_filter_input(x, shiny::updateRadioButtons, ...)
+		call_update_filter_input(x, updateRadioButtons, ...)
 	} else {
 		# default
-		call_update_filter_input(x, shiny::updateSelectInput, ...)
+		call_update_filter_input(x, updateSelectInput, ...)
 	}
 }
 
