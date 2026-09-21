@@ -31,15 +31,23 @@ s7_check_is_valid_list_dispatch <- function(x, function_name) {
 }
 
 ._check_valid_shiny_ns <- function(ns) {
-	if (
-		!is.function(ns) ||
-			!identical(
-				functionBody(shiny::NS("x")),
-				functionBody(ns)
-			)
-	) {
-		stop("`ns` must be the result of calling `shiny::NS()`.")
+	if (!is.function(ns)) {
+		stop(error_message_invalid_ns)
 	}
+	._check_valid_ns_function(ns)
+}
+
+._check_valid_ns_function <- function(ns) {
+	if (!._is_valid_ns_function(ns)) {
+		stop(error_message_invalid_ns)
+	}
+}
+
+._is_valid_ns_function <- function(ns) {
+	identical(
+		functionBody(NS("x")),
+		functionBody(value)
+	)
 }
 
 set_names <- function(object = nm, nm) {

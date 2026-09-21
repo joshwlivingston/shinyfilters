@@ -100,7 +100,7 @@ ui <- fluidPage(
 )
 
 server <- function(input, output, session) {
-	shiny::observe({
+	observe({
 		fruits_filtered <- fruits
 		if (!is.null(input$letter) && length(input$letter) != 0L) {
 			fruits_filtered <- fruits[input$letter]

@@ -47,10 +47,10 @@ must_use_radio <- new_S3_class(
 	 constructor = function(.data) .data
 )
 method(filterInput, must_use_radio) <- function(x, ...) {
-	 call_filter_input(x, shiny::radioButtons, ...)
+	 call_filter_input(x, radioButtons, ...)
 }
 method(updateFilterInput, must_use_radio) <- function(x, ...) {
-	 call_update_filter_input(x, shiny::updateRadioButtons, ...)
+	 call_update_filter_input(x, updateRadioButtons, ...)
 }
 
 use_radio <- function(x) {
@@ -65,7 +65,7 @@ df_shared <- data.frame(
 )
 
 filters_ui <- function(id) {
-	 ns <- shiny::NS(id)
+	 ns <- NS(id)
 	 filterInput(
 		 x = df_shared,
 		 range = TRUE,
@@ -78,7 +78,7 @@ filters_ui <- function(id) {
 
 filters_server <- function(id) {
 	 moduleServer(id, function(input, output, session) {
- 		# serverFilterInput() returns a shiny::observe() expressionc
+ 		# serverFilterInput() returns a observe() expressionc
  		serverFilterInput(df_shared, input = input, range = TRUE)
  	})
 }

@@ -109,7 +109,7 @@ filterInput <- new_generic(
 	name = "filterInput",
 	dispatch_args = c("x"),
 	fun = function(x, ...) {
-		if (all(is.na(x))) {
+		if ((is.list(x) || is.atomic(x)) && all(is.na(x))) {
 			stop("No nonmissing elements found")
 		}
 		args <- list(...)

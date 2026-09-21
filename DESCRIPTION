@@ -16,8 +16,11 @@ BugReports: https://github.com/joshwlivingston/shinyfilters/issues
 Imports:
     htmltools,
     methods,
+    rlang,
     S7 (>= 0.2.0),
-    shiny
+    shiny,
+    stbl,
+    utils
 Suggests:
     bslib,
     DT,
@@ -33,3 +36,4 @@ Config/testthat/edition: 3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 Config/roxygen2/version: 8.1.0
+RoxygenNote: 7.3.3
