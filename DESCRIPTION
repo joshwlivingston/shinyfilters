@@ -26,14 +26,15 @@ Suggests:
     DT,
     knitr,
     rmarkdown,
+    roxygen2,
     shinytest2 (>= 0.4.1),
     shinyWidgets,
     testthat (>= 3.0.0),
     tibble
 VignetteBuilder: 
     knitr
+Config/roxygen2/version: 8.1.0
 Config/testthat/edition: 3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-Config/roxygen2/version: 8.1.0
 RoxygenNote: 7.3.3
