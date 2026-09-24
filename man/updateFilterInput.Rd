@@ -19,15 +19,15 @@ based on the type of object passed to \code{x}, and other specified arguments.
 \tabular{lll}{
 \strong{Value}          \tab \strong{\code{x}}                     \tab \strong{Arguments}              \cr
 
-\link[shiny:updateDateInput]{shiny::updateDateInput}      \tab Date, POSIXt                     \tab \emph{default}                       \cr
-\link[shiny:updateDateRangeInput]{shiny::updateDateRangeInput} \tab Date, POSIXt                     \tab \code{range = TRUE}                  \cr
-\link[shiny:updateNumericInput]{shiny::updateNumericInput}   \tab numeric                          \tab \emph{default}                       \cr
-\link[shiny:updateRadioButtons]{shiny::updateRadioButtons}   \tab character, factor, list, logical \tab \code{radio = TRUE}                  \cr
-\link[shiny:updateSelectInput]{shiny::updateSelectInput}    \tab character, factor, list, logical \tab \emph{default}                       \cr
-\link[shiny:updateSelectInput]{shiny::updateSelectizeInput} \tab character, factor, list, logical \tab \code{selectize = TRUE}              \cr
-\link[shiny:updateSliderInput]{shiny::updateSliderInput}    \tab numeric                          \tab \code{slider = TRUE}                 \cr
-\link[shiny:updateTextAreaInput]{shiny::updateTextAreaInput}  \tab character                        \tab \code{textbox = TRUE}, \code{area = TRUE} \cr
-\link[shiny:updateTextInput]{shiny::updateTextInput}      \tab character                        \tab \code{textbox = TRUE}                \cr
+\link[shiny:updateDateInput]{updateDateInput}      \tab Date, POSIXt                     \tab \emph{default}                       \cr
+\link[shiny:updateDateRangeInput]{updateDateRangeInput} \tab Date, POSIXt                     \tab \code{range = TRUE}                  \cr
+\link[shiny:updateNumericInput]{updateNumericInput}   \tab numeric                          \tab \emph{default}                       \cr
+\link[shiny:updateRadioButtons]{updateRadioButtons}   \tab character, factor, list, logical \tab \code{radio = TRUE}                  \cr
+\link[shiny:updateSelectInput]{updateSelectInput}    \tab character, factor, list, logical \tab \emph{default}                       \cr
+\link[shiny:updateSelectizeInput]{updateSelectizeInput} \tab character, factor, list, logical \tab \code{selectize = TRUE}              \cr
+\link[shiny:updateSliderInput]{updateSliderInput}    \tab numeric                          \tab \code{slider = TRUE}                 \cr
+\link[shiny:updateTextAreaInput]{updateTextAreaInput}  \tab character                        \tab \code{textbox = TRUE}, \code{area = TRUE} \cr
+\link[shiny:updateTextInput]{updateTextInput}      \tab character                        \tab \code{textbox = TRUE}                \cr
 }
 }
 \description{
@@ -37,29 +37,29 @@ Updates a \pkg{shiny} input based the type of object \code{x} and other argument
 The following arguments passed to \code{...} are supported:
 \describe{
 \item{area}{
-\emph{(character)}. Logical. Controls whether to use  \link[shiny:updateTextAreaInput]{shiny::updateTextAreaInput}
-(\code{TRUE}) or \link[shiny:updateTextInput]{shiny::updateTextInput} (\code{FALSE}, default). Only applies when
+\emph{(character)}. Logical. Controls whether to use  \link[shiny:updateTextAreaInput]{updateTextAreaInput}
+(\code{TRUE}) or \link[shiny:updateTextInput]{updateTextInput} (\code{FALSE}, default). Only applies when
 \code{textbox} is \code{TRUE}.}
 
 \item{radio}{
 \emph{(character, factor, list, logical)}. Logical. Controls whether to use
-\link[shiny:updateRadioButtons]{shiny::updateRadioButtons} (\code{TRUE}) or a dropdown input update function
+\link[shiny:updateRadioButtons]{updateRadioButtons} (\code{TRUE}) or a dropdown input update function
 (\code{FALSE}, default). For character vectors, \code{radio} only applies if
 \code{textbox} is \code{FALSE}, the default.}
 
 \item{range}{
-\emph{(Date, POSIXt)}. Logical. Controls whether to use \link[shiny:updateDateRangeInput]{shiny::updateDateRangeInput}
-(\code{TRUE}) or \link[shiny:updateDateInput]{shiny::updateDateInput} (\code{FALSE}, default).}
+\emph{(Date, POSIXt)}. Logical. Controls whether to use \link[shiny:updateDateRangeInput]{updateDateRangeInput}
+(\code{TRUE}) or \link[shiny:updateDateInput]{updateDateInput} (\code{FALSE}, default).}
 
 \item{selectize}{
 \emph{(character, factor, list, logical)}. Logical. Controls whether to use
-\link[shiny:updateSelectInput]{shiny::updateSelectizeInput} (\code{TRUE}) or \link[shiny:updateSelectInput]{shiny::updateSelectInput}
+\link[shiny:updateSelectizeInput]{updateSelectizeInput} (\code{TRUE}) or \link[shiny:updateSelectInput]{updateSelectInput}
 (\code{FALSE}, default). For character vectors, \code{selectize} only applies if
 \code{textbox} is \code{FALSE}, the default.}
 
 \item{slider}{
-\emph{(numeric)}. Logical. Controls whether to use \link[shiny:updateSliderInput]{shiny::updateSliderInput}
-(\code{TRUE}) or \link[shiny:updateNumericInput]{shiny::updateNumericInput} (\code{FALSE}, default).}
+\emph{(numeric)}. Logical. Controls whether to use \link[shiny:updateSliderInput]{updateSliderInput}
+(\code{TRUE}) or \link[shiny:updateNumericInput]{updateNumericInput} (\code{FALSE}, default).}
 
 \item{textbox}{
 \emph{(character)}. Logical. Controls whether to update a text input

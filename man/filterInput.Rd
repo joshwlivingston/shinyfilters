@@ -20,15 +20,15 @@ type of object passed to \code{x}, and other specified arguments. See
 \tabular{lll}{
 \strong{Value}          \tab \strong{\code{x}}                     \tab \strong{Arguments}              \cr
 
-\link[shiny:dateInput]{shiny::dateInput}      \tab Date, POSIXt                     \tab \emph{default}                       \cr
-\link[shiny:dateRangeInput]{shiny::dateRangeInput} \tab Date, POSIXt                     \tab \code{range = TRUE}                  \cr
-\link[shiny:numericInput]{shiny::numericInput}   \tab numeric                          \tab \emph{default}                       \cr
-\link[shiny:radioButtons]{shiny::radioButtons}   \tab character, factor, list, logical \tab \code{radio = TRUE}                  \cr
-\link[shiny:selectInput]{shiny::selectInput}    \tab character, factor, list, logical \tab \emph{default}                       \cr
-\link[shiny:selectInput]{shiny::selectizeInput} \tab character, factor, list, logical \tab \code{selectize = TRUE}              \cr
-\link[shiny:sliderInput]{shiny::sliderInput}    \tab numeric                          \tab \code{slider = TRUE}                 \cr
-\link[shiny:textAreaInput]{shiny::textAreaInput}  \tab character                        \tab \code{textbox = TRUE}, \code{area = TRUE} \cr
-\link[shiny:textInput]{shiny::textInput}      \tab character                        \tab \code{textbox = TRUE}                \cr
+\link[shiny:dateInput]{dateInput}      \tab Date, POSIXt                     \tab \emph{default}                       \cr
+\link[shiny:dateRangeInput]{dateRangeInput} \tab Date, POSIXt                     \tab \code{range = TRUE}                  \cr
+\link[shiny:numericInput]{numericInput}   \tab numeric                          \tab \emph{default}                       \cr
+\link[shiny:radioButtons]{radioButtons}   \tab character, factor, list, logical \tab \code{radio = TRUE}                  \cr
+\link[shiny:selectInput]{selectInput}    \tab character, factor, list, logical \tab \emph{default}                       \cr
+\link[shiny:selectizeInput]{selectizeInput} \tab character, factor, list, logical \tab \code{selectize = TRUE}              \cr
+\link[shiny:sliderInput]{sliderInput}    \tab numeric                          \tab \code{slider = TRUE}                 \cr
+\link[shiny:textAreaInput]{textAreaInput}  \tab character                        \tab \code{textbox = TRUE}, \code{area = TRUE} \cr
+\link[shiny:textInput]{textInput}      \tab character                        \tab \code{textbox = TRUE}                \cr
 }
 }
 \description{
@@ -39,36 +39,36 @@ other arguments.
 The following arguments passed to \code{...} are supported:
 \describe{
 \item{area}{
-\emph{(character)}. Logical. Controls whether to use  \link[shiny:textAreaInput]{shiny::textAreaInput}
-(\code{TRUE}) or \link[shiny:textInput]{shiny::textInput} (\code{FALSE}, default). Only applies when
+\emph{(character)}. Logical. Controls whether to use  \link[shiny:textAreaInput]{textAreaInput}
+(\code{TRUE}) or \link[shiny:textInput]{textInput} (\code{FALSE}, default). Only applies when
 \code{textbox} is \code{TRUE}.}
 
 \item{radio}{
 \emph{(character, factor, list, logical)}. Logical. Controls whether to use
-\link[shiny:radioButtons]{shiny::radioButtons} (\code{TRUE}) or a dropdown input (\code{FALSE}, default).
+\link[shiny:radioButtons]{radioButtons} (\code{TRUE}) or a dropdown input (\code{FALSE}, default).
 For character vectors, \code{radio} only applies if \code{textbox} is \code{FALSE},
 the default.}
 
 \item{range}{
-\emph{(Date, POSIXt)}. Logical. Controls whether to use \link[shiny:dateRangeInput]{shiny::dateRangeInput}
-(\code{TRUE}) or \link[shiny:dateInput]{shiny::dateInput} (\code{FALSE}, default).}
+\emph{(Date, POSIXt)}. Logical. Controls whether to use \link[shiny:dateRangeInput]{dateRangeInput}
+(\code{TRUE}) or \link[shiny:dateInput]{dateInput} (\code{FALSE}, default).}
 
 \item{selectize}{
 \emph{(character, factor, list, logical)}. Logical. Controls whether to use
-\link[shiny:selectInput]{shiny::selectizeInput} (\code{TRUE}) or \link[shiny:selectInput]{shiny::selectInput}
+\link[shiny:selectizeInput]{selectizeInput} (\code{TRUE}) or \link[shiny:selectInput]{selectInput}
 (\code{FALSE}, default). For character vectors, \code{selectize} only applies if
 \code{textbox} is \code{FALSE}, the default.}
 
 \item{slider}{
-\emph{(numeric)}. Logical. Controls whether to use \link[shiny:sliderInput]{shiny::sliderInput}
-(\code{TRUE}) or \link[shiny:numericInput]{shiny::numericInput} (\code{FALSE}, default).}
+\emph{(numeric)}. Logical. Controls whether to use \link[shiny:sliderInput]{sliderInput}
+(\code{TRUE}) or \link[shiny:numericInput]{numericInput} (\code{FALSE}, default).}
 
 \item{textbox}{
 \emph{(character)}. Logical. Controls whether to use a text input
 (\code{TRUE}) or a dropdown input (\code{FALSE}, default).}
 
 \item{ns}{
-An optional namespace created by \code{\link[shiny:NS]{shiny::NS()}}. Useful when using
+An optional namespace created by \code{\link[shiny:NS]{NS()}}. Useful when using
 \code{filterInput()} on a data.frame inside a \pkg{shiny} module.}
 
 }

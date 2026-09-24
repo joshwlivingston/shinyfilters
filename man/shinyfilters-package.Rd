@@ -20,6 +20,11 @@ Useful links:
 \author{
 \strong{Maintainer}: Josh Livingston \email{joshwlivingston@gmail.com}
 
+Authors:
+\itemize{
+  \item Josh Livingston \email{joshwlivingston@gmail.com}
+}
+
 Other contributors:
 \itemize{
   \item Novica Nakov \email{nnovica@gmail.com} (\href{https://orcid.org/0009-0005-7773-7718}{ORCID}) [contributor]
