@@ -42,17 +42,13 @@ expect_shiny_dateInput <- expect_shiny_input(shiny::dateInput)
 # Logical Paths ####
 
 ## All NA's
-expect_all_na_error <- function(x) {
-	expect_error(
-		filterInput(x = x, inputId = "", label = ""),
-		regexp = "No nonmissing elements found"
-	)
-}
 test_that("filterInput() throws error when supplied vector is all NA", {
-	expect_all_na_error(choices_chr_na)
-	expect_all_na_error(choices_cpx_na)
-	expect_all_na_error(choices_rel_na)
-	expect_all_na_error(choices_int_na)
+	expect_snapshot(error = TRUE, {
+		filterInput(x = choices_chr_na, inputId = "", label = "")
+		filterInput(x = choices_cpx_na, inputId = "", label = "")
+		filterInput(x = choices_rel_na, inputId = "", label = "")
+		filterInput(x = choices_int_na, inputId = "", label = "")
+	})
 })
 
 ## Select Input ####
