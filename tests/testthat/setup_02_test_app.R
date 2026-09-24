@@ -14,8 +14,7 @@ app_shiny <- local({
 						mainPanel()
 					)
 				),
-				server = function(input, output, session) {
-				}
+				server = function(input, output, session) {}
 			)
 		}
 		._app_shiny_cache

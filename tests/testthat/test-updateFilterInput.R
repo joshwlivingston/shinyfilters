@@ -37,8 +37,7 @@ test_that("updateFilterInput works with character textbox", {
 					mainPanel()
 				)
 			),
-			function(input, output, session) {
-			}
+			function(input, output, session) {}
 		),
 		{
 			# Update text input
@@ -68,8 +67,7 @@ test_that("updateFilterInput works with character textarea", {
 					mainPanel()
 				)
 			),
-			function(input, output, session) {
-			}
+			function(input, output, session) {}
 		),
 		{
 			# Update textarea input
@@ -206,8 +204,7 @@ test_that("updateFilterInput works with lists", {
 					mainPanel()
 				)
 			),
-			function(input, output, session) {
-			}
+			function(input, output, session) {}
 		),
 		{
 			list_filt <- as.list(letters[1:10])
