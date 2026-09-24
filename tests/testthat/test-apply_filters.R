@@ -192,3 +192,24 @@ test_that("apply_filters() preserves row names when filtering", {
 	result <- apply_filters(df, filter_list)
 	expect_true(all(grepl("row_", rownames(result), fixed = TRUE)))
 })
+
+# Errors ####
+test_that("apply_filters: unknown filter_combine_method", {
+	expect_snapshot(error = TRUE, {
+		apply_filters(
+			test_df,
+			list(chr_col = "i"),
+			filter_combine_method = "unk"
+		)
+	})
+})
+
+test_that("apply_filters: filter_combine_method must be function", {
+	expect_snapshot(error = TRUE, {
+		apply_filters(
+			test_df,
+			list(chr_col = "i"),
+			filter_combine_method = 123
+		)
+	})
+})

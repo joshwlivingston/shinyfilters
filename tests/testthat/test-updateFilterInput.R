@@ -37,7 +37,8 @@ test_that("updateFilterInput works with character textbox", {
 					mainPanel()
 				)
 			),
-			function(input, output, session) {}
+			function(input, output, session) {
+			}
 		),
 		{
 			# Update text input
@@ -67,7 +68,8 @@ test_that("updateFilterInput works with character textarea", {
 					mainPanel()
 				)
 			),
-			function(input, output, session) {}
+			function(input, output, session) {
+			}
 		),
 		{
 			# Update textarea input
@@ -204,7 +206,8 @@ test_that("updateFilterInput works with lists", {
 					mainPanel()
 				)
 			),
-			function(input, output, session) {}
+			function(input, output, session) {
+			}
 		),
 		{
 			list_filt <- as.list(letters[1:10])
@@ -236,5 +239,24 @@ test_that("updateFilterInput works with data.frame", {
 			test_df,
 			session = session
 		))
+	})
+})
+
+# Errors ####
+## call_update_filter_input ####
+test_that("call_update_filter_input errors for data.frames", {
+	expect_snapshot(error = TRUE, {
+		call_update_filter_input(test_df, shiny::updateSelectInput)
+	})
+})
+
+test_that("updateFilterInput: radio and selectize cannot both be TRUE", {
+	expect_snapshot(error = TRUE, {
+		updateFilterInput(
+			choices_chr,
+			inputId = "test",
+			radio = TRUE,
+			selectize = TRUE
+		)
 	})
 })
