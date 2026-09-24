@@ -82,3 +82,50 @@ check_is_nonempty_string <- function(x) {
 		stop(sprintf("`%s` must be a non-empty string", deparse(substitute(x))))
 	}
 }
+
+as_something <- new_generic(
+	"as_something",
+	c("x", "using"),
+	fun = function(x, using) {
+		S7_dispatch()
+	}
+)
+method(as_something, list(class_atomic, class_function)) <- function(x, using) {
+	error <- function(info) {
+		cli_abort(
+			c(
+				sprintf("Unable to coerce to class %s", class(using(NA))),
+				"*" = info
+			),
+			call = caller_env(3)
+		)
+	}
+
+	res <- suppressWarnings(using(x))
+	check_none_na(res, error)
+	return(res)
+}
+method(as_something, list(class_list, class_function)) <- function(x, using) {
+	res <- unlist(x)
+	if (length(res) == length(x)) {
+		return(as_something(res, using))
+	}
+	cli_abort(
+		"Unable to coerce {.arg x} from {.cls list} to {.cls {class(using(NA))}}",
+		call = caller_env(2)
+	)
+}
+
+as_numeric <- function(x) {
+	as_something(x, as.numeric)
+}
+
+as_character <- function(x) {
+	as_something(x, as.character)
+}
+
+check_none_na <- function(x, error) {
+	if (anyNA(x)) {
+		error("NA's found after coercion")
+	}
+}

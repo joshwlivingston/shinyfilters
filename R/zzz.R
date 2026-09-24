@@ -41,12 +41,12 @@ ARGUMENT_KEYWORDS <- NULL
 		)
 
 	TRANSFORMS <<- list(
-		"area" = function(x) to_chr(x),
-		"radio" = function(x) to_chr(x),
+		"area" = as_character,
+		"radio" = as_character,
 		"range" = function(x) as.Date(x),
-		"selecitze" = function(x) to_chr(x),
-		"slider" = function(x) if (is.integer(x)) x else to_dbl(x),
-		"textbox" = function(x) to_chr(x)
+		"selecitze" = as_character,
+		"slider" = as_numeric,
+		"textbox" = as_character
 	)
 
 	ARGUMENT_KEYWORDS <<- c(

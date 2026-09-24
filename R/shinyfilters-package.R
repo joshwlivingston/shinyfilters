@@ -2,11 +2,14 @@
 "_PACKAGE"
 
 ## usethis namespace: start
+#' @importFrom cli cli_abort
 #' @importFrom htmltools tagList
 #' @importFrom methods formalArgs
 #' @importFrom methods functionBody
+#' @importFrom rlang abort
 #' @importFrom rlang as_data_mask
 #' @importFrom rlang as_label
+#' @importFrom rlang caller_env
 #' @importFrom rlang enquos
 #' @importFrom rlang eval_tidy
 #' @importFrom rlang obj_address
@@ -54,9 +57,6 @@
 #' @importFrom shiny updateSliderInput
 #' @importFrom shiny updateTextAreaInput
 #' @importFrom shiny updateTextInput
-#' @importFrom stbl are_dbl_ish
-#' @importFrom stbl to_chr
-#' @importFrom stbl to_dbl
 #' @importFrom utils modifyList
 ## usethis namespace: end
 NULL
