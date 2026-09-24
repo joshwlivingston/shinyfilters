@@ -238,3 +238,22 @@ test_that("updateFilterInput works with data.frame", {
 		))
 	})
 })
+
+# Errors ####
+## call_update_filter_input ####
+test_that("call_update_filter_input errors for data.frames", {
+	expect_snapshot(error = TRUE, {
+		call_update_filter_input(test_df, shiny::updateSelectInput)
+	})
+})
+
+test_that("updateFilterInput: radio and selectize cannot both be TRUE", {
+	expect_snapshot(error = TRUE, {
+		updateFilterInput(
+			choices_chr,
+			inputId = "test",
+			radio = TRUE,
+			selectize = TRUE
+		)
+	})
+})

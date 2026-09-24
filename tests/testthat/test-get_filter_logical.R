@@ -307,3 +307,48 @@ test_that("get_filter_logical() preserves vector length", {
 	result <- get_filter_logical(x, val = x[7])
 	expect_length(result, 15)
 })
+
+# Errors ####
+### column nopt found
+test_that("get_filter_logical: column not found", {
+	expect_snapshot(error = TRUE, {
+		get_filter_logical(test_df, "i", column = "nonexistent")
+	})
+})
+
+### invalid column_name argument ####
+test_that("get_filter_logical: column argument is non-empty string", {
+	expect_snapshot(error = TRUE, {
+		get_filter_logical(test_df, "i", column = NA_character_)
+		get_filter_logical(test_df, "i", column = "")
+	})
+})
+
+### invalid implementation ####
+#### non-logical vector returned ####
+test_that("get_filter_logical: non-logical vector returned", {
+	method(get_filter_logical, list(ClassCharacter, class_character)) <- function(
+		x,
+		val
+	) {
+		integer(length(x))
+	}
+	df <- data.frame(x = ClassCharacter(letters))
+	expect_snapshot(error = TRUE, {
+		apply_filters(df, list(x = letters[1:5]))
+	})
+})
+
+#### logical vector of invalid length returned ####
+test_that("get_filter_logical: logical vector of invalid length", {
+	method(get_filter_logical, list(ClassCharacter, class_character)) <- function(
+		x,
+		val
+	) {
+		logical(length(x) - 1L)
+	}
+	df <- data.frame(x = ClassCharacter(letters))
+	expect_snapshot(error = TRUE, {
+		apply_filters(df, list(x = letters[1:5]))
+	})
+})
