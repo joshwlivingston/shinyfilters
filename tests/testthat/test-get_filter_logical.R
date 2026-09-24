@@ -38,10 +38,9 @@ test_that("get_filter_logical() filters data.frame columns correctly", {
 
 test_that("get_filter_logical() throws error for missing column", {
 	df <- data.frame(a = 1:5, b = letters[1:5])
-	expect_error(
-		get_filter_logical(df, val = "test", column = "nonexistent"),
-		"Column `nonexistent` not found in `x`"
-	)
+	expect_snapshot(error = TRUE, {
+		get_filter_logical(df, val = "test", column = "nonexistent")
+	})
 })
 
 # character `x` provided ####
