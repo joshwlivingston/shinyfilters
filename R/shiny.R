@@ -229,27 +229,13 @@ method(._prepare_input, class_reactiveExpr) <- function(input, x) {
 	names_x <- names(x)
 	input_not_in_res <- !(names_x %in% names_res)
 	if (any(input_not_in_res)) {
-		stop(
-			sprintf(
-				"Missing required input values: `%s`",
-				paste0(
-					names_x[input_not_in_res],
-					collapse = "`, `"
-				)
-			)
-		)
+		missing <- names_x[input_not_in_res]
+		cli_abort("Missing required input value{?s}: {.val {missing}}.")
 	}
 	input_not_in_x <- !(names_res %in% names_x)
 	if (any(input_not_in_x)) {
-		warning(
-			sprintf(
-				"Ignoring unsupported input values: `%s`",
-				paste0(
-					names_res[input_not_in_x],
-					collapse = "`, `"
-				)
-			)
-		)
+		ignored <- names_res[input_not_in_x]
+		cli_warn("Ignoring unsupported input value{?s}: {.val {ignored}}.")
 	}
 	return(res[!input_not_in_x])
 }

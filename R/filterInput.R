@@ -110,7 +110,7 @@ filterInput <- new_generic(
 	dispatch_args = c("x"),
 	fun = function(x, ...) {
 		if (all(is.na(x))) {
-			stop("No nonmissing elements found")
+			cli_abort("{.arg x} must have at least one non-missing element.")
 		}
 		args <- list(...)
 		if (!is.data.frame(x) && !is.null(args$ns)) {
@@ -240,7 +240,10 @@ NULL
 #' @export
 call_filter_input <- function(x, .f, ...) {
 	if (is.data.frame(x)) {
-		stop("call_filter_input() is not implemented for data.frames.")
+		cli_abort(c(
+			"{.fn call_filter_input} does not work with a {.cls data.frame}.",
+			i = "Instead, call {.fn filterInput} on each column."
+		))
 	}
 	args_provided <- list(...)
 	function_args <- formalArgs(.f)
@@ -263,22 +266,23 @@ call_filter_input <- function(x, .f, ...) {
 }
 
 # Generic: ._apply_ns ####
-._apply_ns <- function(ns, ...) {
-	._check_valid_shiny_ns(ns)
+._apply_ns <- function(ns, ..., call = caller_env()) {
+	._check_valid_shiny_ns(ns, call = call)
 
 	args <- list(...)
 
 	input_id_column <- arg_name_input_id(args$x)
 	if (is.null(input_id_column)) {
-		stop(
-			"The result of `arg_name_input_id(x)` cannot be `NULL` when `ns` is provided"
+		cli_abort(
+			"{.code arg_name_input_id(x)} must not return {.code NULL} when {.arg ns} is provided.",
+			call = call
 		)
 	}
 	if (is.null(args[[input_id_column]])) {
-		stop(sprintf(
-			"Argument `%s` is required when `ns` is provided.",
-			input_id_column
-		))
+		cli_abort(
+			"{.arg {input_id_column}} is required when {.arg ns} is provided.",
+			call = call
+		)
 	}
 
 	args[[input_id_column]] <- ns(args[[input_id_column]])
@@ -290,8 +294,9 @@ call_filter_input <- function(x, .f, ...) {
 ._input_discrete_choice <- function(x, ...) {
 	args <- list(...)
 	if (isTRUE(args$radio) && isTRUE(args$selectize)) {
-		stop(
-			"Arguments `radio` and `selectize` cannot both be TRUE."
+		cli_abort(
+			"{.arg radio} and {.arg selectize} can't both be {.code TRUE}.",
+			call = caller_env()
 		)
 	}
 

@@ -68,7 +68,10 @@ method(get_filter_logical, list(x = class_any, val = class_any)) <- function(
 	val,
 	...
 ) {
-	warning("Fallback method called for mismatched types. Returning TRUE")
+	cli_warn(c(
+		"!" = "No {.fn get_filter_logical} method for {.arg x} of class {.cls {class(x)}} and {.arg val} of class {.cls {class(val)}}.",
+		"i" = "Returning {.code TRUE} for all elements."
+	))
 	return(rep(TRUE, length(x)))
 }
 
@@ -84,7 +87,7 @@ method(
 	check_is_nonempty_string(column)
 	col <- x[[column]]
 	if (is.null(col)) {
-		stop(sprintf("Column `%s` not found in `x`.", column))
+		cli_abort("Column {.val {column}} not found in {.arg x}.")
 	}
 	get_filter_logical(col, val, ...)
 }

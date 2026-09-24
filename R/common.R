@@ -6,9 +6,17 @@
 		c(list(x = x), args_provided)
 	)
 
-	check_named_list_or_null(args)
+	check_named_list_or_null(
+		args,
+		arg = "args_filter_input(x)",
+		call = caller_env()
+	)
 	if (any(names(args_provided) %in% names(args))) {
-		error_input_args(x, names(args))
+		error_input_args(
+			x,
+			intersect(names(args_provided), names(args)),
+			call = caller_env()
+		)
 	}
 
 	return(args)
@@ -21,25 +29,19 @@
 		args_update_filter_input,
 		c(list(x = x), args_provided)
 	)
-	check_named_list_or_null(args)
+	check_named_list_or_null(
+		args,
+		arg = "args_update_filter_input(x)",
+		call = caller_env()
+	)
 	return(args)
 }
 
 # Function: error_input_args ####
-error_input_args <- function(x, unsupported_args) {
+error_input_args <- function(x, unsupported_args, call = caller_env()) {
 	vector_class <- class(x)[[1L]]
-	multiple_unsupported_args <- isTRUE(length(unsupported_args) > 1L)
-	stop(
-		sprintf(
-			paste0(
-				"The argument%s `%s`%s",
-				"%s not supported in when used with `%s` objects."
-			),
-			if (multiple_unsupported_args) "s\n -" else "",
-			paste0(unsupported_args, collapse = "`\n - `"),
-			if (multiple_unsupported_args) "\n" else " ",
-			if (multiple_unsupported_args) "are" else "is",
-			vector_class
-		)
+	cli_abort(
+		"The {qty(unsupported_args)}argument{?s} {.arg {unsupported_args}} {?is/are} not supported with {.cls {vector_class}} objects.",
+		call = call
 	)
 }

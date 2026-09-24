@@ -2,9 +2,15 @@
 "_PACKAGE"
 
 ## usethis namespace: start
+#' @importFrom cli cli_abort
+#' @importFrom cli cli_warn
+#' @importFrom cli qty
 #' @importFrom htmltools tagList
 #' @importFrom methods formalArgs
 #' @importFrom methods functionBody
+#' @importFrom rlang caller_arg
+#' @importFrom rlang caller_env
+#' @importFrom rlang current_env
 #' @importFrom S7 class_any
 #' @importFrom S7 class_character
 #' @importFrom S7 class_data.frame

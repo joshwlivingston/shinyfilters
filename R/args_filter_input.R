@@ -91,7 +91,9 @@ method(args_filter_input, class_factor | class_logical) <- function(
 method(args_filter_input, class_list) <- function(x, choices_asis = TRUE, ...) {
 	s7_check_is_valid_list_dispatch(x, function_name = "args_filter_input")
 	if (isFALSE(choices_asis)) {
-		stop("Argument `choices_asis` must be TRUE when `x` is a list.")
+		cli_abort(
+			"{.arg choices_asis} must be {.code TRUE} when {.arg x} is a {.cls list}"
+		)
 	}
 	._discrete_choice_inputs(x = x, choices_asis = TRUE, ...)
 }
@@ -119,8 +121,8 @@ method(args_filter_input, class_POSIXt) <- function(x, ...) {
 	args_sort = NULL,
 	...
 ) {
-	check_supplied_arguments(args_unique)
-	check_supplied_arguments(args_sort)
+	check_supplied_arguments(args_unique, call = caller_env())
+	check_supplied_arguments(args_sort, call = caller_env())
 	args <- list(...)
 	if (isTRUE(args$server)) {
 		return(list(choices = ""))
@@ -132,18 +134,25 @@ method(args_filter_input, class_POSIXt) <- function(x, ...) {
 	list(choices = x)
 }
 
-check_supplied_arguments <- function(args) {
+check_supplied_arguments <- function(
+	args,
+	arg = caller_arg(args),
+	call = caller_env()
+) {
 	if (is.null(args) || identical(args, list())) {
 		return(invisible())
 	}
 	if (!is.list(args)) {
-		stop("Supplied arguments must be a list.")
+		cli_abort(
+			"{.arg {arg}} must be a list, not {.obj_type_friendly {args}}.",
+			call = call
+		)
 	}
 	if (any(names(args) == "")) {
-		stop("All supplied arguments must be named.")
+		cli_abort("All elements of {.arg {arg}} must be named.", call = call)
 	}
 	if (!identical(names(args), unique(names(args)))) {
-		stop("All argument names must be unique.")
+		cli_abort("All names in {.arg {arg}} must be unique.", call = call)
 	}
 }
 

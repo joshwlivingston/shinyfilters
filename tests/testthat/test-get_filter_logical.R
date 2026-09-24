@@ -277,6 +277,10 @@ test_that("get_filter_logical() falls back to all TRUE for every unsupported x/v
 	}
 })
 
+test_that("get_filter_logical() warns when falling back for mismatched types", {
+	expect_snapshot(get_filter_logical(1:3, "a"))
+})
+
 # Empty inputs ####
 test_that("get_filter_logical() handles empty inputs", {
 	# Empty x

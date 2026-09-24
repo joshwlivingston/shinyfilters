@@ -207,8 +207,9 @@ method(updateFilterInput, class_POSIXt) <- function(
 ._update_input_discrete_choice <- function(x, ...) {
 	args <- list(...)
 	if (isTRUE(args$radio) && isTRUE(args$selectize)) {
-		stop(
-			"Arguments `radio` and `selectize` cannot both be TRUE."
+		cli_abort(
+			"{.arg radio} and {.arg selectize} can't both be {.code TRUE}.",
+			call = caller_env()
 		)
 	}
 
@@ -228,7 +229,10 @@ method(updateFilterInput, class_POSIXt) <- function(
 #' @rdname call_input_function
 call_update_filter_input <- function(x, .f, ...) {
 	if (is.data.frame(x)) {
-		stop("call_update_filter_input() is not implemented for data.frames.")
+		cli_abort(c(
+			"{.fn call_update_filter_input} does not work with a {.cls data.frame}.",
+			i = "Instead, call {.fn updateFilterInput} on each column."
+		))
 	}
 	args_provided <- list(...)
 	function_args <- formalArgs(.f)
