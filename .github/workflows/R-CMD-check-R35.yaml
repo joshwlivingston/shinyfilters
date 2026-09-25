@@ -37,7 +37,7 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y make zlib1g-dev libicu-dev libcurl4-openssl-dev libssl-dev
+          sudo apt-get install -y make zlib1g-dev libicu-dev libxml2-dev libcurl4-openssl-dev libssl-dev
 
       - uses: actions/cache@v4
         with:
