@@ -53,6 +53,10 @@ Each artifact has one job. Don't copy content between them.
 **Commits**
 
 - Conventional commits, concise. Detailed prose belongs in the PR.
+- The subject names the change itself, not where it came from or the fact that something changed. Someone reading `git log` should know what's different without opening the diff.
+    - Bad: `docs: address roborev findings on AGENTS.md checklist`, `fix: review feedback`, `chore: update AGENTS.md`
+    - Good: `docs: allow non-test evidence for docs-only acceptance criteria`
+- If one subject can't name the change, the commit holds more than one change: split it.
 - A logical unit = source change + its tests + related docs, in one commit.
 - Never bundle unrelated changes. A fix to an earlier commit is its own commit.
 - Do not add `Co-Authored-By` trailers.
