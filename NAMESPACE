@@ -34,6 +34,7 @@ importFrom(S7,
   class_list,
   class_logical,
   class_numeric,
+  method,
   methods_register,
   new_S3_class,
   new_class,
@@ -42,10 +43,19 @@ importFrom(S7,
   set_props
 )
 importFrom(cli,
+  ansi_strip,
+  cat_line,
+  cat_rule,
   cli_abort,
   cli_warn,
+  col_blue,
+  col_cyan,
+  col_grey,
+  col_red,
   format_inline,
-  qty
+  is_utf8_output,
+  qty,
+  symbol
 )
 importFrom(htmltools,tagList)
 importFrom(methods,

@@ -173,3 +173,42 @@ test_that("as_filters() and with_filter() errors", {
 		filterInput(with_filter(cfg, dbl = "range"))
 	})
 })
+
+test_that("print() shows each column's input", {
+	my_select <- function(inputId, label, choices) {
+		shiny::selectInput(inputId, label, choices)
+	}
+	expect_snapshot({
+		print(as_filters(df_config))
+		as_filters(df_config, slider = TRUE, ns = shiny::NS("m")) |>
+			with_filter(int = "radio", chr = my_select) |>
+			print()
+		print(with_filter(as_filters(df_config), fct = "slider"))
+	})
+})
+
+test_that("print() resolves custom methods", {
+	ClassRadio <- S7::new_class("ClassRadio", S7::class_character)
+	ClassCustom <- S7::new_class("ClassCustom", S7::class_character)
+	S7::method(filterInput, ClassRadio) <- function(x, ...) {
+		call_filter_input(x, shiny::radioButtons, ...)
+	}
+	S7::method(filterInput, ClassCustom) <- function(x, ...) {
+		shiny::tags$div()
+	}
+	df <- structure(
+		list(radio = ClassRadio(c("a", "b")), custom = ClassCustom(c("a", "b"))),
+		class = "data.frame",
+		row.names = 1:2
+	)
+	expect_snapshot(print(as_filters(df)))
+})
+
+test_that("print() resets the dry run after an error", {
+	print_quiet <- function(x) invisible(capture.output(print(x)))
+	print_quiet(with_filter(as_filters(df_config), fct = "slider"))
+	expect_identical(
+		filterInput(as_filters(df_config)),
+		filterInput(df_config)
+	)
+})

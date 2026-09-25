@@ -2,10 +2,19 @@
 "_PACKAGE"
 
 ## usethis namespace: start
+#' @importFrom cli ansi_strip
+#' @importFrom cli cat_line
+#' @importFrom cli cat_rule
 #' @importFrom cli cli_abort
 #' @importFrom cli cli_warn
+#' @importFrom cli col_blue
+#' @importFrom cli col_cyan
+#' @importFrom cli col_grey
+#' @importFrom cli col_red
 #' @importFrom cli format_inline
+#' @importFrom cli is_utf8_output
 #' @importFrom cli qty
+#' @importFrom cli symbol
 #' @importFrom htmltools tagList
 #' @importFrom methods formalArgs
 #' @importFrom methods functionBody
@@ -30,6 +39,7 @@
 #' @importFrom S7 class_logical
 #' @importFrom S7 class_numeric
 #' @importFrom S7 class_POSIXt
+#' @importFrom S7 method
 #' @importFrom S7 method<-
 #' @importFrom S7 methods_register
 #' @importFrom S7 new_class

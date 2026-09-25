@@ -45,46 +45,201 @@ as_filters <- function(data, ..., ns = NULL) {
 ## Method: filterInput() ####
 method(filterInput, FilterConfig) <- function(x, ...) {
 	call <- caller_env()
-	args <- modifyList(c(x@args, list(ns = x@ns)), list(...))
+	args <- ._config_args(x, ...)
 	data <- x@data
-
-	filter_input <- function(col, id, label, name) {
-		col_args <- c(
-			list(x = col),
-			do.call(._id_label_args, c(list(col, id, label), args)),
-			args
-		)
-		override <- x@overrides[[name]]
-		if (is.null(override)) {
-			return(do.call(filterInput, col_args))
-		}
-		try_fetch(
-			do.call(
-				filter_input_override,
-				c(col_args, list(override = override$input))
-			),
-			shinyfilters_error_unsupported_input = function(cnd) {
-				cli_abort(
-					"Can't create an input for column {.field {name}}.",
-					parent = cnd,
-					call = call
-				)
-			}
-		)
-	}
-
 	do.call(
 		tagList,
 		mapply(
-			filter_input,
-			data,
+			._config_input,
+			names(data),
 			get_input_ids(data),
 			get_input_labels(data),
-			names(data),
+			MoreArgs = list(config = x, args = args, call = call),
 			SIMPLIFY = FALSE
 		)
 	)
 }
+
+._config_args <- function(config, ...) {
+	modifyList(c(config@args, list(ns = config@ns)), list(...))
+}
+
+# Creates the input for one column of a FilterConfig
+._config_input <- function(name, id, label, config, args, call) {
+	col <- config@data[[name]]
+	col_args <- c(
+		list(x = col),
+		do.call(._id_label_args, c(list(col, id, label), args)),
+		args
+	)
+	override <- config@overrides[[name]]
+	if (is.null(override)) {
+		return(do.call(filterInput, col_args))
+	}
+	try_fetch(
+		do.call(
+			filter_input_override,
+			c(col_args, list(override = override$input))
+		),
+		shinyfilters_error_unsupported_input = function(cnd) {
+			cli_abort(
+				"Can't create an input for column {.field {name}}.",
+				parent = cnd,
+				call = call
+			)
+		}
+	)
+}
+
+## Method: print() ####
+method(print, FilterConfig) <- function(x, ...) {
+	data <- x@data
+	nms <- names(data)
+	overridden <- nms %in% names(x@overrides)
+
+	header <- paste(nrow(data), symbol$times, ncol(data))
+	if (!is.null(x@ns)) {
+		header <- sprintf(
+			"%s %s ns \"%s\"",
+			header,
+			symbol$bullet,
+			x@ns(character())
+		)
+	}
+	cat_rule(
+		left = paste(col_blue("<FilterConfig>"), symbol$line, header)
+	)
+
+	if (length(x@args) > 0) {
+		values <- vapply(x@args, ._format_arg, character(1))
+		defaults <- paste(names(values), "=", values, collapse = ", ")
+		cat_line(col_grey("Defaults"), "  ", defaults)
+	}
+	cat_line()
+
+	inputs <- ._dry_run_inputs(x)
+	is_error <- startsWith(inputs, symbol$cross)
+	width <- max(0L, nchar(inputs[!is_error]))
+	styled_inputs <- ifelse(
+		is_error,
+		col_red(inputs),
+		col_cyan(paste0(inputs, strrep(" ", pmax(0, width - nchar(inputs)))))
+	)
+	dot <- col_blue(if (is_utf8_output()) "\u25cf" else "*")
+	marker <- ifelse(overridden, paste0("  ", dot), "")
+	types <- vapply(data, ._type_abbr, character(1))
+	lines <- paste0(
+		"  ",
+		format(nms),
+		"  ",
+		col_grey(format(types)),
+		"  ",
+		styled_inputs,
+		marker
+	)
+	cat_line(sub("\\s+$", "", lines))
+
+	if (any(overridden)) {
+		cat_line()
+		cat_line(dot, col_grey(" set by with_filter()"))
+	}
+	invisible(x)
+}
+
+._format_arg <- function(value) {
+	out <- paste(deparse(value, width.cutoff = 500L), collapse = " ")
+	if (nchar(out) > 30) {
+		out <- paste0(substr(out, 1, 29), symbol$ellipsis)
+	}
+	out
+}
+
+._type_abbr <- function(x) {
+	type <- if (is.factor(x)) {
+		"fct"
+	} else if (inherits(x, "Date")) {
+		"date"
+	} else if (inherits(x, "POSIXt")) {
+		"dttm"
+	} else {
+		switch(
+			typeof(x),
+			integer = "int",
+			double = "dbl",
+			character = "chr",
+			logical = "lgl",
+			list = "list",
+			class(x)[[1]]
+		)
+	}
+	paste0("<", type, ">")
+}
+
+# Dry run of dispatch -------------------------------------------------------
+#
+# While `the$dry_run` is TRUE, the input callers return the input function
+# instead of calling it, so print() can show which input each column uses.
+the <- new.env(parent = emptyenv())
+the$dry_run <- FALSE
+
+._dry_run_result <- function(.f) {
+	structure(list(fn = .f), class = "shinyfilters_dry_run")
+}
+
+._dry_run_inputs <- function(config) {
+	the$dry_run <- TRUE
+	on.exit(assign("dry_run", FALSE, envir = the))
+
+	data <- config@data
+	args <- ._config_args(config)
+	mapply(
+		function(name, id, label) {
+			res <- tryCatch(
+				._config_input(name, id, label, config, args, call = NULL),
+				error = identity
+			)
+			._dry_run_label(res, config@overrides[[name]])
+		},
+		names(data),
+		get_input_ids(data),
+		get_input_labels(data),
+		USE.NAMES = FALSE
+	)
+}
+
+._dry_run_label <- function(res, override) {
+	if (inherits(res, "error")) {
+		while (inherits(res$parent, "error")) {
+			res <- res$parent
+		}
+		message <- strsplit(conditionMessage(res), "\n", fixed = TRUE)[[1]][[1]]
+		return(paste(symbol$cross, ansi_strip(message)))
+	}
+	if (!inherits(res, "shinyfilters_dry_run")) {
+		return("<custom>")
+	}
+	for (name in names(SHINY_INPUTS)) {
+		if (identical(res$fn, SHINY_INPUTS[[name]])) {
+			return(name)
+		}
+	}
+	if (is.function(override$input)) {
+		return(override$label)
+	}
+	"<custom>"
+}
+
+SHINY_INPUTS <- list(
+	dateInput = dateInput,
+	dateRangeInput = dateRangeInput,
+	numericInput = numericInput,
+	radioButtons = radioButtons,
+	selectInput = selectInput,
+	selectizeInput = selectizeInput,
+	sliderInput = sliderInput,
+	textAreaInput = textAreaInput,
+	textInput = textInput
+)
 
 # Function: with_filter() ####
 #' Choose the Input for Columns
@@ -342,7 +497,7 @@ method(
 }
 
 ._supported_keywords <- function(x) {
-	fallback <- S7::method(
+	fallback <- method(
 		filter_input_override,
 		list(class_any, class_input_keyword)
 	)
@@ -350,7 +505,7 @@ method(
 	is_supported <- vapply(
 		keywords,
 		function(keyword) {
-			found <- S7::method(
+			found <- method(
 				filter_input_override,
 				object = list(x, input_keyword(keyword))
 			)

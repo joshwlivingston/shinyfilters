@@ -109,3 +109,49 @@
       ! "range" isn't available for <numeric> columns.
       i Use "radio", "selectize", or "slider" instead.
 
+# print() shows each column's input
+
+    Code
+      print(as_filters(df_config))
+    Output
+      -- <FilterConfig> - 3 x 4 ------------------------------------------------------
+      
+        chr  <chr>  selectInput
+        fct  <fct>  selectInput
+        int  <int>  numericInput
+        dbl  <dbl>  numericInput
+    Code
+      print(with_filter(as_filters(df_config, slider = TRUE, ns = shiny::NS("m")),
+      int = "radio", chr = my_select))
+    Output
+      -- <FilterConfig> - 3 x 4 * ns "m" ---------------------------------------------
+      Defaults  slider = TRUE
+      
+        chr  <chr>  my_select     *
+        fct  <fct>  selectInput
+        int  <int>  radioButtons  *
+        dbl  <dbl>  sliderInput
+      
+      * set by with_filter()
+    Code
+      print(with_filter(as_filters(df_config), fct = "slider"))
+    Output
+      -- <FilterConfig> - 3 x 4 ------------------------------------------------------
+      
+        chr  <chr>  selectInput
+        fct  <fct>  x "slider" isn't available for <factor> columns.  *
+        int  <int>  numericInput
+        dbl  <dbl>  numericInput
+      
+      * set by with_filter()
+
+# print() resolves custom methods
+
+    Code
+      print(as_filters(df))
+    Output
+      -- <FilterConfig> - 2 x 2 ------------------------------------------------------
+      
+        radio   <chr>  radioButtons
+        custom  <chr>  <custom>
+
