@@ -19,7 +19,7 @@
       Error in `as_filters()`:
       ! All elements of `...` must be named.
     Code
-      with_filter(df_config, int = "radio")
+      with_filter(df_config, x = "radio")
     Condition
       Error in `with_filter()`:
       ! `config` must be created by `as_filters()`, not a data frame.
@@ -31,21 +31,21 @@
       i Select columns: `with_filter(config, c(a, b), "radio")`.
       i Name columns: `with_filter(config, a = "radio", b = "slider")`.
     Code
-      with_filter(cfg, int)
+      with_filter(cfg, x)
     Condition
       Error in `with_filter()`:
       ! `with_filter()` takes two unnamed arguments or only named arguments.
       i Select columns: `with_filter(config, c(a, b), "radio")`.
       i Name columns: `with_filter(config, a = "radio", b = "slider")`.
     Code
-      with_filter(cfg, int, "radio", "slider")
+      with_filter(cfg, x, "radio", "slider")
     Condition
       Error in `with_filter()`:
       ! `with_filter()` takes two unnamed arguments or only named arguments.
       i Select columns: `with_filter(config, c(a, b), "radio")`.
       i Name columns: `with_filter(config, a = "radio", b = "slider")`.
     Code
-      with_filter(cfg, int = "radio", "chr")
+      with_filter(cfg, x = "radio", "letters")
     Condition
       Error in `with_filter()`:
       ! `with_filter()` takes two unnamed arguments or only named arguments.
@@ -68,19 +68,19 @@
       Error in `with_filter()`:
       ! `where(is.logical)` doesn't select any columns.
     Code
-      with_filter(cfg, int = "radioo")
+      with_filter(cfg, x = "radioo")
     Condition
       Error in `with_filter()`:
       ! An input must be one of "area", "radio", "range", "selectize", "slider", or "textbox", or a function.
       x Got "radioo".
     Code
-      with_filter(cfg, int, c("radio", "slider"))
+      with_filter(cfg, x, c("radio", "slider"))
     Condition
       Error in `with_filter()`:
       ! An input must be one of "area", "radio", "range", "selectize", "slider", or "textbox", or a function.
       x Got "radio" and "slider".
     Code
-      with_filter(cfg, int, radio)
+      with_filter(cfg, x, radio)
     Condition
       Error in `with_filter()`:
       ! Can't evaluate the input `radio`.
@@ -88,23 +88,23 @@
       Caused by error:
       ! object 'radio' not found
     Code
-      with_filter(cfg, int = 1)
+      with_filter(cfg, x = 1)
     Condition
       Error in `with_filter()`:
       ! An input must be a keyword or a function, not a number.
     Code
-      filterInput(with_filter(cfg, fct = "slider"))
+      filterInput(with_filter(cfg, factors = "slider"))
     Condition
       Error in `filterInput()`:
-      ! Can't create an input for column fct.
+      ! Can't create an input for column factors.
       Caused by error:
       ! "slider" isn't available for <factor> columns.
       i Use "radio" or "selectize" instead.
     Code
-      filterInput(with_filter(cfg, dbl = "range"))
+      filterInput(with_filter(cfg, a_very_very_long_name = "range"))
     Condition
       Error in `filterInput()`:
-      ! Can't create an input for column dbl.
+      ! Can't create an input for column a_very_very_long_name.
       Caused by error:
       ! "range" isn't available for <numeric> columns.
       i Use "radio", "selectize", or "slider" instead.
@@ -126,32 +126,32 @@
     Output
       -- <FilterConfig> - 3 x 4 ------------------------------------------------------
       
-        chr  <chr>  selectInput
-        fct  <fct>  selectInput
-        int  <int>  numericInput
-        dbl  <dbl>  numericInput
+        letters                <chr>  selectInput
+        factors                <fct>  selectInput
+        x                      <int>  numericInput
+        a_very_very_long_name  <dbl>  numericInput
     Code
-      print(with_filter(as_filters(df_config, slider = TRUE, ns = shiny::NS("m")),
-      int = "radio", chr = my_select))
+      print(with_filter(as_filters(df_config, slider = TRUE, ns = shiny::NS("m")), x = "radio",
+      letters = my_select))
     Output
       -- <FilterConfig> - 3 x 4 * ns "m" ---------------------------------------------
       Defaults  slider = TRUE
       
-        chr  <chr>  my_select     *
-        fct  <fct>  selectInput
-        int  <int>  radioButtons  *
-        dbl  <dbl>  sliderInput
+        letters                <chr>  my_select     *
+        factors                <fct>  selectInput
+        x                      <int>  radioButtons  *
+        a_very_very_long_name  <dbl>  sliderInput
       
       * set by with_filter()
     Code
-      print(with_filter(as_filters(df_config), fct = "slider"))
+      print(with_filter(as_filters(df_config), factors = "slider"))
     Output
       -- <FilterConfig> - 3 x 4 ------------------------------------------------------
       
-        chr  <chr>  selectInput
-        fct  <fct>  x "slider" isn't available for <factor> columns.  *
-        int  <int>  numericInput
-        dbl  <dbl>  numericInput
+        letters                <chr>  selectInput
+        factors                <fct>  x "slider" isn't available for <factor> columns.  *
+        x                      <int>  numericInput
+        a_very_very_long_name  <dbl>  numericInput
       
       * set by with_filter()
 
