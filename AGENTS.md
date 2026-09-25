@@ -11,7 +11,7 @@ These rules take precedence over the generic sections below where they conflict.
 
 All work flows through GitHub issues and PRs. Every plan — in plan mode or not — must include the issue, branch, and PR steps. A plan that goes straight to code is incomplete.
 
-1. Create an issue (sub-issues for complex work).
+1. Create an issue (sub-issues for complex work). One concern per issue: a change and the CI job that guards it are separate issues and PRs.
 2. Write the implementation plan.
 3. Branch from `main`: `<type>/<short-name>` (e.g. `feat/filter-spec`, `fix/bookmark-restore`). One branch per issue.
 4. Commit each logical unit as you go, referencing the issue.
@@ -59,6 +59,13 @@ Each artifact has one job. Don't copy content between them.
 ### Incidental findings
 
 If you notice an unrelated bug, gap, or improvement, draft an issue right away (title `<type>: ...`, body: what and where) and present it for approval, then keep going. Don't fix it in the current branch, and don't hold it until the end.
+
+- This includes warnings, `R CMD check` NOTEs, and CI failures that already exist on `main`. Search existing issues first.
+- Before reporting a formatter or linter problem, confirm your local `air` and `jarl` match the latest releases, which CI installs.
+
+### Agent guidance
+
+Record guidance about working on this package in this file, not in agent memory, so every agent and contributor sees it.
 
 ### Checklists
 
