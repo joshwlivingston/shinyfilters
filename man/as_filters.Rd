@@ -15,10 +15,14 @@ as \code{slider = TRUE} or \code{selectize = TRUE}.}
 \item{ns}{An optional namespace created by \code{\link[shiny:NS]{shiny::NS()}}.}
 }
 \value{
-A \code{shinyfilters} object. \code{names(filters)} lists its columns;
-\code{filters$col} and \code{filters[["col"]]}
-return the input \code{\link[=filterInput]{filterInput()}} creates for a single column, including
-any \code{\link[=with_filter]{with_filter()}} overrides.
+A \code{shinyfilters} object:
+\itemize{
+\item \code{names(filters)} lists its columns.
+\item \code{filters$col} and \code{filters[["col"]]} return the input \code{\link[=filterInput]{filterInput()}}
+creates for one column, including any \code{\link[=with_filter]{with_filter()}} overrides.
+\item \code{filters[cols]} returns a \code{shinyfilters} object with only the selected
+columns, keeping their overrides.
+}
 }
 \description{
 \code{as_filters()} stores a data frame with the arguments used to create its

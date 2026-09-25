@@ -314,3 +314,23 @@ test_that("`$` and `[[` error on unknown columns", {
 		cfg[[1:2]]
 	})
 })
+
+test_that("`[` returns a config with the selected columns", {
+	cfg <- with_filter(as_filters(df_config, slider = TRUE), x = "radio")
+	sub <- cfg[c("x", "letters")]
+	expect_identical(names(sub), c("x", "letters"))
+	expect_identical(filterInput(sub)[[1]], filterInput(cfg)[[3]])
+	expect_identical(filterInput(sub)[[2]], filterInput(cfg)[[1]])
+	expect_identical(names(cfg[3:4]), c("x", "a_very_very_long_name"))
+	expect_identical(cfg[], cfg)
+	expect_snapshot(print(cfg[c("letters", "x")]))
+})
+
+test_that("`[` errors on unknown columns", {
+	cfg <- as_filters(df_config)
+	expect_snapshot(error = TRUE, {
+		cfg["nope"]
+		cfg[9]
+		cfg[TRUE]
+	})
+})

@@ -14,10 +14,13 @@
 #'   as `slider = TRUE` or `selectize = TRUE`.
 #' @param ns An optional namespace created by [shiny::NS()].
 #'
-#' @returns A `shinyfilters` object. `names(filters)` lists its columns;
-#'   `filters$col` and `filters[["col"]]`
-#'   return the input [filterInput()] creates for a single column, including
-#'   any [with_filter()] overrides.
+#' @returns A `shinyfilters` object:
+#'
+#'   * `names(filters)` lists its columns.
+#'   * `filters$col` and `filters[["col"]]` return the input [filterInput()]
+#'     creates for one column, including any [with_filter()] overrides.
+#'   * `filters[cols]` returns a `shinyfilters` object with only the selected
+#'     columns, keeping their overrides.
 #'
 #' @seealso [with_filter()]
 #'
@@ -105,7 +108,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	)
 }
 
-## Methods: $, [[, names(), .DollarNames() ####
+## Methods: $, [[, [, names(), .DollarNames() ####
 method(`$`, class_shinyfilters) <- function(x, name) {
 	._config_column(x, name, call = call("$", substitute(x), as.name(name)))
 }
@@ -120,6 +123,25 @@ method(.DollarNames, class_shinyfilters) <- function(x, pattern = "") {
 
 method(names, class_shinyfilters) <- function(x) {
 	names(x@data)
+}
+
+method(`[`, class_shinyfilters) <- function(x, i, ...) {
+	if (missing(i)) {
+		return(x)
+	}
+	call <- call("[", substitute(x), substitute(i))
+	cols <- try_fetch(
+		names(eval_select(i, x@data, allow_rename = FALSE, error_call = call)),
+		vctrs_error_subscript = function(cnd) {
+			cnd$call <- call
+			stop(cnd)
+		}
+	)
+	set_props(
+		x,
+		data = x@data[cols],
+		overrides = x@overrides[intersect(names(x@overrides), cols)]
+	)
 }
 
 # Creates the input for one column, selected by name or position

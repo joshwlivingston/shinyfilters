@@ -214,3 +214,38 @@
       Error in `cfg[[1:2]]`:
       ! Select a single column, not 2 values.
 
+# `[` returns a config with the selected columns
+
+    Code
+      print(cfg[c("letters", "x")])
+    Output
+      -- <shinyfilters> - 2 filters --------------------------------------------------
+      Defaults  slider = TRUE
+      
+        letters  <chr>  selectInput
+        x        <int>  radioButtons  *
+      
+      * set by with_filter()
+
+# `[` errors on unknown columns
+
+    Code
+      cfg["nope"]
+    Condition
+      Error in `cfg["nope"]`:
+      ! Can't select columns that don't exist.
+      x Column `nope` doesn't exist.
+    Code
+      cfg[9]
+    Condition
+      Error in `cfg[9]`:
+      ! Can't select columns past the end.
+      i Location 9 doesn't exist.
+      i There are only 4 columns.
+    Code
+      cfg[TRUE]
+    Condition
+      Error in `cfg[TRUE]`:
+      ! Can't select columns.
+      x Subscript must be numeric or character, not `TRUE`.
+
