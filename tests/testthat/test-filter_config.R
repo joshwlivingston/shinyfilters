@@ -245,6 +245,7 @@ test_that("print() shows each column's input", {
 			print()
 		print(with_filter(as_filters(df_config), factors = "slider"))
 		print(as_filters(df_config, args_unique = "bad"))
+		print(as_filters(data.frame(x = "a")))
 	})
 })
 
@@ -259,10 +260,9 @@ test_that("print() resolves custom methods", {
 	}
 	ClassWrapped <- S7::new_class("ClassWrapped", S7::class_character)
 	S7::method(filterInput, ClassWrapped) <- function(x, ...) {
-		htmltools::tagAppendAttributes(
-			call_filter_input(x, shiny::radioButtons, ...),
-			class = "wrapped"
-		)
+		res <- call_filter_input(x, shiny::radioButtons, ...)
+		stopifnot(inherits(res, "shiny.tag"))
+		htmltools::tagAppendAttributes(res, class = "wrapped")
 	}
 	df <- structure(
 		list(

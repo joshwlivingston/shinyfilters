@@ -202,7 +202,10 @@ the$dry_run <- FALSE
 
 ._dry_run_inputs <- function(config) {
 	the$dry_run <- TRUE
-	on.exit(assign("dry_run", FALSE, envir = the))
+	on.exit({
+		assign("dry_run", FALSE, envir = the)
+		assign("dry_run_fn", NULL, envir = the)
+	})
 
 	data <- config@data
 	args <- ._config_args(config)
@@ -214,7 +217,9 @@ the$dry_run <- FALSE
 				error = identity
 			)
 			# A method that post-processes the dry-run result errors after the
-			# input is known; report the input rather than that error
+			# input is known; report the input rather than that error. Trade-off:
+			# a genuine error raised after the input is chosen is hidden here and
+			# only surfaces from filterInput().
 			if (inherits(res, "error") && !is.null(the$dry_run_fn)) {
 				res <- ._dry_run_result(the$dry_run_fn)
 			}

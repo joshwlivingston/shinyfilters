@@ -169,6 +169,12 @@
         factors                <fct>  x `args_unique` must be a list, not a string.
         x                      <int>  numericInput
         a_very_very_long_name  <dbl>  numericInput
+    Code
+      print(as_filters(data.frame(x = "a")))
+    Output
+      -- <shinyfilters> - 1 filter ---------------------------------------------------
+      
+        x  <chr>  selectInput
 
 # print() resolves custom methods
 
