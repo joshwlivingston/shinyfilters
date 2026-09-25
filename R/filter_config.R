@@ -14,7 +14,8 @@
 #'   as `slider = TRUE` or `selectize = TRUE`.
 #' @param ns An optional namespace created by [shiny::NS()].
 #'
-#' @returns A `shinyfilters` object. `filters$col` and `filters[["col"]]`
+#' @returns A `shinyfilters` object. `names(filters)` lists its columns;
+#'   `filters$col` and `filters[["col"]]`
 #'   return the input [filterInput()] creates for a single column, including
 #'   any [with_filter()] overrides.
 #'
@@ -104,7 +105,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	)
 }
 
-## Methods: $, [[, .DollarNames() ####
+## Methods: $, [[, names(), .DollarNames() ####
 method(`$`, class_shinyfilters) <- function(x, name) {
 	._config_column(x, name, call = call("$", substitute(x), as.name(name)))
 }
@@ -114,7 +115,11 @@ method(`[[`, class_shinyfilters) <- function(x, i, ...) {
 }
 
 method(.DollarNames, class_shinyfilters) <- function(x, pattern = "") {
-	grep(pattern, names(x@data), value = TRUE)
+	grep(pattern, names(x), value = TRUE)
+}
+
+method(names, class_shinyfilters) <- function(x) {
+	names(x@data)
 }
 
 # Creates the input for one column, selected by name or position

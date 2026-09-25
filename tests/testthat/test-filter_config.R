@@ -294,12 +294,13 @@ test_that("print() resets the dry run after an error", {
 	)
 })
 
-test_that("`$` and `[[` return one column's input", {
+test_that("`$`, `[[`, and names() access columns", {
 	cfg <- with_filter(as_filters(df_config, ns = shiny::NS("m")), x = "radio")
 	res <- filterInput(cfg)
 	expect_identical(cfg$x, res[[3]])
 	expect_identical(cfg[["letters"]], res[[1]])
 	expect_identical(cfg[[4]], res[[4]])
+	expect_identical(names(cfg), names(df_config))
 	expect_identical(utils::.DollarNames(cfg, "^a_"), "a_very_very_long_name")
 })
 
