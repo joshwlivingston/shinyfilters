@@ -109,23 +109,23 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 }
 
 ## Methods: $, [[, [, names(), .DollarNames() ####
-method(`$`, class_shinyfilters) <- function(x, name) {
+`method<-`(`$`, class_shinyfilters, value = function(x, name) {
 	._config_column(x, name, call = call("$", substitute(x), as.name(name)))
-}
+})
 
-method(`[[`, class_shinyfilters) <- function(x, i, ...) {
+`method<-`(`[[`, class_shinyfilters, value = function(x, i, ...) {
 	._config_column(x, i, call = call("[[", substitute(x), substitute(i)))
-}
+})
 
-method(.DollarNames, class_shinyfilters) <- function(x, pattern = "") {
+`method<-`(.DollarNames, class_shinyfilters, value = function(x, pattern = "") {
 	grep(pattern, names(x), value = TRUE)
-}
+})
 
-method(names, class_shinyfilters) <- function(x) {
+`method<-`(names, class_shinyfilters, value = function(x) {
 	names(x@data)
-}
+})
 
-method(`[`, class_shinyfilters) <- function(x, i, ...) {
+`method<-`(`[`, class_shinyfilters, value = function(x, i, ...) {
 	if (missing(i)) {
 		return(x)
 	}
@@ -142,7 +142,7 @@ method(`[`, class_shinyfilters) <- function(x, i, ...) {
 		data = x@data[cols],
 		overrides = x@overrides[intersect(names(x@overrides), cols)]
 	)
-}
+})
 
 # Creates the input for one column, selected by name or position
 ._config_column <- function(config, col, call) {
@@ -171,7 +171,7 @@ method(`[`, class_shinyfilters) <- function(x, i, ...) {
 }
 
 ## Method: print() ####
-method(print, class_shinyfilters) <- function(x, ...) {
+`method<-`(print, class_shinyfilters, value = function(x, ...) {
 	data <- x@data
 	nms <- names(data)
 	overridden <- nms %in% names(x@overrides)
@@ -223,7 +223,7 @@ method(print, class_shinyfilters) <- function(x, ...) {
 		cat_line(dot, col_grey(" set by with_filter()"))
 	}
 	invisible(x)
-}
+})
 
 ._pad <- function(x) {
 	ansi_align(x, max(ansi_nchar(x, type = "width")))

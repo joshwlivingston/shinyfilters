@@ -334,3 +334,12 @@ test_that("`[` errors on unknown columns", {
 		cfg[TRUE]
 	})
 })
+
+test_that("methods for base generics don't mask them in the namespace", {
+	ns <- asNamespace("shinyfilters")
+	masked <- intersect(
+		ls(ns, all.names = TRUE),
+		c("$", "[[", "[", "names", "print", ".DollarNames")
+	)
+	expect_identical(masked, character())
+})
