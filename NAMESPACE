@@ -75,6 +75,7 @@ importFrom(rlang,
   eval_tidy,
   local_error_call,
   names2,
+  new_quosure,
   try_fetch
 )
 importFrom(shiny,

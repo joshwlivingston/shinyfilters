@@ -126,17 +126,44 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 })
 
 `method<-`(`[`, class_shinyfilters, value = function(x, i, ...) {
+	call <- sys.call()
+	call[[1]] <- as.name("[")
+	if (nargs() > 2) {
+		cli_abort(
+			c(
+				"Can't subset a {.cls shinyfilters} object by rows and columns.",
+				i = "Select columns with {.code x[cols]}."
+			),
+			call = call
+		)
+	}
 	if (missing(i)) {
 		return(x)
 	}
-	call <- call("[", substitute(x), substitute(i))
+	expr <- substitute(i)
+	if (is.symbol(expr) && !(as.character(expr) %in% names(x@data))) {
+		# A variable holding names or positions, as in base `x[cols]`
+		expr <- call("all_of", i)
+	}
+	selection <- new_quosure(expr, parent.frame())
 	cols <- try_fetch(
-		names(eval_select(i, x@data, allow_rename = FALSE, error_call = call)),
-		vctrs_error_subscript = function(cnd) {
+		names(eval_select(
+			selection,
+			x@data,
+			allow_rename = FALSE,
+			error_call = call
+		)),
+		error = function(cnd) {
 			cnd$call <- call
 			stop(cnd)
 		}
 	)
+	if (length(cols) == 0) {
+		cli_abort(
+			"{.code {as_label(selection)}} doesn't select any columns.",
+			call = call
+		)
+	}
 	set_props(
 		x,
 		data = x@data[cols],

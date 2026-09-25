@@ -323,6 +323,15 @@ test_that("`[` returns a config with the selected columns", {
 	expect_identical(filterInput(sub)[[2]], filterInput(cfg)[[1]])
 	expect_identical(names(cfg[3:4]), c("x", "a_very_very_long_name"))
 	expect_identical(cfg[], cfg)
+	expect_identical(names(cfg[-1]), names(df_config)[-1])
+	expect_identical(names(cfg[c("x", "x")]), "x")
+	expect_identical(names(cfg[c(x, letters)]), c("x", "letters"))
+	expect_identical(
+		names(cfg[where(is.numeric)]),
+		c("x", "a_very_very_long_name")
+	)
+	cols <- c("factors", "x")
+	expect_identical(names(cfg[cols]), cols)
 	expect_snapshot(print(cfg[c("letters", "x")]))
 })
 
@@ -332,6 +341,10 @@ test_that("`[` errors on unknown columns", {
 		cfg["nope"]
 		cfg[9]
 		cfg[TRUE]
+		cfg[0]
+		cfg[character(0)]
+		cfg[, "x"]
+		cfg[1, 2]
 	})
 })
 

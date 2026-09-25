@@ -30,6 +30,7 @@
 #' @importFrom rlang eval_tidy
 #' @importFrom rlang local_error_call
 #' @importFrom rlang names2
+#' @importFrom rlang new_quosure
 #' @importFrom rlang try_fetch
 #' @importFrom S7 class_any
 #' @importFrom S7 class_character

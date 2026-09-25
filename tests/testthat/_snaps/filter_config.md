@@ -248,4 +248,26 @@
       Error in `cfg[TRUE]`:
       ! Can't select columns.
       x Subscript must be numeric or character, not `TRUE`.
+    Code
+      cfg[0]
+    Condition
+      Error in `cfg[0]`:
+      ! `0` doesn't select any columns.
+    Code
+      cfg[character(0)]
+    Condition
+      Error in `cfg[character(0)]`:
+      ! `character(0)` doesn't select any columns.
+    Code
+      cfg[, "x"]
+    Condition
+      Error in `cfg[, "x"]`:
+      ! Can't subset a <shinyfilters> object by rows and columns.
+      i Select columns with `x[cols]`.
+    Code
+      cfg[1, 2]
+    Condition
+      Error in `cfg[1, 2]`:
+      ! Can't subset a <shinyfilters> object by rows and columns.
+      i Select columns with `x[cols]`.
 
