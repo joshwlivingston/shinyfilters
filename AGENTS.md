@@ -15,7 +15,7 @@ All work flows through GitHub issues and PRs. Every plan — in plan mode or not
 2. Write the implementation plan.
 3. Branch from `main`: `<type>/<short-name>` (e.g. `feat/filter-spec`, `fix/bookmark-restore`). One branch per issue.
 4. Commit each logical unit as you go, referencing the issue. After each commit, check its roborev review (`roborev list`, `roborev show --job <id>`) before moving on. Fix findings in a new commit, then `roborev comment` and `roborev close` the review.
-    - Push back on overkill. Roborev always finds another edge case; a finding isn't a mandate. Decline and close with a one-line reason when the fix would:
+    - Push back on overkill. Roborev always finds another edge case; a finding isn't a mandate. Unless the finding is a real bug or misleading user-facing output, decline and close with a one-line reason when the fix would:
         - test implementation details (internal flags, mocked helpers, "remove the code and check the test fails"),
         - duplicate what R CMD check, lint, or an upstream package (tidyselect, cli) already enforces,
         - add special cases or helpers to cover inputs no user plausibly writes, or
