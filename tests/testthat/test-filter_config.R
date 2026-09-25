@@ -352,14 +352,20 @@ test_that("`[` errors on unknown columns", {
 	})
 })
 
-test_that("methods for base generics don't mask them in the namespace", {
+test_that("methods for external generics don't mask them in the namespace", {
 	ns <- asNamespace("shinyfilters")
-	external <- c(
-		ls(baseenv(), all.names = TRUE),
-		getNamespaceExports("utils"),
-		getNamespaceExports("methods")
-	)
-	masked <- intersect(ls(ns, all.names = TRUE), external)
-	masked <- setdiff(masked, ".__S3MethodsTable__.")
+	imports <- parent.env(ns)
+	is_copy <- function(name) {
+		obj <- get(name, envir = ns)
+		for (env in list(imports, baseenv())) {
+			other <- get0(name, envir = env, inherits = FALSE)
+			if (!is.null(other) && identical(obj, other)) {
+				return(TRUE)
+			}
+		}
+		FALSE
+	}
+	nms <- ls(ns, all.names = TRUE)
+	masked <- nms[vapply(nms, is_copy, logical(1))]
 	expect_identical(masked, character())
 })
