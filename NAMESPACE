@@ -40,6 +40,7 @@ importFrom(S7,
 importFrom(cli,
   cli_abort,
   cli_warn,
+  format_inline,
   qty
 )
 importFrom(htmltools,tagList)
@@ -50,7 +51,9 @@ importFrom(methods,
 importFrom(rlang,
   caller_arg,
   caller_env,
-  current_env
+  current_call,
+  current_env,
+  local_error_call
 )
 importFrom(shiny,
   NS,

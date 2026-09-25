@@ -36,7 +36,7 @@
       filterInput(choices_chr, inputId = "test", label = "Label", radio = TRUE,
         selectize = TRUE)
     Condition
-      Error in `method(filterInput, class_character)`:
+      Error in `filterInput()`:
       ! `radio` and `selectize` can't both be `TRUE`.
 
 # filterInput: method not found for S7 object passed as list
@@ -44,7 +44,7 @@
     Code
       filterInput(obj)
     Condition
-      Error in `method(filterInput, class_list)`:
+      Error in `filterInput()`:
       ! No `filterInput()` method found for class <ClassList>.
 
 # filterInput: arg supplied that is provided by args_filter_input()
@@ -52,12 +52,12 @@
     Code
       filterInput(letters, choices = letters)
     Condition
-      Error:
+      Error in `filterInput()`:
       ! The argument `choices` is not supported with <character> objects.
     Code
       filterInput(choices_dte, min = min(choices_dte))
     Condition
-      Error:
+      Error in `filterInput()`:
       ! The argument `min` is not supported with <Date> objects.
 
 # ns must be result of shiny::NS()

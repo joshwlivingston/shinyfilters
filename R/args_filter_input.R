@@ -58,6 +58,7 @@ method(args_filter_input, class_character) <- function(
 	choices_asis = FALSE,
 	...
 ) {
+	local_error_call(caller_env())
 	if (isTRUE(textbox)) {
 		return(NULL)
 	}
@@ -84,15 +85,17 @@ method(args_filter_input, class_factor | class_logical) <- function(
 	choices_asis = FALSE,
 	...
 ) {
+	local_error_call(caller_env())
 	._discrete_choice_inputs(x = x, choices_asis = choices_asis, ...)
 }
 
 ## Method: list ####
 method(args_filter_input, class_list) <- function(x, choices_asis = TRUE, ...) {
+	local_error_call(caller_env())
 	s7_check_is_valid_list_dispatch(x, function_name = "args_filter_input")
 	if (isFALSE(choices_asis)) {
 		cli_abort(
-			"{.arg choices_asis} must be {.code TRUE} when {.arg x} is a {.cls list}"
+			"{.arg choices_asis} must be {.code TRUE} when {.arg x} is a {.cls list}."
 		)
 	}
 	._discrete_choice_inputs(x = x, choices_asis = TRUE, ...)

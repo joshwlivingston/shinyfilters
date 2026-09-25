@@ -116,7 +116,7 @@ filterInput <- new_generic(
 		if (!is.data.frame(x) && !is.null(args$ns)) {
 			args <- c(list(x = x), args)
 			args <- do.call(._apply_ns, args)
-			return(do.call(filterInput, args))
+			return(do.call("filterInput", args))
 		}
 		S7_dispatch()
 	}
@@ -124,6 +124,7 @@ filterInput <- new_generic(
 
 ## Method: character ####
 method(filterInput, class_character) <- function(x, ...) {
+	local_error_call(caller_env())
 	args <- list(...)
 	if (isTRUE(args$textbox)) {
 		if (isTRUE(args$area)) {
@@ -133,7 +134,7 @@ method(filterInput, class_character) <- function(x, ...) {
 			# `textbox = TRUE`
 			input <- textInput
 		}
-		return(do.call(call_filter_input, c(list(x = x, .f = input), args)))
+		return(._call_filter_input(x, input, ...))
 	}
 	# Default: select / radio input
 	do.call(._input_discrete_choice, c(list(x = x), args))
@@ -147,7 +148,7 @@ method(filterInput, class_data.frame) <- function(x, ...) {
 		args <- list(x, id, nm)
 		names(args) <- c("x", arg_name_id, arg_name_label)
 		args <- c(args, list(...))
-		do.call(filterInput, args)
+		do.call("filterInput", args)
 	}
 	do.call(
 		tagList,
@@ -163,6 +164,7 @@ method(filterInput, class_data.frame) <- function(x, ...) {
 
 ## Method: Date ####
 method(filterInput, class_Date) <- function(x, ...) {
+	local_error_call(caller_env())
 	args <- list(...)
 	if (isTRUE(args$range)) {
 		# `range = TRUE`
@@ -171,22 +173,25 @@ method(filterInput, class_Date) <- function(x, ...) {
 		# default
 		input <- dateInput
 	}
-	do.call(call_filter_input, c(list(x = x, .f = input), args))
+	._call_filter_input(x, input, ...)
 }
 
 ## Method: factor | logical ####
 method(filterInput, class_factor | class_logical) <- function(x, ...) {
+	local_error_call(caller_env())
 	._input_discrete_choice(x, ...)
 }
 
 ## Method: list ####
 method(filterInput, class_list) <- function(x, ...) {
+	local_error_call(caller_env())
 	s7_check_is_valid_list_dispatch(x, function_name = "filterInput")
 	._input_discrete_choice(x, ...)
 }
 
 ## Method: numeric ####
 method(filterInput, class_numeric) <- function(x, ...) {
+	local_error_call(caller_env())
 	args <- list(...)
 	if (isTRUE(args$slider)) {
 		# `slider = TRUE`
@@ -195,7 +200,7 @@ method(filterInput, class_numeric) <- function(x, ...) {
 		# default
 		input <- numericInput
 	}
-	do.call(call_filter_input, c(list(x = x, .f = input), args))
+	._call_filter_input(x, input, ...)
 }
 
 ## Method: POSIXt ####
@@ -245,6 +250,10 @@ call_filter_input <- function(x, .f, ...) {
 			i = "Instead, call {.fn filterInput} on each column."
 		))
 	}
+	._call_filter_input(x, .f, ...)
+}
+
+._call_filter_input <- function(x, .f, ..., call = caller_env()) {
 	args_provided <- list(...)
 	function_args <- formalArgs(.f)
 	if (identical(.f, selectizeInput)) {
@@ -253,7 +262,7 @@ call_filter_input <- function(x, .f, ...) {
 			setdiff(formalArgs(selectInput), "selectize")
 		)
 	}
-	args_prepared <- ._prepare_input_args(x, ...)
+	args_prepared <- ._prepare_input_args(x, ..., call = call)
 	args <- c(
 		args_prepared,
 		args_provided[
@@ -291,12 +300,12 @@ call_filter_input <- function(x, .f, ...) {
 
 
 # Function: ._input_discrete_choice ####
-._input_discrete_choice <- function(x, ...) {
+._input_discrete_choice <- function(x, ..., call = caller_env()) {
 	args <- list(...)
 	if (isTRUE(args$radio) && isTRUE(args$selectize)) {
 		cli_abort(
 			"{.arg radio} and {.arg selectize} can't both be {.code TRUE}.",
-			call = caller_env()
+			call = call
 		)
 	}
 
@@ -310,5 +319,5 @@ call_filter_input <- function(x, .f, ...) {
 		# default
 		input <- selectInput
 	}
-	do.call(call_filter_input, c(list(x = x, .f = input), args))
+	._call_filter_input(x, input, ..., call = call)
 }

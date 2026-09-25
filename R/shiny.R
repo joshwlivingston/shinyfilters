@@ -88,9 +88,10 @@ serverFilterInput <- function(
 	args_apply_filters = NULL,
 	...
 ) {
+	error_call <- current_call()
 	out_input <- reactiveValues()
 	observe({
-		input <- ._prepare_input(input, x = x)
+		input <- ._prepare_input(input, x = x, call = error_call)
 		args_apply_filters <- c(
 			list(
 				x = x,
@@ -223,24 +224,34 @@ method(get_input_labels, class_data.frame) <- function(x) {
 
 ._prepare_input <- new_generic("._prepare_input", "input")
 
-method(._prepare_input, class_reactiveExpr) <- function(input, x) {
+method(._prepare_input, class_reactiveExpr) <- function(
+	input,
+	x,
+	call = caller_env()
+) {
 	res <- ._prepare_input_list(input())
 	names_res <- names(res)
 	names_x <- names(x)
 	input_not_in_res <- !(names_x %in% names_res)
 	if (any(input_not_in_res)) {
 		missing <- names_x[input_not_in_res]
-		cli_abort("Missing required input value{?s}: {.val {missing}}.")
+		cli_abort(
+			"Missing required input value{?s}: {.val {missing}}.",
+			call = call
+		)
 	}
 	input_not_in_x <- !(names_res %in% names_x)
 	if (any(input_not_in_x)) {
 		ignored <- names_res[input_not_in_x]
-		cli_warn("Ignoring unsupported input value{?s}: {.val {ignored}}.")
+		cli_warn(
+			"Ignoring unsupported input value{?s}: {.val {ignored}}.",
+			call = call
+		)
 	}
 	return(res[!input_not_in_x])
 }
 
-method(._prepare_input, class_reactivevalues) <- function(input, x) {
+method(._prepare_input, class_reactivevalues) <- function(input, x, ...) {
 	._prepare_input_list(get_input_values(input, x))
 }
 

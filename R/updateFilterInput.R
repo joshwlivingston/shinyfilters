@@ -119,14 +119,15 @@ updateFilterInput <- new_generic(
 
 ## Method: character ####
 method(updateFilterInput, class_character) <- function(x, ...) {
+	local_error_call(caller_env())
 	args <- list(...)
 	if (isTRUE(args$textbox)) {
 		if (isTRUE(args$area)) {
 			# `textbox = TRUE, area = TRUE`
-			call_update_filter_input(x, updateTextAreaInput, ...)
+			._call_update_filter_input(x, updateTextAreaInput, ...)
 		} else {
 			# `textbox = TRUE`
-			call_update_filter_input(x, updateTextInput, ...)
+			._call_update_filter_input(x, updateTextInput, ...)
 		}
 	} else {
 		# Default: select / radio input
@@ -147,7 +148,7 @@ method(updateFilterInput, class_data.frame) <- function(x, ...) {
 			} else {
 				names(base_args) <- c("x")
 			}
-			do.call(updateFilterInput, c(base_args, args_provided))
+			do.call("updateFilterInput", c(base_args, args_provided))
 		},
 		x,
 		get_input_ids(x),
@@ -157,18 +158,20 @@ method(updateFilterInput, class_data.frame) <- function(x, ...) {
 
 ## Method: Date ####
 method(updateFilterInput, class_Date) <- function(x, ...) {
+	local_error_call(caller_env())
 	args <- list(...)
 	if (isTRUE(args$range)) {
 		# `range = TRUE`
-		call_update_filter_input(x, updateDateRangeInput, ...)
+		._call_update_filter_input(x, updateDateRangeInput, ...)
 	} else {
 		# default
-		call_update_filter_input(x, updateDateInput, ...)
+		._call_update_filter_input(x, updateDateInput, ...)
 	}
 }
 
 ## Method: factor | logical ####
 method(updateFilterInput, class_factor | class_logical) <- function(x, ...) {
+	local_error_call(caller_env())
 	._update_input_discrete_choice(x, ...)
 }
 
@@ -178,19 +181,21 @@ method(updateFilterInput, class_list) <- function(
 	input,
 	...
 ) {
+	local_error_call(caller_env())
 	s7_check_is_valid_list_dispatch(x, function_name = "updateFilterInput")
 	._update_input_discrete_choice(x, ...)
 }
 
 ## Method: numeric ####
 method(updateFilterInput, class_numeric) <- function(x, ...) {
+	local_error_call(caller_env())
 	args <- list(...)
 	if (isTRUE(args$slider)) {
 		# `slider = TRUE`
-		call_update_filter_input(x, updateSliderInput, ...)
+		._call_update_filter_input(x, updateSliderInput, ...)
 	} else {
 		# default
-		call_update_filter_input(x, updateNumericInput, ...)
+		._call_update_filter_input(x, updateNumericInput, ...)
 	}
 }
 
@@ -204,24 +209,24 @@ method(updateFilterInput, class_POSIXt) <- function(
 }
 
 # Function: ._update_input_discrete_choice ####
-._update_input_discrete_choice <- function(x, ...) {
+._update_input_discrete_choice <- function(x, ..., call = caller_env()) {
 	args <- list(...)
 	if (isTRUE(args$radio) && isTRUE(args$selectize)) {
 		cli_abort(
 			"{.arg radio} and {.arg selectize} can't both be {.code TRUE}.",
-			call = caller_env()
+			call = call
 		)
 	}
 
 	if (isTRUE(args$selectize)) {
 		# `selectize = TRUE`
-		call_update_filter_input(x, updateSelectizeInput, ...)
+		._call_update_filter_input(x, updateSelectizeInput, ..., call = call)
 	} else if (isTRUE(args$radio)) {
 		# `radio = TRUE`
-		call_update_filter_input(x, updateRadioButtons, ...)
+		._call_update_filter_input(x, updateRadioButtons, ..., call = call)
 	} else {
 		# default
-		call_update_filter_input(x, updateSelectInput, ...)
+		._call_update_filter_input(x, updateSelectInput, ..., call = call)
 	}
 }
 
@@ -234,10 +239,14 @@ call_update_filter_input <- function(x, .f, ...) {
 			i = "Instead, call {.fn updateFilterInput} on each column."
 		))
 	}
+	._call_update_filter_input(x, .f, ...)
+}
+
+._call_update_filter_input <- function(x, .f, ..., call = caller_env()) {
 	args_provided <- list(...)
 	function_args <- formalArgs(.f)
 
-	args_prepared <- ._prepare_update_input_args(x, ...)
+	args_prepared <- ._prepare_update_input_args(x, ..., call = call)
 	args <- c(
 		args_prepared,
 		args_provided[

@@ -145,7 +145,7 @@ apply_filters <- function(
 	call = caller_env()
 ) {
 	if (!is.null(column_name)) {
-		filter_str <- "Filter on column {.val {column_name}}"
+		filter_str <- format_inline("Filter on column {.val {column_name}}")
 	} else {
 		filter_str <- "Filter"
 	}

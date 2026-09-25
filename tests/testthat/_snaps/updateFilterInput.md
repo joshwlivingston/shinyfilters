@@ -12,6 +12,6 @@
     Code
       updateFilterInput(choices_chr, inputId = "test", radio = TRUE, selectize = TRUE)
     Condition
-      Error in `method(updateFilterInput, class_character)`:
+      Error in `updateFilterInput()`:
       ! `radio` and `selectize` can't both be `TRUE`.
 
