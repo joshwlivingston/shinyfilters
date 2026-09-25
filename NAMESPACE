@@ -44,7 +44,12 @@ importFrom(S7,
   new_property,
   set_props
 )
-importFrom(cli,cli_abort)
+importFrom(cli,
+  cli_abort,
+  cli_warn,
+  format_inline,
+  qty
+)
 importFrom(htmltools,tagList)
 importFrom(methods,
   formalArgs,
@@ -54,9 +59,13 @@ importFrom(rlang,
   abort,
   as_data_mask,
   as_label,
+  caller_arg,
   caller_env,
+  current_call,
+  current_env,
   enquos,
   eval_tidy,
+  local_error_call,
   obj_address
 )
 importFrom(shiny,
