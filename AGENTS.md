@@ -31,13 +31,13 @@ Each artifact has one job. Don't copy content between them.
 | Answers | What and why | How we'll build it | What was built, and proof it works | What this one unit changes |
 | Written | Before the work | After the issue, before code | After the work | During the work |
 | Lives in | GitHub issue | Plan file (not on GitHub) | GitHub PR | Git history |
-| Contains | Problem or motivation; desired outcome; acceptance criteria; open questions | Files and functions to change; approach; steps; verification | What actually changed (functions, behavior); deviations from the plan; test results; NEWS bullet if user-facing; `Closes #N` | One-line conventional subject; body only if the reason isn't obvious from the diff; `Fixes #N` on its own line when applicable |
+| Contains | Problem or motivation; desired outcome; acceptance criteria (except small changes); open questions | Files and functions to change; approach; steps; verification | What actually changed (functions, behavior); deviations from the plan or unmet acceptance criteria; test results; NEWS bullet if user-facing; `Closes #N` | One-line conventional subject; body only if the reason isn't obvious from the diff; `Fixes #N` on its own line when applicable |
 | Excludes | Implementation approach or steps | Restating the issue's problem | The issue's problem statement (link it instead); the plan's steps | Prose that belongs in the PR |
 
 **Issues**
 
 - Title: `<type>: <description>`. After approval: `gh issue create --title "..." --label <label> --body "..."`
-- The body states the problem and the desired outcome, with acceptance criteria as checkable items.
+- The body states the problem and the desired outcome, with acceptance criteria as checkable items (except for small changes; see below).
 - Size the issue to the change. A small change (a doc tweak, a few lines) gets a one- or two-sentence body with no headings or criteria. If the issue is about as long as the diff, it's too long.
 
 **Implementation plans**
@@ -77,10 +77,10 @@ Before opening a PR:
 5. `pkgdown::build_site(preview = FALSE)`: site builds.
 6. `NEWS.md` bullet added for user-facing changes.
 7. `git log --oneline main..HEAD`: history is clean and logical.
-8. Acceptance criteria review: re-read the issue and check the branch against each criterion.
-    - Each criterion maps to the code that implements it and a test that proves it. Evidence, not intent: a criterion without a passing test isn't met.
+8. Acceptance criteria review: re-read the issue and check the branch against each criterion. If the issue has no criteria, check against its stated outcome.
+    - Each criterion maps to the code that implements it and evidence that it's met: a passing test for behavior, or a concrete check (the doc diff, `pkgdown::check_pkgdown()`, a clean `devtools::check()`) for docs and config. Evidence, not intent.
     - An unmet or partially met criterion is either finished now or listed as a deviation in the PR body, with the reason.
-    - Changes that serve no criterion are scope creep: move them to their own issue.
+    - Functional changes that serve no criterion are scope creep: move them to their own issue. Changes this checklist requires (formatting, generated docs, `NEWS.md`) and fixes to earlier commits on the branch are exempt.
     - Report the mapping to the user before drafting the PR. Don't copy it into the PR body; the PR lists only deviations.
 
 ### `NEWS.md` language
