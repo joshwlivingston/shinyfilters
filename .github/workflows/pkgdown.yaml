@@ -20,8 +20,11 @@ jobs:
       group: pkgdown-${{ github.event_name != 'pull_request' || github.run_id }}
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      DEPLOY: ${{ github.event_name != 'pull_request' }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: r-lib/actions/setup-pandoc@v2
 
@@ -34,15 +37,74 @@ jobs:
           extra-packages: any::pkgdown, local::.
           needs: website
 
-      - name: Build site
+      - name: Build dev site
         run: pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)
         shell: Rscript {0}
+        env:
+          PKGDOWN_DEV_MODE: devel
+
+      # Each release is served at /<version>/, the latest release also at the
+      # root, and the dev site at /dev/. Each deploy replaces the whole site,
+      # so built releases are cached and only new releases are built.
+      - name: Find releases
+        id: releases
+        if: env.DEPLOY == 'true'
+        run: |
+          tags=$(gh release list --exclude-drafts --exclude-pre-releases --json tagName --jq '.[].tagName' | tr '\n' ' ')
+          echo "tags=$tags" >> "$GITHUB_OUTPUT"
+          echo "latest=$(gh release view --json tagName --jq .tagName)" >> "$GITHUB_OUTPUT"
+          echo "key=$(echo "$tags" | sha256sum | cut -c1-16)" >> "$GITHUB_OUTPUT"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Restore release sites
+        if: env.DEPLOY == 'true'
+        uses: actions/cache@v4
+        with:
+          path: releases
+          key: pkgdown-releases-${{ steps.releases.outputs.key }}
+          restore-keys: pkgdown-releases-
+
+      - name: Build release sites
+        if: env.DEPLOY == 'true'
+        run: |
+          url <- "https://joshwlivingston.github.io/shinyfilters"
+          tags <- strsplit(trimws(Sys.getenv("TAGS")), " ")[[1]]
+          for (tag in tags) {
+            version <- sub("^v", "", tag)
+            dest <- file.path(getwd(), "releases", version)
+            if (dir.exists(dest)) next
+            src <- file.path(tempdir(), tag)
+            system2("git", c("worktree", "add", src, tag))
+            pak::local_install_deps(src, upgrade = FALSE, dependencies = TRUE)
+            pkgdown::build_site_github_pages(
+              src,
+              dest_dir = dest,
+              install = TRUE,
+              new_process = TRUE,
+              override = list(url = paste0(url, "/", version))
+            )
+          }
+        shell: Rscript {0}
+        env:
+          PKGDOWN_DEV_MODE: release
+          TAGS: ${{ steps.releases.outputs.tags }}
+
+      - name: Combine sites
+        if: env.DEPLOY == 'true'
+        run: |
+          latest="${LATEST#v}"
+          cp -r "releases/$latest" site
+          cp -r releases/* site/
+          cp -r docs/dev site/dev
+        env:
+          LATEST: ${{ steps.releases.outputs.latest }}
 
       - name: Upload Pages artifact
-        if: github.event_name != 'pull_request'
+        if: env.DEPLOY == 'true'
         uses: actions/upload-pages-artifact@v5
         with:
-          path: docs
+          path: site
 
   deploy:
     if: github.event_name != 'pull_request'
