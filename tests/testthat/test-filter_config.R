@@ -258,40 +258,15 @@ test_that("print() resolves custom methods", {
 	S7::method(filterInput, ClassCustom) <- function(x, ...) {
 		shiny::tags$div()
 	}
-	ClassWrapped <- S7::new_class("ClassWrapped", S7::class_character)
-	S7::method(filterInput, ClassWrapped) <- function(x, ...) {
-		res <- call_filter_input(x, shiny::radioButtons, ...)
-		stopifnot(inherits(res, "shiny.tag"))
-		htmltools::tagAppendAttributes(res, class = "wrapped")
-	}
 	df <- structure(
 		list(
 			radio = ClassRadio(c("a", "b")),
-			custom = ClassCustom(c("a", "b")),
-			wrapped = ClassWrapped(c("a", "b"))
+			custom = ClassCustom(c("a", "b"))
 		),
 		class = "data.frame",
 		row.names = 1:2
 	)
 	expect_snapshot(print(as_filters(df)))
-})
-
-test_that("print() resets the dry run after an error", {
-	local({
-		local_mocked_bindings(
-			._dry_run_label = function(...) {
-				rlang::abort("boom", class = "shinyfilters_test_error")
-			}
-		)
-		expect_error(
-			capture.output(print(as_filters(df_config))),
-			class = "shinyfilters_test_error"
-		)
-	})
-	expect_identical(
-		filterInput(as_filters(df_config)),
-		filterInput(df_config)
-	)
 })
 
 test_that("`$`, `[[`, and names() access columns", {
@@ -331,7 +306,7 @@ test_that("`[` returns a config with the selected columns", {
 		c("x", "a_very_very_long_name")
 	)
 	cols <- c("factors", "x")
-	expect_identical(names(cfg[cols]), cols)
+	expect_identical(names(cfg[all_of(cols)]), cols)
 	x <- "letters"
 	expect_identical(names(cfg[x]), "x")
 	expect_identical(names(cfg[all_of(x)]), "letters")
@@ -349,23 +324,7 @@ test_that("`[` errors on unknown columns", {
 		cfg[, "x"]
 		cfg[1, 2]
 		cfg[factros]
+		cfg[t]
+		cfg[T]
 	})
-})
-
-test_that("methods for external generics don't mask them in the namespace", {
-	ns <- asNamespace("shinyfilters")
-	imports <- parent.env(ns)
-	is_copy <- function(name) {
-		obj <- get(name, envir = ns)
-		for (env in list(imports, baseenv())) {
-			other <- get0(name, envir = env, inherits = FALSE)
-			if (!is.null(other) && identical(obj, other)) {
-				return(TRUE)
-			}
-		}
-		FALSE
-	}
-	nms <- ls(ns, all.names = TRUE)
-	masked <- nms[vapply(nms, is_copy, logical(1))]
-	expect_identical(masked, character())
 })

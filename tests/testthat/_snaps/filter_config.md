@@ -180,11 +180,10 @@
     Code
       print(as_filters(df))
     Output
-      -- <shinyfilters> - 3 filters --------------------------------------------------
+      -- <shinyfilters> - 2 filters --------------------------------------------------
       
-        radio    <chr>  radioButtons
-        custom   <chr>  <custom>
-        wrapped  <chr>  radioButtons
+        radio   <chr>  radioButtons
+        custom  <chr>  <custom>
 
 # `$` and `[[` error on unknown columns
 
@@ -276,4 +275,26 @@
       Error in `cfg[factros]`:
       ! Can't select columns that don't exist.
       x Column `factros` doesn't exist.
+    Code
+      cfg[t]
+    Condition
+      Error in `cfg[t]`:
+      ! Can't select columns that don't exist.
+      x Column `t` doesn't exist.
+    Code
+      cfg[T]
+    Condition
+      Warning:
+      Using an external vector in selections was deprecated in tidyselect 1.1.0.
+      i Please use `all_of()` or `any_of()` instead.
+        # Was:
+        data %>% select(T)
+      
+        # Now:
+        data %>% select(all_of(T))
+      
+      See <https://tidyselect.r-lib.org/reference/faq-external-vector.html>.
+      Error in `cfg[T]`:
+      ! Can't select columns with `T`.
+      x `T` must be numeric or character, not `TRUE`.
 

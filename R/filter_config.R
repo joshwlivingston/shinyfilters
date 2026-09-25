@@ -21,9 +21,8 @@
 #'     creates for one column, including any [with_filter()] overrides.
 #'   * `filters[cols]` returns a `shinyfilters` object with only the selected
 #'     columns, keeping their overrides. `cols` uses
-#'     <[`tidy-select`][tidyselect::language]>, like [with_filter()]; a bare
-#'     name that matches a column selects that column, so use `all_of()` when
-#'     passing a variable in programmatic code.
+#'     <[`tidy-select`][tidyselect::language]>, like [with_filter()]; use
+#'     `all_of()` to select with a variable.
 #'
 #' @seealso [with_filter()]
 #'
@@ -147,18 +146,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	if (missing(i)) {
 		return(x)
 	}
-	expr <- substitute(i)
-	env <- parent.frame()
-	if (
-		is.symbol(expr) &&
-			!(as.character(expr) %in% names(x@data)) &&
-			exists(as.character(expr), envir = env)
-	) {
-		# A variable holding names or positions, as in base `x[cols]`. A bare
-		# name that matches a column selects that column instead.
-		expr <- call("all_of", expr)
-	}
-	selection <- new_quosure(expr, env)
+	selection <- new_quosure(substitute(i), parent.frame())
 	cols <- try_fetch(
 		names(eval_select(
 			selection,
@@ -167,10 +155,6 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 			error_call = call
 		)),
 		vctrs_error_subscript = function(cnd) {
-			cnd$call <- call
-			stop(cnd)
-		},
-		rlang_error = function(cnd) {
 			cnd$call <- call
 			stop(cnd)
 		}
