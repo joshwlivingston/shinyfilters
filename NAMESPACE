@@ -49,6 +49,7 @@ importFrom(methods,
   functionBody
 )
 importFrom(rlang,
+  call2,
   caller_arg,
   caller_env,
   current_call,
