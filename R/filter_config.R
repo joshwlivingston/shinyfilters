@@ -109,6 +109,10 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 }
 
 ## Methods: $, [[, [, names(), .DollarNames() ####
+#
+# Methods for generics from other packages call `method<-` directly. The usual
+# `method(f, class) <- fn` form also assigns `f` in this namespace, masking the
+# original (e.g. base `$`) for all package code.
 `method<-`(`$`, class_shinyfilters, value = function(x, name) {
 	._config_column(x, name, call = call("$", substitute(x), as.name(name)))
 })

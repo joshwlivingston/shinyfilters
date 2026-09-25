@@ -350,9 +350,12 @@ test_that("`[` errors on unknown columns", {
 
 test_that("methods for base generics don't mask them in the namespace", {
 	ns <- asNamespace("shinyfilters")
-	masked <- intersect(
-		ls(ns, all.names = TRUE),
-		c("$", "[[", "[", "names", "print", ".DollarNames")
+	external <- c(
+		ls(baseenv(), all.names = TRUE),
+		getNamespaceExports("utils"),
+		getNamespaceExports("methods")
 	)
+	masked <- intersect(ls(ns, all.names = TRUE), external)
+	masked <- setdiff(masked, ".__S3MethodsTable__.")
 	expect_identical(masked, character())
 })
