@@ -203,4 +203,14 @@
     Condition
       Error in `cfg[[9]]`:
       ! Can't find column 9.
+    Code
+      cfg[[c("x", "nope")]]
+    Condition
+      Error in `cfg[[c("x", "nope")]]`:
+      ! Select a single column, not 2 values.
+    Code
+      cfg[[1:2]]
+    Condition
+      Error in `cfg[[1:2]]`:
+      ! Select a single column, not 2 values.
 

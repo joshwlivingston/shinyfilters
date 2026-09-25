@@ -111,7 +111,7 @@ method(`$`, class_shinyfilters) <- function(x, name) {
 }
 
 method(`[[`, class_shinyfilters) <- function(x, i, ...) {
-	._config_column(x, i, call = call("[[", substitute(x), i))
+	._config_column(x, i, call = call("[[", substitute(x), substitute(i)))
 }
 
 method(.DollarNames, class_shinyfilters) <- function(x, pattern = "") {
@@ -125,10 +125,16 @@ method(names, class_shinyfilters) <- function(x) {
 # Creates the input for one column, selected by name or position
 ._config_column <- function(config, col, call) {
 	nms <- names(config@data)
-	if (is.numeric(col) && length(col) == 1 && col %in% seq_along(nms)) {
+	if (length(col) != 1) {
+		cli_abort(
+			"Select a single column, not {length(col)} value{?s}.",
+			call = call
+		)
+	}
+	if (is.numeric(col) && col %in% seq_along(nms)) {
 		col <- nms[[col]]
 	}
-	if (!is.character(col) || length(col) != 1 || !(col %in% nms)) {
+	if (!is.character(col) || !(col %in% nms)) {
 		cli_abort("Can't find column {.field {col}}.", call = call)
 	}
 	i <- match(col, nms)

@@ -310,6 +310,8 @@ test_that("`$` and `[[` error on unknown columns", {
 		cfg$nope
 		cfg[["nope"]]
 		cfg[[9]]
+		cfg[[c("x", "nope")]]
+		cfg[[1:2]]
 	})
 })
 
