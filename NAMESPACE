@@ -15,6 +15,7 @@ export(get_input_labels)
 export(get_input_values)
 export(serverFilterInput)
 export(updateFilterInput)
+if (getRversion() < "4.3.0") importFrom(S7, "@")
 importFrom(S7,
   "method<-",
   S7_class,

@@ -33,6 +33,7 @@
 #' @importFrom S7 S7_inherits
 #' @importFrom S7 S7_object
 #' @importFrom S7 super
+#' @rawNamespace if (getRversion() < "4.3.0") importFrom(S7, "@")
 #' @importFrom shiny dateInput
 #' @importFrom shiny dateRangeInput
 #' @importFrom shiny NS
