@@ -106,9 +106,8 @@ method(print, class_shinyfilters) <- function(x, ...) {
 	nms <- names(data)
 	overridden <- nms %in% names(x@overrides)
 
-	n_rows <- nrow(data)
-	n_cols <- ncol(data)
-	header <- format_inline("{n_rows} row{?s}, {n_cols} column{?s}")
+	n_filters <- ncol(data)
+	header <- format_inline("{n_filters} filter{?s}")
 	if (!is.null(x@ns)) {
 		header <- paste(
 			header,
