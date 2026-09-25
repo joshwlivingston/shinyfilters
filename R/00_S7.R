@@ -15,3 +15,7 @@ class_tbl_df <- new_S3_class(
 	class = "tbl_df",
 	constructor = function(.data) NULL
 )
+
+class_POSIXt <- new_S3_class("POSIXt")
+
+class_NULL <- new_S3_class("NULL")
