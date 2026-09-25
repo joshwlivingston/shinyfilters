@@ -1,4 +1,3 @@
-ERROR_MESSAGE_INVALID_NS <- NULL
 DISPATCH_KEYWORDS <- NULL
 TRANSFORMS <- NULL
 TRANSFORMS_BY_FUN <- NULL
@@ -6,8 +5,6 @@ ARGUMENT_KEYWORDS <- NULL
 
 .onLoad <- function(libname, pkgname) {
 	methods_register()
-
-	error_message_invalid_ns <<- "`ns` must be the result of calling `shiny::NS()`."
 
 	DISPATCH_KEYWORDS <<- setNames(
 		nm = c(

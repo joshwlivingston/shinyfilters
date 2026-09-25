@@ -59,7 +59,7 @@ prop_ns <- new_property(
 	NULL | class_function,
 	validator = function(value) {
 		if (!is.null(value) && !._is_valid_ns_function(value)) {
-			return(ERROR_MESSAGE_INVALID_NS)
+			return("must be the result of calling `shiny::NS()`")
 		}
 	}
 )

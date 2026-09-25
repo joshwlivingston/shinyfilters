@@ -39,32 +39,20 @@ s7_check_is_valid_list_dispatch <- function(
 }
 
 ._check_valid_shiny_ns <- function(ns, call = caller_env()) {
-	if (
-		!is.function(ns) ||
-			!identical(
-				functionBody(NS("x")),
-				functionBody(ns)
-			)
-	) {
+	if (!._is_valid_ns_function(ns)) {
 		cli_abort(
 			"{.arg ns} must be the result of calling {.fn shiny::NS}.",
 			call = call
 		)
 	}
-	._check_valid_ns_function(ns)
-}
-
-._check_valid_ns_function <- function(ns) {
-	if (!._is_valid_ns_function(ns)) {
-		stop(error_message_invalid_ns)
-	}
 }
 
 ._is_valid_ns_function <- function(ns) {
-	identical(
-		functionBody(NS("x")),
-		functionBody(value)
-	)
+	is.function(ns) &&
+		identical(
+			functionBody(NS("x")),
+			functionBody(ns)
+		)
 }
 
 set_names <- function(object = nm, nm) {
