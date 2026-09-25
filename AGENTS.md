@@ -174,8 +174,8 @@ There are three possible ways to run code, listed in rough order of desirability
 
 - Follow the tidyverse style guide
 - Always run `air format .` after generating code. (air is bundled with Positron so look there if you can't otherwise find it.)
-- The package supports R < 4.1. Don't use the base pipe (`|>`) or `\()` lambdas in `R/`, roxygen examples, or tests. Use intermediate assignments and `function(x) ...` instead. Outside the vignette fallback chunks below, no magrittr pipe (`%>%`) either.
-- Vignettes may use `|>` in chunks with `eval = getRversion() >= "4.1", include = getRversion() >= "4.1"`, each paired with a `%>%` chunk guarded by `getRversion() < "4.1"`. Load magrittr in a guarded chunk; it's in Suggests. Write the check inline in each chunk option, not as a variable from a setup chunk: `purl` evaluates chunk options without running the setup chunk.
+- The package supports R < 4.1. Don't use the base pipe (`|>`) or `\()` lambdas in `R/`, roxygen examples, or tests. Use intermediate assignments and `function(x) ...` instead. No magrittr pipe (`%>%`) either.
+- Vignettes may use `|>` in chunks with `eval = new_r, include = new_r` (`new_r <- getRversion() >= "4.1"`), each paired with a `%>%` chunk using `eval = !new_r, include = !new_r`. Unevaluated chunks aren't parsed, so R CMD check passes on old R.
 - Don't call `pkg::fn()` in `R/`. Import with `usethis::use_import_from("pkg", "fn")` and call `fn()` directly. (Tests may use `pkg::fn()`.)
 
 ### Test style
