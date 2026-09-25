@@ -8,7 +8,6 @@
 ## Bugfixes
 
 * `filterInput()` now throws an error when the provided object is all missing.
-* `filterInput()`, `updateFilterInput()`, `args_filter_input()`, and `arg_name_input_value()` now report a missing method for S7 objects passed as lists on R < 4.3, instead of failing to build or print the error (#121, #122).
 
 # shinyfilters 0.3.1
 
