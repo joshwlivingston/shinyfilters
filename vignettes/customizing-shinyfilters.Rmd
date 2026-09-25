@@ -23,8 +23,8 @@ the ways in which you can customize shinyfilters.
 
 # Motivation
 
-Let's say you have an S7 class,
-[`Person`](https://github.com/RConsortium/S7/blob/v0.2.0/vignettes/classes-objects.Rmd#L324):
+Let's say you have an S7 class, `Person` (a simplified version of the
+[S7 example](https://github.com/RConsortium/S7/blob/v0.2.0/vignettes/classes-objects.Rmd#L324)):
 ```{r, message=FALSE}
 library(S7)
 
