@@ -32,14 +32,15 @@ filters. Pass the result to \code{\link[=with_filter]{with_filter()}} to choose 
 individual columns, then to \code{\link[=filterInput]{filterInput()}} to create the inputs.
 }
 \examples{
-cars <- mtcars[c("mpg", "cyl", "gear")]
+filters <- as_filters(nyc_flights)
+filters
 
-filters <- as_filters(cars, slider = TRUE)
-filters <- with_filter(filters, cyl, "radio")
+# Use sliders for every numeric column
+filters <- as_filters(nyc_flights, slider = TRUE)
 filterInput(filters)
 
 # The input for one column
-filters$cyl
+filters$origin
 }
 \seealso{
 \code{\link[=with_filter]{with_filter()}}

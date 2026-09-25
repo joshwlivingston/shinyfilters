@@ -35,17 +35,12 @@ columns of a configuration made by \code{\link[=as_filters]{as_filters()}}. When
 more than once, the last call wins.
 }
 \examples{
-cars <- mtcars[c("mpg", "cyl", "gear")]
+filters <- as_filters(nyc_flights)
+filters <- with_filter(filters, origin = "radio", carrier = "selectize")
+filters
 
-# Select columns, then choose their input
-filters <- as_filters(cars)
+# Choose one input for several columns with tidyselect
 filters <- with_filter(filters, where(is.numeric), "slider")
-filters <- with_filter(filters, cyl, "radio")
-filterInput(filters)
-
-# Name columns directly
-filters <- as_filters(cars, slider = TRUE)
-filters <- with_filter(filters, cyl = "radio", gear = "selectize")
 filterInput(filters)
 }
 \seealso{

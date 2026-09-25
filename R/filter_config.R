@@ -27,14 +27,15 @@
 #' @seealso [with_filter()]
 #'
 #' @examples
-#' cars <- mtcars[c("mpg", "cyl", "gear")]
+#' filters <- as_filters(nyc_flights)
+#' filters
 #'
-#' filters <- as_filters(cars, slider = TRUE)
-#' filters <- with_filter(filters, cyl, "radio")
+#' # Use sliders for every numeric column
+#' filters <- as_filters(nyc_flights, slider = TRUE)
 #' filterInput(filters)
 #'
 #' # The input for one column
-#' filters$cyl
+#' filters$origin
 #' @export
 as_filters <- function(data, ..., ns = NULL) {
 	if (!is.data.frame(data)) {
@@ -393,17 +394,12 @@ SHINY_INPUTS <- list(
 #' @seealso [as_filters()]
 #'
 #' @examples
-#' cars <- mtcars[c("mpg", "cyl", "gear")]
+#' filters <- as_filters(nyc_flights)
+#' filters <- with_filter(filters, origin = "radio", carrier = "selectize")
+#' filters
 #'
-#' # Select columns, then choose their input
-#' filters <- as_filters(cars)
+#' # Choose one input for several columns with tidyselect
 #' filters <- with_filter(filters, where(is.numeric), "slider")
-#' filters <- with_filter(filters, cyl, "radio")
-#' filterInput(filters)
-#'
-#' # Name columns directly
-#' filters <- as_filters(cars, slider = TRUE)
-#' filters <- with_filter(filters, cyl = "radio", gear = "selectize")
 #' filterInput(filters)
 #' @export
 with_filter <- function(config, ...) {
