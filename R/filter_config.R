@@ -32,6 +32,9 @@ as_filters <- function(data, ..., ns = NULL) {
 			"{.arg data} must be a data frame, not {.obj_type_friendly {data}}."
 		)
 	}
+	if (nrow(data) == 0) {
+		cli_abort("{.arg data} must have at least one row.")
+	}
 	if (!is.null(ns)) {
 		._check_valid_shiny_ns(ns)
 	}

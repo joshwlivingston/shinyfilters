@@ -14,6 +14,11 @@
       Error in `as_filters()`:
       ! `data` must be a data frame, not an integer vector.
     Code
+      as_filters(df_config[0, ])
+    Condition
+      Error in `as_filters()`:
+      ! `data` must have at least one row.
+    Code
       as_filters(df_config, TRUE)
     Condition
       Error in `as_filters()`:

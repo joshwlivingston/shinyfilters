@@ -210,6 +210,7 @@ test_that("as_filters() and with_filter() errors", {
 	cfg <- as_filters(df_config)
 	expect_snapshot(error = TRUE, {
 		as_filters(1:3)
+		as_filters(df_config[0, ])
 		as_filters(df_config, TRUE)
 		with_filter(df_config, x = "radio")
 		with_filter(cfg)
