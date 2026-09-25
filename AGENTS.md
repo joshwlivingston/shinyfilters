@@ -149,6 +149,10 @@ There are three possible ways to run code, listed in rough order of desirability
   multiline or complex code; in that case, write it to a temporary `.R` file
   and run `Rscript path/to/file.R`.
 
+### Installing packages
+
+- Use pak, not `install.packages()`: `pak::pak("pkg")`, `pak::pak("user/repo")` for GitHub, and `pak::local_install_deps()` for this package's dependencies.
+
 ### Code style
 
 - Follow the tidyverse style guide
