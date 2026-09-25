@@ -14,7 +14,7 @@ All work flows through GitHub issues and PRs. Every plan — in plan mode or not
 1. Create an issue (sub-issues for complex work).
 2. Write the implementation plan.
 3. Branch from `main`: `<type>/<short-name>` (e.g. `feat/filter-spec`, `fix/bookmark-restore`). One branch per issue.
-4. Commit each logical unit as you go, referencing the issue.
+4. Commit each logical unit as you go, referencing the issue. After each commit, check its roborev review (`roborev list`, `roborev show --job <id>`) before moving on. Fix findings in a new commit, then `roborev comment` and `roborev close` the review.
 5. Open a PR against `main` that closes the issue.
 6. Review (roborev + manual), squash merge; the issue auto-closes.
 
@@ -57,7 +57,7 @@ Each artifact has one job. Don't copy content between them.
     - Bad: `docs: address roborev findings on AGENTS.md checklist`, `fix: review feedback`, `chore: update AGENTS.md`
     - Good: `docs: allow non-test evidence for docs-only acceptance criteria`
 - If one subject can't name the change, the commit holds more than one change: split it.
-- A logical unit = source change + its tests + related docs, in one commit.
+- A logical unit = source change + its tests + related docs, in one commit. Every commit that changes code includes tests for that change; roborev fails commits without them.
 - Never bundle unrelated changes. A fix to an earlier commit is its own commit.
 - Do not add `Co-Authored-By` trailers.
 
@@ -158,6 +158,7 @@ There are three possible ways to run code, listed in rough order of desirability
 - Follow the tidyverse style guide
 - Always run `air format .` after generating code. (air is bundled with Positron so look there if you can't otherwise find it.)
 - Use the base pipe operator (`|>`), not the magrittr pipe (`%>%`).
+- Don't call `pkg::fn()` in `R/`. Import with `usethis::use_import_from("pkg", "fn")` and call `fn()` directly. (Tests may use `pkg::fn()`.)
 - Use `\() ...` for single-line anonymous functions. For all other cases, use `function() {...}`.
 
 ### Test style
