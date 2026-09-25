@@ -257,3 +257,10 @@ test_that("updateFilterInput: radio and selectize cannot both be TRUE", {
 		)
 	})
 })
+
+test_that("updateFilterInput: method not found for S7 object passed as list", {
+	obj <- ClassList(as.list(letters))
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+		updateFilterInput(obj, inputId = "x")
+	})
+})

@@ -279,3 +279,10 @@ test_that("args_filter_input: extension does not return uniquely named list", {
 		filterInput(ClassCharacter(letters))
 	})
 })
+
+test_that("args_filter_input: method not found for S7 object passed as list", {
+	obj <- ClassList(as.list(letters))
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+		args_filter_input(obj)
+	})
+})

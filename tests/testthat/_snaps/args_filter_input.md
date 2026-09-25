@@ -86,3 +86,11 @@
       Error in `filterInput()`:
       ! All names in `args_filter_input(x)` must be unique.
 
+# args_filter_input: method not found for S7 object passed as list
+
+    Code
+      args_filter_input(obj)
+    Condition
+      Error in `args_filter_input()`:
+      ! No `args_filter_input()` method found for class <ClassList>.
+

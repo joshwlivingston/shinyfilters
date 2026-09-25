@@ -9,7 +9,7 @@
 
 * `filterInput()` now throws an error when the provided object is all missing.
 * `filterInput()` now reports a missing method for S7 objects passed as lists on R < 4.3, instead of failing to build the error message (#121).
-* `filterInput()` and `updateFilterInput()` method-not-found errors can now be printed by knitr on R < 4.0 with S7 0.1.0 (#122).
+* `filterInput()`, `updateFilterInput()`, `args_filter_input()`, and `arg_name_input_value()` now report a missing method for S7 objects passed as lists on R < 4.0 instead of failing to print the error (#122).
 
 # shinyfilters 0.3.1
 

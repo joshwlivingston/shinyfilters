@@ -119,3 +119,10 @@ test_that("arg_name_input_id: implementation returns NULL", {
 		filterInput(ClassCharacter(letters), ns = shiny::NS("mymodule"))
 	})
 })
+
+test_that("arg_name_input_value: method not found for S7 object passed as list", {
+	obj <- ClassList(as.list(letters))
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+		arg_name_input_value(obj)
+	})
+})
