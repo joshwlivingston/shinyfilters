@@ -106,13 +106,14 @@ method(print, class_shinyfilters) <- function(x, ...) {
 	nms <- names(data)
 	overridden <- nms %in% names(x@overrides)
 
-	header <- paste(nrow(data), symbol$times, ncol(data))
+	n_rows <- nrow(data)
+	n_cols <- ncol(data)
+	header <- format_inline("{n_rows} row{?s}, {n_cols} column{?s}")
 	if (!is.null(x@ns)) {
-		header <- sprintf(
-			"%s %s ns \"%s\"",
+		header <- paste(
 			header,
 			symbol$bullet,
-			x@ns(character())
+			format_inline("namespace {.val {x@ns(character())}}")
 		)
 	}
 	cat_rule(
