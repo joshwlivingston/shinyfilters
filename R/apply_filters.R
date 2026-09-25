@@ -72,7 +72,8 @@ apply_filters <- function(
 		x = x,
 		filter_list = filter_list,
 		filter_combine_method = filter_combine_method,
-		...
+		...,
+		call = current_env()
 	)
 
 	if (is.data.frame(x)) {
@@ -88,7 +89,8 @@ apply_filters <- function(
 	x,
 	filter_list,
 	filter_combine_method,
-	...
+	...,
+	call = caller_env()
 ) {
 	if (is.character(filter_combine_method)) {
 		filter_combine_method <-
@@ -98,14 +100,20 @@ apply_filters <- function(
 				"and" = `&`,
 				"|" = `|`,
 				"or" = `|`,
-				stop(sprintf(
-					"Unknown `filter_combine_method` value: %s",
-					filter_combine_method
-				))
+				cli_abort(
+					c(
+						"Unknown {.arg filter_combine_method} value {.val {filter_combine_method}}.",
+						"i" = "Must be one of {.or {.val {c('&', 'and', '|', 'or')}}}, or a function."
+					),
+					call = call
+				)
 			)
 	}
 	if (!is.function(filter_combine_method)) {
-		stop("Argument `filter_combine_method` must be a function.")
+		cli_abort(
+			"{.arg filter_combine_method} must be a string or a function, not {.obj_type_friendly {filter_combine_method}}.",
+			call = call
+		)
 	}
 	x_length <- len(x)
 	filt_out <-
@@ -121,34 +129,41 @@ apply_filters <- function(
 							column_name,
 							...
 						)
-					._check_filter_logical(res, x_length, column_name)
+					._check_filter_logical(res, x_length, column_name, call = call)
 					return(res)
 				}
 			)
 		)
-	._check_filter_logical(filt_out, x_length)
+	._check_filter_logical(filt_out, x_length, call = call)
 	return(filt_out)
 }
 
-._check_filter_logical <- function(filter_res, x_length, column_name = NULL) {
+._check_filter_logical <- function(
+	filter_res,
+	x_length,
+	column_name = NULL,
+	call = caller_env()
+) {
 	if (!is.null(column_name)) {
-		column_str <- sprintf("on column `%s` ", column_name)
+		filter_str <- format_inline("Filter on column {.val {column_name}}")
 	} else {
-		column_str <- ""
+		filter_str <- "Filter"
 	}
 
 	if (!inherits(filter_res, "logical")) {
-		stop(sprintf("Filter %sdid not return a logical vector.", column_str))
+		cli_abort(
+			"{filter_str} must return a logical vector, not {.obj_type_friendly {filter_res}}.",
+			call = call
+		)
 	}
 
 	if (!identical(length(filter_res), x_length)) {
-		stop(
-			sprintf(
-				"Filter %sreturned a logical vector of length %d, but expected length %d.",
-				column_str,
-				length(filter_res),
-				x_length
-			)
+		cli_abort(
+			c(
+				"{filter_str} must return a logical vector of length {x_length}.",
+				"x" = "It returned a vector of length {length(filter_res)}."
+			),
+			call = call
 		)
 	}
 }

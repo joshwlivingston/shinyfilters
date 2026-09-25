@@ -14,8 +14,10 @@ URL: https://joshwlivingston.github.io/shinyfilters/,
     https://github.com/joshwlivingston/shinyfilters
 BugReports: https://github.com/joshwlivingston/shinyfilters/issues
 Imports:
+    cli,
     htmltools,
     methods,
+    rlang,
     S7 (>= 0.2.0),
     shiny
 Suggests:

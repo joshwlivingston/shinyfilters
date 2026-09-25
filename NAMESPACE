@@ -37,10 +37,23 @@ importFrom(S7,
   new_generic,
   super
 )
+importFrom(cli,
+  cli_abort,
+  cli_warn,
+  format_inline,
+  qty
+)
 importFrom(htmltools,tagList)
 importFrom(methods,
   formalArgs,
   functionBody
+)
+importFrom(rlang,
+  caller_arg,
+  caller_env,
+  current_call,
+  current_env,
+  local_error_call
 )
 importFrom(shiny,
   NS,

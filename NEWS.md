@@ -1,5 +1,9 @@
 # shinyfilters (development version)
 
+## Minor improvements
+
+* Error and warning messages now use cli with richer formatting.
+
 ## Bugfixes
 
 * `filterInput()` now throws an error when the provided object is all missing.
