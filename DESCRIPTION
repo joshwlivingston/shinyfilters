@@ -27,7 +27,7 @@ Suggests:
     rmarkdown,
     roxygen2,
     shinyWidgets,
-    testthat (>= 3.0.0),
+    testthat (>= 3.1.0),
     tibble
 VignetteBuilder: 
     knitr
