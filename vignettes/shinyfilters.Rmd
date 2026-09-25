@@ -12,13 +12,15 @@ knitr::opts_chunk$set(
 	collapse = TRUE,
 	comment = "#>"
 )
+# The base pipe needs R >= 4.1; older versions run the magrittr chunks.
+new_r <- getRversion() >= "4.1"
 ```
 
 ```{r setup}
 library(shinyfilters)
 ```
 
-```{r, eval = getRversion() < "4.1", include = getRversion() < "4.1"}
+```{r, eval = !new_r, include = !new_r}
 library(magrittr)
 ```
 
@@ -30,12 +32,12 @@ shinyfilters creates shiny inputs for filtering data. This article uses
 `as_filters()` turns a data frame into a set of filters. Printing it shows the
 input each column gets, based on its type:
 
-```{r, eval = getRversion() >= "4.1", include = getRversion() >= "4.1"}
+```{r, eval = new_r, include = new_r}
 nyc_flights |>
 	as_filters()
 ```
 
-```{r, eval = getRversion() < "4.1", include = getRversion() < "4.1"}
+```{r, eval = !new_r, include = !new_r}
 nyc_flights %>%
 	as_filters()
 ```
@@ -43,12 +45,12 @@ nyc_flights %>%
 Arguments to `as_filters()` apply to every column. For example, `slider = TRUE`
 uses sliders for numeric columns:
 
-```{r, eval = getRversion() >= "4.1", include = getRversion() >= "4.1"}
+```{r, eval = new_r, include = new_r}
 nyc_flights |>
 	as_filters(slider = TRUE)
 ```
 
-```{r, eval = getRversion() < "4.1", include = getRversion() < "4.1"}
+```{r, eval = !new_r, include = !new_r}
 nyc_flights %>%
 	as_filters(slider = TRUE)
 ```
@@ -58,7 +60,7 @@ nyc_flights %>%
 `with_filter()` sets the input for individual columns. Name the columns, or
 select them with tidyselect:
 
-```{r, eval = getRversion() >= "4.1", include = getRversion() >= "4.1"}
+```{r, eval = new_r, include = new_r}
 filters <- nyc_flights |>
 	as_filters() |>
 	with_filter(origin = "radio", carrier = "selectize") |>
@@ -67,7 +69,7 @@ filters <- nyc_flights |>
 filters
 ```
 
-```{r, eval = getRversion() < "4.1", include = getRversion() < "4.1"}
+```{r, eval = !new_r, include = !new_r}
 filters <- nyc_flights %>%
 	as_filters() %>%
 	with_filter(origin = "radio", carrier = "selectize") %>%
