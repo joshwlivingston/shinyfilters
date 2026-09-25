@@ -25,10 +25,9 @@ individual columns, then to \code{\link[=filterInput]{filterInput()}} to create 
 \examples{
 cars <- mtcars[c("mpg", "cyl", "gear")]
 
-cars |>
-  as_filters(slider = TRUE) |>
-  with_filter(cyl, "radio") |>
-  filterInput()
+filters <- as_filters(cars, slider = TRUE)
+filters <- with_filter(filters, cyl, "radio")
+filterInput(filters)
 }
 \seealso{
 \code{\link[=with_filter]{with_filter()}}

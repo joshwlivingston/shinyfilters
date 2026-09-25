@@ -38,17 +38,15 @@ more than once, the last call wins.
 cars <- mtcars[c("mpg", "cyl", "gear")]
 
 # Select columns, then choose their input
-cars |>
-  as_filters() |>
-  with_filter(where(is.numeric), "slider") |>
-  with_filter(cyl, "radio") |>
-  filterInput()
+filters <- as_filters(cars)
+filters <- with_filter(filters, where(is.numeric), "slider")
+filters <- with_filter(filters, cyl, "radio")
+filterInput(filters)
 
 # Name columns directly
-cars |>
-  as_filters(slider = TRUE) |>
-  with_filter(cyl = "radio", gear = "selectize") |>
-  filterInput()
+filters <- as_filters(cars, slider = TRUE)
+filters <- with_filter(filters, cyl = "radio", gear = "selectize")
+filterInput(filters)
 }
 \seealso{
 \code{\link[=as_filters]{as_filters()}}

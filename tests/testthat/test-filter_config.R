@@ -126,8 +126,8 @@ test_that("`ns` applies to keyword, function, and default inputs", {
 	my_select <- function(inputId, label, choices) {
 		shiny::selectInput(inputId, label, choices)
 	}
-	cfg <- as_filters(df_config, ns = shiny::NS("m")) |>
-		with_filter(x = "radio", letters = my_select)
+	cfg <- as_filters(df_config, ns = shiny::NS("m"))
+	cfg <- with_filter(cfg, x = "radio", letters = my_select)
 	html <- as.character(filterInput(cfg))
 	for (col in names(df_config)) {
 		expect_match(html, sprintf('id="m-%s"', col), fixed = TRUE)
@@ -136,18 +136,18 @@ test_that("`ns` applies to keyword, function, and default inputs", {
 
 test_that("with_filter(): last write wins", {
 	cfg <- as_filters(df_config)
-	specific_last <- cfg |>
-		with_filter(where(is.numeric), "slider") |>
-		with_filter(x = "radio") |>
-		filterInput()
+	specific_last <- with_filter(cfg, where(is.numeric), "slider")
+	specific_last <- filterInput(with_filter(specific_last, x = "radio"))
 	expect_identical(
 		specific_last[[3]],
 		filterInput(with_filter(cfg, x = "radio"))[[3]]
 	)
-	class_last <- cfg |>
-		with_filter(x = "radio") |>
-		with_filter(where(is.numeric), "slider") |>
-		filterInput()
+	class_last <- with_filter(cfg, x = "radio")
+	class_last <- filterInput(with_filter(
+		class_last,
+		where(is.numeric),
+		"slider"
+	))
 	expect_identical(
 		class_last[[3]],
 		filterInput(
@@ -238,11 +238,11 @@ test_that("print() shows each column's input", {
 	my_select <- function(inputId, label, choices) {
 		shiny::selectInput(inputId, label, choices)
 	}
+	cfg <- as_filters(df_config, slider = TRUE, ns = shiny::NS("m"))
+	cfg <- with_filter(cfg, x = "radio", letters = my_select)
 	expect_snapshot({
 		print(as_filters(df_config))
-		as_filters(df_config, slider = TRUE, ns = shiny::NS("m")) |>
-			with_filter(x = "radio", letters = my_select) |>
-			print()
+		print(cfg)
 		print(with_filter(as_filters(df_config), factors = "slider"))
 		print(as_filters(df_config, args_unique = "bad"))
 		print(as_filters(data.frame(x = "a")))

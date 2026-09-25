@@ -136,8 +136,7 @@
         x                      <int>  numericInput
         a_very_very_long_name  <dbl>  numericInput
     Code
-      print(with_filter(as_filters(df_config, slider = TRUE, ns = shiny::NS("m")), x = "radio",
-      letters = my_select))
+      print(cfg)
     Output
       -- <shinyfilters> - 4 filters * namespace "m" ----------------------------------
       Defaults  slider = TRUE
