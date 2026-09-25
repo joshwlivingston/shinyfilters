@@ -2,7 +2,7 @@
 
 ## Minor improvements
 
-* Error and warning messages now use cli for richer formatting and report the user-facing function where the problem occurred. Errors about unsupported arguments now list only the arguments that were actually supplied.
+* Error and warning messages now use cli with richer formatting.
 
 ## Bugfixes
 
