@@ -1,5 +1,7 @@
-# R CMD check on the oldest supported R, with dependencies pinned to a
-# Posit Package Manager snapshot whose versions still install on R 3.5.
+# R CMD check on R 3.5, with dependencies pinned to a Posit Package Manager
+# snapshot whose versions still install on R 3.5. That snapshot predates
+# shinytest2 0.4.1, so the check sees an older shinytest2 than Suggests asks
+# for; _R_CHECK_FORCE_SUGGESTS_ is off for that reason.
 on:
   push:
     branches: [main, master]
@@ -40,7 +42,8 @@ jobs:
       - uses: actions/cache@v4
         with:
           path: ${{ env.R_LIBS_USER }}
-          key: ${{ runner.os }}-r-3.5.3-ppm-${{ env.SNAPSHOT }}
+          key: ${{ runner.os }}-r-3.5.3-ppm-${{ env.SNAPSHOT }}-${{ hashFiles('DESCRIPTION') }}
+          restore-keys: ${{ runner.os }}-r-3.5.3-ppm-${{ env.SNAPSHOT }}-
 
       - name: Install R dependencies
         shell: Rscript {0}
@@ -49,11 +52,10 @@ jobs:
             repos = c(CRAN = paste0("https://packagemanager.posit.co/cran/", Sys.getenv("SNAPSHOT"))),
             Ncpus = 4
           )
-          pkgs <- c(
-            "cli", "htmltools", "rlang", "S7", "shiny", "tidyselect",
-            "testthat", "knitr", "rmarkdown", "magrittr", "tibble",
-            "shinytest2", "bslib", "DT", "shinyWidgets"
-          )
+          fields <- read.dcf("DESCRIPTION", c("Imports", "Suggests"))
+          pkgs <- trimws(unlist(strsplit(fields[!is.na(fields)], ",")))
+          pkgs <- sub("[ (].*", "", pkgs)
+          pkgs <- setdiff(pkgs, c("", rownames(installed.packages(priority = "base"))))
           needed <- setdiff(pkgs, rownames(installed.packages()))
           if (length(needed) > 0) install.packages(needed)
           missing <- setdiff(pkgs, rownames(installed.packages()))
