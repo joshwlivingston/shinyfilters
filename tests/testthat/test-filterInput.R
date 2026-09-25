@@ -43,7 +43,7 @@ expect_shiny_dateInput <- expect_shiny_input(shiny::dateInput)
 
 ## All NA's
 test_that("filterInput() throws error when supplied vector is all NA", {
-	expect_snapshot(error = TRUE, {
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
 		filterInput(x = choices_chr_na, inputId = "", label = "")
 		filterInput(x = choices_cpx_na, inputId = "", label = "")
 		filterInput(x = choices_rel_na, inputId = "", label = "")
@@ -782,14 +782,14 @@ test_that("data.frame dte_col (Date) + ns -> shiny::dateInput with namespaced in
 # Errors ####
 ## call_filter_input ####
 test_that("call_filter_input errors for data.frames", {
-	expect_snapshot(error = TRUE, {
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
 		call_filter_input(test_df, shiny::selectInput)
 	})
 })
 
 ### `radio` and `selectize` both TRUE ####
 test_that("filterInput: radio and selectize cannot both be TRUE", {
-	expect_snapshot(error = TRUE, {
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
 		filterInput(
 			choices_chr,
 			inputId = "test",
@@ -803,14 +803,14 @@ test_that("filterInput: radio and selectize cannot both be TRUE", {
 ### S7 method not found ####
 test_that("filterInput: method not found for S7 object passed as list", {
 	obj <- ClassList(as.list(letters))
-	expect_snapshot(error = TRUE, {
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
 		filterInput(obj)
 	})
 })
 
 ### argument supplied that is provided by args_filter_input() ####
 test_that("filterInput: arg supplied that is provided by args_filter_input()", {
-	expect_snapshot(error = TRUE, {
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
 		filterInput(letters, choices = letters)
 		filterInput(choices_dte, min = min(choices_dte))
 	})
@@ -818,7 +818,7 @@ test_that("filterInput: arg supplied that is provided by args_filter_input()", {
 
 ## `ns` ####
 test_that("ns must be result of shiny::NS()", {
-	expect_snapshot(error = TRUE, {
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
 		filterInput(
 			x = choices_chr,
 			inputId = "my_input",
@@ -830,7 +830,7 @@ test_that("ns must be result of shiny::NS()", {
 
 test_that("ns requires inputId argument", {
 	ns <- shiny::NS("mymodule")
-	expect_snapshot(error = TRUE, {
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
 		filterInput(
 			x = choices_chr,
 			label = "Label",

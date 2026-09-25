@@ -62,7 +62,7 @@ test_that("._prepare_input() with reactivevalues extracts values correctly", {
 test_that("serverFilterInput() with reactive() throws error when missing required columns", {
 	testServer(app_shiny(), {
 		input_list <- reactive(list(chr_col = "a", num_col = 5))
-		expect_snapshot(error = TRUE, {
+		expect_snapshot(error = TRUE, variant = snapshot_variant(), {
 			._prepare_input(input_list, x = test_df)
 		})
 	})
@@ -75,6 +75,9 @@ test_that("serverFilterInput() with reactive() warns when extra columns provided
 			names(out) <- get_input_ids(test_df)
 			c(out, list(unsupported = "x"))
 		})
-		expect_snapshot(invisible(._prepare_input(input_list, x = test_df)))
+		expect_snapshot(
+			invisible(._prepare_input(input_list, x = test_df)),
+			variant = snapshot_variant()
+		)
 	})
 })

@@ -38,7 +38,7 @@ test_that("get_filter_logical() filters data.frame columns correctly", {
 
 test_that("get_filter_logical() throws error for missing column", {
 	df <- data.frame(a = 1:5, b = letters[1:5])
-	expect_snapshot(error = TRUE, {
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
 		get_filter_logical(df, val = "test", column = "nonexistent")
 	})
 })
@@ -278,7 +278,7 @@ test_that("get_filter_logical() falls back to all TRUE for every unsupported x/v
 })
 
 test_that("get_filter_logical() warns when falling back for mismatched types", {
-	expect_snapshot(get_filter_logical(1:3, "a"))
+	expect_snapshot(get_filter_logical(1:3, "a"), variant = snapshot_variant())
 })
 
 # Empty inputs ####
@@ -315,14 +315,14 @@ test_that("get_filter_logical() preserves vector length", {
 # Errors ####
 ### column nopt found
 test_that("get_filter_logical: column not found", {
-	expect_snapshot(error = TRUE, {
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
 		get_filter_logical(test_df, "i", column = "nonexistent")
 	})
 })
 
 ### invalid column_name argument ####
 test_that("get_filter_logical: column argument is non-empty string", {
-	expect_snapshot(error = TRUE, {
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
 		get_filter_logical(test_df, "i", column = NA_character_)
 		get_filter_logical(test_df, "i", column = "")
 	})
@@ -338,7 +338,7 @@ test_that("get_filter_logical: non-logical vector returned", {
 		integer(length(x))
 	}
 	df <- data.frame(x = ClassCharacter(letters), stringsAsFactors = FALSE)
-	expect_snapshot(error = TRUE, {
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
 		apply_filters(df, list(x = letters[1:5]))
 	})
 })
@@ -352,7 +352,7 @@ test_that("get_filter_logical: logical vector of invalid length", {
 		logical(length(x) - 1L)
 	}
 	df <- data.frame(x = ClassCharacter(letters), stringsAsFactors = FALSE)
-	expect_snapshot(error = TRUE, {
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
 		apply_filters(df, list(x = letters[1:5]))
 	})
 })

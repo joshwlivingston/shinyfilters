@@ -195,7 +195,7 @@ test_that("apply_filters() preserves row names when filtering", {
 
 # Errors ####
 test_that("apply_filters: unknown filter_combine_method", {
-	expect_snapshot(error = TRUE, {
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
 		apply_filters(
 			test_df,
 			list(chr_col = "i"),
@@ -205,7 +205,7 @@ test_that("apply_filters: unknown filter_combine_method", {
 })
 
 test_that("apply_filters: filter_combine_method must be function", {
-	expect_snapshot(error = TRUE, {
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
 		apply_filters(
 			test_df,
 			list(chr_col = "i"),

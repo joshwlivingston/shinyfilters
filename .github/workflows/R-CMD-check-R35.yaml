@@ -20,6 +20,8 @@ jobs:
       R_KEEP_PKG_SOURCE: yes
       NOT_CRAN: true
       SNAPSHOT: "2023-09-15"
+      # Old testthat formats snapshots differently; keep them in _snaps/r-3.5/
+      SHINYFILTERS_SNAPSHOT_VARIANT: r-3.5
 
     steps:
       - uses: actions/checkout@v4
@@ -75,3 +77,11 @@ jobs:
         with:
           name: R-3.5.3-check
           path: shinyfilters.Rcheck
+
+      - name: Upload snapshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: R-3.5.3-snapshots
+          path: shinyfilters.Rcheck/tests/testthat/_snaps/r-3.5
+          if-no-files-found: ignore

@@ -115,7 +115,7 @@ test_that("arg_name_input_value() returns list with mixed types for data.frame",
 #### returns NULL ####
 test_that("arg_name_input_id: implementation returns NULL", {
 	method(arg_name_input_id, ClassCharacter) <- function(x) NULL
-	expect_snapshot(error = TRUE, {
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
 		filterInput(ClassCharacter(letters), ns = shiny::NS("mymodule"))
 	})
 })
