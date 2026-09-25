@@ -67,6 +67,12 @@ method(filterInput, FilterConfig) <- function(x, ...) {
 # Creates the input for one column of a FilterConfig
 ._config_input <- function(name, id, label, config, args, call) {
 	col <- config@data[[name]]
+	if (all(is.na(col))) {
+		cli_abort(
+			"Column {.field {name}} must have at least one non-missing value.",
+			call = call
+		)
+	}
 	col_args <- c(
 		list(x = col),
 		do.call(._id_label_args, c(list(col, id, label), args)),
@@ -260,6 +266,10 @@ SHINY_INPUTS <- list(
 #'   `"selectize"`, `"slider"`, `"textbox"`) or a \pkg{shiny} input function,
 #'   such as [shiny::radioButtons()]. `"radio"` and `"selectize"` also work
 #'   with numeric columns, using the sorted unique values as choices.
+#'
+#'   Other functions are called like [call_filter_input()]: they receive the
+#'   arguments [args_filter_input()] returns for the column's type, plus any
+#'   other arguments they accept.
 #'
 #' @returns The updated configuration.
 #'

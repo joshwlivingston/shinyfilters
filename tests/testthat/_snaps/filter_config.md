@@ -108,6 +108,16 @@
       Caused by error:
       ! "range" isn't available for <numeric> columns.
       i Use "radio", "selectize", or "slider" instead.
+    Code
+      filterInput(with_filter(as_filters(data.frame(a = NA_integer_)), a = "radio"))
+    Condition
+      Error in `filterInput()`:
+      ! Column a must have at least one non-missing value.
+    Code
+      filterInput(as_filters(data.frame(a = NA_integer_)))
+    Condition
+      Error in `filterInput()`:
+      ! Column a must have at least one non-missing value.
 
 # print() shows each column's input
 

@@ -113,7 +113,9 @@ filterInput <- new_generic(
 			cli_abort("{.arg x} must have at least one non-missing element.")
 		}
 		args <- list(...)
-		if (!is.data.frame(x) && !is.null(args$ns)) {
+		if (
+			!is.data.frame(x) && !S7_inherits(x, FilterConfig) && !is.null(args$ns)
+		) {
 			args <- c(list(x = x), args)
 			args <- do.call(._apply_ns, args)
 			return(do.call("filterInput", args))

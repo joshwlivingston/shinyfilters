@@ -150,6 +150,46 @@ test_that("filterInput(<FilterConfig>, ...) merges with global arguments", {
 		filterInput(as_filters(df_config), slider = TRUE),
 		filterInput(df_config, slider = TRUE)
 	)
+	expect_identical(
+		filterInput(as_filters(df_config), ns = shiny::NS("m")),
+		filterInput(df_config, ns = shiny::NS("m"))
+	)
+})
+
+test_that("range override on Date and POSIXct columns", {
+	df <- data.frame(
+		dte = as.Date("2024-01-01") + 0:1,
+		dtm = as.POSIXct("2024-01-01", tz = "UTC") + 0:1 * 86400
+	)
+	res <- filterInput(with_filter(as_filters(df), everything(), "range"))
+	expect_identical(
+		res[[1]],
+		filterInput(df$dte, inputId = "dte", label = "dte", range = TRUE)
+	)
+	expect_identical(
+		res[[2]],
+		filterInput(df$dtm, inputId = "dtm", label = "dtm", range = TRUE)
+	)
+})
+
+test_that("radio override on logical columns", {
+	df <- data.frame(lgl = c(TRUE, FALSE))
+	res <- filterInput(with_filter(as_filters(df), lgl = "radio"))
+	expect_identical(
+		res[[1]],
+		filterInput(df$lgl, inputId = "lgl", label = "lgl", radio = TRUE)
+	)
+})
+
+test_that("function overrides receive args_filter_input() output", {
+	my_numeric <- function(inputId, label, value, min, max) {
+		shiny::numericInput(inputId, label, value, min, max)
+	}
+	res <- filterInput(with_filter(as_filters(df_config), int = my_numeric))
+	expect_identical(
+		res[[3]],
+		filterInput(df_config$int, inputId = "int", label = "int")
+	)
 })
 
 test_that("as_filters() and with_filter() errors", {
@@ -171,6 +211,11 @@ test_that("as_filters() and with_filter() errors", {
 		with_filter(cfg, int = 1)
 		filterInput(with_filter(cfg, fct = "slider"))
 		filterInput(with_filter(cfg, dbl = "range"))
+		filterInput(with_filter(
+			as_filters(data.frame(a = NA_integer_)),
+			a = "radio"
+		))
+		filterInput(as_filters(data.frame(a = NA_integer_)))
 	})
 })
 

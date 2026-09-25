@@ -20,7 +20,11 @@ with_filter(config, ...)
 Each input is either a keyword (\code{"area"}, \code{"radio"}, \code{"range"},
 \code{"selectize"}, \code{"slider"}, \code{"textbox"}) or a \pkg{shiny} input function,
 such as \code{\link[shiny:radioButtons]{shiny::radioButtons()}}. \code{"radio"} and \code{"selectize"} also work
-with numeric columns, using the sorted unique values as choices.}
+with numeric columns, using the sorted unique values as choices.
+
+Other functions are called like \code{\link[=call_filter_input]{call_filter_input()}}: they receive the
+arguments \code{\link[=args_filter_input]{args_filter_input()}} returns for the column's type, plus any
+other arguments they accept.}
 }
 \value{
 The updated configuration.
