@@ -114,7 +114,9 @@ filterInput <- new_generic(
 		}
 		args <- list(...)
 		if (
-			!is.data.frame(x) && !S7_inherits(x, FilterConfig) && !is.null(args$ns)
+			!is.data.frame(x) &&
+				!S7_inherits(x, class_shinyfilters) &&
+				!is.null(args$ns)
 		) {
 			args <- c(list(x = x), args)
 			args <- do.call(._apply_ns, args)

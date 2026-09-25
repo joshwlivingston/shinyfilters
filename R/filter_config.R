@@ -14,7 +14,7 @@
 #'   as `slider = TRUE` or `selectize = TRUE`.
 #' @param ns An optional namespace created by [shiny::NS()].
 #'
-#' @returns A `FilterConfig` object.
+#' @returns A `shinyfilters` object.
 #'
 #' @seealso [with_filter()]
 #'
@@ -42,11 +42,11 @@ as_filters <- function(data, ..., ns = NULL) {
 	if (length(args) > 0) {
 		check_named_list_or_null(args, arg = "...")
 	}
-	FilterConfig(data = data, args = args, ns = ns)
+	class_shinyfilters(data = data, args = args, ns = ns)
 }
 
 ## Method: filterInput() ####
-method(filterInput, FilterConfig) <- function(x, ...) {
+method(filterInput, class_shinyfilters) <- function(x, ...) {
 	call <- caller_env()
 	args <- ._config_args(x, ...)
 	data <- x@data
@@ -67,7 +67,7 @@ method(filterInput, FilterConfig) <- function(x, ...) {
 	modifyList(c(config@args, list(ns = config@ns)), list(...))
 }
 
-# Creates the input for one column of a FilterConfig
+# Creates the input for one column of a shinyfilters config
 ._config_input <- function(name, id, label, config, args, call) {
 	col <- config@data[[name]]
 	if (all(is.na(col))) {
@@ -101,7 +101,7 @@ method(filterInput, FilterConfig) <- function(x, ...) {
 }
 
 ## Method: print() ####
-method(print, FilterConfig) <- function(x, ...) {
+method(print, class_shinyfilters) <- function(x, ...) {
 	data <- x@data
 	nms <- names(data)
 	overridden <- nms %in% names(x@overrides)
@@ -116,7 +116,7 @@ method(print, FilterConfig) <- function(x, ...) {
 		)
 	}
 	cat_rule(
-		left = paste(col_blue("<FilterConfig>"), symbol$line, header)
+		left = paste(col_blue("<shinyfilters>"), symbol$line, header)
 	)
 
 	if (length(x@args) > 0) {
@@ -306,7 +306,7 @@ SHINY_INPUTS <- list(
 #'   filterInput()
 #' @export
 with_filter <- function(config, ...) {
-	if (!S7_inherits(config, FilterConfig)) {
+	if (!S7_inherits(config, class_shinyfilters)) {
 		cli_abort(
 			"{.arg config} must be created by {.fn as_filters}, not {.obj_type_friendly {config}}."
 		)
@@ -316,7 +316,7 @@ with_filter <- function(config, ...) {
 
 .with_filter <- new_generic(".with_filter", "config")
 
-method(.with_filter, FilterConfig) <- function(
+method(.with_filter, class_shinyfilters) <- function(
 	config,
 	...,
 	.call = caller_env()

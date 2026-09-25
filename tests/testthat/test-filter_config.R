@@ -159,7 +159,7 @@ test_that("with_filter(): last write wins", {
 	)
 })
 
-test_that("filterInput(<FilterConfig>, ...) merges with global arguments", {
+test_that("filterInput(<shinyfilters>, ...) merges with global arguments", {
 	expect_identical(
 		filterInput(as_filters(df_config), slider = TRUE),
 		filterInput(df_config, slider = TRUE)

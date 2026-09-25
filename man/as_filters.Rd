@@ -15,7 +15,7 @@ as \code{slider = TRUE} or \code{selectize = TRUE}.}
 \item{ns}{An optional namespace created by \code{\link[shiny:NS]{shiny::NS()}}.}
 }
 \value{
-A \code{FilterConfig} object.
+A \code{shinyfilters} object.
 }
 \description{
 \code{as_filters()} stores a data frame with the arguments used to create its

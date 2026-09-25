@@ -129,7 +129,7 @@
     Code
       print(as_filters(df_config))
     Output
-      -- <FilterConfig> - 3 x 4 ------------------------------------------------------
+      -- <shinyfilters> - 3 x 4 ------------------------------------------------------
       
         letters                <chr>  selectInput
         factors                <fct>  selectInput
@@ -139,7 +139,7 @@
       print(with_filter(as_filters(df_config, slider = TRUE, ns = shiny::NS("m")), x = "radio",
       letters = my_select))
     Output
-      -- <FilterConfig> - 3 x 4 * ns "m" ---------------------------------------------
+      -- <shinyfilters> - 3 x 4 * ns "m" ---------------------------------------------
       Defaults  slider = TRUE
       
         letters                <chr>  my_select     *
@@ -151,7 +151,7 @@
     Code
       print(with_filter(as_filters(df_config), factors = "slider"))
     Output
-      -- <FilterConfig> - 3 x 4 ------------------------------------------------------
+      -- <shinyfilters> - 3 x 4 ------------------------------------------------------
       
         letters                <chr>  selectInput
         factors                <fct>  x "slider" isn't available for <factor> columns.  *
@@ -162,7 +162,7 @@
     Code
       print(as_filters(df_config, args_unique = "bad"))
     Output
-      -- <FilterConfig> - 3 x 4 ------------------------------------------------------
+      -- <shinyfilters> - 3 x 4 ------------------------------------------------------
       Defaults  args_unique = "bad"
       
         letters                <chr>  x `args_unique` must be a list, not a string.
@@ -175,7 +175,7 @@
     Code
       print(as_filters(df))
     Output
-      -- <FilterConfig> - 2 x 3 ------------------------------------------------------
+      -- <shinyfilters> - 2 x 3 ------------------------------------------------------
       
         radio    <chr>  radioButtons
         custom   <chr>  <custom>

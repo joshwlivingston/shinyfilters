@@ -44,7 +44,7 @@ class_input_selectize <- new_S3_class("shinyfilters_input_selectize")
 class_input_slider <- new_S3_class("shinyfilters_input_slider")
 class_input_textbox <- new_S3_class("shinyfilters_input_textbox")
 
-# FilterConfig ####
+# shinyfilters ####
 
 ## Property: args ####
 prop_args <- new_property(
@@ -73,8 +73,8 @@ prop_ns <- new_property(
 )
 
 ## Class ####
-FilterConfig <- new_class(
-	"FilterConfig",
+class_shinyfilters <- new_class(
+	"shinyfilters",
 	properties = list(
 		data = class_data.frame,
 		args = prop_args,
