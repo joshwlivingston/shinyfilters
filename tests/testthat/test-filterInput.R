@@ -778,3 +778,63 @@ test_that("data.frame dte_col (Date) + ns -> shiny::dateInput with namespaced in
 		do.call(shiny::dateInput, args_shiny_dte)
 	)
 })
+
+# Errors ####
+## call_filter_input ####
+test_that("call_filter_input errors for data.frames", {
+	expect_snapshot(error = TRUE, {
+		call_filter_input(test_df, shiny::selectInput)
+	})
+})
+
+### `radio` and `selectize` both TRUE ####
+test_that("filterInput: radio and selectize cannot both be TRUE", {
+	expect_snapshot(error = TRUE, {
+		filterInput(
+			choices_chr,
+			inputId = "test",
+			label = "Label",
+			radio = TRUE,
+			selectize = TRUE
+		)
+	})
+})
+
+### S7 method not found ####
+test_that("filterInput: method not found for S7 object passed as list", {
+	obj <- ClassList(as.list(letters))
+	expect_snapshot(error = TRUE, {
+		filterInput(obj)
+	})
+})
+
+### argument supplied that is provided by args_filter_input() ####
+test_that("filterInput: arg supplied that is provided by args_filter_input()", {
+	expect_snapshot(error = TRUE, {
+		filterInput(letters, choices = letters)
+		filterInput(choices_dte, min = min(choices_dte))
+	})
+})
+
+## `ns` ####
+test_that("ns must be result of shiny::NS()", {
+	expect_snapshot(error = TRUE, {
+		filterInput(
+			x = choices_chr,
+			inputId = "my_input",
+			label = "Label",
+			ns = function(x) x
+		)
+	})
+})
+
+test_that("ns requires inputId argument", {
+	ns <- shiny::NS("mymodule")
+	expect_snapshot(error = TRUE, {
+		filterInput(
+			x = choices_chr,
+			label = "Label",
+			ns = ns
+		)
+	})
+})

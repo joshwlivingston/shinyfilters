@@ -40,7 +40,6 @@ importFrom(S7,
 importFrom(cli,
   cli_abort,
   cli_warn,
-  format_inline,
   qty
 )
 importFrom(htmltools,tagList)
