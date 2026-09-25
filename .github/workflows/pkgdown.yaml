@@ -52,7 +52,7 @@ jobs:
         run: |
           tags=$(gh release list --exclude-drafts --exclude-pre-releases --json tagName --jq '.[].tagName' | tr '\n' ' ')
           echo "tags=$tags" >> "$GITHUB_OUTPUT"
-          echo "latest=$(gh release view --json tagName --jq .tagName)" >> "$GITHUB_OUTPUT"
+          echo "latest=$(gh release view --json tagName --jq .tagName 2>/dev/null)" >> "$GITHUB_OUTPUT"
           echo "key=$(echo "$tags" | sha256sum | cut -c1-16)" >> "$GITHUB_OUTPUT"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -93,11 +93,17 @@ jobs:
       - name: Combine sites
         if: env.DEPLOY == 'true'
         run: |
-          latest="${LATEST#v}"
-          cp -r "releases/$latest" site
-          cp -r releases/* site/
+          if [ -n "$LATEST" ]; then
+            cp -r "releases/${LATEST#v}" site
+          else
+            cp -r docs/dev site
+          fi
+          for tag in $TAGS; do
+            cp -r "releases/${tag#v}" "site/${tag#v}"
+          done
           cp -r docs/dev site/dev
         env:
+          TAGS: ${{ steps.releases.outputs.tags }}
           LATEST: ${{ steps.releases.outputs.latest }}
 
       - name: Upload Pages artifact
