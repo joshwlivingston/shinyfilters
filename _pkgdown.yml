@@ -38,6 +38,9 @@ reference:
   - get_filter_logical  
   - get_input_ids
   - get_input_labels
+- title: Data
+- contents:
+  - nyc_flights
 - title: Internal functions
 - contents:
   - call_filter_input

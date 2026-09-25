@@ -17,3 +17,4 @@
 ^CRAN-SUBMISSION$
 ^AGENTS\.md$
 ^\.claude$
+^data-raw$

@@ -2,6 +2,8 @@
 
 ## New features
 
+* `nyc_flights` is a new example dataset of flights departing New York City (#36).
+
 * `as_filters()` and `with_filter()` now choose which input `filterInput()` creates for each column of a data frame (#111).
 
 ## Minor improvements
