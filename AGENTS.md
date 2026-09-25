@@ -38,10 +38,10 @@ Never add AI attribution to any of them: no "Generated with Claude Code" lines, 
 
 | | Issue | Implementation plan | PR | Commit |
 |---|---|---|---|---|
-| Answers | What and why | How we'll build it | What was built, and proof it works | What this one unit changes |
+| Answers | What and why | How we'll build it | What was built | What this one unit changes |
 | Written | Before the work | After the issue, before code | After the work | During the work |
 | Lives in | GitHub issue | Plan file (not on GitHub) | GitHub PR | Git history |
-| Contains | Problem or motivation; desired outcome; acceptance criteria (except small changes); open questions | Files and functions to change; approach; steps; verification | What actually changed (functions, behavior); specific deviations from the issue (never from the plan); test results; NEWS bullet if user-facing; `Closes #N` | One-line conventional subject; body only if the reason isn't obvious from the diff; `Fixes #N` on its own line when applicable |
+| Contains | Problem or motivation; desired outcome; acceptance criteria (except small changes); open questions | Files and functions to change; approach; steps; verification | What actually changed (functions, behavior); specific deviations from the issue (never from the plan); NEWS bullet if user-facing; `Closes #N` | One-line conventional subject; body only if the reason isn't obvious from the diff; `Fixes #N` on its own line when applicable |
 | Excludes | Implementation approach or steps | Restating the issue's problem | The issue's problem statement (link it instead); the plan's steps | Prose that belongs in the PR |
 
 **Issues**
@@ -57,7 +57,8 @@ Never add AI attribution to any of them: no "Generated with Claude Code" lines, 
 **Pull requests**
 
 - Title: conventional commit format (becomes the squash commit subject).
-- The body is never empty. It covers changes, deviations from the issue, test results, and `Closes #N`.
+- The body is never empty. It covers changes, deviations from the issue, and `Closes #N`.
+- Never include test, check, or lint results: CI reports those.
 - Deviations are measured against the issue, never the plan: the plan isn't on GitHub. Each one names the acceptance criterion (or the out-of-scope item) and says exactly what differs and why. If every criterion is met as written, say so in one line.
 - After approval: `gh pr create --title "..." --body "..."`
 
