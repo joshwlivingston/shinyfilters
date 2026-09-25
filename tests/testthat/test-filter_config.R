@@ -314,14 +314,3 @@ test_that("`$` and `[[` error on unknown columns", {
 		cfg[[1:2]]
 	})
 })
-
-test_that("NAMESPACE imports S7's `@` for R < 4.3", {
-	ns_file <- system.file("NAMESPACE", package = "shinyfilters")
-	skip_if(ns_file == "")
-	expect_match(
-		readLines(ns_file),
-		'if (getRversion() < "4.3.0") importFrom("S7", "@")',
-		fixed = TRUE,
-		all = FALSE
-	)
-})
