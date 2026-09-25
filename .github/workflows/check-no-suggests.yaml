@@ -56,7 +56,6 @@ jobs:
           extra-packages: |
             any::rcmdcheck
             any::testthat
-            any::shinytest2
             any::knitr
             any::rmarkdown
           needs: check

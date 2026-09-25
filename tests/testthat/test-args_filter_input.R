@@ -197,27 +197,27 @@ test_that("args_filter_input() with server = TRUE returns empty string for choic
 # Errors ####
 ### invalid args_* provided ####
 test_that("args_filter_input validates args_unique must be list", {
-	expect_snapshot(error = TRUE, {
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
 		args_filter_input(choices_chr, args_unique = "not_a_list")
 	})
 })
 
 test_that("args_filter_input validates args_sort must be list", {
-	expect_snapshot(error = TRUE, {
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
 		args_filter_input(choices_chr, args_sort = "not_a_list")
 	})
 })
 
 test_that("args_filter_input validates args_unique list is named", {
 	lst <- list(1, b = 2)
-	expect_snapshot(error = TRUE, {
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
 		args_filter_input(choices_chr, args_unique = lst)
 	})
 })
 
 test_that("args_filter_input validates args_sort list is named", {
 	lst <- list(1, b = 2)
-	expect_snapshot(error = TRUE, {
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
 		args_filter_input(choices_chr, args_sort = lst)
 	})
 })
@@ -225,7 +225,7 @@ test_that("args_filter_input validates args_sort list is named", {
 test_that("args_filter_input validates args_unique names are unique", {
 	lst <- list(a = 1, b = 2)
 	names(lst) <- c("a", "a")
-	expect_snapshot(error = TRUE, {
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
 		args_filter_input(choices_chr, args_unique = lst)
 	})
 })
@@ -233,14 +233,14 @@ test_that("args_filter_input validates args_unique names are unique", {
 test_that("args_filter_input validates args_sort names are unique", {
 	lst <- list(a = 1, b = 2)
 	names(lst) <- c("a", "a")
-	expect_snapshot(error = TRUE, {
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
 		args_filter_input(choices_chr, args_sort = lst)
 	})
 })
 
 ### invalid choices_asis provided ####
 test_that("args_filter_input: choices_asis must be TRUE for list", {
-	expect_snapshot(error = TRUE, {
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
 		args_filter_input(choices_lst, choices_asis = FALSE)
 	})
 })
@@ -249,7 +249,7 @@ test_that("args_filter_input: choices_asis must be TRUE for list", {
 #### not a list
 test_that("args_filter_input: extension does not return list", {
 	method(args_filter_input, ClassCharacter) <- function(x) "not a list"
-	expect_snapshot(error = TRUE, {
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
 		filterInput(ClassCharacter(letters))
 	})
 })
@@ -257,14 +257,14 @@ test_that("args_filter_input: extension does not return list", {
 #### list is not named
 test_that("args_filter_input: extension does not return named list", {
 	method(args_filter_input, ClassCharacter) <- function(x) list("not named")
-	expect_snapshot(error = TRUE, {
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
 		filterInput(ClassCharacter(letters))
 	})
 
 	method(args_filter_input, ClassCharacter) <- function(x) {
 		list("not named", named = "named")
 	}
-	expect_snapshot(error = TRUE, {
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
 		filterInput(ClassCharacter(letters))
 	})
 })
@@ -275,7 +275,14 @@ test_that("args_filter_input: extension does not return uniquely named list", {
 		# jarl-ignore duplicated_arguments: testing for error
 		list(entry = "a", entry = "b")
 	}
-	expect_snapshot(error = TRUE, {
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
 		filterInput(ClassCharacter(letters))
+	})
+})
+
+test_that("args_filter_input: method not found for S7 object passed as list", {
+	obj <- ClassList(as.list(letters))
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+		args_filter_input(obj)
 	})
 })

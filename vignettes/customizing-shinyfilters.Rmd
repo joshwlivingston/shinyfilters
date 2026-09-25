@@ -28,20 +28,11 @@ Let's say you have an S7 class,
 ```{r, message=FALSE}
 library(S7)
 
-StringNonEmpty <- new_property(
-	class = class_character,
-	validator = function(value) {
-		if (length(value) != 1 || is.na(value) || value == "") {
-			return("must be a non-empty string")
-		}
-	}
-)
-
 Person <- new_class(
 	name = "Person",
 	properties = list(
-		first_name = StringNonEmpty,
-		last_name = StringNonEmpty
+		first_name = class_character,
+		last_name = class_character
 	)
 )
 ```

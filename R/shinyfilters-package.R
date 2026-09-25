@@ -9,6 +9,7 @@
 #' @importFrom htmltools tagList
 #' @importFrom methods formalArgs
 #' @importFrom methods functionBody
+#' @importFrom rlang call2
 #' @importFrom rlang caller_arg
 #' @importFrom rlang caller_env
 #' @importFrom rlang current_call
@@ -54,5 +55,6 @@
 #' @importFrom shiny updateSliderInput
 #' @importFrom shiny updateTextAreaInput
 #' @importFrom shiny updateTextInput
+#' @rawNamespace if (getRversion() < "4.3.0") importFrom(S7, "@")
 ## usethis namespace: end
 NULL

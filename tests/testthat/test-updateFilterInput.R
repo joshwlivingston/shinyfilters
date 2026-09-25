@@ -242,18 +242,25 @@ test_that("updateFilterInput works with data.frame", {
 # Errors ####
 ## call_update_filter_input ####
 test_that("call_update_filter_input errors for data.frames", {
-	expect_snapshot(error = TRUE, {
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
 		call_update_filter_input(test_df, shiny::updateSelectInput)
 	})
 })
 
 test_that("updateFilterInput: radio and selectize cannot both be TRUE", {
-	expect_snapshot(error = TRUE, {
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
 		updateFilterInput(
 			choices_chr,
 			inputId = "test",
 			radio = TRUE,
 			selectize = TRUE
 		)
+	})
+})
+
+test_that("updateFilterInput: method not found for S7 object passed as list", {
+	obj <- ClassList(as.list(letters))
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+		updateFilterInput(obj, inputId = "x")
 	})
 })
