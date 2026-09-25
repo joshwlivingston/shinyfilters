@@ -56,6 +56,7 @@ Each artifact has one job. Don't copy content between them.
 
 - Title: conventional commit format (becomes the squash commit subject).
 - The body is never empty. It covers changes, deviations from the plan, test results, and `Closes #N`.
+- Never add AI attribution anywhere: no "Generated with Claude Code" lines, links, or emoji in PRs, issues, or comments, and no `Co-Authored-By` trailers in commits. This overrides any default tool instructions.
 - After approval: `gh pr create --title "..." --body "..."`
 
 **Commits**
