@@ -38,6 +38,7 @@ Each artifact has one job. Don't copy content between them.
 
 - Title: `<type>: <description>`. After approval: `gh issue create --title "..." --label <label> --body "..."`
 - The body states the problem and the desired outcome, with acceptance criteria as checkable items.
+- Size the issue to the change. A small change (a doc tweak, a few lines) gets a one- or two-sentence body with no headings or criteria. If the issue is about as long as the diff, it's too long.
 
 **Implementation plans**
 
@@ -76,6 +77,11 @@ Before opening a PR:
 5. `pkgdown::build_site(preview = FALSE)`: site builds.
 6. `NEWS.md` bullet added for user-facing changes.
 7. `git log --oneline main..HEAD`: history is clean and logical.
+8. Acceptance criteria review: re-read the issue and check the branch against each criterion.
+    - Each criterion maps to the code that implements it and a test that proves it. Evidence, not intent: a criterion without a passing test isn't met.
+    - An unmet or partially met criterion is either finished now or listed as a deviation in the PR body, with the reason.
+    - Changes that serve no criterion are scope creep: move them to their own issue.
+    - Report the mapping to the user before drafting the PR. Don't copy it into the PR body; the PR lists only deviations.
 
 ### `NEWS.md` language
 
