@@ -1,0 +1,2 @@
+[lint.per-file-ignores]
+"R/release.R" = ["unused_function"]
