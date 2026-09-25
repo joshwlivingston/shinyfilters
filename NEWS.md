@@ -2,6 +2,7 @@
 
 ## Minor improvements
 
+* shinyfilters no longer requires S7 0.2.0 or later (#113).
 * Error and warning messages now use cli with richer formatting.
 
 ## Bugfixes

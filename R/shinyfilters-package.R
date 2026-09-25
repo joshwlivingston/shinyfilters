@@ -24,7 +24,6 @@
 #' @importFrom S7 class_list
 #' @importFrom S7 class_logical
 #' @importFrom S7 class_numeric
-#' @importFrom S7 class_POSIXt
 #' @importFrom S7 method<-
 #' @importFrom S7 methods_register
 #' @importFrom S7 new_generic
