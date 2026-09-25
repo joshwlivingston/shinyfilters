@@ -337,7 +337,7 @@ test_that("get_filter_logical: non-logical vector returned", {
 	) {
 		integer(length(x))
 	}
-	df <- data.frame(x = ClassCharacter(letters))
+	df <- data.frame(x = ClassCharacter(letters), stringsAsFactors = FALSE)
 	expect_snapshot(error = TRUE, {
 		apply_filters(df, list(x = letters[1:5]))
 	})
@@ -351,7 +351,7 @@ test_that("get_filter_logical: logical vector of invalid length", {
 	) {
 		logical(length(x) - 1L)
 	}
-	df <- data.frame(x = ClassCharacter(letters))
+	df <- data.frame(x = ClassCharacter(letters), stringsAsFactors = FALSE)
 	expect_snapshot(error = TRUE, {
 		apply_filters(df, list(x = letters[1:5]))
 	})
