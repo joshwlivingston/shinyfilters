@@ -13,3 +13,10 @@
     Error <rlang_error>
       `radio` and `selectize` can't both be `TRUE`.
 
+# updateFilterInput: method not found for S7 object passed as list
+
+    Code
+      updateFilterInput(obj, inputId = "x")
+    Error <rlang_error>
+      No `updateFilterInput()` method found for class <ClassList>.
+

@@ -75,3 +75,10 @@
     Error <rlang_error>
       All names in `args_filter_input(x)` must be unique.
 
+# args_filter_input: method not found for S7 object passed as list
+
+    Code
+      args_filter_input(obj)
+    Error <rlang_error>
+      No `args_filter_input()` method found for class <ClassList>.
+
