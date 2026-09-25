@@ -186,3 +186,21 @@
         custom   <chr>  <custom>
         wrapped  <chr>  radioButtons
 
+# `$` and `[[` error on unknown columns
+
+    Code
+      cfg$nope
+    Condition
+      Error in `cfg$nope`:
+      ! Can't find column nope.
+    Code
+      cfg[["nope"]]
+    Condition
+      Error in `cfg[["nope"]]`:
+      ! Can't find column nope.
+    Code
+      cfg[[9]]
+    Condition
+      Error in `cfg[[9]]`:
+      ! Can't find column 9.
+

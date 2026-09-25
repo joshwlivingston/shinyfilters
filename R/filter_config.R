@@ -14,7 +14,9 @@
 #'   as `slider = TRUE` or `selectize = TRUE`.
 #' @param ns An optional namespace created by [shiny::NS()].
 #'
-#' @returns A `shinyfilters` object.
+#' @returns A `shinyfilters` object. `filters$col` and `filters[["col"]]`
+#'   return the input [filterInput()] creates for a single column, including
+#'   any [with_filter()] overrides.
 #'
 #' @seealso [with_filter()]
 #'
@@ -24,6 +26,9 @@
 #' filters <- as_filters(cars, slider = TRUE)
 #' filters <- with_filter(filters, cyl, "radio")
 #' filterInput(filters)
+#'
+#' # The input for one column
+#' filters$cyl
 #' @export
 as_filters <- function(data, ..., ns = NULL) {
 	if (!is.data.frame(data)) {
@@ -96,6 +101,39 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 				call = call
 			)
 		}
+	)
+}
+
+## Methods: $, [[, .DollarNames() ####
+method(`$`, class_shinyfilters) <- function(x, name) {
+	._config_column(x, name, call = call("$", substitute(x), as.name(name)))
+}
+
+method(`[[`, class_shinyfilters) <- function(x, i, ...) {
+	._config_column(x, i, call = call("[[", substitute(x), i))
+}
+
+method(.DollarNames, class_shinyfilters) <- function(x, pattern = "") {
+	grep(pattern, names(x@data), value = TRUE)
+}
+
+# Creates the input for one column, selected by name or position
+._config_column <- function(config, col, call) {
+	nms <- names(config@data)
+	if (is.numeric(col) && length(col) == 1 && col %in% seq_along(nms)) {
+		col <- nms[[col]]
+	}
+	if (!is.character(col) || length(col) != 1 || !(col %in% nms)) {
+		cli_abort("Can't find column {.field {col}}.", call = call)
+	}
+	i <- match(col, nms)
+	._config_input(
+		col,
+		get_input_ids(config@data)[[i]],
+		get_input_labels(config@data)[[i]],
+		config,
+		._config_args(config),
+		call
 	)
 }
 

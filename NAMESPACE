@@ -100,4 +100,7 @@ importFrom(shiny,
   updateTextInput
 )
 importFrom(tidyselect,eval_select)
-importFrom(utils,modifyList)
+importFrom(utils,
+  .DollarNames,
+  modifyList
+)

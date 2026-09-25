@@ -15,7 +15,9 @@ as \code{slider = TRUE} or \code{selectize = TRUE}.}
 \item{ns}{An optional namespace created by \code{\link[shiny:NS]{shiny::NS()}}.}
 }
 \value{
-A \code{shinyfilters} object.
+A \code{shinyfilters} object. \code{filters$col} and \code{filters[["col"]]}
+return the input \code{\link[=filterInput]{filterInput()}} creates for a single column, including
+any \code{\link[=with_filter]{with_filter()}} overrides.
 }
 \description{
 \code{as_filters()} stores a data frame with the arguments used to create its
@@ -28,6 +30,9 @@ cars <- mtcars[c("mpg", "cyl", "gear")]
 filters <- as_filters(cars, slider = TRUE)
 filters <- with_filter(filters, cyl, "radio")
 filterInput(filters)
+
+# The input for one column
+filters$cyl
 }
 \seealso{
 \code{\link[=with_filter]{with_filter()}}

@@ -75,6 +75,7 @@
 #' @importFrom shiny updateTextAreaInput
 #' @importFrom shiny updateTextInput
 #' @importFrom tidyselect eval_select
+#' @importFrom utils .DollarNames
 #' @importFrom utils modifyList
 ## usethis namespace: end
 NULL
