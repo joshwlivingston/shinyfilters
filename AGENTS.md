@@ -64,7 +64,7 @@ Never add AI attribution to any of them: no "Generated with Claude Code" lines, 
 
 - Title: conventional commit format (becomes the squash commit subject).
 - The body is never empty. It covers changes, any deviations from the issue, and `Closes #N`.
-- Never include test, check, or lint results (CI reports those), the `NEWS.md` bullet, or file names (all in the diff). Describe behavior and functions instead.
+- Never include test, check, or lint results (CI reports those), the `NEWS.md` bullet, or file names (both in the diff). Describe behavior and functions instead.
 - Deviations are measured against the issue, never the plan: the plan isn't on GitHub. Each one names the acceptance criterion (or anything the issue excluded) and says exactly what differs and why. For issues without criteria, measure against the stated outcome. List only the deviations, with no preamble; if there are none, omit the deviations section entirely.
 - After approval: `gh pr create --title "..." --body "..."`
 
