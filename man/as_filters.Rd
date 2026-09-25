@@ -21,7 +21,10 @@ A \code{shinyfilters} object:
 \item \code{filters$col} and \code{filters[["col"]]} return the input \code{\link[=filterInput]{filterInput()}}
 creates for one column, including any \code{\link[=with_filter]{with_filter()}} overrides.
 \item \code{filters[cols]} returns a \code{shinyfilters} object with only the selected
-columns, keeping their overrides.
+columns, keeping their overrides. \code{cols} uses
+<\code{\link[tidyselect:language]{tidy-select}}>, like \code{\link[=with_filter]{with_filter()}}; a bare
+name that matches a column selects that column, so use \code{all_of()} when
+passing a variable in programmatic code.
 }
 }
 \description{

@@ -332,6 +332,9 @@ test_that("`[` returns a config with the selected columns", {
 	)
 	cols <- c("factors", "x")
 	expect_identical(names(cfg[cols]), cols)
+	x <- "letters"
+	expect_identical(names(cfg[x]), "x")
+	expect_identical(names(cfg[all_of(x)]), "letters")
 	expect_snapshot(print(cfg[c("letters", "x")]))
 })
 
@@ -345,6 +348,7 @@ test_that("`[` errors on unknown columns", {
 		cfg[character(0)]
 		cfg[, "x"]
 		cfg[1, 2]
+		cfg[factros]
 	})
 })
 

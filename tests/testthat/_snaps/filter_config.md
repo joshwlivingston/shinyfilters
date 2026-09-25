@@ -270,4 +270,10 @@
       Error in `cfg[1, 2]`:
       ! Can't subset a <shinyfilters> object by rows and columns.
       i Select columns with `x[cols]`.
+    Code
+      cfg[factros]
+    Condition
+      Error in `cfg[factros]`:
+      ! Can't select columns that don't exist.
+      x Column `factros` doesn't exist.
 
