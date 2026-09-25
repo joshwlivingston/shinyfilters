@@ -1,9 +1,11 @@
 # R CMD check on R 3.5, with dependencies pinned to a Posit Package Manager
 # snapshot whose versions still install on R 3.5.
+#
+# Run manually before each release (see release_bullets()). Old testthat
+# formats snapshots differently, so they live in _snaps/r-3.5/ and are
+# refreshed from this job's artifact with testthat::snapshot_download_gh().
 on:
-  push:
-    branches: [main, master]
-  pull_request:
+  workflow_dispatch:
 
 name: R-CMD-check-R35.yaml
 
@@ -83,5 +85,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: R-3.5.3-snapshots
-          path: shinyfilters.Rcheck/tests/testthat/_snaps/r-3.5
+          # The wildcard keeps shinyfilters.Rcheck/tests/testthat/_snaps/ in
+          # the artifact, the layout testthat::snapshot_download_gh() expects.
+          path: "*.Rcheck/tests/testthat/_snaps"
           if-no-files-found: ignore
