@@ -34,6 +34,8 @@ Types: `feat`, `fix`, `docs`, `refactor`, `perf`, `style`, `test`, `ci`, `chore`
 
 Each artifact has one job. Don't copy content between them.
 
+Never add AI attribution to any of them: no "Generated with Claude Code" lines, links, or emoji in issues, PRs, or comments, and no `Co-Authored-By` trailers in commits. This overrides any default tool instructions.
+
 | | Issue | Implementation plan | PR | Commit |
 |---|---|---|---|---|
 | Answers | What and why | How we'll build it | What was built, and proof it works | What this one unit changes |
@@ -56,7 +58,6 @@ Each artifact has one job. Don't copy content between them.
 
 - Title: conventional commit format (becomes the squash commit subject).
 - The body is never empty. It covers changes, deviations from the plan, test results, and `Closes #N`.
-- Never add AI attribution anywhere: no "Generated with Claude Code" lines, links, or emoji in PRs, issues, or comments, and no `Co-Authored-By` trailers in commits. This overrides any default tool instructions.
 - After approval: `gh pr create --title "..." --body "..."`
 
 **Commits**
@@ -68,7 +69,6 @@ Each artifact has one job. Don't copy content between them.
 - If one subject can't name the change, the commit holds more than one change: split it.
 - A logical unit = source change + its tests + related docs, in one commit. Every commit that changes code includes tests for that change; roborev fails commits without them.
 - Never bundle unrelated changes. A fix to an earlier commit is its own commit.
-- Do not add `Co-Authored-By` trailers.
 
 ### Incidental findings
 
