@@ -157,9 +157,8 @@ There are three possible ways to run code, listed in rough order of desirability
 
 - Follow the tidyverse style guide
 - Always run `air format .` after generating code. (air is bundled with Positron so look there if you can't otherwise find it.)
-- Use the base pipe operator (`|>`), not the magrittr pipe (`%>%`).
+- The package supports R < 4.1. Don't use the base pipe (`|>`) or `\()` lambdas anywhere R CMD check runs: `R/`, roxygen examples, tests, and vignettes. Use intermediate assignments and `function(x) ...` instead. No magrittr pipe (`%>%`) either.
 - Don't call `pkg::fn()` in `R/`. Import with `usethis::use_import_from("pkg", "fn")` and call `fn()` directly. (Tests may use `pkg::fn()`.)
-- Use `\() ...` for single-line anonymous functions. For all other cases, use `function() {...}`.
 
 ### Test style
 
