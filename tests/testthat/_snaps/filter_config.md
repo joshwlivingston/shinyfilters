@@ -3,7 +3,109 @@
     Code
       as_filters(data.frame(a = letters), ns = function(x) x)
     Condition
-      Error:
-      ! <shinyfilters::FilterConfig> object properties are invalid:
-      - @ns must be the result of calling `shiny::NS()`
+      Error in `as_filters()`:
+      ! `ns` must be the result of calling `shiny::NS()`.
+
+# as_filters() and with_filter() errors
+
+    Code
+      as_filters(1:3)
+    Condition
+      Error in `as_filters()`:
+      ! `data` must be a data frame, not an integer vector.
+    Code
+      as_filters(df_config, TRUE)
+    Condition
+      Error in `as_filters()`:
+      ! All elements of `...` must be named.
+    Code
+      with_filter(df_config, int = "radio")
+    Condition
+      Error in `with_filter()`:
+      ! `config` must be created by `as_filters()`, not a data frame.
+    Code
+      with_filter(cfg)
+    Condition
+      Error in `with_filter()`:
+      ! `with_filter()` takes two unnamed arguments or only named arguments.
+      i Select columns: `with_filter(config, c(a, b), "radio")`.
+      i Name columns: `with_filter(config, a = "radio", b = "slider")`.
+    Code
+      with_filter(cfg, int)
+    Condition
+      Error in `with_filter()`:
+      ! `with_filter()` takes two unnamed arguments or only named arguments.
+      i Select columns: `with_filter(config, c(a, b), "radio")`.
+      i Name columns: `with_filter(config, a = "radio", b = "slider")`.
+    Code
+      with_filter(cfg, int, "radio", "slider")
+    Condition
+      Error in `with_filter()`:
+      ! `with_filter()` takes two unnamed arguments or only named arguments.
+      i Select columns: `with_filter(config, c(a, b), "radio")`.
+      i Name columns: `with_filter(config, a = "radio", b = "slider")`.
+    Code
+      with_filter(cfg, int = "radio", "chr")
+    Condition
+      Error in `with_filter()`:
+      ! `with_filter()` takes two unnamed arguments or only named arguments.
+      i Select columns: `with_filter(config, c(a, b), "radio")`.
+      i Name columns: `with_filter(config, a = "radio", b = "slider")`.
+    Code
+      with_filter(cfg, nope = "radio")
+    Condition
+      Error in `with_filter()`:
+      ! Can't find column nope.
+    Code
+      with_filter(cfg, nope, "radio")
+    Condition
+      Error in `with_filter()`:
+      ! Can't select columns that don't exist.
+      x Column `nope` doesn't exist.
+    Code
+      with_filter(cfg, where(is.logical), "radio")
+    Condition
+      Error in `with_filter()`:
+      ! `where(is.logical)` doesn't select any columns.
+    Code
+      with_filter(cfg, int = "radioo")
+    Condition
+      Error in `with_filter()`:
+      ! An input must be one of "area", "radio", "range", "selectize", "slider", or "textbox", or a function.
+      x Got "radioo".
+    Code
+      with_filter(cfg, int, c("radio", "slider"))
+    Condition
+      Error in `with_filter()`:
+      ! An input must be one of "area", "radio", "range", "selectize", "slider", or "textbox", or a function.
+      x Got "radio" and "slider".
+    Code
+      with_filter(cfg, int, radio)
+    Condition
+      Error in `with_filter()`:
+      ! Can't evaluate the input `radio`.
+      i Keywords are strings, e.g. `"radio"`.
+      Caused by error:
+      ! object 'radio' not found
+    Code
+      with_filter(cfg, int = 1)
+    Condition
+      Error in `with_filter()`:
+      ! An input must be a keyword or a function, not a number.
+    Code
+      filterInput(with_filter(cfg, fct = "slider"))
+    Condition
+      Error in `filterInput()`:
+      ! Can't create an input for column fct.
+      Caused by error:
+      ! "slider" isn't available for <factor> columns.
+      i Use "radio" or "selectize" instead.
+    Code
+      filterInput(with_filter(cfg, dbl = "range"))
+    Condition
+      Error in `filterInput()`:
+      ! Can't create an input for column dbl.
+      Caused by error:
+      ! "range" isn't available for <numeric> columns.
+      i Use "radio", "selectize", or "slider" instead.
 

@@ -4,12 +4,6 @@
 
 # S3 classes ####
 
-## quosure ####
-class_quosure <- new_S3_class(
-	class = "quosure",
-	constructor = function(.data) NULL
-)
-
 ## reactivevalues ####
 class_reactivevalues <- new_S3_class(
 	class = "reactivevalues",
@@ -22,37 +16,51 @@ class_reactiveExpr <- new_S3_class(
 	constructor = function(.data) NULL
 )
 
-## shinyfilters_id
-class_shinyfilters_id <- new_S3_class(
-	class = "shinyfilters_id",
-	constructor = function(.data) NULL
+# Input keywords ####
+#
+# Keywords accepted by `with_filter()`. `args` are the `filterInput()` flags the
+# keyword sets; `fn` is the matching shiny input.
+INPUT_KEYWORDS <- list(
+	area = list(args = list(textbox = TRUE, area = TRUE), fn = textAreaInput),
+	radio = list(args = list(radio = TRUE), fn = radioButtons),
+	range = list(args = list(range = TRUE), fn = dateRangeInput),
+	selectize = list(args = list(selectize = TRUE), fn = selectizeInput),
+	slider = list(args = list(slider = TRUE), fn = sliderInput),
+	textbox = list(args = list(textbox = TRUE), fn = textInput)
 )
+
+input_keyword <- function(keyword) {
+	structure(
+		keyword,
+		class = c(paste0("shinyfilters_input_", keyword), "shinyfilters_input")
+	)
+}
+
+class_input_keyword <- new_S3_class("shinyfilters_input")
+class_input_area <- new_S3_class("shinyfilters_input_area")
+class_input_radio <- new_S3_class("shinyfilters_input_radio")
+class_input_range <- new_S3_class("shinyfilters_input_range")
+class_input_selectize <- new_S3_class("shinyfilters_input_selectize")
+class_input_slider <- new_S3_class("shinyfilters_input_slider")
+class_input_textbox <- new_S3_class("shinyfilters_input_textbox")
 
 # FilterConfig ####
 
-## Property (template): *_args ####
-prop_args <- function(name, required) {
-	new_property(
-		class = class_list,
-		validator = function(value) {
-			if (!all(required %in% names(value))) {
-				return(sprintf(
-					"Missing list elements from @%s:\n* `%s`",
-					name,
-					paste0(setdiff(required, names(value)), collapse = "`\n* `")
-				))
-			}
-
-			if (any(names(value) == "")) {
-				return(sprintf("All elements of @%s must be named", name))
-			}
-
-			if (!identical(length(value), length(unique(names(value))))) {
-				return(sprintf("All names of @%s must be unique", name))
-			}
+## Property: args ####
+prop_args <- new_property(
+	class = class_list,
+	validator = function(value) {
+		if (length(value) == 0) {
+			return(NULL)
 		}
-	)
-}
+		if (is.null(names(value)) || any(names(value) == "")) {
+			return("must have all elements named")
+		}
+		if (anyDuplicated(names(value))) {
+			return("must have unique names")
+		}
+	}
+)
 
 ## Property: ns ####
 prop_ns <- new_property(
@@ -69,11 +77,8 @@ FilterConfig <- new_class(
 	"FilterConfig",
 	properties = list(
 		data = class_data.frame,
-		dispatch_args = prop_args(
-			"dispatch_args",
-			c(DISPATCH_KEYWORDS, ARGUMENT_KEYWORDS)
-		),
+		args = prop_args,
 		ns = prop_ns,
-		filter_overrides = class_list
+		overrides = class_list
 	)
 )

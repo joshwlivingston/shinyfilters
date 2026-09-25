@@ -14,11 +14,9 @@ export(get_filter_logical)
 export(get_input_ids)
 export(get_input_labels)
 export(get_input_values)
-export(id)
 export(serverFilterInput)
 export(updateFilterInput)
 export(with_filter)
-export(with_filters)
 importFrom(S7,
   "method<-",
   S7_class,
@@ -28,7 +26,6 @@ importFrom(S7,
   class_Date,
   class_POSIXt,
   class_any,
-  class_atomic,
   class_character,
   class_data.frame,
   class_factor,
@@ -56,8 +53,6 @@ importFrom(methods,
   functionBody
 )
 importFrom(rlang,
-  abort,
-  as_data_mask,
   as_label,
   caller_arg,
   caller_env,
@@ -66,7 +61,8 @@ importFrom(rlang,
   enquos,
   eval_tidy,
   local_error_call,
-  obj_address
+  names2,
+  try_fetch
 )
 importFrom(shiny,
   NS,
@@ -91,4 +87,5 @@ importFrom(shiny,
   updateTextAreaInput,
   updateTextInput
 )
+importFrom(tidyselect,eval_select)
 importFrom(utils,modifyList)

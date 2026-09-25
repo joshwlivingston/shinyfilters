@@ -22,6 +22,10 @@ reference:
 - contents: 
   - filterInput
   - updateFilterInput
+- title: Configure filters
+- contents:
+  - as_filters
+  - with_filter
 - title: Usage with shiny
 - contents: 
   - serverFilterInput

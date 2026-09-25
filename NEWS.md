@@ -1,5 +1,9 @@
 # shinyfilters (development version)
 
+## New features
+
+* `as_filters()` and `with_filter()` now choose which input `filterInput()` creates for each column of a data frame (#111).
+
 ## Minor improvements
 
 * Error and warning messages now use cli with richer formatting.

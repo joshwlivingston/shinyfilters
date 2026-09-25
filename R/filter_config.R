@@ -1,281 +1,362 @@
+# R/filter_config.R
+#
+# Configure which input filterInput() creates for each column of a data.frame
+
+# Function: as_filters() ####
+#' Configure the Filters for a Data Frame
+#'
+#' `as_filters()` stores a data frame with the arguments used to create its
+#' filters. Pass the result to [with_filter()] to choose the input for
+#' individual columns, then to [filterInput()] to create the inputs.
+#'
+#' @param data A data frame.
+#' @param ... Named arguments passed to [filterInput()] for every column, such
+#'   as `slider = TRUE` or `selectize = TRUE`.
+#' @param ns An optional namespace created by [shiny::NS()].
+#'
+#' @returns A `FilterConfig` object.
+#'
+#' @seealso [with_filter()]
+#'
+#' @examples
+#' cars <- mtcars[c("mpg", "cyl", "gear")]
+#'
+#' cars |>
+#'   as_filters(slider = TRUE) |>
+#'   with_filter(cyl, "radio") |>
+#'   filterInput()
 #' @export
-as_filters <- function(
-	data,
-	area = FALSE,
-	radio = FALSE,
-	range = FALSE,
-	selecitze = FALSE,
-	slider = FALSE,
-	textbox = FALSE,
-	ns = NULL,
-	choices_asis = FALSE,
-	args_unique = list(),
-	args_sort = list(),
-	custom_dispatch_args = list(),
-	custom_argument_args = list()
-) {
-	if (!is.list(custom_dispatch_args)) {
-		stop("`custom_dispatch_args` must be a list")
+as_filters <- function(data, ..., ns = NULL) {
+	if (!is.data.frame(data)) {
+		cli_abort(
+			"{.arg data} must be a data frame, not {.obj_type_friendly {data}}."
+		)
 	}
-	if (!is.list(custom_argument_args)) {
-		stop("`custom_argument_args` must be a list")
+	if (!is.null(ns)) {
+		._check_valid_shiny_ns(ns)
 	}
-
-	FilterConfig(
-		data = data,
-		dispatch_args = c(
-			list(
-				area = area,
-				radio = radio,
-				range = range,
-				selecitze = selecitze,
-				slider = slider,
-				textbox = textbox,
-				choices_asis = choices_asis,
-				args_unique = args_unique,
-				args_sort = args_sort
-			),
-			custom_dispatch_args,
-			custom_argument_args
-		),
-		ns = ns
-	)
+	args <- list(...)
+	if (length(args) > 0) {
+		check_named_list_or_null(args, arg = "...")
+	}
+	FilterConfig(data = data, args = args, ns = ns)
 }
 
+## Method: filterInput() ####
 method(filterInput, FilterConfig) <- function(x, ...) {
-	if (!identical(list(...), list())) {
-		warning(
-			"! Ignorning arguments supplied to `filterInput()`\n",
-			"  i Provide arguments to `as_filters()` instead\n",
-			sprintf(
-				"  * Ignored arguments:\n    * `%s`",
-				paste0(names(list(...)), collapse = "`\n    * `")
-			)
+	call <- caller_env()
+	args <- modifyList(c(x@args, list(ns = x@ns)), list(...))
+	data <- x@data
+
+	filter_input <- function(col, id, label, name) {
+		col_args <- c(
+			list(x = col),
+			do.call(._id_label_args, c(list(col, id, label), args)),
+			args
+		)
+		override <- x@overrides[[name]]
+		if (is.null(override)) {
+			return(do.call(filterInput, col_args))
+		}
+		try_fetch(
+			do.call(
+				filter_input_override,
+				c(col_args, list(override = override$input))
+			),
+			shinyfilters_error_unsupported_input = function(cnd) {
+				cli_abort(
+					"Can't create an input for column {.field {name}}.",
+					parent = cnd,
+					call = call
+				)
+			}
 		)
 	}
-	out <- vector("list", ncol(x@data))
-	names(out) <- names(x@data)
 
-	args <- c(x@dispatch_args, list(ns = x@ns))
-	nms <- names(x@filter_overrides)
-	for (i in seq_along(x@filter_overrides)) {
-		id <- nms[[i]]
-		subset <- x@data[, id, drop = FALSE]
-		override <- x@filter_overrides[[i]]
-		out[nms[[i]]] <- filter_input_override(subset, override, id, args)
-	}
-	columns_original <- setdiff(names(x@data), nms)
-	original <- x@data[, columns_original, drop = FALSE]
-	out[columns_original] <- do.call(filterInput, c(args, list(x = original)))
-	do.call(tagList, out)
-}
-
-filter_input_override <- new_generic(
-	"filter_input_override",
-	c("x", "override")
-)
-method(
-	filter_input_override,
-	list(class_data.frame, class_character)
-) <- function(x, override, id, args) {
-	x[[id]] <- TRANSFORMS[[override]](x[[id]])
-	args_overridden <- modifyList(
-		args,
-		c(
-			list(x = x),
-			setNames(list(TRUE), override)
-		)
-	)
-	do.call(filterInput, args_overridden)
-}
-
-method(
-	filter_input_override,
-	list(class_data.frame, class_function)
-) <- function(x, override, id, args) {
-	call_override <- function(col, id, label) {
-		override_args <- list(
-			x = col,
-			override = override,
-			args = c(args, list(inputId = id, label = label))
-		)
-		do.call(filter_input_override, override_args)
-	}
 	do.call(
 		tagList,
 		mapply(
-			call_override,
-			x,
-			get_input_ids(x),
-			get_input_labels(x),
+			filter_input,
+			data,
+			get_input_ids(data),
+			get_input_labels(data),
+			names(data),
 			SIMPLIFY = FALSE
 		)
 	)
 }
 
-method(
-	filter_input_override,
-	list(class_atomic | class_list, class_function)
-) <- function(x, override, id, args) {
-	fun_transform <- TRANSFORMS_BY_FUN[[obj_address(override)]]
-	if (!is.null(fun_transform)) {
-		x <- fun_transform(x)
-	}
-	do.call(call_filter_input, c(list(x = x, .f = override), args))
-}
-
+# Function: with_filter() ####
+#' Choose the Input for Columns
+#'
+#' `with_filter()` sets the input that [filterInput()] creates for one or more
+#' columns of a configuration made by [as_filters()]. When a column is set
+#' more than once, the last call wins.
+#'
+#' @param config A configuration created by [as_filters()].
+#' @param ... Either two unnamed arguments, or any number of named arguments:
+#'
+#'   * `with_filter(config, cols, input)`: `cols` selects columns with
+#'     <[`tidy-select`][tidyselect::language]>, such as `cyl`,
+#'     `c(mpg, disp)`, or `where(is.numeric)`.
+#'   * `with_filter(config, col = input, ...)`: each name is a column.
+#'
+#'   Each input is either a keyword (`"area"`, `"radio"`, `"range"`,
+#'   `"selectize"`, `"slider"`, `"textbox"`) or a \pkg{shiny} input function,
+#'   such as [shiny::radioButtons()]. `"radio"` and `"selectize"` also work
+#'   with numeric columns, using the sorted unique values as choices.
+#'
+#' @returns The updated configuration.
+#'
+#' @seealso [as_filters()]
+#'
+#' @examples
+#' cars <- mtcars[c("mpg", "cyl", "gear")]
+#'
+#' # Select columns, then choose their input
+#' cars |>
+#'   as_filters() |>
+#'   with_filter(where(is.numeric), "slider") |>
+#'   with_filter(cyl, "radio") |>
+#'   filterInput()
+#'
+#' # Name columns directly
+#' cars |>
+#'   as_filters(slider = TRUE) |>
+#'   with_filter(cyl = "radio", gear = "selectize") |>
+#'   filterInput()
 #' @export
 with_filter <- function(config, ...) {
-	.with_filter(config, ...)
+	if (!S7_inherits(config, FilterConfig)) {
+		cli_abort(
+			"{.arg config} must be created by {.fn as_filters}, not {.obj_type_friendly {config}}."
+		)
+	}
+	.with_filter(config, ..., .call = current_env())
 }
 
-#' @rdname with_filter
-#' @export
-with_filters <- with_filter
+.with_filter <- new_generic(".with_filter", "config")
 
-.with_filter <- new_generic(".with_filter", c("config"))
-method(.with_filter, FilterConfig) <- function(config, ...) {
-	expressions <- enquos(...)
-	nms <- names(expressions)
-	if (is.null(nms) || all(nms == "")) {
-		if (length(expressions) > 2) {
-			stop(
-				"`...` can only be any number of named arguments, or two unnamed arguments"
+method(.with_filter, FilterConfig) <- function(
+	config,
+	...,
+	.call = caller_env()
+) {
+	quos <- enquos(...)
+	nms <- names2(quos)
+
+	if (length(quos) > 0 && all(nms != "")) {
+		unknown <- setdiff(nms, names(config@data))
+		if (length(unknown) > 0) {
+			cli_abort("Can't find column{?s} {.field {unknown}}.", call = .call)
+		}
+		overrides <- lapply(quos, ._new_override, call = .call)
+	} else if (length(quos) == 2 && all(nms == "")) {
+		cols <- names(eval_select(
+			quos[[1]],
+			config@data,
+			allow_rename = FALSE,
+			error_call = .call
+		))
+		if (length(cols) == 0) {
+			cli_abort(
+				"{.code {as_label(quos[[1]])}} doesn't select any columns.",
+				call = .call
 			)
 		}
-		ids <- resolve_id(expressions[[1]], config)
-		filter_overrides <- resolve_filter_override(expressions[[2]])
-
-		if (
-			length(filter_overrides) != 1 &&
-				!identical(length(filter_overrides), length(ids))
-		) {
-			stop(
-				"If more than one override is provided, it must equal the length of the provided ids"
-			)
-		}
-
-		out <- vector("list", length(ids))
-		for (i in seq_along(out)) {
-			out[[i]] <- filter_overrides
-		}
-		filter_overrides <- out
+		overrides <- rep(
+			list(._new_override(quos[[2]], call = .call)),
+			length(cols)
+		)
+		names(overrides) <- cols
 	} else {
-		ids <- lapply(nms, resolve_id, config = config)
-
-		id_not_found <- vapply(ids, is.null, logical(1L))
-		if (any(id_not_found)) {
-			stop(sprintf(
-				"Invalid argument names provided:\n* `%s`",
-				paste0(nms[id_not_found], collapse = "`\n* `")
-			))
-		}
-
-		filter_overrides <- lapply(expressions, resolve_filter_override)
-		override_not_found <- vapply(filter_overrides, is.null, logical(1L))
-		if (any(override_not_found)) {
-			stop(sprintf(
-				"Invalid argument values provided for:\n* `%s`",
-				paste0(nms[override_not_found], collapse = "`\n* `")
-			))
-		}
+		cli_abort(
+			c(
+				"{.fn with_filter} takes two unnamed arguments or only named arguments.",
+				i = "Select columns: {.code with_filter(config, c(a, b), \"radio\")}.",
+				i = "Name columns: {.code with_filter(config, a = \"radio\", b = \"slider\")}."
+			),
+			call = .call
+		)
 	}
 
-	set_props(
-		config,
-		filter_overrides = modifyList(
-			config@filter_overrides,
-			setNames(filter_overrides, ids)
+	overrides_all <- config@overrides
+	overrides_all[names(overrides)] <- overrides
+	set_props(config, overrides = overrides_all)
+}
+
+._new_override <- function(quo, call) {
+	label <- as_label(quo)
+	input <- try_fetch(
+		eval_tidy(quo),
+		error = function(cnd) {
+			cli_abort(
+				c(
+					"Can't evaluate the input {.code {label}}.",
+					i = "Keywords are strings, e.g. {.code \"radio\"}."
+				),
+				parent = cnd,
+				call = call
+			)
+		}
+	)
+	list(input = resolve_filter_override(input, call = call), label = label)
+}
+
+# Generic: resolve_filter_override() ####
+resolve_filter_override <- new_generic("resolve_filter_override", "input")
+
+method(resolve_filter_override, class_character) <- function(
+	input,
+	...,
+	call = caller_env()
+) {
+	keywords <- names(INPUT_KEYWORDS)
+	if (length(input) != 1 || !(input %in% keywords)) {
+		cli_abort(
+			c(
+				"An input must be one of {.or {.val {keywords}}}, or a function.",
+				x = "Got {.val {input}}."
+			),
+			call = call
 		)
+	}
+	input_keyword(input)
+}
+
+method(resolve_filter_override, class_function) <- function(input, ...) {
+	for (keyword in names(INPUT_KEYWORDS)) {
+		if (identical(input, INPUT_KEYWORDS[[keyword]]$fn)) {
+			return(input_keyword(keyword))
+		}
+	}
+	input
+}
+
+method(resolve_filter_override, class_any) <- function(
+	input,
+	...,
+	call = caller_env()
+) {
+	cli_abort(
+		"An input must be a keyword or a function, not {.obj_type_friendly {input}}.",
+		call = call
 	)
 }
 
-#' @export
-id <- function(x) {
-	x <- to_chr(x)
-	structure(x, class = unique(c("shinyfilters_id", class(x))))
-}
-
-resolve_id <- new_generic("resolve_id", c("id", "config"))
-method(resolve_id, list(class_character, FilterConfig)) <- function(
-	id,
-	config
-) {
-	if (length(id) == 0) {
-		stop("`id` cannot be empty")
-	}
-	ids <- get_input_ids(config@data)
-	if (length(id) == 1) {
-		has_provided_class <- vapply(config@data, checker_function(id), logical(1L))
-		if (any(has_provided_class)) {
-			# 1 / 2
-			# Matches the class of at least one obj in obj
-			return(ids[has_provided_class])
+# Generic: filter_input_override() ####
+filter_input_override <- new_generic(
+	"filter_input_override",
+	c("x", "override"),
+	fun = function(x, override, ...) {
+		args <- list(...)
+		if (!is.null(args$ns)) {
+			args <- do.call(._apply_ns, c(list(x = x), args))
+			return(do.call(
+				filter_input_override,
+				c(args, list(override = override))
+			))
 		}
-	} else if (length(setdiff(id, ids)) > 0) {
-		stop(
-			sprintf(
-				"Provided ids are not found in data:\n* `%s`",
-				paste0(setdiff(id, ids), collapse = "`\n* `")
+		S7_dispatch()
+	}
+)
+
+## Keyword flags supported by filterInput() ####
+._filter_input_keyword <- function(x, override, ...) {
+	flags_off <- lapply(INPUT_KEYWORDS, \(keyword) FALSE)
+	flags <- modifyList(flags_off, INPUT_KEYWORDS[[unclass(override)]]$args)
+	args <- modifyList(list(...), flags)
+	do.call(filterInput, c(list(x = x), args))
+}
+
+method(
+	filter_input_override,
+	list(
+		class_character,
+		class_input_area |
+			class_input_radio |
+			class_input_selectize |
+			class_input_textbox
+	)
+) <- ._filter_input_keyword
+
+method(
+	filter_input_override,
+	list(
+		class_factor | class_logical | class_list,
+		class_input_radio | class_input_selectize
+	)
+) <- ._filter_input_keyword
+
+method(
+	filter_input_override,
+	list(class_numeric, class_input_slider)
+) <- ._filter_input_keyword
+
+method(
+	filter_input_override,
+	list(class_Date | class_POSIXt, class_input_range)
+) <- ._filter_input_keyword
+
+## Numeric discrete choices ####
+method(
+	filter_input_override,
+	list(class_numeric, class_input_radio | class_input_selectize)
+) <- function(x, override, ...) {
+	args <- list(...)
+	choices <- ._discrete_choice_inputs(
+		x,
+		choices_asis = isTRUE(args$choices_asis),
+		args_unique = args$args_unique,
+		args_sort = args$args_sort,
+		server = args$server
+	)
+	._call_input(INPUT_KEYWORDS[[unclass(override)]]$fn, choices, ...)
+}
+
+## Function ####
+method(
+	filter_input_override,
+	list(class_any, class_function)
+) <- function(x, override, ...) {
+	._call_filter_input(x, override, ...)
+}
+
+## Unsupported keyword ####
+method(
+	filter_input_override,
+	list(class_any, class_input_keyword)
+) <- function(x, override, ...) {
+	keyword <- unclass(override)
+	supported <- ._supported_keywords(x)
+	cli_abort(
+		c(
+			"{.val {keyword}} isn't available for {.cls {class(x)[[1]]}} columns.",
+			i = if (length(supported) > 0) {
+				"Use {.or {.val {supported}}} instead."
+			}
+		),
+		class = "shinyfilters_error_unsupported_input",
+		call = NULL
+	)
+}
+
+._supported_keywords <- function(x) {
+	fallback <- S7::method(
+		filter_input_override,
+		list(class_any, class_input_keyword)
+	)
+	keywords <- names(INPUT_KEYWORDS)
+	is_supported <- vapply(
+		keywords,
+		function(keyword) {
+			found <- S7::method(
+				filter_input_override,
+				object = list(x, input_keyword(keyword))
 			)
-		)
-	}
-
-	if (all(id %in% ids)) {
-		# 2 / 2
-		# ID of the object provided
-		return(id)
-	}
-
-	return(invisible())
-}
-method(resolve_id, list(class_shinyfilters_id, class_any)) <- function(
-	id,
-	config
-) {
-	ids <- get_input_ids(config@data)
-	if (id %in% ids) {
-		# 1 / 1
-		# ID of the object provided
-		return(unclass(id))
-	}
-
-	return(invisible())
-}
-method(resolve_id, list(NULL, class_any)) <- function(id, config) return(NULL)
-method(resolve_id, list(class_quosure, FilterConfig)) <- function(id, config) {
-	column <- as_label(id)
-	if (!is.null(config@data[[column]])) {
-		return(column)
-	}
-	res <- eval_tidy(id)
-	resolve_id(res, config)
-}
-
-resolve_filter_override <- new_generic("resolve_filter_override", "override")
-method(resolve_filter_override, class_character) <- function(override) {
-	if (override %in% DISPATCH_KEYWORDS) {
-		return(override)
-	}
-}
-method(resolve_filter_override, class_function) <- function(override) {
-	return(override)
-}
-method(resolve_filter_override, class_quosure) <- function(override) {
-	override <- eval_tidy(override, as_data_mask(DISPATCH_KEYWORDS))
-	resolve_filter_override(override)
-}
-
-checker_function <- function(id) {
-	if (id == "numeric") {
-		return(function(x) {
-			inherits(x, "integer") || inherits(x, "numeric")
-		})
-	} else if (id == "double") {
-		return(function(x) {
-			typeof(x) == "double" && inherits(x, "numeric")
-		})
-	} else {
-		return(function(x) inherits(x, id))
-	}
+			!identical(found, fallback)
+		},
+		logical(1)
+	)
+	keywords[is_supported]
 }
