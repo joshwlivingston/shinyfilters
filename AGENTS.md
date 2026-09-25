@@ -7,6 +7,12 @@ These rules take precedence over the generic sections below where they conflict.
 - Be concise and direct. Lead with the point; cut filler, hedging, and preamble.
 - Prefer bullets to paragraphs. No restating what's already written elsewhere — link to it.
 
+### Verify independently
+
+- Verify claims yourself before acting on them or repeating them: roborev findings, your own assumptions, and what you tell the user. Reproduce with the real tool (R CMD check, rendering, running the code) rather than reasoning about what it would do.
+- Say what the evidence shows, not more. "purl drops the chunk" isn't "R CMD check fails."
+- If you can't verify something, say so.
+
 ### Issue-driven workflow
 
 All work flows through GitHub issues and PRs. Every plan — in plan mode or not — must include the issue, branch, and PR steps. A plan that goes straight to code is incomplete.
