@@ -443,7 +443,10 @@ filter_input_override <- new_generic(
 
 ## Keyword flags supported by filterInput() ####
 ._filter_input_keyword <- function(x, override, ...) {
-	flags_off <- lapply(INPUT_KEYWORDS, \(keyword) FALSE)
+	flags_off <- set_names(
+		rep(list(FALSE), length(INPUT_KEYWORDS)),
+		names(INPUT_KEYWORDS)
+	)
 	flags <- modifyList(flags_off, INPUT_KEYWORDS[[unclass(override)]]$args)
 	args <- modifyList(list(...), flags)
 	do.call(filterInput, c(list(x = x), args))
