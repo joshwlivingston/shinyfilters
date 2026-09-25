@@ -62,6 +62,7 @@ If you notice an unrelated bug, gap, or improvement, draft an issue right away (
 
 - This includes warnings, `R CMD check` NOTEs, and CI failures that already exist on `main`. Search existing issues first.
 - Before reporting a formatter or linter problem, confirm your local `air` and `jarl` match the latest releases, which CI installs.
+- When CI or a check fails, report the cause and the options before changing pinned versions, dependencies, or scope to make it pass. Workflow typos and syntax errors are fine to fix directly.
 
 ### Agent guidance
 
