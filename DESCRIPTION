@@ -26,6 +26,7 @@ Suggests:
     bslib,
     DT,
     knitr,
+    magrittr,
     rmarkdown,
     roxygen2,
     shinytest2 (>= 0.4.1),
