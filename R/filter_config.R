@@ -125,20 +125,20 @@ method(print, FilterConfig) <- function(x, ...) {
 
 	inputs <- ._dry_run_inputs(x)
 	is_error <- startsWith(inputs, symbol$cross)
-	width <- max(0L, nchar(inputs[!is_error]))
+	width <- max(0L, ansi_nchar(inputs[!is_error], type = "width"))
 	styled_inputs <- ifelse(
 		is_error,
 		col_red(inputs),
-		col_cyan(paste0(inputs, strrep(" ", pmax(0, width - nchar(inputs)))))
+		col_cyan(ansi_align(inputs, width))
 	)
 	dot <- col_blue(if (is_utf8_output()) "\u25cf" else "*")
 	marker <- ifelse(overridden, paste0("  ", dot), "")
 	types <- vapply(data, ._type_abbr, character(1))
 	lines <- paste0(
 		"  ",
-		format(nms),
+		._pad(nms),
 		"  ",
-		col_grey(format(types)),
+		col_grey(._pad(types)),
 		"  ",
 		styled_inputs,
 		marker
@@ -150,6 +150,10 @@ method(print, FilterConfig) <- function(x, ...) {
 		cat_line(dot, col_grey(" set by with_filter()"))
 	}
 	invisible(x)
+}
+
+._pad <- function(x) {
+	ansi_align(x, max(ansi_nchar(x, type = "width")))
 }
 
 ._format_arg <- function(value) {
@@ -189,6 +193,7 @@ the <- new.env(parent = emptyenv())
 the$dry_run <- FALSE
 
 ._dry_run_result <- function(.f) {
+	the$dry_run_fn <- .f
 	structure(list(fn = .f), class = "shinyfilters_dry_run")
 }
 
@@ -200,10 +205,16 @@ the$dry_run <- FALSE
 	args <- ._config_args(config)
 	mapply(
 		function(name, id, label) {
+			the$dry_run_fn <- NULL
 			res <- tryCatch(
 				._config_input(name, id, label, config, args, call = NULL),
 				error = identity
 			)
+			# A method that post-processes the dry-run result errors after the
+			# input is known; report the input rather than that error
+			if (inherits(res, "error") && !is.null(the$dry_run_fn)) {
+				res <- ._dry_run_result(the$dry_run_fn)
+			}
 			._dry_run_label(res, config@overrides[[name]])
 		},
 		names(data),

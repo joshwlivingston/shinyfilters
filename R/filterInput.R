@@ -252,9 +252,6 @@ call_filter_input <- function(x, .f, ...) {
 }
 
 ._call_filter_input <- function(x, .f, ..., call = caller_env()) {
-	if (the$dry_run) {
-		return(._dry_run_result(.f))
-	}
 	args_prepared <- ._prepare_input_args(x, ..., call = call)
 	._call_input(.f, args_prepared, ...)
 }

@@ -154,14 +154,25 @@
         a_very_very_long_name  <dbl>  numericInput
       
       * set by with_filter()
+    Code
+      print(as_filters(df_config, args_unique = "bad"))
+    Output
+      -- <FilterConfig> - 3 x 4 ------------------------------------------------------
+      Defaults  args_unique = "bad"
+      
+        letters                <chr>  x `args_unique` must be a list, not a string.
+        factors                <fct>  x `args_unique` must be a list, not a string.
+        x                      <int>  numericInput
+        a_very_very_long_name  <dbl>  numericInput
 
 # print() resolves custom methods
 
     Code
       print(as_filters(df))
     Output
-      -- <FilterConfig> - 2 x 2 ------------------------------------------------------
+      -- <FilterConfig> - 2 x 3 ------------------------------------------------------
       
-        radio   <chr>  radioButtons
-        custom  <chr>  <custom>
+        radio    <chr>  radioButtons
+        custom   <chr>  <custom>
+        wrapped  <chr>  radioButtons
 

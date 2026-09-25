@@ -2,6 +2,8 @@
 "_PACKAGE"
 
 ## usethis namespace: start
+#' @importFrom cli ansi_align
+#' @importFrom cli ansi_nchar
 #' @importFrom cli ansi_strip
 #' @importFrom cli cat_line
 #' @importFrom cli cat_rule

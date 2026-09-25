@@ -243,6 +243,7 @@ test_that("print() shows each column's input", {
 			with_filter(x = "radio", letters = my_select) |>
 			print()
 		print(with_filter(as_filters(df_config), factors = "slider"))
+		print(as_filters(df_config, args_unique = "bad"))
 	})
 })
 
@@ -255,8 +256,19 @@ test_that("print() resolves custom methods", {
 	S7::method(filterInput, ClassCustom) <- function(x, ...) {
 		shiny::tags$div()
 	}
+	ClassWrapped <- S7::new_class("ClassWrapped", S7::class_character)
+	S7::method(filterInput, ClassWrapped) <- function(x, ...) {
+		htmltools::tagAppendAttributes(
+			call_filter_input(x, shiny::radioButtons, ...),
+			class = "wrapped"
+		)
+	}
 	df <- structure(
-		list(radio = ClassRadio(c("a", "b")), custom = ClassCustom(c("a", "b"))),
+		list(
+			radio = ClassRadio(c("a", "b")),
+			custom = ClassCustom(c("a", "b")),
+			wrapped = ClassWrapped(c("a", "b"))
+		),
 		class = "data.frame",
 		row.names = 1:2
 	)
@@ -264,8 +276,17 @@ test_that("print() resolves custom methods", {
 })
 
 test_that("print() resets the dry run after an error", {
-	print_quiet <- function(x) invisible(capture.output(print(x)))
-	print_quiet(with_filter(as_filters(df_config), factors = "slider"))
+	local({
+		local_mocked_bindings(
+			._dry_run_label = function(...) {
+				rlang::abort("boom", class = "shinyfilters_test_error")
+			}
+		)
+		expect_error(
+			capture.output(print(as_filters(df_config))),
+			class = "shinyfilters_test_error"
+		)
+	})
 	expect_identical(
 		filterInput(as_filters(df_config)),
 		filterInput(df_config)

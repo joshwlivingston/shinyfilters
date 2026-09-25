@@ -43,6 +43,8 @@ importFrom(S7,
   set_props
 )
 importFrom(cli,
+  ansi_align,
+  ansi_nchar,
   ansi_strip,
   cat_line,
   cat_rule,
