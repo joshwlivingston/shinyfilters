@@ -7,14 +7,30 @@ These rules take precedence over the generic sections below where they conflict.
 - Be concise and direct. Lead with the point; cut filler, hedging, and preamble.
 - Prefer bullets to paragraphs. No restating what's already written elsewhere — link to it.
 
+### Verify independently
+
+- Verify claims yourself before acting on them or repeating them: roborev findings, your own assumptions, and what you tell the user. Reproduce with the real tool (R CMD check, rendering, running the code) rather than reasoning about what it would do.
+- Say what the evidence shows, not more. "purl drops the chunk" isn't "R CMD check fails."
+- If you can't verify something, say so.
+
 ### Issue-driven workflow
 
 All work flows through GitHub issues and PRs. Every plan — in plan mode or not — must include the issue, branch, and PR steps. A plan that goes straight to code is incomplete.
 
+Exception: changes to AGENTS.md need no issue or PR. Commit them on their own branch and handle roborev reviews as usual, with the merge standing in for the PR. With the user's approval, squash-merge into `main`. Commits name no issue.
+
 1. Create an issue (sub-issues for complex work). One concern per issue: a change and the CI job that guards it are separate issues and PRs.
 2. Write the implementation plan.
 3. Branch from `main`: `<type>/<short-name>` (e.g. `feat/filter-spec`, `fix/bookmark-restore`). One branch per issue.
-4. Commit each logical unit as you go, referencing the issue.
+4. Commit each logical unit as you go, referencing the issue. Handle each commit's roborev review (`roborev show --job <id>`) when it finishes (see the monitor bullet below). Fix findings in a new commit, then `roborev comment` and `roborev close` the review.
+    - Watch reviews as they finish instead of batch-checking later. After the first commit, start one background monitor (e.g. Claude Code's Monitor tool) that polls `roborev list` every ~15s and emits a line for each newly finished review. Handle each event when it arrives. Run only one monitor at a time; stop duplicates. Re-arm it when it expires, until the PR is open.
+    - Before drafting the PR, run `roborev list --open` and resolve or close everything on the branch.
+    - Push back on overkill. Roborev always finds another edge case; a finding isn't a mandate. Unless the finding is a real bug or misleading user-facing output, decline and close with a one-line reason when the fix would:
+        - test implementation details (internal flags, mocked helpers, "remove the code and check the test fails"),
+        - duplicate what R CMD check, lint, or an upstream package (tidyselect, cli) already enforces,
+        - add special cases or helpers to cover inputs no user plausibly writes, or
+        - be the third round of hardening on the same function.
+    - Fix real bugs, missing behavior tests, and misleading user-facing output. When unsure, ask the user instead of adding code.
 5. Open a PR against `main` that closes the issue.
 6. Review (roborev + manual), squash merge; the issue auto-closes.
 
@@ -26,18 +42,21 @@ Types: `feat`, `fix`, `docs`, `refactor`, `perf`, `style`, `test`, `ci`, `chore`
 
 Each artifact has one job. Don't copy content between them.
 
+Never add AI attribution to any of them: no "Generated with Claude Code" lines, links, or emoji in issues, PRs, or comments, and no `Co-Authored-By` trailers in commits. This overrides any default tool instructions.
+
 | | Issue | Implementation plan | PR | Commit |
 |---|---|---|---|---|
-| Answers | What and why | How we'll build it | What was built, and proof it works | What this one unit changes |
+| Answers | What and why | How we'll build it | What was built | What this one unit changes |
 | Written | Before the work | After the issue, before code | After the work | During the work |
 | Lives in | GitHub issue | Plan file (not on GitHub) | GitHub PR | Git history |
-| Contains | Problem or motivation; desired outcome; acceptance criteria; open questions | Files and functions to change; approach; steps; verification | What actually changed (functions, behavior); deviations from the plan; test results; NEWS bullet if user-facing; `Closes #N` | One-line conventional subject; body only if the reason isn't obvious from the diff; `Fixes #N` on its own line when applicable |
+| Contains | Problem or motivation; desired outcome; acceptance criteria (except small changes); open questions | Files and functions to change; approach; steps; verification | What actually changed (functions, behavior); specific deviations from the issue (never from the plan); `Closes #N` | One-line conventional subject; body only if the reason isn't obvious from the diff; `Fixes #N` on its own line when applicable |
 | Excludes | Implementation approach or steps | Restating the issue's problem | The issue's problem statement (link it instead); the plan's steps | Prose that belongs in the PR |
 
 **Issues**
 
 - Title: `<type>: <description>`. After approval: `gh issue create --title "..." --label <label> --body "..."`
-- The body states the problem and the desired outcome, with acceptance criteria as checkable items.
+- The body states the problem and the desired outcome, with acceptance criteria as checkable items (except for small changes; see below).
+- Size the issue to the change. A small change (a doc tweak, a few lines) gets a one- or two-sentence body with no headings or criteria. If the issue is about as long as the diff, it's too long.
 
 **Implementation plans**
 
@@ -46,17 +65,21 @@ Each artifact has one job. Don't copy content between them.
 **Pull requests**
 
 - Title: conventional commit format (becomes the squash commit subject).
-- The body is never empty. It covers changes, deviations from the plan, test results, and `Closes #N`.
-- Never add a "Generated with Claude Code" line or any other agent attribution.
+- The body is never empty. It covers changes, any deviations from the issue, and `Closes #N`.
+- Never include test, check, or lint results (CI reports those), the `NEWS.md` bullet, or file names (both in the diff). Describe behavior and functions instead.
+- Deviations are measured against the issue, never the plan: the plan isn't on GitHub. Each one names the acceptance criterion (or anything the issue excluded) and says exactly what differs and why. For issues without criteria, measure against the stated outcome. List only the deviations, with no preamble; if there are none, omit the deviations section entirely.
 - Don't list what the PR doesn't do (e.g. "Deviations: none", "no NEWS bullet") unless its absence would obviously be questioned.
 - After approval: `gh pr create --title "..." --body "..."`
 
 **Commits**
 
 - Conventional commits, concise. Detailed prose belongs in the PR.
-- A logical unit = source change + its tests + related docs, in one commit.
+- The subject names the change itself, not where it came from or the fact that something changed. Someone reading `git log` should know what's different without opening the diff.
+    - Bad: `docs: address roborev findings on AGENTS.md checklist`, `fix: review feedback`, `chore: update AGENTS.md`
+    - Good: `docs: allow non-test evidence for docs-only acceptance criteria`
+- If one subject can't name the change, the commit holds more than one change: split it.
+- A logical unit = source change + its tests + related docs, in one commit. Every commit that changes code includes tests for that change; roborev fails commits without them.
 - Never bundle unrelated changes. A fix to an earlier commit is its own commit.
-- Do not add `Co-Authored-By` trailers.
 
 ### Incidental findings
 
@@ -86,6 +109,11 @@ Before opening a PR:
 5. `pkgdown::build_site(preview = FALSE)`: site builds.
 6. `NEWS.md` bullet added for user-facing changes.
 7. `git log --oneline main..HEAD`: history is clean and logical.
+8. Acceptance criteria review: re-read the issue and check the branch against each criterion. If the issue has no criteria, check against its stated outcome.
+    - Each criterion maps to the code that implements it and evidence that it's met: a passing test for behavior, or a concrete check (the doc diff, `pkgdown::check_pkgdown()`, a clean `devtools::check()`) for docs and config. Evidence, not intent.
+    - An unmet or partially met criterion is either finished now or listed as a deviation in the PR body, with the reason.
+    - Functional changes that serve no criterion are scope creep: move them to their own issue. Changes this checklist requires (formatting, generated docs, `NEWS.md`) and fixes to earlier commits on the branch are exempt.
+    - Report the mapping to the user before drafting the PR. Don't copy it into the PR body; the PR lists only deviations.
 
 ### `NEWS.md` language
 
@@ -149,12 +177,17 @@ There are three possible ways to run code, listed in rough order of desirability
   multiline or complex code; in that case, write it to a temporary `.R` file
   and run `Rscript path/to/file.R`.
 
+### Installing packages
+
+- Use pak, not `install.packages()`: `pak::pak("pkg")`, `pak::pak("user/repo")` for GitHub, and `pak::local_install_deps()` for this package's dependencies.
+
 ### Code style
 
 - Follow the tidyverse style guide
 - Always run `air format .` after generating code. (air is bundled with Positron so look there if you can't otherwise find it.)
-- Use the base pipe operator (`|>`), not the magrittr pipe (`%>%`).
-- Use `\() ...` for single-line anonymous functions. For all other cases, use `function() {...}`.
+- The package supports R < 4.1. Don't use the base pipe (`|>`) or `\()` lambdas in `R/`, roxygen examples, or tests. Use intermediate assignments and `function(x) ...` instead. No magrittr pipe (`%>%`) either.
+- Vignettes may use `|>` in chunks with `eval = new_r, include = new_r` (`new_r <- getRversion() >= "4.1"`), each paired with a `%>%` chunk using `eval = !new_r, include = !new_r`. Unevaluated chunks aren't parsed, so R CMD check passes on old R.
+- Don't call `pkg::fn()` in `R/`. Import with `usethis::use_import_from("pkg", "fn")` and call `fn()` directly. (Tests may use `pkg::fn()`.)
 
 ### Test style
 
