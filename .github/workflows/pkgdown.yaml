@@ -68,8 +68,8 @@ jobs:
         uses: actions/cache@v4
         with:
           path: releases
-          key: pkgdown-releases-v2-${{ steps.releases.outputs.key }}
-          restore-keys: pkgdown-releases-v2-
+          key: pkgdown-releases-${{ steps.releases.outputs.key }}
+          restore-keys: pkgdown-releases-
 
       - name: Build release sites
         if: env.DEPLOY == 'true'
