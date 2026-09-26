@@ -38,10 +38,16 @@ jobs:
           needs: website
 
       - name: Build dev site
-        run: pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)
+        run: |
+          pkgdown::build_site_github_pages(
+            new_process = FALSE,
+            install = FALSE,
+            override = list(repo = list(branch = Sys.getenv("SOURCE_REF")))
+          )
         shell: Rscript {0}
         env:
           PKGDOWN_DEV_MODE: devel
+          SOURCE_REF: ${{ github.event.repository.default_branch }}
 
       # Each release is served at /<version>/, the latest release also at the
       # root, and the dev site at /dev/. Each deploy replaces the whole site,
@@ -82,7 +88,10 @@ jobs:
               dest_dir = dest,
               install = TRUE,
               new_process = TRUE,
-              override = list(url = paste0(url, "/", version))
+              override = list(
+                url = paste0(url, "/", version),
+                repo = list(branch = tag)
+              )
             )
           }
         shell: Rscript {0}
