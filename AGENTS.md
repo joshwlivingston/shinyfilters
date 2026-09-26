@@ -47,6 +47,8 @@ Each artifact has one job. Don't copy content between them.
 
 - Title: conventional commit format (becomes the squash commit subject).
 - The body is never empty. It covers changes, deviations from the plan, test results, and `Closes #N`.
+- Never add a "Generated with Claude Code" line or any other agent attribution.
+- Don't list what the PR doesn't do (e.g. "Deviations: none", "no NEWS bullet") unless its absence would obviously be questioned.
 - After approval: `gh pr create --title "..." --body "..."`
 
 **Commits**
