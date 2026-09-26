@@ -24,16 +24,14 @@ check_named_list_or_null <- function(
 	}
 }
 
-s7_check_is_valid_list_dispatch <- function(
-	x,
-	function_name,
-	call = caller_env()
-) {
+s7_check_is_valid_list_dispatch <- function(x, function_name) {
 	cls <- S7_class(x)
 	if (!is.null(cls)) {
+		# Build the call from the name: older S7 dispatch inlines the generic and
+		# object into the frame's call, which can't be deparsed on R < 4.
 		cli_abort(
 			"No {.fn {function_name}} method found for class {.cls {cls@name}}.",
-			call = call
+			call = call2(function_name)
 		)
 	}
 }

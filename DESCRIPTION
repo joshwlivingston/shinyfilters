@@ -18,7 +18,7 @@ Imports:
     htmltools,
     methods,
     rlang,
-    S7 (>= 0.2.0),
+    S7,
     shiny,
     tidyselect,
     utils
@@ -29,9 +29,8 @@ Suggests:
     magrittr,
     rmarkdown,
     roxygen2,
-    shinytest2 (>= 0.4.1),
     shinyWidgets,
-    testthat (>= 3.0.0),
+    testthat (>= 3.1.0),
     tibble
 VignetteBuilder: 
     knitr

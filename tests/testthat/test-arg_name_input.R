@@ -115,7 +115,14 @@ test_that("arg_name_input_value() returns list with mixed types for data.frame",
 #### returns NULL ####
 test_that("arg_name_input_id: implementation returns NULL", {
 	method(arg_name_input_id, ClassCharacter) <- function(x) NULL
-	expect_snapshot(error = TRUE, {
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
 		filterInput(ClassCharacter(letters), ns = shiny::NS("mymodule"))
+	})
+})
+
+test_that("arg_name_input_value: method not found for S7 object passed as list", {
+	obj <- ClassList(as.list(letters))
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+		arg_name_input_value(obj)
 	})
 })

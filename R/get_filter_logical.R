@@ -55,7 +55,7 @@ get_filter_logical <- new_generic(
 	}
 )
 
-method(get_filter_logical, list(x = NULL, val = class_any)) <- function(
+method(get_filter_logical, list(x = class_NULL, val = class_any)) <- function(
 	x,
 	val,
 	...

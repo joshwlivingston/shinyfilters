@@ -1,0 +1,91 @@
+# R CMD check on R 3.5, with dependencies pinned to a Posit Package Manager
+# snapshot whose versions still install on R 3.5.
+#
+# Run manually before each release (see release_bullets()). Old testthat
+# formats snapshots differently, so they live in _snaps/r-3.5/ and are
+# refreshed from this job's artifact with testthat::snapshot_download_gh().
+on:
+  workflow_dispatch:
+
+name: R-CMD-check-R35.yaml
+
+permissions: read-all
+
+jobs:
+  R-CMD-check-R35:
+    runs-on: ubuntu-latest
+
+    name: ubuntu-latest (3.5.3)
+
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      R_KEEP_PKG_SOURCE: yes
+      NOT_CRAN: true
+      SNAPSHOT: "2023-09-15"
+      # Old testthat formats snapshots differently; keep them in _snaps/r-3.5/
+      SHINYFILTERS_SNAPSHOT_VARIANT: r-3.5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: r-lib/actions/setup-pandoc@v2
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: "3.5.3"
+          use-public-rspm: false
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y make zlib1g-dev libicu-dev libxml2-dev libcurl4-openssl-dev libssl-dev
+
+      - uses: actions/cache@v4
+        with:
+          path: ${{ env.R_LIBS_USER }}
+          key: ${{ runner.os }}-r-3.5.3-ppm-${{ env.SNAPSHOT }}-${{ hashFiles('DESCRIPTION') }}
+          restore-keys: ${{ runner.os }}-r-3.5.3-ppm-${{ env.SNAPSHOT }}-
+
+      - name: Install R dependencies
+        shell: Rscript {0}
+        run: |
+          options(
+            repos = c(CRAN = paste0("https://packagemanager.posit.co/cran/", Sys.getenv("SNAPSHOT"))),
+            Ncpus = 4
+          )
+          fields <- read.dcf("DESCRIPTION", c("Imports", "Suggests"))
+          pkgs <- trimws(unlist(strsplit(fields[!is.na(fields)], ",")))
+          pkgs <- sub("[ (].*", "", pkgs)
+          pkgs <- setdiff(pkgs, c("", rownames(installed.packages(priority = "base"))))
+          needed <- setdiff(pkgs, rownames(installed.packages()))
+          if (length(needed) > 0) install.packages(needed)
+          missing <- setdiff(pkgs, rownames(installed.packages()))
+          if (length(missing) > 0) stop("Failed to install: ", paste(missing, collapse = ", "))
+          sessionInfo()
+
+      - name: Build
+        run: R CMD build --no-manual .
+
+      - name: Check
+        run: |
+          R CMD check --no-manual shinyfilters_*.tar.gz
+          if grep -qE "^Status: .*(ERROR|WARNING)" shinyfilters.Rcheck/00check.log; then
+            exit 1
+          fi
+
+      - name: Upload check results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: R-3.5.3-check
+          path: shinyfilters.Rcheck
+
+      - name: Upload snapshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: R-3.5.3-snapshots
+          # The wildcard keeps shinyfilters.Rcheck/tests/testthat/_snaps/ in
+          # the artifact, the layout testthat::snapshot_download_gh() expects.
+          path: "*.Rcheck/tests/testthat/_snaps"
+          if-no-files-found: ignore

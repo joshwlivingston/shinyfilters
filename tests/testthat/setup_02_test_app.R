@@ -1,5 +1,4 @@
 library(shiny)
-library(shinytest2)
 
 app_shiny <- local({
 	._app_shiny_cache <- NULL

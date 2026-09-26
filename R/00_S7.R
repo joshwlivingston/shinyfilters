@@ -82,3 +82,7 @@ class_shinyfilters <- new_class(
 		overrides = class_list
 	)
 )
+
+class_POSIXt <- new_S3_class("POSIXt")
+
+class_NULL <- new_S3_class("NULL")

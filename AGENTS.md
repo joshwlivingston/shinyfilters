@@ -17,7 +17,9 @@ These rules take precedence over the generic sections below where they conflict.
 
 All work flows through GitHub issues and PRs. Every plan — in plan mode or not — must include the issue, branch, and PR steps. A plan that goes straight to code is incomplete.
 
-1. Create an issue (sub-issues for complex work).
+Exception: changes to AGENTS.md need no issue or PR. Commit them on their own branch and handle roborev reviews as usual, with the merge standing in for the PR. With the user's approval, squash-merge into `main`. Commits name no issue.
+
+1. Create an issue (sub-issues for complex work). One concern per issue: a change and the CI job that guards it are separate issues and PRs.
 2. Write the implementation plan.
 3. Branch from `main`: `<type>/<short-name>` (e.g. `feat/filter-spec`, `fix/bookmark-restore`). One branch per issue.
 4. Commit each logical unit as you go, referencing the issue. Handle each commit's roborev review (`roborev show --job <id>`) when it finishes (see the monitor bullet below). Fix findings in a new commit, then `roborev comment` and `roborev close` the review.
@@ -66,6 +68,7 @@ Never add AI attribution to any of them: no "Generated with Claude Code" lines, 
 - The body is never empty. It covers changes, any deviations from the issue, and `Closes #N`.
 - Never include test, check, or lint results (CI reports those), the `NEWS.md` bullet, or file names (both in the diff). Describe behavior and functions instead.
 - Deviations are measured against the issue, never the plan: the plan isn't on GitHub. Each one names the acceptance criterion (or anything the issue excluded) and says exactly what differs and why. For issues without criteria, measure against the stated outcome. List only the deviations, with no preamble; if there are none, omit the deviations section entirely.
+- Don't list what the PR doesn't do (e.g. "Deviations: none", "no NEWS bullet") unless its absence would obviously be questioned.
 - After approval: `gh pr create --title "..." --body "..."`
 
 **Commits**
@@ -81,6 +84,14 @@ Never add AI attribution to any of them: no "Generated with Claude Code" lines, 
 ### Incidental findings
 
 If you notice an unrelated bug, gap, or improvement, draft an issue right away (title `<type>: ...`, body: what and where) and present it for approval, then keep going. Don't fix it in the current branch, and don't hold it until the end.
+
+- This includes warnings, `R CMD check` NOTEs, and CI failures that already exist on `main`. Search existing issues first.
+- Before reporting a formatter or linter problem, confirm your local `air` and `jarl` match the latest releases, which CI installs.
+- When CI or a check fails, report the cause and the options before changing pinned versions, dependencies, or scope to make it pass. Workflow typos and syntax errors are fine to fix directly.
+
+### Agent guidance
+
+Record guidance about working on this package in this file, not in agent memory, so every agent and contributor sees it.
 
 ### Checklists
 

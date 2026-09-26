@@ -1,5 +1,4 @@
 #' @keywords internal
-#' @rawNamespace if (getRversion() < "4.3.0") importFrom("S7", "@")
 "_PACKAGE"
 
 ## usethis namespace: start
@@ -22,6 +21,7 @@
 #' @importFrom methods formalArgs
 #' @importFrom methods functionBody
 #' @importFrom rlang as_label
+#' @importFrom rlang call2
 #' @importFrom rlang caller_arg
 #' @importFrom rlang caller_env
 #' @importFrom rlang current_call
@@ -42,7 +42,6 @@
 #' @importFrom S7 class_list
 #' @importFrom S7 class_logical
 #' @importFrom S7 class_numeric
-#' @importFrom S7 class_POSIXt
 #' @importFrom S7 method
 #' @importFrom S7 method<-
 #' @importFrom S7 methods_register
@@ -76,6 +75,7 @@
 #' @importFrom shiny updateSliderInput
 #' @importFrom shiny updateTextAreaInput
 #' @importFrom shiny updateTextInput
+#' @rawNamespace if (getRversion() < "4.3.0") importFrom(S7, "@")
 #' @importFrom tidyselect eval_select
 #' @importFrom utils .DollarNames
 #' @importFrom utils modifyList
