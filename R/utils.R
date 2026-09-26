@@ -37,18 +37,20 @@ s7_check_is_valid_list_dispatch <- function(x, function_name) {
 }
 
 ._check_valid_shiny_ns <- function(ns, call = caller_env()) {
-	if (
-		!is.function(ns) ||
-			!identical(
-				functionBody(NS("x")),
-				functionBody(ns)
-			)
-	) {
+	if (!._is_valid_ns_function(ns)) {
 		cli_abort(
 			"{.arg ns} must be the result of calling {.fn shiny::NS}.",
 			call = call
 		)
 	}
+}
+
+._is_valid_ns_function <- function(ns) {
+	is.function(ns) &&
+		identical(
+			functionBody(NS("x")),
+			functionBody(ns)
+		)
 }
 
 set_names <- function(object = nm, nm) {

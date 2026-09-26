@@ -6,6 +6,7 @@ export(arg_name_input_label)
 export(arg_name_input_value)
 export(args_filter_input)
 export(args_update_filter_input)
+export(as_filters)
 export(call_filter_input)
 export(call_update_filter_input)
 export(filterInput)
@@ -15,6 +16,7 @@ export(get_input_labels)
 export(get_input_values)
 export(serverFilterInput)
 export(updateFilterInput)
+export(with_filter)
 if (getRversion() < "4.3.0") importFrom(S7, "@")
 importFrom(S7,
   "method<-",
@@ -32,16 +34,30 @@ importFrom(S7,
   class_list,
   class_logical,
   class_numeric,
+  method,
   methods_register,
   new_S3_class,
+  new_class,
   new_generic,
-  super
+  new_property,
+  set_props
 )
 importFrom(cli,
+  ansi_align,
+  ansi_nchar,
+  ansi_strip,
+  cat_line,
+  cat_rule,
   cli_abort,
   cli_warn,
+  col_blue,
+  col_cyan,
+  col_grey,
+  col_red,
   format_inline,
-  qty
+  is_utf8_output,
+  qty,
+  symbol
 )
 importFrom(htmltools,tagList)
 importFrom(methods,
@@ -49,12 +65,18 @@ importFrom(methods,
   functionBody
 )
 importFrom(rlang,
+  as_label,
   call2,
   caller_arg,
   caller_env,
   current_call,
   current_env,
-  local_error_call
+  enquos,
+  eval_tidy,
+  local_error_call,
+  names2,
+  new_quosure,
+  try_fetch
 )
 importFrom(shiny,
   NS,
@@ -78,4 +100,9 @@ importFrom(shiny,
   updateSliderInput,
   updateTextAreaInput,
   updateTextInput
+)
+importFrom(tidyselect,eval_select)
+importFrom(utils,
+  .DollarNames,
+  modifyList
 )
