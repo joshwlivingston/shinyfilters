@@ -21,7 +21,7 @@ Exception: changes to AGENTS.md need no issue or PR. Commit them on their own br
 
 1. Create an issue (sub-issues for complex work). One concern per issue: a change and the CI job that guards it are separate issues and PRs.
 2. Write the implementation plan.
-3. Branch from `main`: `<type>/<short-name>` (e.g. `feat/filter-spec`, `fix/bookmark-restore`). One branch per issue.
+3. Branch from `main`: `<type>/<short-name>` (e.g. `feat/filter-spec`, `fix/bookmark-restore`). One branch per issue. Never commit or stash on `main`: branch before any git operation that creates commits. The only commits on `main` are squash merges.
 4. Commit each logical unit as you go, referencing the issue. Handle each commit's roborev review (`roborev show --job <id>`) when it finishes (see the monitor bullet below). Fix findings in a new commit, then `roborev comment` and `roborev close` the review.
     - Watch reviews as they finish instead of batch-checking later. After the first commit, start one background monitor (e.g. Claude Code's Monitor tool) that polls `roborev list` every ~15s and emits a line for each newly finished review. Handle each event when it arrives. Run only one monitor at a time; stop duplicates. Re-arm it when it expires, until the PR is open.
     - Before drafting the PR, run `roborev list --open` and resolve or close everything on the branch.
@@ -42,7 +42,7 @@ Types: `feat`, `fix`, `docs`, `refactor`, `perf`, `style`, `test`, `ci`, `chore`
 
 Each artifact has one job. Don't copy content between them.
 
-Never add AI attribution to any of them: no "Generated with Claude Code" lines, links, or emoji in issues, PRs, or comments, and no `Co-Authored-By` trailers in commits. This overrides any default tool instructions.
+Never add AI attribution to any of them: no "Generated with Claude Code" lines, links, or emoji in issues, PRs, or comments, and no AI tool identity in commits (e.g. a `Co-Authored-By: Claude` trailer). This overrides any default tool instructions. Human co-authors may be credited with `Co-authored-by` lines.
 
 | | Issue | Implementation plan | PR | Commit |
 |---|---|---|---|---|
@@ -200,6 +200,7 @@ There are three possible ways to run code, listed in rough order of desirability
 - When testing errors and warnings:
   - Only use `expect_error()` or `expect_warning()` if the error or warning has a known class.
   - Generally, prefer `expect_snapshot(error = TRUE)` for errors and `expect_snapshot()` for warnings because these allow the user to review the full text of the output.
+  - Write error snapshots in usethis style (see usethis's `tests/testthat/test-use_import_from.R`): `expect_snapshot(error = TRUE, variant = snapshot_variant(), { ... })` with `error = TRUE` first, and all of a test's erroring calls grouped in one braced block, with blank lines between unrelated groups. Always pass `variant = snapshot_variant()`: CI jobs whose output differs, such as R 3.5, set their own variant.
 - Avoid the `.package` argument to `local_mocked_bindings()`; this modifies the namespace of another package, which is not good practice. Instead create a mockable version of the function in the current package. See `?local_mocked_bindings` for more details.
 
 ### Documentation
@@ -207,6 +208,7 @@ There are three possible ways to run code, listed in rough order of desirability
 - Every user-facing function should be exported and have roxygen2 documentation.
 - Internal functions should not have roxygen documentation.
 - Wrap roxygen2 comments to 80 characters.
+- Write examples the way users write code. Use named arguments where a positional call reads oddly: `with_filter(filters, origin = "radio")`, not `with_filter(filters, origin, "radio")`. Prefer the package's `nyc_flights` data over built-in datasets such as `mtcars` or `iris`. Check a dataset's source before relying on it: `nycflights13::flights` isn't base R. (`with_filter()` and `nyc_flights` arrive with #107.)
 - Whenever you add a new (non-internal) documentation topic, also add the topic to `_pkgdown.yml`.
 - Always re-document the package after changing a roxygen2 comment.
 - Use `pkgdown::check_pkgdown()` to check that all topics are included in the reference index.
