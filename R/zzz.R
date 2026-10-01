@@ -8,11 +8,6 @@
 	._s3_register("base::names", cls, `names.shinyfilters::shinyfilters`)
 	._s3_register("base::print", cls, `print.shinyfilters::shinyfilters`)
 	._s3_register(
-		"base::as.character",
-		cls,
-		`as.character.shinyfilters::shinyfilters`
-	)
-	._s3_register(
 		"htmltools::as.tags",
 		cls,
 		`as.tags.shinyfilters::shinyfilters`

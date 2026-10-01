@@ -8,7 +8,7 @@
 
 * `across_filters()` is a new function that chooses one input for the columns it selects, for use inside `with_filter()` or `mutate()` (#105).
 
-* `as.character()` now renders a configuration's inputs as HTML, and `as.data.frame()`, `as_tibble()`, and `as.data.table()` return its data (#105).
+* `as.data.frame()`, `as_tibble()`, and `as.data.table()` now return a configuration's data (#105).
 
 * `mutate()` now chooses which input `filterInput()` creates for a column, either by column name or with `across_filters()` or `across()` to select several columns (#105).
 

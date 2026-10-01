@@ -122,13 +122,6 @@ test_that("pull() errors", {
 	})
 })
 
-test_that("as.character() renders the inputs as HTML", {
-	cfg <- shinyfilters(df_config)
-	res <- as.character(cfg)
-	expect_identical(res, as.character(filterInput(cfg)))
-	expect_type(res, "character")
-})
-
 test_that("a config placed in a UI renders its inputs", {
 	cfg <- shinyfilters(df_config, selectize = TRUE)
 	expect_identical(

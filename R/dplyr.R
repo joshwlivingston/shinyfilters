@@ -123,10 +123,6 @@ MUTATE_ACROSS_NAMES <- c(SHINYFILTERS_ACROSS, DPLYR_ACROSS)
 	))
 }
 
-`as.character.shinyfilters::shinyfilters` <- function(x, ...) {
-	as.character(filterInput(x))
-}
-
 `as.tags.shinyfilters::shinyfilters` <- function(x, ...) {
 	filterInput(x)
 }
