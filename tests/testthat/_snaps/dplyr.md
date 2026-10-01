@@ -78,6 +78,15 @@
       Error in `dplyr::pull()`:
       ! `name` is not supported for <shinyfilters> objects.
 
+# a config placed in the UI of a bookmarked app errors
+
+    Code
+      htmltools::renderTags(shiny::sidebarPanel(cfg))
+    Condition
+      Error:
+      ! Can't place a <shinyfilters> object in the UI of an app that uses bookmarking.
+      i Call `filterInput(filters)` inside the UI function instead, so the inputs restore their bookmarked values.
+
 # select() errors name the user's call
 
     Code

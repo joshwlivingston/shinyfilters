@@ -10,8 +10,9 @@
 #' individual columns, then place it in a shiny UI to create the inputs.
 #'
 #' The inputs are created when the page is rendered. Call [filterInput()] on
-#' the result to create them right away, which apps that use bookmarking need
-#' to do inside their UI function to restore bookmarked values.
+#' the result to create them right away. Apps that use bookmarking must do so
+#' inside their UI function to restore bookmarked values; placing the result
+#' in their UI directly is an error.
 #'
 #' @param data A data frame.
 #' @param ... Named arguments passed to [filterInput()] for every column, such

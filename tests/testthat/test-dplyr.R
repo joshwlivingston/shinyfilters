@@ -130,6 +130,16 @@ test_that("a config placed in a UI renders its inputs", {
 	)
 })
 
+test_that("a config placed in the UI of a bookmarked app errors", {
+	shiny::shinyOptions(bookmarkStore = "url")
+	on.exit(shiny::shinyOptions(bookmarkStore = NULL))
+	cfg <- shinyfilters(df_config)
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+		htmltools::renderTags(shiny::sidebarPanel(cfg))
+	})
+	expect_no_error(htmltools::renderTags(shiny::sidebarPanel(filterInput(cfg))))
+})
+
 test_that("as.data.frame() returns the data", {
 	cfg <- with_filter(shinyfilters(df_config), x = "radio")
 	expect_identical(as.data.frame(cfg), df_config)

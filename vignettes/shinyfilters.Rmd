@@ -157,4 +157,5 @@ shinyApp(ui, server)
 ```
 
 Apps that use bookmarking need `filterInput(filters)` inside their UI function
-instead, so the inputs restore their bookmarked values.
+instead, so the inputs restore their bookmarked values. Placing `filters` in
+their UI directly is an error.

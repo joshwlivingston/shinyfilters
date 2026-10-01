@@ -123,7 +123,18 @@ MUTATE_ACROSS_NAMES <- c(SHINYFILTERS_ACROSS, DPLYR_ACROSS)
 	))
 }
 
+# shiny renders the page after its restore context has closed, so inputs
+# created here would silently ignore bookmarked values.
 `as.tags.shinyfilters::shinyfilters` <- function(x, ...) {
+	if (!identical(getShinyOption("bookmarkStore", "disable"), "disable")) {
+		cli_abort(
+			c(
+				"Can't place a {.cls shinyfilters} object in the UI of an app that uses bookmarking.",
+				i = "Call {.code filterInput(filters)} inside the UI function instead, so the inputs restore their bookmarked values."
+			),
+			call = NULL
+		)
+	}
 	filterInput(x)
 }
 
