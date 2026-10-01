@@ -16,6 +16,9 @@ class_reactiveExpr <- new_S3_class(
 	constructor = function(.data) NULL
 )
 
+# POSIXt ####
+class_POSIXt <- new_S3_class("POSIXt")
+
 # Input keywords ####
 #
 # Keywords accepted by `with_filter()`. `args` are the `filterInput()` flags the
@@ -44,39 +47,14 @@ class_input_selectize <- new_S3_class("shinyfilters_input_selectize")
 class_input_slider <- new_S3_class("shinyfilters_input_slider")
 class_input_textbox <- new_S3_class("shinyfilters_input_textbox")
 
-# shinyfilters ####
-
-## Property: args ####
-prop_args <- new_property(
-	class = class_list,
-	validator = function(value) {
-		if (length(value) == 0) {
-			return(NULL)
-		}
-		if (is.null(names(value)) || any(names(value) == "")) {
-			return("must have all elements named")
-		}
-		if (anyDuplicated(names(value))) {
-			return("must have unique names")
-		}
-	}
-)
-
-## Property: ns ####
+# NULL ####
 # `class_NULL` rather than a bare `NULL`: S7's NEWS mentions `NULL` only for
 # `method<-()` dispatch (0.2.0) and DESCRIPTION sets no S7 minimum, so the
 # wrapper avoids relying on a bare `NULL` in a union. The constructor keeps the
 # property defaulting to `NULL`, as the bare form did.
 class_NULL <- new_S3_class("NULL", constructor = function(.data) NULL)
 
-prop_ns <- new_property(
-	class_NULL | class_function,
-	validator = function(value) {
-		if (!is.null(value) && !._is_valid_ns_function(value)) {
-			return("must be the result of calling `shiny::NS()`")
-		}
-	}
-)
+# shinyfilters ####
 
 ## Class ####
 class_shinyfilters <- new_class(
@@ -84,10 +62,26 @@ class_shinyfilters <- new_class(
 	package = "shinyfilters",
 	properties = list(
 		data = class_data.frame,
-		args = prop_args,
-		ns = prop_ns,
+		args = class_list,
+		ns = class_NULL | class_function,
 		overrides = class_list
-	)
-)
+	),
+	validator = function(self) {
+		# properties are validated in the class validation to support S7 < 0.2.0
 
-class_POSIXt <- new_S3_class("POSIXt")
+		# args
+		if (length(self@args) != 0) {
+			if (is.null(names(self@args)) || any(names(self@args) == "")) {
+				return("must have all elements named")
+			}
+			if (anyDuplicated(names(self@args))) {
+				return("must have unique names")
+			}
+		}
+
+		# ns
+		if (!is.null(self@ns) && !._is_valid_ns_function(self@ns)) {
+			return("must be the result of calling `shiny::NS()`")
+		}
+	}
+)
