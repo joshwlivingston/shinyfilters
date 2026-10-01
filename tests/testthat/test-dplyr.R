@@ -74,7 +74,7 @@ test_that("mutate() labels a custom input the way with_filter() does", {
 		shiny::selectInput(inputId, label, choices)
 	}
 	cfg <- shinyfilters(df_config)
-	expect_snapshot({
+	expect_snapshot(variant = snapshot_variant(), {
 		print(dplyr::mutate(cfg, across(letters, my_select)))
 		print(dplyr::mutate(cfg, letters = my_select))
 	})

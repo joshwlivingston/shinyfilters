@@ -4,7 +4,7 @@ test_that("shinyfilters() applies `ns` to input ids", {
 })
 
 test_that("shinyfilters(): `ns` must be result of shiny::NS()", {
-	expect_snapshot(error = TRUE, {
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
 		shinyfilters(data.frame(a = letters), ns = function(x) x)
 	})
 })
@@ -215,7 +215,7 @@ test_that("function overrides receive args_filter_input() output", {
 
 test_that("shinyfilters() and with_filter() errors", {
 	cfg <- shinyfilters(df_config)
-	expect_snapshot(error = TRUE, {
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
 		shinyfilters(1:3)
 		shinyfilters(df_config[0, ])
 		shinyfilters(df_config, TRUE)
@@ -247,7 +247,7 @@ test_that("print() shows each column's input", {
 	}
 	cfg <- shinyfilters(df_config, slider = TRUE, ns = shiny::NS("m"))
 	cfg <- with_filter(cfg, x = "radio", letters = my_select)
-	expect_snapshot({
+	expect_snapshot(variant = snapshot_variant(), {
 		print(shinyfilters(df_config))
 		print(cfg)
 		print(with_filter(shinyfilters(df_config), factors = "slider"))
@@ -273,7 +273,7 @@ test_that("print() resolves custom methods", {
 		class = "data.frame",
 		row.names = 1:2
 	)
-	expect_snapshot(print(shinyfilters(df)))
+	expect_snapshot(print(shinyfilters(df)), variant = snapshot_variant())
 })
 
 test_that("`$`, `[[`, and names() access columns", {
@@ -288,7 +288,7 @@ test_that("`$`, `[[`, and names() access columns", {
 
 test_that("`$` and `[[` error on unknown columns", {
 	cfg <- shinyfilters(df_config)
-	expect_snapshot(error = TRUE, {
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
 		cfg$nope
 		cfg[["nope"]]
 		cfg[[9]]
@@ -317,12 +317,15 @@ test_that("`[` returns a config with the selected columns", {
 	x <- "letters"
 	expect_identical(names(cfg[x]), "x")
 	expect_identical(names(cfg[all_of(x)]), "letters")
-	expect_snapshot(print(cfg[c("letters", "x")]))
+	expect_snapshot(
+		print(cfg[c("letters", "x")]),
+		variant = snapshot_variant()
+	)
 })
 
 test_that("`[` errors on unknown columns", {
 	cfg <- shinyfilters(df_config)
-	expect_snapshot(error = TRUE, {
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
 		cfg["nope"]
 		cfg[9]
 		cfg[TRUE]
