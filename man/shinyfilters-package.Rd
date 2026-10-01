@@ -2,7 +2,6 @@
 % Please edit documentation in R/shinyfilters-package.R
 \docType{package}
 \name{shinyfilters-package}
-\alias{shinyfilters}
 \alias{shinyfilters-package}
 \title{shinyfilters: Create 'shiny' Inputs from Vectors, 'data.frames', or any R Object}
 \description{

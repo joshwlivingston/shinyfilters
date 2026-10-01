@@ -1,0 +1,343 @@
+test_that("shinyfilters() applies `ns` to input ids", {
+	res <- filterInput(shinyfilters(data.frame(a = letters), ns = shiny::NS("m")))
+	expect_match(as.character(res), 'id="m-a"', fixed = TRUE)
+})
+
+test_that("shinyfilters(): `ns` must be result of shiny::NS()", {
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+		shinyfilters(data.frame(a = letters), ns = function(x) x)
+	})
+})
+
+test_that("shinyfilters() without overrides matches filterInput(<data.frame>)", {
+	expect_identical(
+		filterInput(shinyfilters(df_config, slider = TRUE)),
+		filterInput(df_config, slider = TRUE)
+	)
+})
+
+test_that("with_filter() call forms are equivalent", {
+	cfg <- shinyfilters(df_config, slider = TRUE)
+	expected <- filterInput(with_filter(cfg, x = "radio"))
+	col <- "x"
+	expect_identical(filterInput(with_filter(cfg, x, "radio")), expected)
+	expect_identical(filterInput(with_filter(cfg, "x", "radio")), expected)
+	expect_identical(
+		filterInput(with_filter(cfg, all_of(col), "radio")),
+		expected
+	)
+	expect_identical(
+		filterInput(with_filter(cfg, x, shiny::radioButtons)),
+		expected
+	)
+})
+
+test_that("with_filter() selects columns with tidyselect", {
+	expected <- filterInput(df_config, slider = TRUE)
+	expect_identical(
+		filterInput(with_filter(
+			shinyfilters(df_config),
+			where(is.numeric),
+			"slider"
+		)),
+		expected
+	)
+	expect_identical(
+		filterInput(with_filter(
+			shinyfilters(df_config),
+			c(x, a_very_very_long_name),
+			"slider"
+		)),
+		expected
+	)
+})
+
+test_that("numeric + radio / selectize -> choices in numeric order", {
+	res <- filterInput(with_filter(shinyfilters(df_config), x = "radio"))
+	expect_identical(
+		res[[3]],
+		shiny::radioButtons("x", "x", choices = c(2L, 9L, 10L))
+	)
+	res <- filterInput(with_filter(shinyfilters(df_config), x = "selectize"))
+	expect_identical(
+		res[[3]],
+		shiny::selectizeInput("x", "x", choices = c(2L, 9L, 10L))
+	)
+})
+
+test_that("global `radio = TRUE` doesn't apply to numeric columns", {
+	res <- filterInput(shinyfilters(df_config, radio = TRUE))
+	expect_identical(
+		res[[3]],
+		filterInput(df_config$x, inputId = "x", label = "x")
+	)
+})
+
+test_that("factor + radio keeps level order", {
+	res <- filterInput(with_filter(shinyfilters(df_config), factors = "radio"))
+	expect_identical(
+		res[[2]],
+		shiny::radioButtons(
+			"factors",
+			"factors",
+			choices = factor(c("lo", "hi"), c("lo", "hi"))
+		)
+	)
+})
+
+test_that("keyword override replaces conflicting global flags", {
+	res <- filterInput(with_filter(
+		shinyfilters(df_config, selectize = TRUE),
+		letters = "radio"
+	))
+	expect_identical(
+		res[[1]],
+		filterInput(
+			df_config$letters,
+			inputId = "letters",
+			label = "letters",
+			radio = TRUE
+		)
+	)
+})
+
+test_that("area -> shiny::textAreaInput", {
+	res <- filterInput(with_filter(shinyfilters(df_config), letters = "area"))
+	expect_identical(res[[1]], shiny::textAreaInput("letters", "letters"))
+})
+
+test_that("overrides work on columns with NA", {
+	df <- data.frame(a = c(NA, 3L, 1L))
+	res <- filterInput(with_filter(shinyfilters(df), a = "radio"))
+	expect_identical(res[[1]], shiny::radioButtons("a", "a", choices = c(1L, 3L)))
+})
+
+test_that("every column overridden, and one-column data frames", {
+	res <- filterInput(with_filter(
+		shinyfilters(df_config),
+		everything(),
+		"radio"
+	))
+	expect_length(res, ncol(df_config))
+	res <- filterInput(with_filter(
+		shinyfilters(data.frame(a = 1:3)),
+		a = "slider"
+	))
+	expect_identical(
+		res[[1]],
+		filterInput(1:3, inputId = "a", label = "a", slider = TRUE)
+	)
+})
+
+test_that("`ns` applies to keyword, function, and default inputs", {
+	my_select <- function(inputId, label, choices) {
+		shiny::selectInput(inputId, label, choices)
+	}
+	cfg <- shinyfilters(df_config, ns = shiny::NS("m"))
+	cfg <- with_filter(cfg, x = "radio", letters = my_select)
+	html <- as.character(filterInput(cfg))
+	for (col in names(df_config)) {
+		expect_match(html, sprintf('id="m-%s"', col), fixed = TRUE)
+	}
+})
+
+test_that("with_filter(): last write wins", {
+	cfg <- shinyfilters(df_config)
+	specific_last <- with_filter(cfg, where(is.numeric), "slider")
+	specific_last <- filterInput(with_filter(specific_last, x = "radio"))
+	expect_identical(
+		specific_last[[3]],
+		filterInput(with_filter(cfg, x = "radio"))[[3]]
+	)
+	class_last <- with_filter(cfg, x = "radio")
+	class_last <- filterInput(with_filter(
+		class_last,
+		where(is.numeric),
+		"slider"
+	))
+	expect_identical(
+		class_last[[3]],
+		filterInput(
+			df_config$x,
+			inputId = "x",
+			label = "x",
+			slider = TRUE
+		)
+	)
+})
+
+test_that("filterInput(<shinyfilters>, ...) merges with global arguments", {
+	expect_identical(
+		filterInput(shinyfilters(df_config), slider = TRUE),
+		filterInput(df_config, slider = TRUE)
+	)
+	expect_identical(
+		filterInput(shinyfilters(df_config), ns = shiny::NS("m")),
+		filterInput(df_config, ns = shiny::NS("m"))
+	)
+})
+
+test_that("range override on Date and POSIXct columns", {
+	df <- data.frame(
+		dte = as.Date("2024-01-01") + 0:1,
+		dtm = as.POSIXct("2024-01-01", tz = "UTC") + 0:1 * 86400
+	)
+	res <- filterInput(with_filter(shinyfilters(df), everything(), "range"))
+	expect_identical(
+		res[[1]],
+		filterInput(df$dte, inputId = "dte", label = "dte", range = TRUE)
+	)
+	expect_identical(
+		res[[2]],
+		filterInput(df$dtm, inputId = "dtm", label = "dtm", range = TRUE)
+	)
+})
+
+test_that("radio override on logical columns", {
+	df <- data.frame(lgl = c(TRUE, FALSE))
+	res <- filterInput(with_filter(shinyfilters(df), lgl = "radio"))
+	expect_identical(
+		res[[1]],
+		filterInput(df$lgl, inputId = "lgl", label = "lgl", radio = TRUE)
+	)
+})
+
+test_that("function overrides receive args_filter_input() output", {
+	my_numeric <- function(inputId, label, value, min, max) {
+		shiny::numericInput(inputId, label, value, min, max)
+	}
+	res <- filterInput(with_filter(shinyfilters(df_config), x = my_numeric))
+	expect_identical(
+		res[[3]],
+		filterInput(df_config$x, inputId = "x", label = "x")
+	)
+})
+
+test_that("shinyfilters() and with_filter() errors", {
+	cfg <- shinyfilters(df_config)
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+		shinyfilters(1:3)
+		shinyfilters(df_config[0, ])
+		shinyfilters(df_config, TRUE)
+		with_filter(df_config, x = "radio")
+		with_filter(cfg)
+		with_filter(cfg, x)
+		with_filter(cfg, x, "radio", "slider")
+		with_filter(cfg, x = "radio", "letters")
+		with_filter(cfg, nope = "radio")
+		with_filter(cfg, nope, "radio")
+		with_filter(cfg, where(is.logical), "radio")
+		with_filter(cfg, x = "radioo")
+		with_filter(cfg, x, c("radio", "slider"))
+		with_filter(cfg, x, radio)
+		with_filter(cfg, x = 1)
+		filterInput(with_filter(cfg, factors = "slider"))
+		filterInput(with_filter(cfg, a_very_very_long_name = "range"))
+		filterInput(with_filter(
+			shinyfilters(data.frame(a = NA_integer_)),
+			a = "radio"
+		))
+		filterInput(shinyfilters(data.frame(a = NA_integer_)))
+	})
+})
+
+test_that("print() shows each column's input", {
+	my_select <- function(inputId, label, choices) {
+		shiny::selectInput(inputId, label, choices)
+	}
+	cfg <- shinyfilters(df_config, slider = TRUE, ns = shiny::NS("m"))
+	cfg <- with_filter(cfg, x = "radio", letters = my_select)
+	expect_snapshot(variant = snapshot_variant(), {
+		print(shinyfilters(df_config))
+		print(cfg)
+		print(with_filter(shinyfilters(df_config), factors = "slider"))
+		print(shinyfilters(df_config, args_unique = "bad"))
+		print(shinyfilters(data.frame(x = "a")))
+	})
+})
+
+test_that("print() resolves custom methods", {
+	ClassRadio <- S7::new_class("ClassRadio", S7::class_character)
+	ClassCustom <- S7::new_class("ClassCustom", S7::class_character)
+	S7::method(filterInput, ClassRadio) <- function(x, ...) {
+		call_filter_input(x, shiny::radioButtons, ...)
+	}
+	S7::method(filterInput, ClassCustom) <- function(x, ...) {
+		shiny::tags$div()
+	}
+	df <- structure(
+		list(
+			radio = ClassRadio(c("a", "b")),
+			custom = ClassCustom(c("a", "b"))
+		),
+		class = "data.frame",
+		row.names = 1:2
+	)
+	expect_snapshot(print(shinyfilters(df)), variant = snapshot_variant())
+})
+
+test_that("`$`, `[[`, and names() access columns", {
+	cfg <- with_filter(shinyfilters(df_config, ns = shiny::NS("m")), x = "radio")
+	res <- filterInput(cfg)
+	expect_identical(cfg$x, res[[3]])
+	expect_identical(cfg[["letters"]], res[[1]])
+	expect_identical(cfg[[4]], res[[4]])
+	expect_identical(names(cfg), names(df_config))
+	expect_identical(utils::.DollarNames(cfg, "^a_"), "a_very_very_long_name")
+})
+
+test_that("`$` and `[[` error on unknown columns", {
+	cfg <- shinyfilters(df_config)
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+		cfg$nope
+		cfg[["nope"]]
+		cfg[[9]]
+		cfg[[c("x", "nope")]]
+		cfg[[1:2]]
+	})
+})
+
+test_that("`[` returns a config with the selected columns", {
+	cfg <- with_filter(shinyfilters(df_config, slider = TRUE), x = "radio")
+	sub <- cfg[c("x", "letters")]
+	expect_identical(names(sub), c("x", "letters"))
+	expect_identical(filterInput(sub)[[1]], filterInput(cfg)[[3]])
+	expect_identical(filterInput(sub)[[2]], filterInput(cfg)[[1]])
+	expect_identical(names(cfg[3:4]), c("x", "a_very_very_long_name"))
+	expect_identical(cfg[], cfg)
+	expect_identical(names(cfg[-1]), names(df_config)[-1])
+	expect_identical(names(cfg[c("x", "x")]), "x")
+	expect_identical(names(cfg[c(x, letters)]), c("x", "letters"))
+	expect_identical(
+		names(cfg[where(is.numeric)]),
+		c("x", "a_very_very_long_name")
+	)
+	cols <- c("factors", "x")
+	expect_identical(names(cfg[all_of(cols)]), cols)
+	x <- "letters"
+	expect_identical(names(cfg[x]), "x")
+	expect_identical(names(cfg[all_of(x)]), "letters")
+	expect_snapshot(
+		print(cfg[c("letters", "x")]),
+		variant = snapshot_variant()
+	)
+})
+
+test_that("`[` errors on unknown columns", {
+	cfg <- shinyfilters(df_config)
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+		cfg["nope"]
+		cfg[9]
+		cfg[TRUE]
+		cfg[0]
+		cfg[character(0)]
+		cfg[, "x"]
+		cfg[1, 2]
+		cfg[factros]
+		cfg[t]
+	})
+})
+
+test_that("the `ns` property defaults to NULL", {
+	expect_null(class_shinyfilters(data = data.frame(a = 1:3))@ns)
+})
