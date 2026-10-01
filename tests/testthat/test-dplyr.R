@@ -124,9 +124,18 @@ test_that("pull() errors", {
 
 test_that("a config placed in a UI renders its inputs", {
 	cfg <- shinyfilters(df_config, selectize = TRUE)
-	expect_identical(
-		htmltools::renderTags(shiny::sidebarPanel(cfg)),
-		htmltools::renderTags(shiny::sidebarPanel(filterInput(cfg)))
+	testServer(
+		shinyApp(
+			fluidPage(uiOutput("implicit"), uiOutput("explicit")),
+			function(input, output, session) {
+				output$implicit <- renderUI(cfg)
+				output$explicit <- renderUI(filterInput(cfg))
+			}
+		),
+		{
+			expect_identical(output$implicit, output$explicit)
+			expect_match(output$implicit$html, 'id="letters"', fixed = TRUE)
+		}
 	)
 })
 
@@ -142,14 +151,20 @@ test_that("a config placed in the UI of a bookmarked app errors", {
 
 test_that("a config rendered in a session of a bookmarked app doesn't error", {
 	cfg <- shinyfilters(df_config)
-	shiny::withReactiveDomain(shiny::MockShinySession$new(), {
-		shiny::shinyOptions(bookmarkStore = "url")
-		expect_identical(
-			shiny::getShinyOption("bookmarkStore"),
-			"url"
-		)
-		expect_no_error(htmltools::renderTags(shiny::sidebarPanel(cfg)))
-	})
+	testServer(
+		shinyApp(
+			function(request) fluidPage(uiOutput("filters")),
+			function(input, output, session) {
+				# testServer() doesn't apply the app's `enableBookmarking`
+				shinyOptions(bookmarkStore = "url")
+				output$filters <- renderUI(cfg)
+			}
+		),
+		{
+			expect_identical(getShinyOption("bookmarkStore"), "url")
+			expect_match(output$filters$html, 'id="letters"', fixed = TRUE)
+		}
+	)
 })
 
 test_that("as.data.frame() returns the data", {
