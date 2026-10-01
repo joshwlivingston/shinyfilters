@@ -66,7 +66,7 @@ Name the columns, or select them with tidyselect:
 
 #### dplyr {#columns-dplyr}
 
-`r if (!requireNamespace("dplyr", quietly = TRUE)) "Install dplyr to run this example."`
+`r if (!requireNamespace("dplyr", quietly = TRUE)) "Install dplyr to see this example."`
 
 ```{r, eval = requireNamespace("dplyr", quietly = TRUE), include = requireNamespace("dplyr", quietly = TRUE), message = FALSE}
 library(dplyr)
@@ -117,7 +117,7 @@ them, alongside named columns:
 
 #### dplyr {#across-dplyr}
 
-`r if (!requireNamespace("dplyr", quietly = TRUE)) "Install dplyr to run this example."`
+`r if (!requireNamespace("dplyr", quietly = TRUE)) "Install dplyr to see this example."`
 
 ```{r, eval = requireNamespace("dplyr", quietly = TRUE), include = requireNamespace("dplyr", quietly = TRUE)}
 mutate(
