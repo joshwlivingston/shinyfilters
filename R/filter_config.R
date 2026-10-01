@@ -26,7 +26,7 @@
 #'
 #' @seealso [with_filter()]
 #'
-#' @examples
+#' @examplesIf interactive()
 #' filters <- shinyfilters(nyc_flights)
 #' filters
 #'
