@@ -123,12 +123,10 @@ MUTATE_ACROSS_NAMES <- c(SHINYFILTERS_ACROSS, DPLYR_ACROSS)
 	))
 }
 
-#' @exportS3Method as.character shinyfilters::shinyfilters
 `as.character.shinyfilters::shinyfilters` <- function(x, ...) {
 	as.character(filterInput(x))
 }
 
-#' @exportS3Method as.data.frame shinyfilters::shinyfilters
 `as.data.frame.shinyfilters::shinyfilters` <- function(x, ...) {
 	return(x@data)
 }
