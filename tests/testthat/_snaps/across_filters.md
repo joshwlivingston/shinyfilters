@@ -61,8 +61,8 @@
     Condition
       Error in `with_filter()`:
       ! `with_filter()` takes two unnamed arguments, named arguments, or `across_filters()`.
-      i Select columns: `filters |> with_filter(c(a, b), "radio")`.
-      i Name columns: `filters |> with_filter(a = "radio", b = "slider")`.
-      i Mix the two: `filters |> with_filter(across_filters(c(a, b), "radio"), x = "slider")`.
+      i Select columns: `with_filter(filters, c(a, b), "radio")`.
+      i Name columns: `with_filter(filters, a = "radio", b = "slider")`.
+      i Mix the two: `with_filter(filters, across_filters(c(a, b), "radio"), x = "slider")`.
       i `across()` works only inside `mutate()`; use `across_filters()` here.
 

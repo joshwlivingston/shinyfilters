@@ -486,9 +486,9 @@ method(.with_filter, class_shinyfilters) <- function(
 ._abort_with_filter_form <- function(quos, call) {
 	msg <- c(
 		"{.fn with_filter} takes two unnamed arguments, named arguments, or {.fn across_filters}.",
-		i = "Select columns: {.code filters |> with_filter(c(a, b), \"radio\")}.",
-		i = "Name columns: {.code filters |> with_filter(a = \"radio\", b = \"slider\")}.",
-		i = "Mix the two: {.code filters |> with_filter(across_filters(c(a, b), \"radio\"), x = \"slider\")}."
+		i = "Select columns: {.code with_filter(filters, c(a, b), \"radio\")}.",
+		i = "Name columns: {.code with_filter(filters, a = \"radio\", b = \"slider\")}.",
+		i = "Mix the two: {.code with_filter(filters, across_filters(c(a, b), \"radio\"), x = \"slider\")}."
 	)
 	used_across <- vapply(
 		quos,
