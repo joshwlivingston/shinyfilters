@@ -53,18 +53,14 @@ NULL
 		cli_abort(
 			c(
 				"{.fn select} must select at least one column.",
-				i = "Select columns: {.code select(filters, c(a, b))}."
+				i = "Select columns: {.code select(filters, a, b)}."
 			),
 			call = call
 		)
 	}
 	exprs <- lapply(quos, quo_get_expr)
 	selection <- quo(c(!!!quos))
-	label <- if (length(exprs) == 1) {
-		as_label(exprs[[1]])
-	} else {
-		as_label(call2("c", !!!exprs))
-	}
+	label <- paste(vapply(exprs, as_label, ""), collapse = ", ")
 	._select_columns(.data, selection, label, call)
 }
 

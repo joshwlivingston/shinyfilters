@@ -163,5 +163,6 @@ test_that("select() errors name the user's call", {
 		dplyr::select(cfg, nope)
 		dplyr::select(cfg)
 		dplyr::select(cfg, where(is.complex))
+		dplyr::select(cfg, where(is.complex), where(is.raw))
 	})
 })

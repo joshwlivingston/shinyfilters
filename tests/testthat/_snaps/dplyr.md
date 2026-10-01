@@ -91,10 +91,15 @@
     Condition
       Error in `select()`:
       ! `select()` must select at least one column.
-      i Select columns: `select(filters, c(a, b))`.
+      i Select columns: `select(filters, a, b)`.
     Code
       dplyr::select(cfg, where(is.complex))
     Condition
       Error in `select()`:
       ! `where(is.complex)` doesn't select any columns.
+    Code
+      dplyr::select(cfg, where(is.complex), where(is.raw))
+    Condition
+      Error in `select()`:
+      ! `where(is.complex), where(is.raw)` doesn't select any columns.
 
