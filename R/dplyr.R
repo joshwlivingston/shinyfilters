@@ -124,9 +124,14 @@ MUTATE_ACROSS_NAMES <- c(SHINYFILTERS_ACROSS, DPLYR_ACROSS)
 }
 
 # shiny renders the page after its restore context has closed, so inputs
-# created here would silently ignore bookmarked values.
+# created here would silently ignore bookmarked values. Inside a session
+# (`renderUI()`, `insertUI()`), the session's restore context still applies.
 `as.tags.shinyfilters::shinyfilters` <- function(x, ...) {
-	if (!identical(getShinyOption("bookmarkStore", "disable"), "disable")) {
+	bookmarking <- !identical(
+		getShinyOption("bookmarkStore", "disable"),
+		"disable"
+	)
+	if (bookmarking && is.null(getDefaultReactiveDomain())) {
 		cli_abort(
 			c(
 				"Can't place a {.cls shinyfilters} object in the UI of an app that uses bookmarking.",

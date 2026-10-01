@@ -71,6 +71,7 @@
 #' @importFrom S7 set_props
 #' @importFrom shiny dateInput
 #' @importFrom shiny dateRangeInput
+#' @importFrom shiny getDefaultReactiveDomain
 #' @importFrom shiny getShinyOption
 #' @importFrom shiny NS
 #' @importFrom shiny numericInput

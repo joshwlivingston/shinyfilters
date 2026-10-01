@@ -140,6 +140,18 @@ test_that("a config placed in the UI of a bookmarked app errors", {
 	expect_no_error(htmltools::renderTags(shiny::sidebarPanel(filterInput(cfg))))
 })
 
+test_that("a config rendered in a session of a bookmarked app doesn't error", {
+	cfg <- shinyfilters(df_config)
+	shiny::withReactiveDomain(shiny::MockShinySession$new(), {
+		shiny::shinyOptions(bookmarkStore = "url")
+		expect_identical(
+			shiny::getShinyOption("bookmarkStore"),
+			"url"
+		)
+		expect_no_error(htmltools::renderTags(shiny::sidebarPanel(cfg)))
+	})
+})
+
 test_that("as.data.frame() returns the data", {
 	cfg <- with_filter(shinyfilters(df_config), x = "radio")
 	expect_identical(as.data.frame(cfg), df_config)
