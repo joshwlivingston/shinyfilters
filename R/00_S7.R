@@ -63,8 +63,13 @@ prop_args <- new_property(
 )
 
 ## Property: ns ####
+# `class_NULL` rather than a bare `NULL`: S7 documents `NULL` support only from
+# 0.2.0, and DESCRIPTION sets no S7 minimum, so the wrapper avoids relying on
+# it. `get_filter_logical()` wraps `NULL` the same way for dispatch.
+class_NULL <- new_S3_class("NULL")
+
 prop_ns <- new_property(
-	NULL | class_function,
+	class_NULL | class_function,
 	validator = function(value) {
 		if (!is.null(value) && !._is_valid_ns_function(value)) {
 			return("must be the result of calling `shiny::NS()`")
@@ -85,5 +90,3 @@ class_shinyfilters <- new_class(
 )
 
 class_POSIXt <- new_S3_class("POSIXt")
-
-class_NULL <- new_S3_class("NULL")
