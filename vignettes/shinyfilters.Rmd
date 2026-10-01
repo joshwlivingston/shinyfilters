@@ -55,8 +55,40 @@ nyc_flights %>%
 
 ## Choose inputs per column
 
-`with_filter()` sets the input for individual columns. Name the columns, or
-select them with tidyselect:
+Set the input for individual columns with dplyr's `mutate()`, or with
+`with_filter()`, which needs no other package. Inputs are keywords like
+`"radio"` or shiny functions like `shiny::radioButtons`. See `?with_filter` for
+the full list.
+
+### Name or select columns {.tabset}
+
+Name the columns, or select them with tidyselect:
+
+#### dplyr {#columns-dplyr}
+
+```{r, eval = requireNamespace("dplyr", quietly = TRUE), include = requireNamespace("dplyr", quietly = TRUE), message = FALSE}
+library(dplyr)
+```
+
+```{r, eval = getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE)}
+filters <- nyc_flights |>
+	shinyfilters() |>
+	mutate(origin = "radio", carrier = "selectize") |>
+	mutate(across(where(is.numeric), "slider"))
+
+filters
+```
+
+```{r, eval = !getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = !getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE)}
+filters <- nyc_flights %>%
+	shinyfilters() %>%
+	mutate(origin = "radio", carrier = "selectize") %>%
+	mutate(across(where(is.numeric), "slider"))
+
+filters
+```
+
+#### shinyfilters {#columns-shinyfilters}
 
 ```{r, eval = getRversion() >= "4.1", include = getRversion() >= "4.1"}
 filters <- nyc_flights |>
@@ -76,8 +108,22 @@ filters <- nyc_flights %>%
 filters
 ```
 
-`across_filters()` does both in one call: it selects columns and names one
-input for all of them, alongside named columns. It needs no other package.
+### Select and name columns in one call {.tabset}
+
+`across()` and `across_filters()` select columns and name one input for all of
+them, alongside named columns:
+
+#### dplyr {#across-dplyr}
+
+```{r, eval = requireNamespace("dplyr", quietly = TRUE), include = requireNamespace("dplyr", quietly = TRUE)}
+mutate(
+	filters,
+	across(where(is.character), "selectize"),
+	origin = "radio"
+)
+```
+
+#### shinyfilters {#across-shinyfilters}
 
 ```{r}
 with_filter(
@@ -86,9 +132,6 @@ with_filter(
 	origin = "radio"
 )
 ```
-
-Inputs are keywords like `"radio"` or shiny functions like
-`shiny::radioButtons`. See `?with_filter` for the full list.
 
 ## Use in a shiny app
 
