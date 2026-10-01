@@ -46,7 +46,26 @@
 NULL
 
 `select.shinyfilters::shinyfilters` <- function(.data, ...) {
-	.data[c(...)]
+	call <- sys.call()
+	call[[1]] <- as.name("select")
+	quos <- enquos(...)
+	if (length(quos) == 0) {
+		cli_abort(
+			c(
+				"{.fn select} must select at least one column.",
+				i = "Select columns: {.code select(filters, c(a, b))}."
+			),
+			call = call
+		)
+	}
+	exprs <- lapply(quos, quo_get_expr)
+	selection <- quo(c(!!!quos))
+	label <- if (length(exprs) == 1) {
+		as_label(exprs[[1]])
+	} else {
+		as_label(call2("c", !!!exprs))
+	}
+	._select_columns(.data, selection, label, call)
 }
 
 `pull.shinyfilters::shinyfilters` <- function(

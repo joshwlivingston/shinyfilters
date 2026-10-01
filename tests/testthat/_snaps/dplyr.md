@@ -78,3 +78,23 @@
       Error in `dplyr::pull()`:
       ! `name` is not supported for <shinyfilters> objects.
 
+# select() errors name the user's call
+
+    Code
+      dplyr::select(cfg, nope)
+    Condition
+      Error in `select()`:
+      ! Can't select columns that don't exist.
+      x Column `nope` doesn't exist.
+    Code
+      dplyr::select(cfg)
+    Condition
+      Error in `select()`:
+      ! `select()` must select at least one column.
+      i Select columns: `select(filters, c(a, b))`.
+    Code
+      dplyr::select(cfg, where(is.complex))
+    Condition
+      Error in `select()`:
+      ! `where(is.complex)` doesn't select any columns.
+

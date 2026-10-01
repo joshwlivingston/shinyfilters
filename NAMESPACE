@@ -102,9 +102,9 @@ importFrom(rlang,
   local_error_call,
   names2,
   new_quosure,
+  quo,
   quo_get_env,
   quo_get_expr,
-  quo_is_null,
   try_fetch
 )
 importFrom(shiny,

@@ -155,3 +155,13 @@ test_that("the class name the S3 registrations use is stable", {
 		"shinyfilters::shinyfilters"
 	)
 })
+
+test_that("select() errors name the user's call", {
+	skip_if_not_installed("dplyr")
+	cfg <- shinyfilters(df_config)
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+		dplyr::select(cfg, nope)
+		dplyr::select(cfg)
+		dplyr::select(cfg, where(is.complex))
+	})
+})

@@ -148,6 +148,12 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 		return(x)
 	}
 	selection <- new_quosure(substitute(i), parent.frame())
+	._select_columns(x, selection, as_label(selection), call)
+})
+
+# Shared by `[` and dplyr's `select()`. Each passes the user's selection and
+# its own call and label, so errors name the code the user wrote.
+._select_columns <- function(x, selection, label, call) {
 	cols <- try_fetch(
 		names(eval_select(
 			selection,
@@ -161,17 +167,14 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 		}
 	)
 	if (length(cols) == 0) {
-		cli_abort(
-			"{.code {as_label(selection)}} doesn't select any columns.",
-			call = call
-		)
+		cli_abort("{.code {label}} doesn't select any columns.", call = call)
 	}
 	set_props(
 		x,
 		data = x@data[cols],
 		overrides = x@overrides[intersect(names(x@overrides), cols)]
 	)
-})
+}
 
 # Creates the input for one column, selected by name or position
 ._config_column <- function(config, col, call) {
