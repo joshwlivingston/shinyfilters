@@ -8,7 +8,10 @@
 #' `shinyfilters()` stores a data frame with the arguments used to create its
 #' filters. Pass the result to [with_filter()] to choose the input for
 #' individual columns, then place it in a shiny UI to create the inputs.
-#' [filterInput()] creates them explicitly.
+#'
+#' The inputs are created when the page is rendered. Call [filterInput()] on
+#' the result to create them right away, which apps that use bookmarking need
+#' to do inside their UI function to restore bookmarked values.
 #'
 #' @param data A data frame.
 #' @param ... Named arguments passed to [filterInput()] for every column, such

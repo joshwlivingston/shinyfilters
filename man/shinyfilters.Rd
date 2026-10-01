@@ -30,7 +30,11 @@ columns, keeping their overrides. \code{cols} uses
 \code{shinyfilters()} stores a data frame with the arguments used to create its
 filters. Pass the result to \code{\link[=with_filter]{with_filter()}} to choose the input for
 individual columns, then place it in a shiny UI to create the inputs.
-\code{\link[=filterInput]{filterInput()}} creates them explicitly.
+}
+\details{
+The inputs are created when the page is rendered. Call \code{\link[=filterInput]{filterInput()}} on
+the result to create them right away, which apps that use bookmarking need
+to do inside their UI function to restore bookmarked values.
 }
 \examples{
 \dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
