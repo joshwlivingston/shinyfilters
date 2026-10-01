@@ -112,27 +112,23 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 }
 
 ## Methods: $, [[, [, names(), .DollarNames() ####
-#
-# Methods for generics from other packages call `method<-` directly. The usual
-# `method(f, class) <- fn` form also assigns `f` in this namespace, masking the
-# original (e.g. base `$`) for all package code.
-`method<-`(`$`, class_shinyfilters, value = function(x, name) {
+`$.shinyfilters::shinyfilters` <- function(x, name) {
 	._config_column(x, name, call = call("$", substitute(x), as.name(name)))
-})
+}
 
-`method<-`(`[[`, class_shinyfilters, value = function(x, i, ...) {
+`[[.shinyfilters::shinyfilters` <- function(x, i, ...) {
 	._config_column(x, i, call = call("[[", substitute(x), substitute(i)))
-})
+}
 
-`method<-`(.DollarNames, class_shinyfilters, value = function(x, pattern = "") {
+`.DollarNames.shinyfilters::shinyfilters` <- function(x, pattern = "") {
 	grep(pattern, names(x), value = TRUE)
-})
+}
 
-`method<-`(names, class_shinyfilters, value = function(x) {
+`names.shinyfilters::shinyfilters` <- function(x) {
 	names(x@data)
-})
+}
 
-`method<-`(`[`, class_shinyfilters, value = function(x, i, ...) {
+`[.shinyfilters::shinyfilters` <- function(x, i, ...) {
 	call <- sys.call()
 	call[[1]] <- as.name("[")
 	if (nargs() > 2) {
@@ -149,7 +145,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	}
 	selection <- new_quosure(substitute(i), parent.frame())
 	._select_columns(x, selection, as_label(selection), call)
-})
+}
 
 # Shared by `[` and dplyr's `select()`. Each passes the user's selection and
 # its own call and label, so errors name the code the user wrote.
@@ -203,7 +199,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 }
 
 ## Method: print() ####
-`method<-`(print, class_shinyfilters, value = function(x, ...) {
+`print.shinyfilters::shinyfilters` <- function(x, ...) {
 	data <- x@data
 	nms <- names(data)
 	overridden <- nms %in% names(x@overrides)
@@ -255,7 +251,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 		cat_line(dot, col_grey(" set by with_filter()"))
 	}
 	invisible(x)
-})
+}
 
 ._pad <- function(x) {
 	ansi_align(x, max(ansi_nchar(x, type = "width")))
