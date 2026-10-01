@@ -40,6 +40,7 @@ or \code{<} (\code{FALSE}) on \code{val[[2]]}.}
 }
 \examples{
 df <- data.frame(
+  stringsAsFactors = FALSE,
   category = rep(letters[1:3], each = 4),
   value = 1:12,
   date = Sys.Date() + 0:11

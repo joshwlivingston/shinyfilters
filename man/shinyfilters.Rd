@@ -32,6 +32,7 @@ filters. Pass the result to \code{\link[=with_filter]{with_filter()}} to choose 
 individual columns, then to \code{\link[=filterInput]{filterInput()}} to create the inputs.
 }
 \examples{
+\dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 filters <- shinyfilters(nyc_flights)
 filters
 
@@ -41,6 +42,7 @@ filterInput(filters)
 
 # The input for one column
 filters$origin
+\dontshow{\}) # examplesIf}
 }
 \seealso{
 \code{\link[=with_filter]{with_filter()}}
