@@ -63,10 +63,11 @@ prop_args <- new_property(
 )
 
 ## Property: ns ####
-# `class_NULL` rather than a bare `NULL`: S7 documents `NULL` support only from
-# 0.2.0, and DESCRIPTION sets no S7 minimum, so the wrapper avoids relying on
-# it. `get_filter_logical()` wraps `NULL` the same way for dispatch.
-class_NULL <- new_S3_class("NULL")
+# `class_NULL` rather than a bare `NULL`: S7's NEWS mentions `NULL` only for
+# `method<-()` dispatch (0.2.0) and DESCRIPTION sets no S7 minimum, so the
+# wrapper avoids relying on a bare `NULL` in a union. The constructor keeps the
+# property defaulting to `NULL`, as the bare form did.
+class_NULL <- new_S3_class("NULL", constructor = function(.data) NULL)
 
 prop_ns <- new_property(
 	class_NULL | class_function,
