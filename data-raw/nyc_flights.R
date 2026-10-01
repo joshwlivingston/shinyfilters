@@ -5,7 +5,7 @@ set.seed(2013)
 rows <- sort(sample(nrow(flights), 200))
 flights <- flights[rows, ]
 
-nyc_flights <- data.frame(
+nyc_flights <- tibble::as_tibble(
 	date = as.Date(ISOdate(flights$year, flights$month, flights$day)),
 	carrier = flights$carrier,
 	origin = factor(flights$origin),

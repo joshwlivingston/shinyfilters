@@ -37,6 +37,7 @@
 #' }
 #'
 #' df_shared <- data.frame(
+#'   stringsAsFactors = FALSE,
 #' 	 x = letters,
 #' 	 y = use_radio(sample(c("red", "green", "blue"), 26, replace = TRUE)),
 #' 	 z = round(runif(26, 0, 3.5), 2),
@@ -132,6 +133,7 @@ serverFilterInput <- function(
 #' @examplesIf interactive()
 #' library(shiny)
 #' df <- data.frame(
+#' 	 stringsAsFactors = FALSE,
 #'   name = c("Alice", "Bob"),
 #'   age = c(25, 30),
 #'   completed = c(TRUE, FALSE)
@@ -186,6 +188,7 @@ method(
 #' @returns A character vector of input ids.
 #' @examples
 #' df <- data.frame(
+#'   stringsAsFactors = FALSE,
 #'   name = c("Alice", "Bob"),
 #'   age = c(25, 30),
 #'   completed = c(TRUE, FALSE)
@@ -209,6 +212,7 @@ method(get_input_ids, class_data.frame) <- function(x) {
 #' @returns A character vector of input labels
 #' @examples
 #' df <- data.frame(
+#'   stringsAsFactors = FALSE,
 #'   name = c("Alice", "Bob"),
 #'   age = c(25, 30),
 #'   completed = c(TRUE, FALSE)

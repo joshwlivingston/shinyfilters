@@ -1,4 +1,5 @@
 df_config <- data.frame(
+	stringsAsFactors = FALSE,
 	letters = c("b", "a", "c"),
 	factors = factor(c("hi", "lo", "lo"), levels = c("lo", "hi")),
 	x = c(10L, 9L, 2L),

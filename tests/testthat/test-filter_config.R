@@ -1,11 +1,17 @@
 test_that("shinyfilters() applies `ns` to input ids", {
-	res <- filterInput(shinyfilters(data.frame(a = letters), ns = shiny::NS("m")))
+	res <- filterInput(shinyfilters(
+		data.frame(stringsAsFactors = FALSE, a = letters),
+		ns = shiny::NS("m")
+	))
 	expect_match(as.character(res), 'id="m-a"', fixed = TRUE)
 })
 
 test_that("shinyfilters(): `ns` must be result of shiny::NS()", {
 	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
-		shinyfilters(data.frame(a = letters), ns = function(x) x)
+		shinyfilters(
+			data.frame(stringsAsFactors = FALSE, a = letters),
+			ns = function(x) x
+		)
 	})
 })
 
@@ -107,7 +113,7 @@ test_that("area -> shiny::textAreaInput", {
 })
 
 test_that("overrides work on columns with NA", {
-	df <- data.frame(a = c(NA, 3L, 1L))
+	df <- data.frame(stringsAsFactors = FALSE, a = c(NA, 3L, 1L))
 	res <- filterInput(with_filter(shinyfilters(df), a = "radio"))
 	expect_identical(res[[1]], shiny::radioButtons("a", "a", choices = c(1L, 3L)))
 })
@@ -120,7 +126,7 @@ test_that("every column overridden, and one-column data frames", {
 	))
 	expect_length(res, ncol(df_config))
 	res <- filterInput(with_filter(
-		shinyfilters(data.frame(a = 1:3)),
+		shinyfilters(data.frame(stringsAsFactors = FALSE, a = 1:3)),
 		a = "slider"
 	))
 	expect_identical(
@@ -179,6 +185,7 @@ test_that("filterInput(<shinyfilters>, ...) merges with global arguments", {
 
 test_that("range override on Date and POSIXct columns", {
 	df <- data.frame(
+		stringsAsFactors = FALSE,
 		dte = as.Date("2024-01-01") + 0:1,
 		dtm = as.POSIXct("2024-01-01", tz = "UTC") + 0:1 * 86400
 	)
@@ -194,7 +201,7 @@ test_that("range override on Date and POSIXct columns", {
 })
 
 test_that("radio override on logical columns", {
-	df <- data.frame(lgl = c(TRUE, FALSE))
+	df <- data.frame(stringsAsFactors = FALSE, lgl = c(TRUE, FALSE))
 	res <- filterInput(with_filter(shinyfilters(df), lgl = "radio"))
 	expect_identical(
 		res[[1]],
@@ -234,10 +241,13 @@ test_that("shinyfilters() and with_filter() errors", {
 		filterInput(with_filter(cfg, factors = "slider"))
 		filterInput(with_filter(cfg, a_very_very_long_name = "range"))
 		filterInput(with_filter(
-			shinyfilters(data.frame(a = NA_integer_)),
+			shinyfilters(data.frame(stringsAsFactors = FALSE, a = NA_integer_)),
 			a = "radio"
 		))
-		filterInput(shinyfilters(data.frame(a = NA_integer_)))
+		filterInput(shinyfilters(data.frame(
+			stringsAsFactors = FALSE,
+			a = NA_integer_
+		)))
 	})
 })
 
@@ -252,7 +262,7 @@ test_that("print() shows each column's input", {
 		print(cfg)
 		print(with_filter(shinyfilters(df_config), factors = "slider"))
 		print(shinyfilters(df_config, args_unique = "bad"))
-		print(shinyfilters(data.frame(x = "a")))
+		print(shinyfilters(data.frame(stringsAsFactors = FALSE, x = "a")))
 	})
 })
 
@@ -339,5 +349,7 @@ test_that("`[` errors on unknown columns", {
 })
 
 test_that("the `ns` property defaults to NULL", {
-	expect_null(class_shinyfilters(data = data.frame(a = 1:3))@ns)
+	expect_null(
+		class_shinyfilters(data = data.frame(stringsAsFactors = FALSE, a = 1:3))@ns
+	)
 })
