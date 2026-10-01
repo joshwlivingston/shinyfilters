@@ -20,7 +20,7 @@ Imports:
     rlang,
     S7,
     shiny,
-    tidyselect,
+    tidyselect (>= 1.2.0),
     utils
 Suggests:
     bslib,
