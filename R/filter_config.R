@@ -7,7 +7,8 @@
 #'
 #' `shinyfilters()` stores a data frame with the arguments used to create its
 #' filters. Pass the result to [with_filter()] to choose the input for
-#' individual columns, then to [filterInput()] to create the inputs.
+#' individual columns, then place it in a shiny UI to create the inputs.
+#' [filterInput()] creates them explicitly.
 #'
 #' @param data A data frame.
 #' @param ... Named arguments passed to [filterInput()] for every column, such

@@ -18,6 +18,8 @@
 
 * `shinyfilters()` and `with_filter()` now choose which input `filterInput()` creates for each column of a data frame (#111).
 
+* `shinyfilters()` objects can now be placed directly in a shiny UI, where they create their inputs like `filterInput()` does (#111).
+
 ## Minor improvements
 
 * shinyfilters no longer requires S7 0.2.0 or later (#113).

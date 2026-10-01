@@ -135,14 +135,14 @@ with_filter(
 
 ## Use in a shiny app
 
-`filterInput()` creates the inputs:
+Place the filters in a UI to create their inputs:
 
 ```{r, eval = FALSE}
 library(shiny)
 
 ui <- fluidPage(
 	sidebarLayout(
-		sidebarPanel(filterInput(filters)),
+		sidebarPanel(filters),
 		mainPanel()
 	)
 )

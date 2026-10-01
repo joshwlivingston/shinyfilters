@@ -29,7 +29,8 @@ columns, keeping their overrides. \code{cols} uses
 \description{
 \code{shinyfilters()} stores a data frame with the arguments used to create its
 filters. Pass the result to \code{\link[=with_filter]{with_filter()}} to choose the input for
-individual columns, then to \code{\link[=filterInput]{filterInput()}} to create the inputs.
+individual columns, then place it in a shiny UI to create the inputs.
+\code{\link[=filterInput]{filterInput()}} creates them explicitly.
 }
 \examples{
 \dontshow{if (interactive()) withAutoprint(\{ # examplesIf}

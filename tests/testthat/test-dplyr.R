@@ -129,6 +129,14 @@ test_that("as.character() renders the inputs as HTML", {
 	expect_type(res, "character")
 })
 
+test_that("a config placed in a UI renders its inputs", {
+	cfg <- shinyfilters(df_config, selectize = TRUE)
+	expect_identical(
+		htmltools::renderTags(shiny::sidebarPanel(cfg)),
+		htmltools::renderTags(shiny::sidebarPanel(filterInput(cfg)))
+	)
+})
+
 test_that("as.data.frame() returns the data", {
 	cfg <- with_filter(shinyfilters(df_config), x = "radio")
 	expect_identical(as.data.frame(cfg), df_config)

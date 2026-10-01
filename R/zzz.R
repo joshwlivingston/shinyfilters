@@ -13,6 +13,11 @@
 		`as.character.shinyfilters::shinyfilters`
 	)
 	._s3_register(
+		"htmltools::as.tags",
+		cls,
+		`as.tags.shinyfilters::shinyfilters`
+	)
+	._s3_register(
 		"base::as.data.frame",
 		cls,
 		`as.data.frame.shinyfilters::shinyfilters`
