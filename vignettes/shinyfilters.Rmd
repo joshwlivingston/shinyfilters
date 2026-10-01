@@ -29,30 +29,30 @@ shinyfilters creates shiny inputs for filtering data. This article uses
 
 ## Filters from a data frame
 
-`as_filters()` turns a data frame into a set of filters. Printing it shows the
+`shinyfilters()` turns a data frame into a set of filters. Printing it shows the
 input each column gets, based on its type:
 
 ```{r, eval = new_r, include = new_r}
 nyc_flights |>
-	as_filters()
+	shinyfilters()
 ```
 
 ```{r, eval = !new_r, include = !new_r}
 nyc_flights %>%
-	as_filters()
+	shinyfilters()
 ```
 
-Arguments to `as_filters()` apply to every column. For example, `slider = TRUE`
+Arguments to `shinyfilters()` apply to every column. For example, `slider = TRUE`
 uses sliders for numeric columns:
 
 ```{r, eval = new_r, include = new_r}
 nyc_flights |>
-	as_filters(slider = TRUE)
+	shinyfilters(slider = TRUE)
 ```
 
 ```{r, eval = !new_r, include = !new_r}
 nyc_flights %>%
-	as_filters(slider = TRUE)
+	shinyfilters(slider = TRUE)
 ```
 
 ## Choose inputs per column
@@ -62,7 +62,7 @@ select them with tidyselect:
 
 ```{r, eval = new_r, include = new_r}
 filters <- nyc_flights |>
-	as_filters() |>
+	shinyfilters() |>
 	with_filter(origin = "radio", carrier = "selectize") |>
 	with_filter(where(is.numeric), "slider")
 
@@ -71,11 +71,22 @@ filters
 
 ```{r, eval = !new_r, include = !new_r}
 filters <- nyc_flights %>%
-	as_filters() %>%
+	shinyfilters() %>%
 	with_filter(origin = "radio", carrier = "selectize") %>%
 	with_filter(where(is.numeric), "slider")
 
 filters
+```
+
+`across_filters()` does both in one call: it selects columns and names one
+input for all of them, alongside named columns. It needs no other package.
+
+```{r}
+with_filter(
+	filters,
+	across_filters(where(is.character), "selectize"),
+	origin = "radio"
+)
 ```
 
 Inputs are keywords like `"radio"` or shiny functions like

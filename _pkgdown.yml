@@ -24,8 +24,10 @@ reference:
   - updateFilterInput
 - title: Configure filters
 - contents:
-  - as_filters
+  - shinyfilters
   - with_filter
+  - across_filters
+  - shinyfilters-dplyr
 - title: Usage with shiny
 - contents: 
   - serverFilterInput

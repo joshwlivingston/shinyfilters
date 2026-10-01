@@ -1,61 +1,65 @@
-# as_filters(): `ns` must be result of shiny::NS()
+# shinyfilters(): `ns` must be result of shiny::NS()
 
     Code
-      as_filters(data.frame(a = letters), ns = function(x) x)
+      shinyfilters(data.frame(a = letters), ns = function(x) x)
     Condition
-      Error in `as_filters()`:
+      Error in `shinyfilters()`:
       ! `ns` must be the result of calling `shiny::NS()`.
 
-# as_filters() and with_filter() errors
+# shinyfilters() and with_filter() errors
 
     Code
-      as_filters(1:3)
+      shinyfilters(1:3)
     Condition
-      Error in `as_filters()`:
+      Error in `shinyfilters()`:
       ! `data` must be a data frame, not an integer vector.
     Code
-      as_filters(df_config[0, ])
+      shinyfilters(df_config[0, ])
     Condition
-      Error in `as_filters()`:
+      Error in `shinyfilters()`:
       ! `data` must have at least one row.
     Code
-      as_filters(df_config, TRUE)
+      shinyfilters(df_config, TRUE)
     Condition
-      Error in `as_filters()`:
+      Error in `shinyfilters()`:
       ! All elements of `...` must be named.
     Code
       with_filter(df_config, x = "radio")
     Condition
       Error in `with_filter()`:
-      ! `config` must be created by `as_filters()`, not a data frame.
+      ! `config` must be created by `shinyfilters()`, not a data frame.
     Code
       with_filter(cfg)
     Condition
       Error in `with_filter()`:
-      ! `with_filter()` takes two unnamed arguments or only named arguments.
-      i Select columns: `with_filter(config, c(a, b), "radio")`.
-      i Name columns: `with_filter(config, a = "radio", b = "slider")`.
+      ! `with_filter()` takes two unnamed arguments, named arguments, or `across_filters()`.
+      i Select columns: `filters |> with_filter(c(a, b), "radio")`.
+      i Name columns: `filters |> with_filter(a = "radio", b = "slider")`.
+      i Mix the two: `filters |> with_filter(across_filters(c(a, b), "radio"), x = "slider")`.
     Code
       with_filter(cfg, x)
     Condition
       Error in `with_filter()`:
-      ! `with_filter()` takes two unnamed arguments or only named arguments.
-      i Select columns: `with_filter(config, c(a, b), "radio")`.
-      i Name columns: `with_filter(config, a = "radio", b = "slider")`.
+      ! `with_filter()` takes two unnamed arguments, named arguments, or `across_filters()`.
+      i Select columns: `filters |> with_filter(c(a, b), "radio")`.
+      i Name columns: `filters |> with_filter(a = "radio", b = "slider")`.
+      i Mix the two: `filters |> with_filter(across_filters(c(a, b), "radio"), x = "slider")`.
     Code
       with_filter(cfg, x, "radio", "slider")
     Condition
       Error in `with_filter()`:
-      ! `with_filter()` takes two unnamed arguments or only named arguments.
-      i Select columns: `with_filter(config, c(a, b), "radio")`.
-      i Name columns: `with_filter(config, a = "radio", b = "slider")`.
+      ! `with_filter()` takes two unnamed arguments, named arguments, or `across_filters()`.
+      i Select columns: `filters |> with_filter(c(a, b), "radio")`.
+      i Name columns: `filters |> with_filter(a = "radio", b = "slider")`.
+      i Mix the two: `filters |> with_filter(across_filters(c(a, b), "radio"), x = "slider")`.
     Code
       with_filter(cfg, x = "radio", "letters")
     Condition
       Error in `with_filter()`:
-      ! `with_filter()` takes two unnamed arguments or only named arguments.
-      i Select columns: `with_filter(config, c(a, b), "radio")`.
-      i Name columns: `with_filter(config, a = "radio", b = "slider")`.
+      ! `with_filter()` takes two unnamed arguments, named arguments, or `across_filters()`.
+      i Select columns: `filters |> with_filter(c(a, b), "radio")`.
+      i Name columns: `filters |> with_filter(a = "radio", b = "slider")`.
+      i Mix the two: `filters |> with_filter(across_filters(c(a, b), "radio"), x = "slider")`.
     Code
       with_filter(cfg, nope = "radio")
     Condition
@@ -114,12 +118,12 @@
       ! "range" isn't available for <numeric> columns.
       i Use "radio", "selectize", or "slider" instead.
     Code
-      filterInput(with_filter(as_filters(data.frame(a = NA_integer_)), a = "radio"))
+      filterInput(with_filter(shinyfilters(data.frame(a = NA_integer_)), a = "radio"))
     Condition
       Error in `filterInput()`:
       ! Column a must have at least one non-missing value.
     Code
-      filterInput(as_filters(data.frame(a = NA_integer_)))
+      filterInput(shinyfilters(data.frame(a = NA_integer_)))
     Condition
       Error in `filterInput()`:
       ! Column a must have at least one non-missing value.
@@ -127,7 +131,7 @@
 # print() shows each column's input
 
     Code
-      print(as_filters(df_config))
+      print(shinyfilters(df_config))
     Output
       -- <shinyfilters> - 4 filters --------------------------------------------------
       
@@ -148,7 +152,7 @@
       
       * set by with_filter()
     Code
-      print(with_filter(as_filters(df_config), factors = "slider"))
+      print(with_filter(shinyfilters(df_config), factors = "slider"))
     Output
       -- <shinyfilters> - 4 filters --------------------------------------------------
       
@@ -159,7 +163,7 @@
       
       * set by with_filter()
     Code
-      print(as_filters(df_config, args_unique = "bad"))
+      print(shinyfilters(df_config, args_unique = "bad"))
     Output
       -- <shinyfilters> - 4 filters --------------------------------------------------
       Defaults  args_unique = "bad"
@@ -169,7 +173,7 @@
         x                      <int>  numericInput
         a_very_very_long_name  <dbl>  numericInput
     Code
-      print(as_filters(data.frame(x = "a")))
+      print(shinyfilters(data.frame(x = "a")))
     Output
       -- <shinyfilters> - 1 filter ---------------------------------------------------
       
@@ -178,7 +182,7 @@
 # print() resolves custom methods
 
     Code
-      print(as_filters(df))
+      print(shinyfilters(df))
     Output
       -- <shinyfilters> - 2 filters --------------------------------------------------
       

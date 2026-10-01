@@ -24,6 +24,8 @@ Imports:
     utils
 Suggests:
     bslib,
+    data.table,
+    dplyr,
     DT,
     knitr,
     magrittr,

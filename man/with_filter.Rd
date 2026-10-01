@@ -7,14 +7,18 @@
 with_filter(config, ...)
 }
 \arguments{
-\item{config}{A configuration created by \code{\link[=as_filters]{as_filters()}}.}
+\item{config}{A configuration created by \code{\link[=shinyfilters]{shinyfilters()}}.}
 
-\item{...}{Either two unnamed arguments, or any number of named arguments:
+\item{...}{Either two unnamed arguments, or any number of named arguments
+and \code{\link[=across_filters]{across_filters()}} calls:
 \itemize{
 \item \code{with_filter(config, cols, input)}: \code{cols} selects columns with
 <\code{\link[tidyselect:language]{tidy-select}}>, such as \code{cyl},
 \code{c(mpg, disp)}, or \code{where(is.numeric)}.
 \item \code{with_filter(config, col = input, ...)}: each name is a column.
+\item \code{with_filter(config, across_filters(cols, input), ...)}:
+\code{\link[=across_filters]{across_filters()}} selects columns and names one input for all of
+them, and can be mixed with named columns.
 }
 
 Each input is either a keyword (\code{"area"}, \code{"radio"}, \code{"range"},
@@ -31,18 +35,25 @@ The updated configuration.
 }
 \description{
 \code{with_filter()} sets the input that \code{\link[=filterInput]{filterInput()}} creates for one or more
-columns of a configuration made by \code{\link[=as_filters]{as_filters()}}. When a column is set
+columns of a configuration made by \code{\link[=shinyfilters]{shinyfilters()}}. When a column is set
 more than once, the last call wins.
 }
 \examples{
-filters <- as_filters(nyc_flights)
+filters <- shinyfilters(nyc_flights)
 filters <- with_filter(filters, origin = "radio", carrier = "selectize")
 filters
 
 # Choose one input for several columns with tidyselect
 filters <- with_filter(filters, where(is.numeric), "slider")
 filterInput(filters)
+
+# Or select columns and name others in one call
+with_filter(
+  filters,
+  across_filters(where(is.character), "selectize"),
+  origin = "radio"
+)
 }
 \seealso{
-\code{\link[=as_filters]{as_filters()}}
+\code{\link[=shinyfilters]{shinyfilters()}}, \code{\link[=across_filters]{across_filters()}}
 }

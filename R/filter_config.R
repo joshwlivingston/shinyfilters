@@ -2,10 +2,10 @@
 #
 # Configure which input filterInput() creates for each column of a data.frame
 
-# Function: as_filters() ####
+# Function: shinyfilters() ####
 #' Configure the Filters for a Data Frame
 #'
-#' `as_filters()` stores a data frame with the arguments used to create its
+#' `shinyfilters()` stores a data frame with the arguments used to create its
 #' filters. Pass the result to [with_filter()] to choose the input for
 #' individual columns, then to [filterInput()] to create the inputs.
 #'
@@ -27,17 +27,17 @@
 #' @seealso [with_filter()]
 #'
 #' @examples
-#' filters <- as_filters(nyc_flights)
+#' filters <- shinyfilters(nyc_flights)
 #' filters
 #'
 #' # Use sliders for every numeric column
-#' filters <- as_filters(nyc_flights, slider = TRUE)
+#' filters <- shinyfilters(nyc_flights, slider = TRUE)
 #' filterInput(filters)
 #'
 #' # The input for one column
 #' filters$origin
 #' @export
-as_filters <- function(data, ..., ns = NULL) {
+shinyfilters <- function(data, ..., ns = NULL) {
 	if (!is.data.frame(data)) {
 		cli_abort(
 			"{.arg data} must be a data frame, not {.obj_type_friendly {data}}."
@@ -369,16 +369,20 @@ SHINY_INPUTS <- list(
 #' Choose the Input for Columns
 #'
 #' `with_filter()` sets the input that [filterInput()] creates for one or more
-#' columns of a configuration made by [as_filters()]. When a column is set
+#' columns of a configuration made by [shinyfilters()]. When a column is set
 #' more than once, the last call wins.
 #'
-#' @param config A configuration created by [as_filters()].
-#' @param ... Either two unnamed arguments, or any number of named arguments:
+#' @param config A configuration created by [shinyfilters()].
+#' @param ... Either two unnamed arguments, or any number of named arguments
+#'   and [across_filters()] calls:
 #'
 #'   * `with_filter(config, cols, input)`: `cols` selects columns with
 #'     <[`tidy-select`][tidyselect::language]>, such as `cyl`,
 #'     `c(mpg, disp)`, or `where(is.numeric)`.
 #'   * `with_filter(config, col = input, ...)`: each name is a column.
+#'   * `with_filter(config, across_filters(cols, input), ...)`:
+#'     [across_filters()] selects columns and names one input for all of
+#'     them, and can be mixed with named columns.
 #'
 #'   Each input is either a keyword (`"area"`, `"radio"`, `"range"`,
 #'   `"selectize"`, `"slider"`, `"textbox"`) or a \pkg{shiny} input function,
@@ -391,71 +395,135 @@ SHINY_INPUTS <- list(
 #'
 #' @returns The updated configuration.
 #'
-#' @seealso [as_filters()]
+#' @seealso [shinyfilters()], [across_filters()]
 #'
 #' @examples
-#' filters <- as_filters(nyc_flights)
+#' filters <- shinyfilters(nyc_flights)
 #' filters <- with_filter(filters, origin = "radio", carrier = "selectize")
 #' filters
 #'
 #' # Choose one input for several columns with tidyselect
 #' filters <- with_filter(filters, where(is.numeric), "slider")
 #' filterInput(filters)
+#'
+#' # Or select columns and name others in one call
+#' with_filter(
+#'   filters,
+#'   across_filters(where(is.character), "selectize"),
+#'   origin = "radio"
+#' )
 #' @export
 with_filter <- function(config, ...) {
 	if (!S7_inherits(config, class_shinyfilters)) {
 		cli_abort(
-			"{.arg config} must be created by {.fn as_filters}, not {.obj_type_friendly {config}}."
+			"{.arg config} must be created by {.fn shinyfilters}, not {.obj_type_friendly {config}}."
 		)
+	}
+	if (...length() == 0) {
+		._abort_with_filter_form(list(), call = current_env())
 	}
 	.with_filter(config, ..., .call = current_env())
 }
 
 .with_filter <- new_generic(".with_filter", "config")
 
+# `.across` names the calls that select columns and name one input for all of
+# them. `with_filter()` takes `across_filters()`; `mutate()` also takes
+# `across()`, which is unambiguous there.
 method(.with_filter, class_shinyfilters) <- function(
 	config,
 	...,
-	.call = caller_env()
+	.call = caller_env(),
+	.across = SHINYFILTERS_ACROSS
 ) {
 	quos <- enquos(...)
 	nms <- names2(quos)
+	named <- nms != ""
+	is_across <- vapply(
+		quos,
+		function(quo) {
+			._is_across_call(quo_get_expr(quo), .across)
+		},
+		logical(1)
+	)
 
-	if (length(quos) > 0 && all(nms != "")) {
-		unknown <- setdiff(nms, names(config@data))
-		if (length(unknown) > 0) {
-			cli_abort("Can't find column{?s} {.field {unknown}}.", call = .call)
-		}
-		overrides <- lapply(quos, ._new_override, call = .call)
-	} else if (length(quos) == 2 && all(nms == "")) {
-		cols <- names(eval_select(
-			quos[[1]],
-			config@data,
-			allow_rename = FALSE,
-			error_call = .call
-		))
-		if (length(cols) == 0) {
-			cli_abort(
-				"{.code {as_label(quos[[1]])}} doesn't select any columns.",
-				call = .call
-			)
-		}
-		overrides <- rep(
-			list(._new_override(quos[[2]], call = .call)),
-			length(cols)
-		)
-		names(overrides) <- cols
-	} else {
-		cli_abort(
-			c(
-				"{.fn with_filter} takes two unnamed arguments or only named arguments.",
-				i = "Select columns: {.code with_filter(config, c(a, b), \"radio\")}.",
-				i = "Name columns: {.code with_filter(config, a = \"radio\", b = \"slider\")}."
-			),
-			call = .call
-		)
+	if (any(is_across & named)) {
+		i <- which(is_across & named)[[1]]
+		._abort_across_named(quos[[i]], nms[[i]], call = .call)
 	}
 
+	if (!any(is_across) && length(quos) == 2 && !any(named)) {
+		return(._override_cols(config, quos[[1]], quos[[2]], call = .call))
+	}
+
+	loose <- !named & !is_across
+	if (any(loose)) {
+		._abort_with_filter_form(quos[loose], call = .call)
+	}
+
+	unknown <- setdiff(nms[named], names(config@data))
+	if (length(unknown) > 0) {
+		cli_abort("Can't find column{?s} {.field {unknown}}.", call = .call)
+	}
+
+	for (i in seq_along(quos)) {
+		if (is_across[[i]]) {
+			spec <- ._across_spec(quos[[i]], call = .call)
+			config <- ._override_cols(config, spec$cols, spec$input, call = .call)
+		} else {
+			config <- ._override_named(config, quos[i], call = .call)
+		}
+	}
+
+	config
+}
+
+# Reached only from `with_filter()`: `mutate()` checks its own argument shapes
+# before forwarding, so its wording never has to appear here.
+._abort_with_filter_form <- function(quos, call) {
+	msg <- c(
+		"{.fn with_filter} takes two unnamed arguments, named arguments, or {.fn across_filters}.",
+		i = "Select columns: {.code filters |> with_filter(c(a, b), \"radio\")}.",
+		i = "Name columns: {.code filters |> with_filter(a = \"radio\", b = \"slider\")}.",
+		i = "Mix the two: {.code filters |> with_filter(across_filters(c(a, b), \"radio\"), x = \"slider\")}."
+	)
+	used_across <- vapply(
+		quos,
+		function(quo) is_call(quo_get_expr(quo), "across"),
+		logical(1)
+	)
+	if (any(used_across)) {
+		msg <- c(
+			msg,
+			i = "{.fn across} works only inside {.fn mutate}; use {.fn across_filters} here."
+		)
+	}
+	cli_abort(msg, call = call)
+}
+
+._override_cols <- function(config, cols, input, call) {
+	selected <- names(eval_select(
+		cols,
+		config@data,
+		allow_rename = FALSE,
+		error_call = call
+	))
+	if (length(selected) == 0) {
+		cli_abort(
+			"{.code {as_label(cols)}} doesn't select any columns.",
+			call = call
+		)
+	}
+	overrides <- rep(list(._new_override(input, call = call)), length(selected))
+	names(overrides) <- selected
+	._set_overrides(config, overrides)
+}
+
+._override_named <- function(config, quos, call) {
+	._set_overrides(config, lapply(quos, ._new_override, call = call))
+}
+
+._set_overrides <- function(config, overrides) {
 	overrides_all <- config@overrides
 	overrides_all[names(overrides)] <- overrides
 	set_props(config, overrides = overrides_all)

@@ -1,7 +1,7 @@
 # nyc_flights gets an input for every column
 
     Code
-      as_filters(nyc_flights)
+      shinyfilters(nyc_flights)
     Output
       -- <shinyfilters> - 7 filters --------------------------------------------------
       

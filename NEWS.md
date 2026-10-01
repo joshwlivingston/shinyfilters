@@ -4,7 +4,11 @@
 
 * `nyc_flights` is a new example dataset of flights departing New York City (#36).
 
-* `as_filters()` and `with_filter()` now choose which input `filterInput()` creates for each column of a data frame (#111).
+* `across_filters()` is a new function that chooses one input for the columns it selects, for use inside `with_filter()` or `mutate()` (#105).
+
+* `mutate()` now chooses which input `filterInput()` creates for a column, either by column name or with `across_filters()` or `across()` to select several columns (#105).
+
+* `shinyfilters()` and `with_filter()` now choose which input `filterInput()` creates for each column of a data frame (#111).
 
 ## Minor improvements
 
