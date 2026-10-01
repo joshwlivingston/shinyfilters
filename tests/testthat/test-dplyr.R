@@ -148,3 +148,10 @@ test_that("as.data.table() returns the data", {
 		data.table::as.data.table(df_config)
 	)
 })
+
+test_that("the class name the S3 registrations use is stable", {
+	expect_identical(
+		class(shinyfilters(df_config))[[1]],
+		"shinyfilters::shinyfilters"
+	)
+})

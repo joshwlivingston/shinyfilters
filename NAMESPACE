@@ -2,11 +2,6 @@
 
 S3method(as.character,shinyfilters::shinyfilters)
 S3method(as.data.frame,shinyfilters::shinyfilters)
-S3method(data.table::as.data.table,shinyfilters::shinyfilters)
-S3method(dplyr::mutate,shinyfilters::shinyfilters)
-S3method(dplyr::pull,shinyfilters::shinyfilters)
-S3method(dplyr::select,shinyfilters::shinyfilters)
-S3method(tibble::as_tibble,shinyfilters::shinyfilters)
 export(across_filters)
 export(all_of)
 export(any_of)

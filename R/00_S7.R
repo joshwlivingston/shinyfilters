@@ -75,6 +75,7 @@ prop_ns <- new_property(
 ## Class ####
 class_shinyfilters <- new_class(
 	"shinyfilters",
+	package = "shinyfilters",
 	properties = list(
 		data = class_data.frame,
 		args = prop_args,

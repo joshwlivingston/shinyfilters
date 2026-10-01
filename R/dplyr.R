@@ -45,12 +45,10 @@
 #' select(filters, origin, carrier)
 NULL
 
-#' @exportS3Method dplyr::select shinyfilters::shinyfilters
 `select.shinyfilters::shinyfilters` <- function(.data, ...) {
 	.data[c(...)]
 }
 
-#' @exportS3Method dplyr::pull shinyfilters::shinyfilters
 `pull.shinyfilters::shinyfilters` <- function(
 	.data,
 	var = -1,
@@ -72,7 +70,6 @@ SHINYFILTERS_ACROSS <- "across_filters"
 DPLYR_ACROSS <- "across"
 MUTATE_ACROSS_NAMES <- c(SHINYFILTERS_ACROSS, DPLYR_ACROSS)
 
-#' @exportS3Method dplyr::mutate shinyfilters::shinyfilters
 `mutate.shinyfilters::shinyfilters` <- function(.data, ...) {
 	call <- current_env()
 	quos <- enquos(...)
@@ -121,12 +118,10 @@ MUTATE_ACROSS_NAMES <- c(SHINYFILTERS_ACROSS, DPLYR_ACROSS)
 	return(x@data)
 }
 
-#' @exportS3Method tibble::as_tibble shinyfilters::shinyfilters
 `as_tibble.shinyfilters::shinyfilters` <- function(x, ...) {
 	tibble::as_tibble(x@data)
 }
 
-#' @exportS3Method data.table::as.data.table shinyfilters::shinyfilters
 `as.data.table.shinyfilters::shinyfilters` <- function(x, ...) {
 	data.table::as.data.table(x@data)
 }
