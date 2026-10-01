@@ -1,7 +1,8 @@
 # shinyfilters(): `ns` must be result of shiny::NS()
 
     Code
-      shinyfilters(data.frame(a = letters), ns = function(x) x)
+      shinyfilters(data.frame(stringsAsFactors = FALSE, a = letters), ns = function(x)
+        x)
     Condition
       Error in `shinyfilters()`:
       ! `ns` must be the result of calling `shiny::NS()`.
@@ -118,12 +119,13 @@
       ! "range" isn't available for <numeric> columns.
       i Use "radio", "selectize", or "slider" instead.
     Code
-      filterInput(with_filter(shinyfilters(data.frame(a = NA_integer_)), a = "radio"))
+      filterInput(with_filter(shinyfilters(data.frame(stringsAsFactors = FALSE, a = NA_integer_)),
+      a = "radio"))
     Condition
       Error in `filterInput()`:
       ! Column a must have at least one non-missing value.
     Code
-      filterInput(shinyfilters(data.frame(a = NA_integer_)))
+      filterInput(shinyfilters(data.frame(stringsAsFactors = FALSE, a = NA_integer_)))
     Condition
       Error in `filterInput()`:
       ! Column a must have at least one non-missing value.
@@ -173,7 +175,7 @@
         x                      <int>  numericInput
         a_very_very_long_name  <dbl>  numericInput
     Code
-      print(shinyfilters(data.frame(x = "a")))
+      print(shinyfilters(data.frame(stringsAsFactors = FALSE, x = "a")))
     Output
       -- <shinyfilters> - 1 filter ---------------------------------------------------
       
