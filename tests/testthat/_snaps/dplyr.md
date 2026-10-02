@@ -126,9 +126,10 @@
       dplyr::mutate(cfg, 1 + 1)
     Condition
       Error in `dplyr::mutate()`:
-      ! Each argument to `mutate()` must be named or use `across()`.
+      ! Each argument to `mutate()` must be named or use `across()` or `with_ns()`.
       i Named: `mutate(filters, origin = "radio")`.
       i `across()`: `mutate(filters, across(where(is.numeric), "slider"))`.
+      i `with_ns()`: `mutate(filters, with_ns(NS("id")))`.
     Code
       dplyr::mutate(cfg, nope = "radio")
     Condition

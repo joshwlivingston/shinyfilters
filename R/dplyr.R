@@ -126,9 +126,10 @@ MUTATE_ACROSS_NAMES <- c(SHINYFILTERS_ACROSS, DPLYR_ACROSS)
 	if (any(nms == "" & !is_across & !is_ns)) {
 		cli_abort(
 			c(
-				"Each argument to {.fn mutate} must be named or use {.fn across}.",
+				"Each argument to {.fn mutate} must be named or use {.fn across} or {.fn with_ns}.",
 				i = "Named: {.code mutate(filters, origin = \"radio\")}.",
-				i = "{.fn across}: {.code mutate(filters, across(where(is.numeric), \"slider\"))}."
+				i = "{.fn across}: {.code mutate(filters, across(where(is.numeric), \"slider\"))}.",
+				i = "{.fn with_ns}: {.code mutate(filters, with_ns(NS(\"id\")))}."
 			),
 			call = call
 		)
