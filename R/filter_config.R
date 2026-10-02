@@ -170,11 +170,12 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	if (length(cols) == 0) {
 		cli_abort("{.code {label}} doesn't select any columns.", call = call)
 	}
+	added <- x@added[intersect(names(x@added), cols)]
 	set_props(
 		x,
 		data = x@data[cols],
 		overrides = x@overrides[intersect(names(x@overrides), cols)],
-		added = intersect(x@added, cols)
+		added = if (length(added) > 0) added else character()
 	)
 }
 
@@ -209,7 +210,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	data <- x@data
 	nms <- names(data)
 	overridden <- nms %in% names(x@overrides)
-	added <- nms %in% x@added
+	added <- nms %in% names(x@added)
 
 	n_filters <- ncol(data)
 	header <- format_inline("{n_filters} filter{?s}")
@@ -269,9 +270,10 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 		)
 	}
 	if (any(added)) {
+		fns <- sort(unique(unname(x@added[nms[added]])))
 		cat_line(
 			dot_added,
-			col_grey(format_inline(" Column added by {.fn mutate}"))
+			col_grey(format_inline(" Column added by {.or {.fn {fns}}}"))
 		)
 	}
 	invisible(x)
@@ -392,8 +394,9 @@ SHINY_INPUTS <- list(
 #' Choose the Input for Columns
 #'
 #' `with_filter()` sets the input that [filterInput()] creates for one or more
-#' columns of a configuration made by [shinyfilters()]. When a column is set
-#' more than once, the last call wins.
+#' columns of a configuration made by [shinyfilters()], and adds or replaces
+#' columns computed from the others. When a column is set more than once, the
+#' last call wins.
 #'
 #' @param config A configuration created by [shinyfilters()].
 #' @param ... Either two unnamed arguments, or any number of named arguments
@@ -403,6 +406,10 @@ SHINY_INPUTS <- list(
 #'     <[`tidy-select`][tidyselect::language]>, such as `cyl`,
 #'     `c(mpg, disp)`, or `where(is.numeric)`.
 #'   * `with_filter(config, col = input, ...)`: each name is a column.
+#'   * `with_filter(config, col = expression, ...)`: adds or replaces a
+#'     column, computed from the other columns. A replaced column keeps its
+#'     input. A function or a single string is always read as an input; any
+#'     other value is the column's data.
 #'   * `with_filter(config, across_filters(cols, input), ...)`:
 #'     [across_filters()] selects columns and names one input for all of
 #'     them, and can be mixed with named columns.
@@ -435,6 +442,9 @@ SHINY_INPUTS <- list(
 #'   across_filters(where(is.character), "selectize"),
 #'   origin = "radio"
 #' )
+#'
+#' # Add a column computed from the others
+#' with_filter(filters, delay_sq = dep_delay^2)
 #' @export
 with_filter <- function(config, ...) {
 	if (!S7_inherits(config, class_shinyfilters)) {
@@ -491,11 +501,7 @@ method(.with_filter, class_shinyfilters) <- function(
 		._abort_with_filter_form(quos[loose], call = .call)
 	}
 
-	unknown <- setdiff(nms[named], names(config@data))
-	if (length(unknown) > 0) {
-		cli_abort("Can't find column{?s} {.field {unknown}}.", call = .call)
-	}
-
+	# One argument at a time, so each sees the columns the earlier ones computed.
 	for (i in seq_along(quos)) {
 		if (is_across[[i]]) {
 			spec <- ._across_spec(quos[[i]], call = .call)
@@ -507,7 +513,13 @@ method(.with_filter, class_shinyfilters) <- function(
 				fn = .fn
 			)
 		} else {
-			config <- ._override_named(config, quos[i], call = .call, fn = .fn)
+			config <- ._set_column(
+				config,
+				nms[[i]],
+				quos[[i]],
+				call = .call,
+				fn = .fn
+			)
 		}
 	}
 
@@ -556,8 +568,65 @@ method(.with_filter, class_shinyfilters) <- function(
 	._set_overrides(config, overrides)
 }
 
-._override_named <- function(config, quos, call, fn) {
-	._set_overrides(config, lapply(quos, ._new_override, call = call, fn = fn))
+# A function or a single string chooses the column's input; any other value is
+# the column's data, computed from the other columns.
+._set_column <- function(config, name, quo, call, fn) {
+	label <- as_label(quo)
+	data <- config@data
+	value <- try_fetch(
+		eval_tidy(quo, data = data),
+		error = function(cnd) {
+			cli_abort(
+				c(
+					"Can't evaluate {.code {name} = {label}}.",
+					i = if (is_symbol(quo_get_expr(quo))) {
+						"Keywords are strings, e.g. {.code \"radio\"}."
+					}
+				),
+				parent = cnd,
+				call = call
+			)
+		}
+	)
+
+	if (is.function(value) || is_string(value)) {
+		if (!(name %in% names(data))) {
+			cli_abort(
+				c(
+					"Can't find column {.field {name}}.",
+					x = "{.code {label}} chooses the input for an existing column.",
+					i = "To add a column, compute it from the others: {.code {fn}(filters, {name} = <expression>)}."
+				),
+				call = call
+			)
+		}
+		override <- list(
+			input = resolve_filter_override(value, call = call),
+			label = label,
+			fn = fn
+		)
+		return(._set_overrides(config, set_names(list(override), name)))
+	}
+
+	n <- nrow(data)
+	if (!is_vector(value) || is.data.frame(value)) {
+		cli_abort(
+			"Column {.field {name}} must be a vector, not {.obj_type_friendly {value}}.",
+			call = call
+		)
+	}
+	if (!(length(value) %in% c(1L, n))) {
+		cli_abort(
+			"Column {.field {name}} must have 1 or {n} value{?s}, not {length(value)}.",
+			call = call
+		)
+	}
+	added <- config@added
+	if (!(name %in% names(data))) {
+		added[[name]] <- fn
+	}
+	data[[name]] <- if (length(value) == 1) rep(value, n) else value
+	set_props(config, data = data, added = added)
 }
 
 ._set_overrides <- function(config, overrides) {

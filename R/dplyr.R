@@ -148,7 +148,13 @@ MUTATE_ACROSS_NAMES <- c(SHINYFILTERS_ACROSS, DPLYR_ACROSS)
 		} else if (is_ns[[i]]) {
 			.data <- ._mutate_ns(.data, quos[[i]], call = call)
 		} else {
-			.data <- ._mutate_column(.data, nms[[i]], quos[[i]], call = call)
+			.data <- ._set_column(
+				.data,
+				nms[[i]],
+				quos[[i]],
+				call = call,
+				fn = "mutate"
+			)
 		}
 	}
 	.data
@@ -170,64 +176,6 @@ MUTATE_ACROSS_NAMES <- c(SHINYFILTERS_ACROSS, DPLYR_ACROSS)
 	}
 	ns <- eval_tidy(args[[1]], env = quo_get_env(quo))
 	with_ns(config, ns)
-}
-
-# A function or a single string chooses the column's input; any other value is
-# the column's data, computed from the other columns.
-._mutate_column <- function(config, name, quo, call) {
-	label <- as_label(quo)
-	data <- config@data
-	value <- try_fetch(
-		eval_tidy(quo, data = data),
-		error = function(cnd) {
-			cli_abort(
-				c(
-					"Can't evaluate {.code {name} = {label}}.",
-					i = if (is_symbol(quo_get_expr(quo))) {
-						"Keywords are strings, e.g. {.code \"radio\"}."
-					}
-				),
-				parent = cnd,
-				call = call
-			)
-		}
-	)
-
-	if (is.function(value) || is_string(value)) {
-		if (!(name %in% names(data))) {
-			cli_abort(
-				c(
-					"Can't find column {.field {name}}.",
-					x = "{.code {label}} chooses the input for an existing column.",
-					i = "To add a column, compute it from the others: {.code mutate(filters, {name} = <expression>)}."
-				),
-				call = call
-			)
-		}
-		override <- list(
-			input = resolve_filter_override(value, call = call),
-			label = label,
-			fn = "mutate"
-		)
-		return(._set_overrides(config, set_names(list(override), name)))
-	}
-
-	n <- nrow(data)
-	if (!is_vector(value) || is.data.frame(value)) {
-		cli_abort(
-			"Column {.field {name}} must be a vector, not {.obj_type_friendly {value}}.",
-			call = call
-		)
-	}
-	if (!(length(value) %in% c(1L, n))) {
-		cli_abort(
-			"Column {.field {name}} must have 1 or {n} value{?s}, not {length(value)}.",
-			call = call
-		)
-	}
-	added <- union(config@added, setdiff(name, names(data)))
-	data[[name]] <- if (length(value) == 1) rep(value, n) else value
-	set_props(config, data = data, added = added)
 }
 
 # shiny renders the page after its restore context has closed, so inputs

@@ -7,6 +7,35 @@
       Error in `shinyfilters()`:
       ! `ns` must be the result of calling `shiny::NS()`.
 
+# print() marks columns added by with_filter()
+
+    Code
+      print(cfg)
+    Output
+      - <shinyfilters> - 5 filters
+      
+        letters                <chr>  selectInput
+        factors                <fct>  selectInput
+        x                      <int>  numericInput
+        a_very_very_long_name  <dbl>  numericInput
+        y                      <dbl>  numericInput  *
+      
+      * Column added by `with_filter()`
+    Code
+      print(cfg["y"])
+    Output
+      - <shinyfilters> - 1 filter
+      
+        y  <dbl>  numericInput  *
+      
+      * Column added by `with_filter()`
+    Code
+      print(cfg["x"])
+    Output
+      - <shinyfilters> - 1 filter
+      
+        x  <int>  numericInput
+
 # shinyfilters() and with_filter() errors
 
     Code
@@ -66,6 +95,8 @@
     Condition
       Error in `with_filter()`:
       ! Can't find column nope.
+      x `"radio"` chooses the input for an existing column.
+      i To add a column, compute it from the others: `with_filter(filters, nope = <expression>)`.
     Code
       with_filter(cfg, nope, "radio")
     Condition
@@ -98,10 +129,22 @@
       Caused by error:
       ! object 'radio' not found
     Code
-      with_filter(cfg, x = 1)
+      with_filter(cfg, y = nope * 2)
     Condition
       Error in `with_filter()`:
-      ! An input must be a keyword or a function, not a number.
+      ! Can't evaluate `y = nope * 2`.
+      Caused by error:
+      ! object 'nope' not found
+    Code
+      with_filter(cfg, y = 1:2)
+    Condition
+      Error in `with_filter()`:
+      ! Column y must have 1 or 3 values, not 2.
+    Code
+      with_filter(cfg, y = NULL)
+    Condition
+      Error in `with_filter()`:
+      ! Column y must be a vector, not NULL.
     Code
       filterInput(with_filter(cfg, factors = "slider"))
     Condition

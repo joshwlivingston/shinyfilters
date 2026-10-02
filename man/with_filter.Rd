@@ -16,6 +16,10 @@ and \code{\link[=across_filters]{across_filters()}} calls:
 <\code{\link[tidyselect:language]{tidy-select}}>, such as \code{cyl},
 \code{c(mpg, disp)}, or \code{where(is.numeric)}.
 \item \code{with_filter(config, col = input, ...)}: each name is a column.
+\item \code{with_filter(config, col = expression, ...)}: adds or replaces a
+column, computed from the other columns. A replaced column keeps its
+input. A function or a single string is always read as an input; any
+other value is the column's data.
 \item \code{with_filter(config, across_filters(cols, input), ...)}:
 \code{\link[=across_filters]{across_filters()}} selects columns and names one input for all of
 them, and can be mixed with named columns.
@@ -35,8 +39,9 @@ The updated configuration.
 }
 \description{
 \code{with_filter()} sets the input that \code{\link[=filterInput]{filterInput()}} creates for one or more
-columns of a configuration made by \code{\link[=shinyfilters]{shinyfilters()}}. When a column is set
-more than once, the last call wins.
+columns of a configuration made by \code{\link[=shinyfilters]{shinyfilters()}}, and adds or replaces
+columns computed from the others. When a column is set more than once, the
+last call wins.
 }
 \examples{
 filters <- shinyfilters(nyc_flights)
@@ -53,6 +58,9 @@ with_filter(
   across_filters(where(is.character), "selectize"),
   origin = "radio"
 )
+
+# Add a column computed from the others
+with_filter(filters, delay_sq = dep_delay^2)
 }
 \seealso{
 \code{\link[=shinyfilters]{shinyfilters()}}, \code{\link[=across_filters]{across_filters()}}

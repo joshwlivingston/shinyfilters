@@ -172,6 +172,44 @@ test_that("with_filter(): last write wins", {
 	)
 })
 
+test_that("with_filter() adds and replaces columns", {
+	cfg <- shinyfilters(df_config)
+	added <- with_filter(cfg, y = x^2, flag = TRUE, z = y + 1)
+	expect_identical(
+		as.data.frame(added),
+		transform(df_config, y = x^2, flag = TRUE, z = x^2 + 1)
+	)
+
+	replaced <- with_filter(with_filter(cfg, x = "radio"), x = x / 2)
+	expect_identical(as.data.frame(replaced)$x, df_config$x / 2)
+	expect_identical(
+		filterInput(replaced),
+		filterInput(with_filter(shinyfilters(as.data.frame(replaced)), x = "radio"))
+	)
+
+	expect_identical(
+		filterInput(with_filter(
+			with_filter(cfg, y = x * 2),
+			y = "slider",
+			across_filters(letters, "radio")
+		)),
+		filterInput(with_filter(
+			shinyfilters(transform(df_config, y = x * 2)),
+			y = "slider",
+			letters = "radio"
+		))
+	)
+})
+
+test_that("print() marks columns added by with_filter()", {
+	cfg <- with_filter(shinyfilters(df_config), y = x * 2)
+	expect_snapshot(variant = snapshot_variant(), {
+		print(cfg)
+		print(cfg["y"])
+		print(cfg["x"])
+	})
+})
+
 test_that("filterInput(<shinyfilters>, ...) merges with global arguments", {
 	expect_identical(
 		filterInput(shinyfilters(df_config), slider = TRUE),
@@ -237,7 +275,9 @@ test_that("shinyfilters() and with_filter() errors", {
 		with_filter(cfg, x = "radioo")
 		with_filter(cfg, x, c("radio", "slider"))
 		with_filter(cfg, x, radio)
-		with_filter(cfg, x = 1)
+		with_filter(cfg, y = nope * 2)
+		with_filter(cfg, y = 1:2)
+		with_filter(cfg, y = NULL)
 		filterInput(with_filter(cfg, factors = "slider"))
 		filterInput(with_filter(cfg, a_very_very_long_name = "range"))
 		filterInput(with_filter(
