@@ -219,20 +219,20 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	header <- format_inline("{n_filters} filter{?s}")
 	if (!is.null(x@ns)) {
 		header <- paste(
-			header,
-			symbol$bullet,
-			format_inline("namespace {.val {x@ns(character())}}")
+			cli::col_br_white(header),
+			col_grey(symbol$bullet),
+			col_grey("namespace"),
+			format_inline("{.val {resolve_ns(x@ns)(character())}}")
 		)
 	}
-	cat_line(paste(symbol$line, col_blue("<shinyfilters>"), symbol$line, header))
+	cat_line(paste(
+		col_magenta("<shinyfilters>"),
+		col_grey(symbol$bullet),
+		header
+	))
 
-	if (length(x@args) > 0) {
-		values <- vapply(x@args, ._format_arg, character(1))
-		defaults <- paste(names(values), "=", values, collapse = ", ")
-		cat_line(col_grey("Defaults"), "  ", defaults)
-	}
 	cat_line()
-
+	cat_line(col_grey("Filters"))
 	inputs <- ._dry_run_inputs(x)
 	is_error <- startsWith(inputs, symbol$cross)
 	width <- max(0L, ansi_nchar(inputs[!is_error], type = "width"))
@@ -243,8 +243,10 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	)
 	dot <- if (is_utf8_output()) "\u25cf" else "*"
 	dot_input <- col_blue(dot)
-	dot_added <- col_green(dot)
-	dot_replaced <- col_yellow(dot)
+	plus <- if (is_utf8_output()) "\uff0b" else "+"
+	dot_added <- col_green(plus)
+	swap <- if (is_utf8_output()) "\u21c4" else "→"
+	dot_replaced <- col_yellow(swap)
 	marker <- paste0(
 		ifelse(overridden | added | replaced, "  ", ""),
 		ifelse(overridden, dot_input, ""),
@@ -263,6 +265,18 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	)
 	cat_line(sub("\\s+$", "", lines))
 
+	cat_line()
+	if (length(x@args) > 0) {
+		values <- vapply(x@args, ._format_arg, character(1))
+		cat_line(col_grey("Default Overrides"))
+		cat_line(paste0(
+			"  ",
+			._pad(names(values)),
+			" = ",
+			col_blue(values)
+		))
+	}
+
 	if (any(overridden) || any(added) || any(replaced)) {
 		cat_line()
 	}
@@ -271,21 +285,21 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 		fns <- sort(unique(fns))
 		cat_line(
 			dot_input,
-			col_grey(format_inline(" Input chosen by {.or {.fn {fns}}}"))
+			col_grey(format_inline(" Filter chosen by {.or {.fn {fns}}}"))
 		)
 	}
 	if (any(added)) {
 		fns <- sort(unique(unname(x@added[nms[added]])))
 		cat_line(
 			dot_added,
-			col_grey(format_inline(" Column added by {.or {.fn {fns}}}"))
+			col_grey(format_inline(" Filter added by {.or {.fn {fns}}}"))
 		)
 	}
 	if (any(replaced)) {
 		fns <- sort(unique(unname(x@replaced[nms[replaced]])))
 		cat_line(
 			dot_replaced,
-			col_grey(format_inline(" Column replaced by {.or {.fn {fns}}}"))
+			col_grey(format_inline(" Filter replaced by {.or {.fn {fns}}}"))
 		)
 	}
 	invisible(x)
@@ -709,61 +723,19 @@ method(.with_filter, class_shinyfilters) <- function(
 #' # Remove it
 #' with_ns(filters, NULL)
 #' @export
-with_ns <- new_generic(
-	name = "with_ns",
-	dispatch_args = c("config", "ns")
-)
-
-## Method: character ####
-method(
-	with_ns,
-	list(class_shinyfilters, class_character)
-) <- function(config, ns, ...) {
-	if (!is_string(ns) || is.na(ns)) {
-		._abort_ns_type(ns)
-	}
-	set_props(config, ns = NS(ns))
-}
-
-## Method: function ####
-method(
-	with_ns,
-	list(class_shinyfilters, class_function)
-) <- function(config, ns, ...) {
-	._check_valid_shiny_ns(ns, call = call2("with_ns"))
-	set_props(config, ns = ns)
-}
-
-## Method: NULL ####
-method(
-	with_ns,
-	list(class_shinyfilters, class_NULL)
-) <- function(config, ns, ...) {
-	set_props(config, ns = NULL)
-}
-
-## Method: any ####
-method(with_ns, list(class_any, class_any)) <- function(config, ns, ...) {
-	if (!S7_inherits(config, class_shinyfilters)) {
-		cli_abort(
-			"{.arg config} must be created by {.fn shinyfilters}, not {.obj_type_friendly {config}}.",
-			call = call2("with_ns")
-		)
-	}
+with_ns <- function(config, ns) {
 	if (missing(ns)) {
 		cli_abort(
-			"{.arg ns} must be supplied. Use {.code NULL} to remove the namespace.",
-			call = call2("with_ns")
+			"{.arg ns} must be supplied. Use {.code NULL} to remove the namespace."
 		)
 	}
-	._abort_ns_type(ns)
-}
-
-._abort_ns_type <- function(ns) {
-	cli_abort(
-		"{.arg ns} must be a string, the result of calling {.fn shiny::NS}, or {.code NULL}, not {.obj_type_friendly {ns}}.",
-		call = call2("with_ns")
-	)
+	if (!S7_inherits(config, class_shinyfilters)) {
+		cli_abort(c(
+			"{.arg config} must be a {.cls shinyfilters} object, not {.obj_type_friendly {config}}.",
+			"i" = "Usage: {.code {caller_arg(config)} |> shinyfilters() |> with_ns({caller_arg(ns)})}"
+		))
+	}
+	set_props(config, ns = ns)
 }
 
 # Function: with_defaults() ####

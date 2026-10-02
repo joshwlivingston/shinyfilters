@@ -10,8 +10,9 @@ with_defaults(config, ...)
 \item{config}{A configuration created by \code{\link[=shinyfilters]{shinyfilters()}}.}
 
 \item{...}{Named arguments passed to \code{\link[=filterInput]{filterInput()}} for every column, such
-as \code{slider = TRUE} or \code{selectize = TRUE}. An argument set to \code{NULL} is
-removed. Arguments not named here keep their current values.}
+as \code{slider = TRUE} or \code{selectize = TRUE}. An argument set to \code{NULL}, or
+an input flag such as \code{slider} set to \code{FALSE}, its default, is removed.
+Arguments not named here keep their current values.}
 }
 \value{
 The updated configuration.
@@ -22,17 +23,18 @@ configuration made by \code{\link[=shinyfilters]{shinyfilters()}} passes to \cod
 column.
 }
 \examples{
-filters <- shinyfilters(nyc_flights, slider = TRUE)
+filters <- shinyfilters(nyc_flights, slider = TRUE, width = "200px")
 
 # Add a default
 filters <- with_defaults(filters, range = TRUE)
 filters
 
 # Replace one
-with_defaults(filters, slider = FALSE)
+with_defaults(filters, width = "100\%")
 
-# Remove one
+# Remove one, with `NULL` or its default value
 with_defaults(filters, slider = NULL)
+with_defaults(filters, range = FALSE)
 }
 \seealso{
 \code{\link[=shinyfilters]{shinyfilters()}}, \code{\link[=with_filter]{with_filter()}}, \code{\link[=with_ns]{with_ns()}}

@@ -3,23 +3,29 @@
     Code
       print(dplyr::mutate(cfg, across(letters, my_select)))
     Output
-      - <shinyfilters> - 4 filters
+      <shinyfilters> - 4 filters
       
+      Filters
         letters                <chr>  my_select     *
         factors                <fct>  selectInput
         x                      <int>  numericInput
         a_very_very_long_name  <dbl>  numericInput
+      
+      
       
       * Input chosen by `mutate()`
     Code
       print(dplyr::mutate(cfg, letters = my_select))
     Output
-      - <shinyfilters> - 4 filters
+      <shinyfilters> - 4 filters
       
+      Filters
         letters                <chr>  my_select     *
         factors                <fct>  selectInput
         x                      <int>  numericInput
         a_very_very_long_name  <dbl>  numericInput
+      
+      
       
       * Input chosen by `mutate()`
 
@@ -28,26 +34,32 @@
     Code
       print(cfg)
     Output
-      - <shinyfilters> - 5 filters
+      <shinyfilters> - 5 filters
       
+      Filters
         letters                <chr>  selectInput
         factors                <fct>  selectInput
         x                      <dbl>  numericInput  *
         a_very_very_long_name  <dbl>  numericInput
         y                      <dbl>  numericInput  *
       
+      
+      
       * Column added by `mutate()`
       * Column replaced by `mutate()`
     Code
       print(dplyr::mutate(cfg, y = "slider", letters = "radio"))
     Output
-      - <shinyfilters> - 5 filters
+      <shinyfilters> - 5 filters
       
+      Filters
         letters                <chr>  radioButtons  *
         factors                <fct>  selectInput
         x                      <dbl>  numericInput  *
         a_very_very_long_name  <dbl>  numericInput
         y                      <dbl>  sliderInput   **
+      
+      
       
       * Input chosen by `mutate()`
       * Column added by `mutate()`
@@ -55,23 +67,29 @@
     Code
       print(dplyr::select(cfg, x, letters))
     Output
-      - <shinyfilters> - 2 filters
+      <shinyfilters> - 2 filters
       
+      Filters
         x        <dbl>  numericInput  *
         letters  <chr>  selectInput
+      
+      
       
       * Column replaced by `mutate()`
     Code
       print(with_filter(cfg, z = y + 1, x = x / 2))
     Output
-      - <shinyfilters> - 6 filters
+      <shinyfilters> - 6 filters
       
+      Filters
         letters                <chr>  selectInput
         factors                <fct>  selectInput
         x                      <dbl>  numericInput  *
         a_very_very_long_name  <dbl>  numericInput
         y                      <dbl>  numericInput  *
         z                      <dbl>  numericInput  *
+      
+      
       
       * Column added by `mutate()` or `with_filter()`
       * Column replaced by `with_filter()`
@@ -81,34 +99,43 @@
     Code
       print(cfg)
     Output
-      - <shinyfilters> - 4 filters
+      <shinyfilters> - 4 filters
       
+      Filters
         letters                <chr>  selectInput
         factors                <fct>  selectInput
         x                      <int>  sliderInput   *
         a_very_very_long_name  <dbl>  numericInput
+      
+      
       
       * Input chosen by `mutate()`
     Code
       print(with_filter(cfg, letters = "radio"))
     Output
-      - <shinyfilters> - 4 filters
+      <shinyfilters> - 4 filters
       
+      Filters
         letters                <chr>  radioButtons  *
         factors                <fct>  selectInput
         x                      <int>  sliderInput   *
         a_very_very_long_name  <dbl>  numericInput
       
+      
+      
       * Input chosen by `mutate()` or `with_filter()`
     Code
       print(with_filter(cfg, x = "radio"))
     Output
-      - <shinyfilters> - 4 filters
+      <shinyfilters> - 4 filters
       
+      Filters
         letters                <chr>  selectInput
         factors                <fct>  selectInput
         x                      <int>  radioButtons  *
         a_very_very_long_name  <dbl>  numericInput
+      
+      
       
       * Input chosen by `with_filter()`
 
@@ -209,9 +236,16 @@
       i Remove it: `mutate(filters, with_ns(NULL))`.
     Code
       dplyr::mutate(cfg, with_ns(1))
-    Condition
-      Error in `with_ns()`:
-      ! `ns` must be a string, the result of calling `shiny::NS()`, or `NULL`, not a number.
+    Output
+      <shinyfilters> - 4 filters * namespace "1"
+      
+      Filters
+        letters                <chr>  x Can't find method for `._apply_ns(<double>)`.
+        factors                <fct>  x Can't find method for `._apply_ns(<double>)`.
+        x                      <int>  x Can't find method for `._apply_ns(<double>)`.
+        a_very_very_long_name  <dbl>  x Can't find method for `._apply_ns(<double>)`.
+      
+      
 
 # pull() errors
 

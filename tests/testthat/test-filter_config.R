@@ -366,6 +366,14 @@ test_that("with_defaults() adds, replaces, and removes defaults", {
 	)
 	expect_identical(with_defaults(cfg), cfg)
 	expect_identical(
+		with_defaults(cfg, slider = FALSE),
+		with_defaults(cfg, slider = NULL)
+	)
+	expect_identical(
+		shinyfilters(df_config, slider = FALSE, width = FALSE)@args,
+		list(width = FALSE)
+	)
+	expect_identical(
 		with_defaults(
 			shinyfilters(df_config, options = list(a = 1)),
 			options = list(b = 2)

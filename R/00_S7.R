@@ -63,7 +63,7 @@ class_shinyfilters <- new_class(
 	properties = list(
 		data = class_data.frame,
 		args = class_list,
-		ns = class_NULL | class_function,
+		ns = class_any,
 		overrides = class_list,
 		added = class_character,
 		replaced = class_character
@@ -79,11 +79,6 @@ class_shinyfilters <- new_class(
 			if (anyDuplicated(names(self@args))) {
 				return("must have unique names")
 			}
-		}
-
-		# ns
-		if (!is.null(self@ns) && !._is_valid_ns_function(self@ns)) {
-			return("must be the result of calling `shiny::NS()`")
 		}
 	}
 )

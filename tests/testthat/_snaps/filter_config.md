@@ -12,57 +12,69 @@
     Code
       print(cfg)
     Output
-      - <shinyfilters> - 5 filters
+      <shinyfilters> - 5 filters
       
+      Filters
         letters                <chr>  selectInput
         factors                <fct>  selectInput
         x                      <int>  numericInput
         a_very_very_long_name  <dbl>  numericInput
         y                      <dbl>  numericInput  *
       
-      * Column added by `with_filter()`
+      
+      * Filter added by `with_filter()`
     Code
       print(cfg["y"])
     Output
-      - <shinyfilters> - 1 filter
+      <shinyfilters> - 1 filter
       
+      Filters
         y  <dbl>  numericInput  *
       
-      * Column added by `with_filter()`
+      
+      * Filter added by `with_filter()`
     Code
       print(cfg["x"])
     Output
-      - <shinyfilters> - 1 filter
+      <shinyfilters> - 1 filter
       
+      Filters
         x  <int>  numericInput
+      
 
 # print() marks columns replaced by with_filter()
 
     Code
       print(cfg)
     Output
-      - <shinyfilters> - 4 filters
+      <shinyfilters> - 4 filters
       
+      Filters
         letters                <chr>  selectInput
         factors                <fct>  selectInput
         x                      <dbl>  numericInput  *
         a_very_very_long_name  <dbl>  numericInput
       
-      * Column replaced by `with_filter()`
+      
+      * Filter replaced by `with_filter()`
     Code
       print(cfg["x"])
     Output
-      - <shinyfilters> - 1 filter
+      <shinyfilters> - 1 filter
       
+      Filters
         x  <dbl>  numericInput  *
       
-      * Column replaced by `with_filter()`
+      
+      * Filter replaced by `with_filter()`
     Code
       print(cfg["letters"])
     Output
-      - <shinyfilters> - 1 filter
+      <shinyfilters> - 1 filter
       
+      Filters
         letters  <chr>  selectInput
+      
 
 # shinyfilters() and with_filter() errors
 
@@ -207,11 +219,14 @@
       with_ns(df_config, shiny::NS("m"))
     Condition
       Error in `with_ns()`:
-      ! `config` must be created by `shinyfilters()`, not a data frame.
+      ! `config` must be a <shinyfilters> object, not a data frame.
+      i Usage: `df_config |> shinyfilters() |> with_ns(shiny::NS("m"))`
     Code
       with_ns(cfg, function(x) x)
     Condition
-      Error in `with_ns()`:
+      Error:
+      ! ! Could not evaluate cli `{}` expression: `resolve_ns(x@ns)(...`.
+      Caused by error in `resolve_ns(x@ns)`:
       ! `ns` must be the result of calling `shiny::NS()`.
     Code
       with_ns(cfg)
@@ -220,19 +235,37 @@
       ! `ns` must be supplied. Use `NULL` to remove the namespace.
     Code
       with_ns(cfg, c("m", "n"))
-    Condition
-      Error in `with_ns()`:
-      ! `ns` must be a string, the result of calling `shiny::NS()`, or `NULL`, not a character vector.
+    Output
+      <shinyfilters> - 4 filters * namespace "m-n"
+      
+      Filters
+        letters                <chr>  selectInput
+        factors                <fct>  selectInput
+        x                      <int>  numericInput
+        a_very_very_long_name  <dbl>  numericInput
+      
     Code
       with_ns(cfg, NA_character_)
-    Condition
-      Error in `with_ns()`:
-      ! `ns` must be a string, the result of calling `shiny::NS()`, or `NULL`, not a character `NA`.
+    Output
+      <shinyfilters> - 4 filters * namespace "NA"
+      
+      Filters
+        letters                <chr>  selectInput
+        factors                <fct>  selectInput
+        x                      <int>  numericInput
+        a_very_very_long_name  <dbl>  numericInput
+      
     Code
       with_ns(cfg, 1)
-    Condition
-      Error in `with_ns()`:
-      ! `ns` must be a string, the result of calling `shiny::NS()`, or `NULL`, not a number.
+    Output
+      <shinyfilters> - 4 filters * namespace "1"
+      
+      Filters
+        letters                <chr>  x Can't find method for `._apply_ns(<double>)`.
+        factors                <fct>  x Can't find method for `._apply_ns(<double>)`.
+        x                      <int>  x Can't find method for `._apply_ns(<double>)`.
+        a_very_very_long_name  <dbl>  x Can't find method for `._apply_ns(<double>)`.
+      
 
 # with_defaults() errors
 
@@ -259,82 +292,103 @@
     Code
       print(with_ns(cfg, shiny::NS("other")))
     Output
-      - <shinyfilters> - 4 filters * namespace "other"
+      <shinyfilters> - 4 filters * namespace "other"
       
+      Filters
         letters                <chr>  selectInput
         factors                <fct>  selectInput
         x                      <int>  numericInput
         a_very_very_long_name  <dbl>  numericInput
+      
     Code
       print(with_ns(cfg, NULL))
     Output
-      - <shinyfilters> - 4 filters
+      <shinyfilters> - 4 filters
       
+      Filters
         letters                <chr>  selectInput
         factors                <fct>  selectInput
         x                      <int>  numericInput
         a_very_very_long_name  <dbl>  numericInput
+      
 
 # print() shows each column's input
 
     Code
       print(shinyfilters(df_config))
     Output
-      - <shinyfilters> - 4 filters
+      <shinyfilters> - 4 filters
       
+      Filters
         letters                <chr>  selectInput
         factors                <fct>  selectInput
         x                      <int>  numericInput
         a_very_very_long_name  <dbl>  numericInput
+      
     Code
       print(cfg)
     Output
-      - <shinyfilters> - 4 filters * namespace "m"
-      Defaults  slider = TRUE
+      <shinyfilters> - 4 filters * namespace "m"
       
+      Filters
         letters                <chr>  my_select     *
         factors                <fct>  selectInput
         x                      <int>  radioButtons  *
         a_very_very_long_name  <dbl>  sliderInput
       
+      Default Overrides
+    Message
+        slider = TRUE
+    Output
+      
       * Input chosen by `with_filter()`
     Code
       print(with_filter(shinyfilters(df_config), factors = "slider"))
     Output
-      - <shinyfilters> - 4 filters
+      <shinyfilters> - 4 filters
       
+      Filters
         letters                <chr>  selectInput
         factors                <fct>  x "slider" isn't available for <factor> columns.  *
         x                      <int>  numericInput
         a_very_very_long_name  <dbl>  numericInput
       
+      
       * Input chosen by `with_filter()`
     Code
       print(shinyfilters(df_config, args_unique = "bad"))
     Output
-      - <shinyfilters> - 4 filters
-      Defaults  args_unique = "bad"
+      <shinyfilters> - 4 filters
       
+      Filters
         letters                <chr>  x `args_unique` must be a list, not a string.
         factors                <fct>  x `args_unique` must be a list, not a string.
         x                      <int>  numericInput
         a_very_very_long_name  <dbl>  numericInput
+      
+      Default Overrides
+    Message
+        args_unique = "bad"
     Code
       print(shinyfilters(data.frame(stringsAsFactors = FALSE, x = "a")))
     Output
-      - <shinyfilters> - 1 filter
+      <shinyfilters> - 1 filter
       
+      Filters
         x  <chr>  selectInput
+      
 
 # print() resolves custom methods
 
     Code
       print(shinyfilters(df))
     Output
-      - <shinyfilters> - 2 filters
+      <shinyfilters> - 2 filters
       
+      Filters
         radio   <chr>  radioButtons
         custom  <chr>  <custom>
+      
 
 # `$` and `[[` error on unknown columns
 
@@ -369,11 +423,16 @@
     Code
       print(cfg[c("letters", "x")])
     Output
-      - <shinyfilters> - 2 filters
-      Defaults  slider = TRUE
+      <shinyfilters> - 2 filters
       
+      Filters
         letters  <chr>  selectInput
         x        <int>  radioButtons  *
+      
+      Default Overrides
+    Message
+        slider = TRUE
+    Output
       
       * Input chosen by `with_filter()`
 

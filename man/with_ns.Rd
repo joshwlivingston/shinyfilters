@@ -4,7 +4,7 @@
 \alias{with_ns}
 \title{Change the Namespace of a Configuration}
 \usage{
-with_ns(config, ns, ...)
+with_ns(config, ns)
 }
 \arguments{
 \item{config}{A configuration created by \code{\link[=shinyfilters]{shinyfilters()}}.}
