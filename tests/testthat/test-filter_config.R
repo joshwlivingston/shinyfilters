@@ -226,6 +226,14 @@ test_that("print() keeps a recomputed added column marked as added", {
 	expect_no_match(out, "Column replaced by", fixed = TRUE)
 })
 
+test_that("print() shows one marker per row", {
+	cfg <- shinyfilters(df_config, slider = TRUE, selectize = TRUE)
+	cfg <- with_filter(cfg, y = x * 2, x = x / 2, z = letters)
+	cfg <- with_filter(cfg, a_very_very_long_name = a_very_very_long_name + 1)
+	cfg <- with_filter(cfg, x = "radio", a_very_very_long_name = numericInput)
+	expect_snapshot(print(cfg), variant = snapshot_variant())
+})
+
 test_that("filterInput(<shinyfilters>, ...) merges with global arguments", {
 	expect_identical(
 		filterInput(shinyfilters(df_config), slider = TRUE),

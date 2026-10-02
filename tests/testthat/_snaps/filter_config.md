@@ -76,6 +76,28 @@
         letters  <chr>  selectInput
       
 
+# print() shows one marker per row
+
+    Code
+      print(cfg)
+    Output
+      <shinyfilters> * 6 filters
+      
+      Filters
+        letters                <chr>  selectizeInput  #
+        factors                <fct>  selectizeInput  #
+        x                      <dbl>  radioButtons    *
+        a_very_very_long_name  <dbl>  numericInput    *
+        y                      <dbl>  sliderInput     #
+        z                      <chr>  selectizeInput  #
+      
+      Default Overrides
+        slider    = TRUE
+        selectize = TRUE
+      
+      * Filter chosen by `with_filter()`
+      # Filter set by default argument
+
 # shinyfilters() and with_filter() errors
 
     Code
@@ -321,12 +343,13 @@
         letters                <chr>  my_select     *
         factors                <fct>  selectInput
         x                      <int>  radioButtons  *
-        a_very_very_long_name  <dbl>  sliderInput
+        a_very_very_long_name  <dbl>  sliderInput   #
       
       Default Overrides
         slider = TRUE
       
       * Filter chosen by `with_filter()`
+      # Filter set by default argument
     Code
       print(with_filter(shinyfilters(df_config), factors = "slider"))
     Output
@@ -346,13 +369,15 @@
       <shinyfilters> * 4 filters
       
       Filters
-        letters                <chr>  x `args_unique` must be a list, not a string.
-        factors                <fct>  x `args_unique` must be a list, not a string.
+        letters                <chr>  x `args_unique` must be a list, not a string.  #
+        factors                <fct>  x `args_unique` must be a list, not a string.  #
         x                      <int>  numericInput
         a_very_very_long_name  <dbl>  numericInput
       
       Default Overrides
         args_unique = "bad"
+      
+      # Filter set by default argument
     Code
       print(shinyfilters(data.frame(stringsAsFactors = FALSE, x = "a")))
     Output

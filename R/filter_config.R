@@ -255,9 +255,18 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	dot_added <- col_green(plus)
 	swap <- if (is_utf8_output()) "\u21c4" else "→"
 	dot_replaced <- col_yellow(swap)
+	diamond <- if (is_utf8_output()) "◆" else "#"
+	dot_default <- col_magenta(diamond)
+
+	# One marker per row: whatever decided the input wins over where the column
+	# came from.
+	defaulted <- !overridden & ._set_by_default(x, inputs)
+	added <- added & !overridden & !defaulted
+	replaced <- replaced & !overridden & !defaulted
 	marker <- paste0(
-		ifelse(overridden | added | replaced, "  ", ""),
+		ifelse(overridden | defaulted | added | replaced, "  ", ""),
 		ifelse(overridden, dot_input, ""),
+		ifelse(defaulted, dot_default, ""),
 		ifelse(added, dot_added, ""),
 		ifelse(replaced, dot_replaced, "")
 	)
@@ -285,7 +294,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 		))
 	}
 
-	if (any(overridden) || any(added) || any(replaced)) {
+	if (any(overridden) || any(defaulted) || any(added) || any(replaced)) {
 		cat_line()
 	}
 	if (any(overridden)) {
@@ -295,6 +304,9 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 			dot_input,
 			col_grey(format_inline(" Filter chosen by {.or {.fn {fns}}}"))
 		)
+	}
+	if (any(defaulted)) {
+		cat_line(dot_default, col_grey(" Filter set by default argument"))
 	}
 	if (any(added)) {
 		fns <- sort(unique(unname(x@added[nms[added]])))
@@ -311,6 +323,15 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 		)
 	}
 	invisible(x)
+}
+
+# Columns whose input differs from the one they get without the default
+# overrides
+._set_by_default <- function(config, inputs) {
+	if (length(config@args) == 0) {
+		return(rep(FALSE, length(inputs)))
+	}
+	inputs != ._dry_run_inputs(set_props(config, args = list()))
 }
 
 ._pad <- function(x) {
