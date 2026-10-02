@@ -58,7 +58,14 @@ shinyfilters <- function(data, ..., ns = NULL) {
 	if (length(args) > 0) {
 		check_named_list_or_null(args, arg = "...")
 	}
-	class_shinyfilters(data = data, args = args, ns = ns)
+	class_shinyfilters(data = data, args = ._drop_flags_off(args), ns = ns)
+}
+
+# Drops input flags set to `FALSE`, their default
+._drop_flags_off <- function(args) {
+	is_flag <- names(args) %in% names(INPUT_KEYWORDS)
+	is_off <- vapply(args, isFALSE, logical(1))
+	args[!(is_flag & is_off)]
 }
 
 ## Method: filterInput() ####
@@ -747,25 +754,27 @@ with_ns <- function(config, ns) {
 #'
 #' @param config A configuration created by [shinyfilters()].
 #' @param ... Named arguments passed to [filterInput()] for every column, such
-#'   as `slider = TRUE` or `selectize = TRUE`. An argument set to `NULL` is
-#'   removed. Arguments not named here keep their current values.
+#'   as `slider = TRUE` or `selectize = TRUE`. An argument set to `NULL`, or
+#'   an input flag such as `slider` set to `FALSE`, its default, is removed.
+#'   Arguments not named here keep their current values.
 #'
 #' @returns The updated configuration.
 #'
 #' @seealso [shinyfilters()], [with_filter()], [with_ns()]
 #'
 #' @examples
-#' filters <- shinyfilters(nyc_flights, slider = TRUE)
+#' filters <- shinyfilters(nyc_flights, slider = TRUE, width = "200px")
 #'
 #' # Add a default
 #' filters <- with_defaults(filters, range = TRUE)
 #' filters
 #'
 #' # Replace one
-#' with_defaults(filters, slider = FALSE)
+#' with_defaults(filters, width = "100%")
 #'
-#' # Remove one
+#' # Remove one, with `NULL` or its default value
 #' with_defaults(filters, slider = NULL)
+#' with_defaults(filters, range = FALSE)
 #' @export
 with_defaults <- function(config, ...) {
 	if (!S7_inherits(config, class_shinyfilters)) {
@@ -789,6 +798,7 @@ with_defaults <- function(config, ...) {
 	for (name in names(args)) {
 		defaults[[name]] <- args[[name]]
 	}
+	defaults <- ._drop_flags_off(defaults)
 	set_props(config, args = if (length(defaults) > 0) defaults else list())
 }
 

@@ -12,31 +12,31 @@
     Code
       print(cfg)
     Output
-      <shinyfilters> - 5 filters
+      <shinyfilters> * 5 filters
       
       Filters
         letters                <chr>  selectInput
         factors                <fct>  selectInput
         x                      <int>  numericInput
         a_very_very_long_name  <dbl>  numericInput
-        y                      <dbl>  numericInput  *
+        y                      <dbl>  numericInput  +
       
       
-      * Filter added by `with_filter()`
+      + Filter added by `with_filter()`
     Code
       print(cfg["y"])
     Output
-      <shinyfilters> - 1 filter
+      <shinyfilters> * 1 filter
       
       Filters
-        y  <dbl>  numericInput  *
+        y  <dbl>  numericInput  +
       
       
-      * Filter added by `with_filter()`
+      + Filter added by `with_filter()`
     Code
       print(cfg["x"])
     Output
-      <shinyfilters> - 1 filter
+      <shinyfilters> * 1 filter
       
       Filters
         x  <int>  numericInput
@@ -47,30 +47,30 @@
     Code
       print(cfg)
     Output
-      <shinyfilters> - 4 filters
+      <shinyfilters> * 4 filters
       
       Filters
         letters                <chr>  selectInput
         factors                <fct>  selectInput
-        x                      <dbl>  numericInput  *
+        x                      <dbl>  numericInput  →
         a_very_very_long_name  <dbl>  numericInput
       
       
-      * Filter replaced by `with_filter()`
+      → Filter replaced by `with_filter()`
     Code
       print(cfg["x"])
     Output
-      <shinyfilters> - 1 filter
+      <shinyfilters> * 1 filter
       
       Filters
-        x  <dbl>  numericInput  *
+        x  <dbl>  numericInput  →
       
       
-      * Filter replaced by `with_filter()`
+      → Filter replaced by `with_filter()`
     Code
       print(cfg["letters"])
     Output
-      <shinyfilters> - 1 filter
+      <shinyfilters> * 1 filter
       
       Filters
         letters  <chr>  selectInput
@@ -236,7 +236,7 @@
     Code
       with_ns(cfg, c("m", "n"))
     Output
-      <shinyfilters> - 4 filters * namespace "m-n"
+      <shinyfilters> * 4 filters * namespace "m-n"
       
       Filters
         letters                <chr>  selectInput
@@ -247,7 +247,7 @@
     Code
       with_ns(cfg, NA_character_)
     Output
-      <shinyfilters> - 4 filters * namespace "NA"
+      <shinyfilters> * 4 filters * namespace "NA"
       
       Filters
         letters                <chr>  selectInput
@@ -258,7 +258,7 @@
     Code
       with_ns(cfg, 1)
     Output
-      <shinyfilters> - 4 filters * namespace "1"
+      <shinyfilters> * 4 filters * namespace "1"
       
       Filters
         letters                <chr>  x Can't find method for `._apply_ns(<double>)`.
@@ -292,7 +292,7 @@
     Code
       print(with_ns(cfg, shiny::NS("other")))
     Output
-      <shinyfilters> - 4 filters * namespace "other"
+      <shinyfilters> * 4 filters * namespace "other"
       
       Filters
         letters                <chr>  selectInput
@@ -303,7 +303,7 @@
     Code
       print(with_ns(cfg, NULL))
     Output
-      <shinyfilters> - 4 filters
+      <shinyfilters> * 4 filters
       
       Filters
         letters                <chr>  selectInput
@@ -317,7 +317,7 @@
     Code
       print(shinyfilters(df_config))
     Output
-      <shinyfilters> - 4 filters
+      <shinyfilters> * 4 filters
       
       Filters
         letters                <chr>  selectInput
@@ -328,7 +328,7 @@
     Code
       print(cfg)
     Output
-      <shinyfilters> - 4 filters * namespace "m"
+      <shinyfilters> * 4 filters * namespace "m"
       
       Filters
         letters                <chr>  my_select     *
@@ -337,15 +337,13 @@
         a_very_very_long_name  <dbl>  sliderInput
       
       Default Overrides
-    Message
         slider = TRUE
-    Output
       
-      * Input chosen by `with_filter()`
+      * Filter chosen by `with_filter()`
     Code
       print(with_filter(shinyfilters(df_config), factors = "slider"))
     Output
-      <shinyfilters> - 4 filters
+      <shinyfilters> * 4 filters
       
       Filters
         letters                <chr>  selectInput
@@ -354,11 +352,11 @@
         a_very_very_long_name  <dbl>  numericInput
       
       
-      * Input chosen by `with_filter()`
+      * Filter chosen by `with_filter()`
     Code
       print(shinyfilters(df_config, args_unique = "bad"))
     Output
-      <shinyfilters> - 4 filters
+      <shinyfilters> * 4 filters
       
       Filters
         letters                <chr>  x `args_unique` must be a list, not a string.
@@ -367,12 +365,11 @@
         a_very_very_long_name  <dbl>  numericInput
       
       Default Overrides
-    Message
         args_unique = "bad"
     Code
       print(shinyfilters(data.frame(stringsAsFactors = FALSE, x = "a")))
     Output
-      <shinyfilters> - 1 filter
+      <shinyfilters> * 1 filter
       
       Filters
         x  <chr>  selectInput
@@ -383,7 +380,7 @@
     Code
       print(shinyfilters(df))
     Output
-      <shinyfilters> - 2 filters
+      <shinyfilters> * 2 filters
       
       Filters
         radio   <chr>  radioButtons
@@ -423,18 +420,16 @@
     Code
       print(cfg[c("letters", "x")])
     Output
-      <shinyfilters> - 2 filters
+      <shinyfilters> * 2 filters
       
       Filters
         letters  <chr>  selectInput
         x        <int>  radioButtons  *
       
       Default Overrides
-    Message
         slider = TRUE
-    Output
       
-      * Input chosen by `with_filter()`
+      * Filter chosen by `with_filter()`
 
 # `[` errors on unknown columns
 
