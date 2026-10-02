@@ -260,7 +260,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 
 	# One marker per row: whatever decided the input wins over where the column
 	# came from.
-	defaulted <- !overridden & ._set_by_default(x, inputs)
+	defaulted <- !overridden & !is_error & ._set_by_default(x, inputs)
 	added <- added & !overridden & !defaulted
 	replaced <- replaced & !overridden & !defaulted
 	marker <- paste0(

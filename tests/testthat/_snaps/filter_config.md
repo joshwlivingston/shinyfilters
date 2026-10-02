@@ -369,15 +369,13 @@
       <shinyfilters> * 4 filters
       
       Filters
-        letters                <chr>  x `args_unique` must be a list, not a string.  #
-        factors                <fct>  x `args_unique` must be a list, not a string.  #
+        letters                <chr>  x `args_unique` must be a list, not a string.
+        factors                <fct>  x `args_unique` must be a list, not a string.
         x                      <int>  numericInput
         a_very_very_long_name  <dbl>  numericInput
       
       Default Overrides
         args_unique = "bad"
-      
-      # Filter set by default argument
     Code
       print(shinyfilters(data.frame(stringsAsFactors = FALSE, x = "a")))
     Output
