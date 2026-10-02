@@ -4,41 +4,34 @@
 
 `shinyfilters()` is a new function to configure filters. It displays an informative print and allows for configuration without extending methods directly. The functions listed here support `shinyfilters` objects (#111).
 
-### Select columns
+### Choose columns
 
 * `[` and `dplyr::select()` keep only the selected columns of a configuration (#105).
-* `[[` and `dplyr::pull()` return the input for one column of a configuration (#105).
-* The tidyselect helpers, such as `everything()` and `where()`, are re-exported and supported (#105).
+* `[[`, `$`, and `dplyr::pull()` return the input for one column of a configuration (#105).
+* The tidyselect helpers, such as `everything()` and `where()`, are re-exported and supported in `dplyr` functions, as well as `[` and `[[`.
 
 ### Add, remove, or modify filters
-
-#### `with_filter()`
 
 * `with_filter()` chooses the input for columns, and adds or replaces computed columns (#105, #111).
 * `dplyr::mutate()` is supported, matching `with_filter()`'s behavior.
 * `dplyr::transmute()` is also supported, leaving only the columns called in `transmute()`.
-
-#### `across_filters()`
-
 * `across_filters()` mirrors `dplyr::across()`, for `shinyfilters` objects (#105).
 * `dplyr::across()` is also supported.
 
 ### Update defaults
 
-* `with_defaults()` is sets or removes the arguments a configuration passes to `filterInput()` for every column (#105).
-
-### Update namespace
-
+* `with_defaults()` is sets or removes the arguments a configuration passed to `filterInput()` for every column (#105).
 * `with_ns()` is sets or removes the namespace of a configuration (#105).
 
-### Return data
+### View data
 
-* `as.data.frame()`, `as_tibble()`, and `as.data.table()` return the data of a configuration (#105).
+* `print()` displays the current configuration and if/how any settings were applied.
+* `as.data.frame()`, `as_tibble()`, and `as.data.table()` return the data.frame behind a configuration (#105).
 
 ## Other new features
 
 * Error and warning messages use cli formatting.
-* `nyc_flights` is a new example dataset of flights departing New York City (#36).
+* `nyc_flights` is a new example dataset of [flights departing New York City](https://nycflights13.tidyverse.org/) (#36).
 
 ## Minor improvements
 
