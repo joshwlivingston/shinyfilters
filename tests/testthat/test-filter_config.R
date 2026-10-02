@@ -22,6 +22,16 @@ test_that("shinyfilters() without overrides matches filterInput(<data.frame>)", 
 	)
 })
 
+test_that("column and argument names don't partial-match the configuration", {
+	df <- data.frame(stringsAsFactors = FALSE, c = c("a", "b"), con = 1:2)
+	cfg <- shinyfilters(df)
+	expect_identical(
+		with_filter(cfg, c = "radio", con = "slider"),
+		with_filter(with_filter(cfg, "c", "radio"), "con", "slider")
+	)
+	expect_identical(with_defaults(cfg, c = 1)@args, list(c = 1))
+})
+
 test_that("with_filter() call forms are equivalent", {
 	cfg <- shinyfilters(df_config, slider = TRUE)
 	expected <- filterInput(with_filter(cfg, x = "radio"))

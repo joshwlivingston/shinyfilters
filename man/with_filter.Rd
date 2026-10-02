@@ -4,24 +4,24 @@
 \alias{with_filter}
 \title{Choose the Input for Columns}
 \usage{
-with_filter(config, ...)
+with_filter(.config, ...)
 }
 \arguments{
-\item{config}{A configuration created by \code{\link[=shinyfilters]{shinyfilters()}}.}
+\item{.config}{A configuration created by \code{\link[=shinyfilters]{shinyfilters()}}.}
 
 \item{...}{Either two unnamed arguments, or any number of named arguments
 and \code{\link[=across_filters]{across_filters()}} calls:
 \itemize{
-\item \code{with_filter(config, cols, input)}: \code{cols} selects columns with
+\item \code{with_filter(.config, cols, input)}: \code{cols} selects columns with
 <\code{\link[tidyselect:language]{tidy-select}}>, such as \code{cyl},
 \code{c(mpg, disp)}, or \code{where(is.numeric)}.
-\item \code{with_filter(config, col = input, ...)}: each name is a column.
-\item \code{with_filter(config, col = expression, ...)}: adds or replaces a
+\item \code{with_filter(.config, col = input, ...)}: each name is a column.
+\item \code{with_filter(.config, col = expression, ...)}: adds or replaces a
 column, computed from the other columns. A replaced column keeps its
 input. A function or a single string is always read as an input; any
 other value is the column's data. A column takes precedence over a
 variable of the same name.
-\item \code{with_filter(config, across_filters(cols, input), ...)}:
+\item \code{with_filter(.config, across_filters(cols, input), ...)}:
 \code{\link[=across_filters]{across_filters()}} selects columns and names one input for all of
 them, and can be mixed with named columns.
 }
