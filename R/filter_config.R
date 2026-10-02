@@ -255,7 +255,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	dot_added <- col_green(plus)
 	swap <- if (is_utf8_output()) "\u21c4" else "→"
 	dot_replaced <- col_yellow(swap)
-	diamond <- if (is_utf8_output()) "◆" else "#"
+	diamond <- if (is_utf8_output()) "\u25c6" else "#"
 	dot_default <- col_magenta(diamond)
 
 	# One marker per row: whatever decided the input wins over where the column
