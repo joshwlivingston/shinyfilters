@@ -189,6 +189,68 @@ test_that("mutate() errors", {
 	})
 })
 
+test_that("transmute() keeps only the columns it names", {
+	skip_if_not_installed("dplyr")
+	cfg <- shinyfilters(df_config)
+	kept <- dplyr::transmute(cfg, y = x * 2, x = "radio")
+	expect_identical(names(kept), c("y", "x"))
+	expect_identical(
+		as.data.frame(kept),
+		transform(df_config, y = x * 2)[c("y", "x")]
+	)
+	expect_identical(
+		filterInput(kept),
+		filterInput(dplyr::select(dplyr::mutate(cfg, y = x * 2, x = "radio"), y, x))
+	)
+	expect_identical(names(dplyr::transmute(cfg, x = "radio", x = x / 2)), "x")
+})
+
+test_that("transmute() keeps the columns across() selects", {
+	skip_if_not_installed("dplyr")
+	cfg <- shinyfilters(df_config)
+	expect_identical(
+		filterInput(dplyr::transmute(cfg, across(where(is.numeric), "slider"))),
+		filterInput(dplyr::select(
+			with_filter(cfg, where(is.numeric), "slider"),
+			where(is.numeric)
+		))
+	)
+	expect_identical(
+		names(dplyr::transmute(
+			cfg,
+			letters = "radio",
+			across_filters(c(x, letters), "selectize"),
+			y = x * 2
+		)),
+		c("letters", "x", "y")
+	)
+})
+
+test_that("transmute() changes the namespace with with_ns()", {
+	skip_if_not_installed("dplyr")
+	cfg <- shinyfilters(df_config)
+	ns <- shiny::NS("m")
+	expect_identical(
+		filterInput(dplyr::transmute(cfg, with_ns(ns), x = "radio")),
+		filterInput(with_ns(with_filter(cfg, x = "radio"), ns)["x"])
+	)
+})
+
+test_that("transmute() errors", {
+	skip_if_not_installed("dplyr")
+	cfg <- shinyfilters(df_config)
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+		dplyr::transmute(cfg, .keep = "none")
+		dplyr::transmute(cfg, 1 + 1)
+		dplyr::transmute(cfg, nope = "radio")
+
+		dplyr::transmute(cfg)
+		dplyr::transmute(cfg, with_ns("m"))
+		dplyr::transmute(cfg, with_ns())
+		dplyr::transmute(cfg, across(starts_with("nope"), "radio"))
+	})
+})
+
 test_that("pull() returns one column's input", {
 	skip_if_not_installed("dplyr")
 	cfg <- shinyfilters(df_config)

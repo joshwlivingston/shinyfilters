@@ -237,6 +237,54 @@
         a_very_very_long_name  <dbl>  numericInput
       
 
+# transmute() errors
+
+    Code
+      dplyr::transmute(cfg, .keep = "none")
+    Condition
+      Error in `dplyr::transmute()`:
+      ! `transmute()` doesn't support `.keep` for a <shinyfilters> object.
+      i It chooses inputs and computes columns; it doesn't drop or move them.
+    Code
+      dplyr::transmute(cfg, 1 + 1)
+    Condition
+      Error in `dplyr::transmute()`:
+      ! Each argument to `transmute()` must be named or use `across()` or `with_ns()`.
+      i Named: `transmute(filters, origin = "radio")`.
+      i `across()`: `transmute(filters, across(where(is.numeric), "slider"))`.
+      i `with_ns()`: `transmute(filters, with_ns("id"))`.
+    Code
+      dplyr::transmute(cfg, nope = "radio")
+    Condition
+      Error in `dplyr::transmute()`:
+      ! Can't find column nope.
+      x `"radio"` chooses the input for an existing column.
+      i To add a column, compute it from the others: `transmute(filters, nope = <expression>)`.
+    Code
+      dplyr::transmute(cfg)
+    Condition
+      Error in `dplyr::transmute()`:
+      ! `transmute()` must keep at least one column.
+      i Name columns: `transmute(filters, origin = "radio")`.
+    Code
+      dplyr::transmute(cfg, with_ns("m"))
+    Condition
+      Error in `dplyr::transmute()`:
+      ! `transmute()` must keep at least one column.
+      i Name columns: `transmute(filters, origin = "radio")`.
+    Code
+      dplyr::transmute(cfg, with_ns())
+    Condition
+      Error in `dplyr::transmute()`:
+      ! `with_ns()` takes only `ns` inside `transmute()`.
+      i Set a namespace: `transmute(filters, with_ns("id"))`.
+      i Remove it: `transmute(filters, with_ns(NULL))`.
+    Code
+      dplyr::transmute(cfg, across(starts_with("nope"), "radio"))
+    Condition
+      Error in `dplyr::transmute()`:
+      ! `starts_with("nope")` doesn't select any columns.
+
 # pull() errors
 
     Code

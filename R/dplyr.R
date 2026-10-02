@@ -96,8 +96,10 @@ SHINYFILTERS_ACROSS <- "across_filters"
 DPLYR_ACROSS <- "across"
 MUTATE_ACROSS_NAMES <- c(SHINYFILTERS_ACROSS, DPLYR_ACROSS)
 
-`mutate.shinyfilters::shinyfilters` <- function(.data, ...) {
-	call <- current_env()
+# `.keep_used` is `transmute()`: only the columns the arguments name or select
+# are kept, in the order they first appear.
+._mutate_impl <- function(.data, ..., .fn, .call, .keep_used = FALSE) {
+	fn <- .fn
 	quos <- enquos(...)
 	nms <- names2(quos)
 
@@ -105,10 +107,10 @@ MUTATE_ACROSS_NAMES <- c(SHINYFILTERS_ACROSS, DPLYR_ACROSS)
 	if (length(reserved) > 0) {
 		cli_abort(
 			c(
-				"{.fn mutate} doesn't support {.arg {reserved}} for a {.cls shinyfilters} object.",
+				"{.fn {fn}} doesn't support {.arg {reserved}} for a {.cls shinyfilters} object.",
 				i = "It chooses inputs and computes columns; it doesn't drop or move them."
 			),
-			call = call
+			call = .call
 		)
 	}
 
@@ -126,50 +128,81 @@ MUTATE_ACROSS_NAMES <- c(SHINYFILTERS_ACROSS, DPLYR_ACROSS)
 	if (any(nms == "" & !is_across & !is_ns)) {
 		cli_abort(
 			c(
-				"Each argument to {.fn mutate} must be named or use {.fn across} or {.fn with_ns}.",
-				i = "Named: {.code mutate(filters, origin = \"radio\")}.",
-				i = "{.fn across}: {.code mutate(filters, across(where(is.numeric), \"slider\"))}.",
-				i = "{.fn with_ns}: {.code mutate(filters, with_ns(\"id\"))}."
+				"Each argument to {.fn {fn}} must be named or use {.fn across} or {.fn with_ns}.",
+				i = "Named: {.code {fn}(filters, origin = \"radio\")}.",
+				i = "{.fn across}: {.code {fn}(filters, across(where(is.numeric), \"slider\"))}.",
+				i = "{.fn with_ns}: {.code {fn}(filters, with_ns(\"id\"))}."
 			),
-			call = call
+			call = .call
 		)
 	}
 
+	used <- character()
 	# One argument at a time, so each sees the columns the earlier ones computed.
 	for (i in seq_along(quos)) {
 		if (is_across[[i]]) {
 			.data <- inject(.with_filter(
 				.data,
 				!!!quos[i],
-				.call = call,
+				.call = .call,
 				.across = MUTATE_ACROSS_NAMES,
-				.fn = "mutate"
+				.fn = fn
 			))
+			cols <- ._across_spec(quos[[i]], call = .call)$cols
+			used <- c(used, names(eval_select(cols, .data@data)))
 		} else if (is_ns[[i]]) {
-			.data <- ._mutate_ns(.data, quos[[i]], call = call)
+			.data <- ._mutate_ns(.data, quos[[i]], call = .call, fn = fn)
 		} else {
+			used <- c(used, nms[[i]])
 			.data <- ._set_column(
 				.data,
 				nms[[i]],
 				quos[[i]],
-				call = call,
-				fn = "mutate"
+				call = .call,
+				fn = fn
 			)
 		}
 	}
-	.data
+	if (!.keep_used) {
+		return(.data)
+	}
+	used <- unique(used)
+	if (length(used) == 0) {
+		cli_abort(
+			c(
+				"{.fn {fn}} must keep at least one column.",
+				i = "Name columns: {.code {fn}(filters, origin = \"radio\")}."
+			),
+			call = .call
+		)
+	}
+	._select_columns(.data, new_quosure(used), "", .call)
+}
+
+`mutate.shinyfilters::shinyfilters` <- function(.data, ...) {
+	._mutate_impl(.data, ..., .fn = "mutate", .call = current_env())
+}
+
+`transmute.shinyfilters::shinyfilters` <- function(.data, ...) {
+	._mutate_impl(
+		.data,
+		...,
+		.fn = "transmute",
+		.call = current_env(),
+		.keep_used = TRUE
+	)
 }
 
 # `with_ns()` takes the configuration from `mutate()`, so the call is captured
 # and only its `ns` is evaluated.
-._mutate_ns <- function(config, quo, call) {
+._mutate_ns <- function(config, quo, call, fn) {
 	args <- call_args(quo_get_expr(quo))
 	if (length(args) != 1 || !(names2(args) %in% c("", "ns"))) {
 		cli_abort(
 			c(
-				"{.fn with_ns} takes only {.arg ns} inside {.fn mutate}.",
-				i = "Set a namespace: {.code mutate(filters, with_ns(\"id\"))}.",
-				i = "Remove it: {.code mutate(filters, with_ns(NULL))}."
+				"{.fn with_ns} takes only {.arg ns} inside {.fn {fn}}.",
+				i = "Set a namespace: {.code {fn}(filters, with_ns(\"id\"))}.",
+				i = "Remove it: {.code {fn}(filters, with_ns(NULL))}."
 			),
 			call = call
 		)
