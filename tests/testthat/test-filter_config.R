@@ -358,6 +358,13 @@ test_that("with_defaults() adds, replaces, and removes defaults", {
 		with_filter(shinyfilters(df_config), x = "radio")
 	)
 	expect_identical(with_defaults(cfg), cfg)
+	expect_identical(
+		with_defaults(
+			shinyfilters(df_config, options = list(a = 1)),
+			options = list(b = 2)
+		),
+		shinyfilters(df_config, options = list(b = 2))
+	)
 })
 
 test_that("with_defaults() errors", {

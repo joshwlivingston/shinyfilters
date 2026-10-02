@@ -812,8 +812,12 @@ with_defaults <- function(config, ...) {
 			"i" = "Use {.fn with_ns} to change the namespace."
 		))
 	}
-	args <- modifyList(config@args, args)
-	set_props(config, args = if (length(args) > 0) args else list())
+	# Not `modifyList()`: it merges list values instead of replacing them.
+	defaults <- config@args
+	for (name in names(args)) {
+		defaults[[name]] <- args[[name]]
+	}
+	set_props(config, args = if (length(defaults) > 0) defaults else list())
 }
 
 # Generic: resolve_filter_override() ####
