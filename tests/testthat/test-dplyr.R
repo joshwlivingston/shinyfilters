@@ -139,6 +139,7 @@ test_that("mutate() errors", {
 
 		dplyr::mutate(cfg, y = shiny::selectInput)
 		dplyr::mutate(cfg, y = nope * 2)
+		dplyr::mutate(cfg, x = radio)
 		dplyr::mutate(cfg, y = 1:2)
 		dplyr::mutate(cfg, y = NULL)
 	})

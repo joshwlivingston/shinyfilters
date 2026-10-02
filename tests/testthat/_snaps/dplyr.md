@@ -83,9 +83,16 @@
     Condition
       Error in `dplyr::mutate()`:
       ! Can't evaluate `y = nope * 2`.
-      i Keywords are strings, e.g. `"radio"`.
       Caused by error:
       ! object 'nope' not found
+    Code
+      dplyr::mutate(cfg, x = radio)
+    Condition
+      Error in `dplyr::mutate()`:
+      ! Can't evaluate `x = radio`.
+      i Keywords are strings, e.g. `"radio"`.
+      Caused by error:
+      ! object 'radio' not found
     Code
       dplyr::mutate(cfg, y = 1:2)
     Condition
