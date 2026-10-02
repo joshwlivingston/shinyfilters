@@ -52,21 +52,21 @@
       Filters
         letters                <chr>  selectInput
         factors                <fct>  selectInput
-        x                      <dbl>  numericInput  →
+        x                      <dbl>  numericInput  ~
         a_very_very_long_name  <dbl>  numericInput
       
       
-      → Filter replaced by `with_filter()`
+      ~ Filter replaced by `with_filter()`
     Code
       print(cfg["x"])
     Output
       <shinyfilters> * 1 filter
       
       Filters
-        x  <dbl>  numericInput  →
+        x  <dbl>  numericInput  ~
       
       
-      → Filter replaced by `with_filter()`
+      ~ Filter replaced by `with_filter()`
     Code
       print(cfg["letters"])
     Output

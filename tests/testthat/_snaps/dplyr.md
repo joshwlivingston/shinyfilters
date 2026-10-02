@@ -37,13 +37,13 @@
       Filters
         letters                <chr>  selectInput
         factors                <fct>  selectInput
-        x                      <dbl>  numericInput  →
+        x                      <dbl>  numericInput  ~
         a_very_very_long_name  <dbl>  numericInput
         y                      <dbl>  numericInput  +
       
       
       + Filter added by `mutate()`
-      → Filter replaced by `mutate()`
+      ~ Filter replaced by `mutate()`
     Code
       print(dplyr::mutate(cfg, y = "slider", letters = "radio"))
     Output
@@ -52,24 +52,24 @@
       Filters
         letters                <chr>  radioButtons  *
         factors                <fct>  selectInput
-        x                      <dbl>  numericInput  →
+        x                      <dbl>  numericInput  ~
         a_very_very_long_name  <dbl>  numericInput
         y                      <dbl>  sliderInput   *
       
       
       * Filter chosen by `mutate()`
-      → Filter replaced by `mutate()`
+      ~ Filter replaced by `mutate()`
     Code
       print(dplyr::select(cfg, x, letters))
     Output
       <shinyfilters> * 2 filters
       
       Filters
-        x        <dbl>  numericInput  →
+        x        <dbl>  numericInput  ~
         letters  <chr>  selectInput
       
       
-      → Filter replaced by `mutate()`
+      ~ Filter replaced by `mutate()`
     Code
       print(with_filter(cfg, z = y + 1, x = x / 2))
     Output
@@ -78,14 +78,14 @@
       Filters
         letters                <chr>  selectInput
         factors                <fct>  selectInput
-        x                      <dbl>  numericInput  →
+        x                      <dbl>  numericInput  ~
         a_very_very_long_name  <dbl>  numericInput
         y                      <dbl>  numericInput  +
         z                      <dbl>  numericInput  +
       
       
       + Filter added by `mutate()` or `with_filter()`
-      → Filter replaced by `with_filter()`
+      ~ Filter replaced by `with_filter()`
 
 # print() names the functions that chose inputs
 
