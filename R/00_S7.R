@@ -80,5 +80,10 @@ class_shinyfilters <- new_class(
 				return("must have unique names")
 			}
 		}
+
+		# ns
+		if (is.function(self@ns) && !._is_valid_ns_function(self@ns)) {
+			return("must be created using shiny::NS()")
+		}
 	}
 )

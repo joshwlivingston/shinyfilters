@@ -289,36 +289,6 @@ call_filter_input <- function(x, .f, ...) {
 	args
 }
 
-# Generic: ._apply_ns ####
-._apply_ns <- new_generic("._apply_ns", "ns")
-
-method(._apply_ns, class_any) <- function(ns, ..., call = caller_env()) {
-	._apply_ns(NS(ns), ..., call = call)
-}
-
-method(._apply_ns, class_function) <- function(ns, ..., call = caller_env()) {
-	._check_valid_shiny_ns(ns, call = call)
-
-	args <- list(...)
-
-	input_id_column <- arg_name_input_id(args$x)
-	if (is.null(input_id_column)) {
-		cli_abort(
-			"{.code arg_name_input_id(x)} must not return {.code NULL} when {.arg ns} is provided.",
-			call = call
-		)
-	}
-	if (is.null(args[[input_id_column]])) {
-		cli_abort(
-			"{.arg {input_id_column}} is required when {.arg ns} is provided.",
-			call = call
-		)
-	}
-
-	args[[input_id_column]] <- ns(args[[input_id_column]])
-	return(args)
-}
-
 
 # Function: ._input_discrete_choice ####
 ._input_discrete_choice <- function(x, ..., call = caller_env()) {

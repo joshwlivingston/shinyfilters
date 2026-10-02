@@ -225,11 +225,12 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	n_filters <- ncol(data)
 	header <- format_inline("{n_filters} filter{?s}")
 	if (!is.null(x@ns)) {
+		ns <- ._resolve_ns(x@ns)
 		header <- paste(
 			cli::col_br_white(header),
 			col_grey(symbol$bullet),
 			col_grey("namespace"),
-			format_inline("{.val {resolve_ns(x@ns)(character())}}")
+			format_inline("{.val {ns(character())}}")
 		)
 	}
 	cat_line(paste(
@@ -741,6 +742,9 @@ with_ns <- function(config, ns) {
 			"{.arg config} must be a {.cls shinyfilters} object, not {.obj_type_friendly {config}}.",
 			"i" = "Usage: {.code {caller_arg(config)} |> shinyfilters() |> with_ns({caller_arg(ns)})}"
 		))
+	}
+	if (is.function(ns)) {
+		._check_valid_shiny_ns(ns)
 	}
 	set_props(config, ns = ns)
 }

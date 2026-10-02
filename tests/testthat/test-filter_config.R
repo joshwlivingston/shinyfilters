@@ -342,7 +342,6 @@ test_that("with_ns() errors", {
 		with_ns(cfg)
 		with_ns(cfg, c("m", "n"))
 		with_ns(cfg, NA_character_)
-		with_ns(cfg, 1)
 	})
 })
 

@@ -231,10 +231,10 @@
       <shinyfilters> * 4 filters * namespace "1"
       
       Filters
-        letters                <chr>  x Can't find method for `._apply_ns(<double>)`.
-        factors                <fct>  x Can't find method for `._apply_ns(<double>)`.
-        x                      <int>  x Can't find method for `._apply_ns(<double>)`.
-        a_very_very_long_name  <dbl>  x Can't find method for `._apply_ns(<double>)`.
+        letters                <chr>  selectInput
+        factors                <fct>  selectInput
+        x                      <int>  numericInput
+        a_very_very_long_name  <dbl>  numericInput
       
 
 # pull() errors

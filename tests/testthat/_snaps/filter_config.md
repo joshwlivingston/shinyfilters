@@ -5,7 +5,7 @@
         x)
     Condition
       Error in `shinyfilters()`:
-      ! `ns` must be the result of calling `shiny::NS()`.
+      ! `ns` must not be a custom function.
 
 # print() marks columns added by with_filter()
 
@@ -224,10 +224,8 @@
     Code
       with_ns(cfg, function(x) x)
     Condition
-      Error:
-      ! ! Could not evaluate cli `{}` expression: `resolve_ns(x@ns)(...`.
-      Caused by error in `resolve_ns(x@ns)`:
-      ! `ns` must be the result of calling `shiny::NS()`.
+      Error in `with_ns()`:
+      ! `ns` must not be a custom function.
     Code
       with_ns(cfg)
     Condition
@@ -254,17 +252,6 @@
         factors                <fct>  selectInput
         x                      <int>  numericInput
         a_very_very_long_name  <dbl>  numericInput
-      
-    Code
-      with_ns(cfg, 1)
-    Output
-      <shinyfilters> * 4 filters * namespace "1"
-      
-      Filters
-        letters                <chr>  x Can't find method for `._apply_ns(<double>)`.
-        factors                <fct>  x Can't find method for `._apply_ns(<double>)`.
-        x                      <int>  x Can't find method for `._apply_ns(<double>)`.
-        a_very_very_long_name  <dbl>  x Can't find method for `._apply_ns(<double>)`.
       
 
 # with_defaults() errors

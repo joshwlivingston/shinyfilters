@@ -39,7 +39,7 @@ s7_check_is_valid_list_dispatch <- function(x, function_name) {
 ._check_valid_shiny_ns <- function(ns, call = caller_env()) {
 	if (!._is_valid_ns_function(ns)) {
 		cli_abort(
-			"{.arg ns} must be the result of calling {.fn shiny::NS}.",
+			"{.arg ns} must not be a custom function.",
 			call = call
 		)
 	}
