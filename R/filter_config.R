@@ -251,10 +251,9 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	)
 	dot <- if (is_utf8_output()) "\u25cf" else "*"
 	dot_input <- col_blue(dot)
-	plus <- if (is_utf8_output()) "\uff0b" else "+"
-	dot_added <- col_green(plus)
-	swap <- if (is_utf8_output()) "\u21c4" else "~"
-	dot_replaced <- col_yellow(swap)
+	# ASCII in every locale: wider glyphs break the marker column.
+	dot_added <- col_green("+")
+	dot_replaced <- col_yellow("~")
 	circle <- if (is_utf8_output()) "\u25cb" else "#"
 	dot_default <- col_grey(circle)
 

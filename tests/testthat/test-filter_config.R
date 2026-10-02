@@ -236,6 +236,17 @@ test_that("print() keeps a recomputed added column marked as added", {
 	expect_no_match(out, "Column replaced by", fixed = TRUE)
 })
 
+test_that("print() markers are one column wide in UTF-8 output", {
+	withr::local_options(cli.unicode = TRUE, cli.num_colors = 1)
+	cfg <- shinyfilters(df_config, selectize = TRUE)
+	cfg <- with_filter(cfg, y = x * 2, x = x / 2)
+	cfg <- with_filter(cfg, letters = "radio")
+	out <- capture.output(print(cfg))
+	legend <- grep(" Filter ", out, fixed = TRUE, value = TRUE)
+	expect_length(legend, 4)
+	expect_all_equal(nchar(sub(" Filter .*", "", legend), type = "width"), 1L)
+})
+
 test_that("print() shows one marker per row", {
 	cfg <- shinyfilters(df_config, slider = TRUE, selectize = TRUE)
 	cfg <- with_filter(cfg, y = x * 2, x = x / 2, z = letters)
