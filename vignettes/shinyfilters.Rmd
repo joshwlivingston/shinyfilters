@@ -40,31 +40,54 @@ nyc_flights %>%
 	shinyfilters()
 ```
 
-Arguments to `shinyfilters()` apply to every column. For example, `slider = TRUE`
-uses sliders for numeric columns:
+## Set defaults for every column
+
+Arguments to `shinyfilters()` apply to every column. `range = TRUE` uses a date
+range for date columns, and `selectize = TRUE` uses selectize inputs in place
+of select inputs:
 
 ```{r, eval = getRversion() >= "4.1", include = getRversion() >= "4.1"}
 nyc_flights |>
-	shinyfilters(slider = TRUE)
+	shinyfilters(range = TRUE, selectize = TRUE)
 ```
 
 ```{r, eval = !getRversion() >= "4.1", include = !getRversion() >= "4.1"}
 nyc_flights %>%
-	shinyfilters(slider = TRUE)
+	shinyfilters(range = TRUE, selectize = TRUE)
 ```
 
-## Choose inputs per column
+## Add a namespace
 
-Set the input for individual columns with dplyr's `mutate()`, or with
-`with_filter()`, which needs no other package. Inputs are keywords like
-`"radio"` or shiny functions like `shiny::radioButtons`. See `?with_filter` for
-the full list.
+`with_ns()` prefixes every input id with a namespace, so the filters can be
+used in a shiny module:
 
-### Name or select columns {.tabset}
+```{r, eval = getRversion() >= "4.1", include = getRversion() >= "4.1"}
+filters <- nyc_flights |>
+	shinyfilters(range = TRUE, selectize = TRUE) |>
+	with_ns("sidebar-mod")
 
-Name the columns, or select them with tidyselect:
+filters
+```
 
-#### dplyr {#columns-dplyr}
+```{r, eval = !getRversion() >= "4.1", include = !getRversion() >= "4.1"}
+filters <- nyc_flights %>%
+	shinyfilters(range = TRUE, selectize = TRUE) %>%
+	with_ns("sidebar-mod")
+
+filters
+```
+
+```{r, include = FALSE}
+filters_ns <- filters
+```
+
+## Add and replace columns {.tabset}
+
+Compute columns with dplyr's `mutate()`, or with `with_filter()`, which needs
+no other package. A new column gets a filter based on its type; a replaced
+column keeps its input:
+
+### dplyr {#columns-dplyr}
 
 `r if (!requireNamespace("dplyr", quietly = TRUE)) "Install dplyr to see this example."`
 
@@ -73,9 +96,95 @@ library(dplyr)
 ```
 
 ```{r, eval = getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE)}
+filters <- filters |>
+	mutate(dep_delay = -dep_delay, on_time = !delayed)
+
+filters
+```
+
+```{r, eval = !getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = !getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE)}
+filters <- filters %>%
+	mutate(dep_delay = -dep_delay, on_time = !delayed)
+
+filters
+```
+
+```{r, include = FALSE}
+filters_dplyr <- filters
+filters <- filters_ns
+```
+
+### shinyfilters {#columns-shinyfilters}
+
+```{r, eval = getRversion() >= "4.1", include = getRversion() >= "4.1"}
+filters <- filters |>
+	with_filter(dep_delay = -dep_delay, on_time = !delayed)
+
+filters
+```
+
+```{r, eval = !getRversion() >= "4.1", include = !getRversion() >= "4.1"}
+filters <- filters %>%
+	with_filter(dep_delay = -dep_delay, on_time = !delayed)
+
+filters
+```
+
+## Choose inputs per column {.tabset}
+
+The same functions set the input for individual columns. Inputs are keywords
+like `"slider"` or shiny functions like `shiny::sliderInput`; see
+`?with_filter` for the full list. Name the columns (`distance = "slider"`), or
+select them with tidyselect:
+
+### dplyr {#inputs-dplyr}
+
+`r if (!requireNamespace("dplyr", quietly = TRUE)) "Install dplyr to see this example."`
+
+```{r, include = FALSE}
+filters_shinyfilters <- filters
+filters <- filters_dplyr
+```
+
+```{r, eval = getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE)}
+filters |>
+	mutate(across(where(is.numeric), "slider"))
+```
+
+```{r, eval = !getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = !getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE)}
+filters %>%
+	mutate(across(where(is.numeric), "slider"))
+```
+
+### shinyfilters {#inputs-shinyfilters}
+
+```{r, include = FALSE}
+filters <- filters_shinyfilters
+```
+
+```{r, eval = getRversion() >= "4.1", include = getRversion() >= "4.1"}
+filters |>
+	with_filter(where(is.numeric), "slider")
+```
+
+```{r, eval = !getRversion() >= "4.1", include = !getRversion() >= "4.1"}
+filters %>%
+	with_filter(where(is.numeric), "slider")
+```
+
+## Put it together {.tabset}
+
+The steps chain into one pipeline:
+
+### dplyr {#full-dplyr}
+
+`r if (!requireNamespace("dplyr", quietly = TRUE)) "Install dplyr to see this example."`
+
+```{r, eval = getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE)}
 filters <- nyc_flights |>
-	shinyfilters() |>
-	mutate(origin = "radio", carrier = "selectize") |>
+	shinyfilters(range = TRUE, selectize = TRUE) |>
+	with_ns("sidebar-mod") |>
+	mutate(dep_delay = -dep_delay, on_time = !delayed) |>
 	mutate(across(where(is.numeric), "slider"))
 
 filters
@@ -83,19 +192,21 @@ filters
 
 ```{r, eval = !getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = !getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE)}
 filters <- nyc_flights %>%
-	shinyfilters() %>%
-	mutate(origin = "radio", carrier = "selectize") %>%
+	shinyfilters(range = TRUE, selectize = TRUE) %>%
+	with_ns("sidebar-mod") %>%
+	mutate(dep_delay = -dep_delay, on_time = !delayed) %>%
 	mutate(across(where(is.numeric), "slider"))
 
 filters
 ```
 
-#### shinyfilters {#columns-shinyfilters}
+### shinyfilters {#full-shinyfilters}
 
 ```{r, eval = getRversion() >= "4.1", include = getRversion() >= "4.1"}
 filters <- nyc_flights |>
-	shinyfilters() |>
-	with_filter(origin = "radio", carrier = "selectize") |>
+	shinyfilters(range = TRUE, selectize = TRUE) |>
+	with_ns("sidebar-mod") |>
+	with_filter(dep_delay = -dep_delay, on_time = !delayed) |>
 	with_filter(where(is.numeric), "slider")
 
 filters
@@ -103,43 +214,19 @@ filters
 
 ```{r, eval = !getRversion() >= "4.1", include = !getRversion() >= "4.1"}
 filters <- nyc_flights %>%
-	shinyfilters() %>%
-	with_filter(origin = "radio", carrier = "selectize") %>%
+	shinyfilters(range = TRUE, selectize = TRUE) %>%
+	with_ns("sidebar-mod") %>%
+	with_filter(dep_delay = -dep_delay, on_time = !delayed) %>%
 	with_filter(where(is.numeric), "slider")
 
 filters
 ```
 
-### Select and name columns in one call {.tabset}
-
-`across()` and `across_filters()` select columns and name one input for all of
-them, alongside named columns:
-
-#### dplyr {#across-dplyr}
-
-`r if (!requireNamespace("dplyr", quietly = TRUE)) "Install dplyr to see this example."`
-
-```{r, eval = requireNamespace("dplyr", quietly = TRUE), include = requireNamespace("dplyr", quietly = TRUE)}
-mutate(
-	filters,
-	across(where(is.character), "selectize"),
-	origin = "radio"
-)
-```
-
-#### shinyfilters {#across-shinyfilters}
-
-```{r}
-with_filter(
-	filters,
-	across_filters(where(is.character), "selectize"),
-	origin = "radio"
-)
-```
-
 ## Use in a shiny app
 
-Place the filters in a UI to create their inputs:
+Place the filters in a UI to create their inputs. With the namespace, their
+ids are prefixed (`sidebar-mod-origin`), so a module with the id
+`"sidebar-mod"` reads them as `input$origin`:
 
 ```{r, eval = FALSE}
 library(shiny)
