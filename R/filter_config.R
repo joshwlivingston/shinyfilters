@@ -663,6 +663,12 @@ method(with_ns, list(class_any, class_any)) <- function(config, ns, ...) {
 			call = call2("with_ns")
 		)
 	}
+	if (missing(ns)) {
+		cli_abort(
+			"{.arg ns} must be supplied. Use {.code NULL} to remove the namespace.",
+			call = call2("with_ns")
+		)
+	}
 	._abort_ns_type(ns)
 }
 

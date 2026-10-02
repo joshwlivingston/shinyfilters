@@ -143,6 +143,11 @@
       Error in `with_ns()`:
       ! `ns` must be the result of calling `shiny::NS()`.
     Code
+      with_ns(cfg)
+    Condition
+      Error in `with_ns()`:
+      ! `ns` must be supplied. Use `NULL` to remove the namespace.
+    Code
       with_ns(cfg, c("m", "n"))
     Condition
       Error in `with_ns()`:

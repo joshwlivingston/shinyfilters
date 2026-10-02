@@ -283,6 +283,7 @@ test_that("with_ns() errors", {
 	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
 		with_ns(df_config, shiny::NS("m"))
 		with_ns(cfg, function(x) x)
+		with_ns(cfg)
 		with_ns(cfg, c("m", "n"))
 		with_ns(cfg, NA_character_)
 		with_ns(cfg, 1)
