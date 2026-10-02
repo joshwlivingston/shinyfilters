@@ -219,6 +219,13 @@ test_that("print() marks columns replaced by with_filter()", {
 	})
 })
 
+test_that("print() keeps a recomputed added column marked as added", {
+	cfg <- with_filter(shinyfilters(df_config), y = x * 2, y = y + 1)
+	out <- capture.output(print(cfg))
+	expect_match(out, "Column added by", fixed = TRUE, all = FALSE)
+	expect_no_match(out, "Column replaced by", fixed = TRUE)
+})
+
 test_that("filterInput(<shinyfilters>, ...) merges with global arguments", {
 	expect_identical(
 		filterInput(shinyfilters(df_config), slider = TRUE),
