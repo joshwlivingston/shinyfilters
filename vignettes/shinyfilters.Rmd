@@ -182,11 +182,9 @@ Any other input function works too, such as `shinyWidgets::pickerInput`. It
 receives the arguments shinyfilters computes for the column's type, here the
 `choices` of a character column, so it must accept them:
 
-`r if (!requireNamespace("shinyWidgets", quietly = TRUE)) "Install shinyWidgets to see this example."`
-
 ### dplyr {#custom-dplyr}
 
-`r if (!requireNamespace("dplyr", quietly = TRUE)) "Install dplyr to see this example."`
+`r if (!requireNamespace("dplyr", quietly = TRUE) || !requireNamespace("shinyWidgets", quietly = TRUE)) "Install dplyr and shinyWidgets to see this example."`
 
 ```{r, eval = getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE) && requireNamespace("shinyWidgets", quietly = TRUE), include = getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE) && requireNamespace("shinyWidgets", quietly = TRUE)}
 filters |>
@@ -199,6 +197,8 @@ filters %>%
 ```
 
 ### shinyfilters {#custom-shinyfilters}
+
+`r if (!requireNamespace("shinyWidgets", quietly = TRUE)) "Install shinyWidgets to see this example."`
 
 ```{r, eval = getRversion() >= "4.1" && requireNamespace("shinyWidgets", quietly = TRUE), include = getRversion() >= "4.1" && requireNamespace("shinyWidgets", quietly = TRUE)}
 filters |>
