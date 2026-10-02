@@ -729,12 +729,9 @@ method(.with_filter, class_shinyfilters) <- function(
 #' Inside [dplyr::mutate()], call it without the configuration:
 #' `mutate(filters, with_ns("id"))`.
 #'
-#' `with_ns()` is a generic that dispatches on `.config` and `ns`.
-#'
 #' @param .config A configuration created by [shinyfilters()].
 #' @param ns The namespace: a string, used as the id passed to [shiny::NS()];
 #'   a namespace created by [shiny::NS()]; or `NULL` to remove the namespace.
-#' @param ... Not used.
 #'
 #' @returns The updated configuration.
 #'

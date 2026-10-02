@@ -11,8 +11,6 @@ with_ns(.config, ns)
 
 \item{ns}{The namespace: a string, used as the id passed to \code{\link[shiny:NS]{shiny::NS()}};
 a namespace created by \code{\link[shiny:NS]{shiny::NS()}}; or \code{NULL} to remove the namespace.}
-
-\item{...}{Not used.}
 }
 \value{
 The updated configuration.
@@ -25,8 +23,6 @@ configuration once and reuse it in several modules.
 \details{
 Inside \code{\link[dplyr:mutate]{dplyr::mutate()}}, call it without the configuration:
 \code{mutate(filters, with_ns("id"))}.
-
-\code{with_ns()} is a generic that dispatches on \code{.config} and \code{ns}.
 }
 \examples{
 filters <- shinyfilters(nyc_flights)
