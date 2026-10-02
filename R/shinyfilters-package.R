@@ -40,6 +40,7 @@
 #' @importFrom rlang is_formula
 #' @importFrom rlang is_string
 #' @importFrom rlang is_symbol
+#' @importFrom rlang is_vector
 #' @importFrom rlang local_error_call
 #' @importFrom rlang names2
 #' @importFrom rlang new_quosure

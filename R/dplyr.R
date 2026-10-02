@@ -5,7 +5,8 @@
 #' Choose Inputs with dplyr Verbs
 #'
 #' [dplyr::mutate()] sets the input [filterInput()] creates for a column of a
-#' configuration made by [shinyfilters()], like [with_filter()] does.
+#' configuration made by [shinyfilters()], like [with_filter()] does, and
+#' adds or replaces columns computed from the others.
 #' [dplyr::select()] keeps only the selected columns, and [dplyr::pull()]
 #' returns one column's input.
 #'
@@ -14,13 +15,17 @@
 #'   [across_filters()]:
 #'
 #'   * `mutate(filters, col = input)`: each name is a column.
+#'   * `mutate(filters, col = expression)`: adds or replaces a column, like
+#'     [dplyr::mutate()] does for a data frame. A replaced column keeps its
+#'     input.
 #'   * `mutate(filters, across_filters(cols, input))`: `cols` selects columns
 #'     with <[`tidy-select`][tidyselect::language]>.
 #'
 #'   [dplyr::across()] is accepted in place of [across_filters()] here.
 #'
 #'   Each input is a keyword or a shiny input function, as described in
-#'   [with_filter()].
+#'   [with_filter()]. A function or a single string is always read as an
+#'   input; any other value is the column's data.
 #'
 #'   For `select()`, the columns to keep, using
 #'   <[`tidy-select`][tidyselect::language]>.
@@ -40,6 +45,9 @@
 #'
 #' # Or choose one input for several columns
 #' mutate(filters, across(where(is.numeric), "slider"))
+#'
+#' # Add a column computed from the others
+#' mutate(filters, air_time_hours = air_time / 60)
 #'
 #' # Keep only some columns
 #' select(filters, origin, carrier)
@@ -95,32 +103,96 @@ MUTATE_ACROSS_NAMES <- c(SHINYFILTERS_ACROSS, DPLYR_ACROSS)
 		cli_abort(
 			c(
 				"{.fn mutate} doesn't support {.arg {reserved}} for a {.cls shinyfilters} object.",
-				i = "It chooses each column's input; it doesn't add, drop, or move columns."
+				i = "It chooses inputs and computes columns; it doesn't drop or move them."
 			),
 			call = call
 		)
 	}
 
+	is_across <- vapply(
+		quos,
+		function(quo) ._is_across_call(quo_get_expr(quo)),
+		logical(1)
+	)
+	if (any(nms == "" & !is_across)) {
+		cli_abort(
+			c(
+				"Each argument to {.fn mutate} must be named or use {.fn across}.",
+				i = "Named: {.code mutate(filters, origin = \"radio\")}.",
+				i = "{.fn across}: {.code mutate(filters, across(where(is.numeric), \"slider\"))}."
+			),
+			call = call
+		)
+	}
+
+	# One argument at a time, so each sees the columns the earlier ones computed.
 	for (i in seq_along(quos)) {
-		is_across <- ._is_across_call(quo_get_expr(quos[[i]]))
-		if (nms[[i]] == "" && !is_across) {
+		if (is_across[[i]]) {
+			.data <- inject(.with_filter(
+				.data,
+				!!!quos[i],
+				.call = call,
+				.across = MUTATE_ACROSS_NAMES
+			))
+		} else {
+			.data <- ._mutate_column(.data, nms[[i]], quos[[i]], call = call)
+		}
+	}
+	.data
+}
+
+# A function or a single string chooses the column's input; any other value is
+# the column's data, computed from the other columns.
+._mutate_column <- function(config, name, quo, call) {
+	label <- as_label(quo)
+	data <- config@data
+	value <- try_fetch(
+		eval_tidy(quo, data = data),
+		error = function(cnd) {
 			cli_abort(
 				c(
-					"Each argument to {.fn mutate} must be named or use {.fn across}.",
-					i = "Named: {.code mutate(filters, origin = \"radio\")}.",
-					i = "{.fn across}: {.code mutate(filters, across(where(is.numeric), \"slider\"))}."
+					"Can't evaluate {.code {name} = {label}}.",
+					i = "Keywords are strings, e.g. {.code \"radio\"}."
+				),
+				parent = cnd,
+				call = call
+			)
+		}
+	)
+
+	if (is.function(value) || is_string(value)) {
+		if (!(name %in% names(data))) {
+			cli_abort(
+				c(
+					"Can't find column {.field {name}}.",
+					x = "{.code {label}} chooses the input for an existing column.",
+					i = "To add a column, compute it from the others: {.code mutate(filters, {name} = <expression>)}."
 				),
 				call = call
 			)
 		}
+		override <- list(
+			input = resolve_filter_override(value, call = call),
+			label = label
+		)
+		return(._set_overrides(config, set_names(list(override), name)))
 	}
 
-	inject(.with_filter(
-		.data,
-		!!!quos,
-		.call = call,
-		.across = MUTATE_ACROSS_NAMES
-	))
+	n <- nrow(data)
+	if (!is_vector(value) || is.data.frame(value)) {
+		cli_abort(
+			"Column {.field {name}} must be a vector, not {.obj_type_friendly {value}}.",
+			call = call
+		)
+	}
+	if (!(length(value) %in% c(1L, n))) {
+		cli_abort(
+			"Column {.field {name}} must have 1 or {n} value{?s}, not {length(value)}.",
+			call = call
+		)
+	}
+	data[[name]] <- if (length(value) == 1) rep(value, n) else value
+	set_props(config, data = data)
 }
 
 # shiny renders the page after its restore context has closed, so inputs

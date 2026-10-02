@@ -10,7 +10,7 @@
 
 * `as.data.frame()`, `as_tibble()`, and `as.data.table()` now return a configuration's data (#105).
 
-* `mutate()` now chooses which input `filterInput()` creates for a column, either by column name or with `across_filters()` or `across()` to select several columns (#105).
+* `mutate()` now chooses which input `filterInput()` creates for a column, either by column name or with `across_filters()` or `across()` to select several columns, and adds or replaces columns computed from the others (#105).
 
 * `pull()` now returns one column's input (#105).
 

@@ -44,13 +44,13 @@
     Condition
       Error in `dplyr::mutate()`:
       ! `mutate()` doesn't support `.keep` for a <shinyfilters> object.
-      i It chooses each column's input; it doesn't add, drop, or move columns.
+      i It chooses inputs and computes columns; it doesn't drop or move them.
     Code
       dplyr::mutate(cfg, .by = x)
     Condition
       Error in `dplyr::mutate()`:
       ! `mutate()` doesn't support `.by` for a <shinyfilters> object.
-      i It chooses each column's input; it doesn't add, drop, or move columns.
+      i It chooses inputs and computes columns; it doesn't drop or move them.
     Code
       dplyr::mutate(cfg, 1 + 1)
     Condition
@@ -63,12 +63,39 @@
     Condition
       Error in `dplyr::mutate()`:
       ! Can't find column nope.
+      x `"radio"` chooses the input for an existing column.
+      i To add a column, compute it from the others: `mutate(filters, nope = <expression>)`.
     Code
       dplyr::mutate(cfg, x = "radioo")
     Condition
       Error in `dplyr::mutate()`:
       ! An input must be one of "area", "radio", "range", "selectize", "slider", or "textbox", or a function.
       x Got "radioo".
+    Code
+      dplyr::mutate(cfg, y = shiny::selectInput)
+    Condition
+      Error in `dplyr::mutate()`:
+      ! Can't find column y.
+      x `shiny::selectInput` chooses the input for an existing column.
+      i To add a column, compute it from the others: `mutate(filters, y = <expression>)`.
+    Code
+      dplyr::mutate(cfg, y = nope * 2)
+    Condition
+      Error in `dplyr::mutate()`:
+      ! Can't evaluate `y = nope * 2`.
+      i Keywords are strings, e.g. `"radio"`.
+      Caused by error:
+      ! object 'nope' not found
+    Code
+      dplyr::mutate(cfg, y = 1:2)
+    Condition
+      Error in `dplyr::mutate()`:
+      ! Column y must have 1 or 3 values, not 2.
+    Code
+      dplyr::mutate(cfg, y = NULL)
+    Condition
+      Error in `dplyr::mutate()`:
+      ! Column y must be a vector, not NULL.
 
 # pull() errors
 

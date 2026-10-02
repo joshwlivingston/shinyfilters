@@ -68,6 +68,39 @@ test_that("mutate() applies its arguments in order", {
 	)
 })
 
+test_that("mutate() adds and replaces columns", {
+	skip_if_not_installed("dplyr")
+	cfg <- shinyfilters(df_config)
+	added <- dplyr::mutate(cfg, y = x * 2, flag = TRUE, z = y + 1)
+	expect_identical(
+		as.data.frame(added),
+		transform(df_config, y = x * 2, flag = TRUE, z = x * 2 + 1)
+	)
+
+	replaced <- dplyr::mutate(cfg, x = "radio", x = x / 2)
+	expect_identical(as.data.frame(replaced)$x, df_config$x / 2)
+	expect_identical(
+		filterInput(replaced),
+		filterInput(with_filter(shinyfilters(as.data.frame(replaced)), x = "radio"))
+	)
+})
+
+test_that("mutate() chooses the input for a column it added", {
+	skip_if_not_installed("dplyr")
+	cfg <- shinyfilters(df_config)
+	expect_identical(
+		filterInput(dplyr::mutate(cfg, y = x * 2, y = "slider")),
+		filterInput(with_filter(
+			shinyfilters(transform(df_config, y = x * 2)),
+			y = "slider"
+		))
+	)
+	expect_identical(
+		filterInput(dplyr::mutate(cfg, y = x * 2, across(y, "slider"))),
+		filterInput(dplyr::mutate(cfg, y = x * 2, y = "slider"))
+	)
+})
+
 test_that("mutate() labels a custom input the way with_filter() does", {
 	skip_if_not_installed("dplyr")
 	my_select <- function(inputId, label, choices) {
@@ -103,6 +136,11 @@ test_that("mutate() errors", {
 		dplyr::mutate(cfg, 1 + 1)
 		dplyr::mutate(cfg, nope = "radio")
 		dplyr::mutate(cfg, x = "radioo")
+
+		dplyr::mutate(cfg, y = shiny::selectInput)
+		dplyr::mutate(cfg, y = nope * 2)
+		dplyr::mutate(cfg, y = 1:2)
+		dplyr::mutate(cfg, y = NULL)
 	})
 })
 

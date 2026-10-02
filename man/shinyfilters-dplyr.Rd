@@ -10,6 +10,9 @@
 \code{\link[=across_filters]{across_filters()}}:
 \itemize{
 \item \code{mutate(filters, col = input)}: each name is a column.
+\item \code{mutate(filters, col = expression)}: adds or replaces a column, like
+\code{\link[dplyr:mutate]{dplyr::mutate()}} does for a data frame. A replaced column keeps its
+input.
 \item \code{mutate(filters, across_filters(cols, input))}: \code{cols} selects columns
 with <\code{\link[tidyselect:language]{tidy-select}}>.
 }
@@ -17,7 +20,8 @@ with <\code{\link[tidyselect:language]{tidy-select}}>.
 \code{\link[dplyr:across]{dplyr::across()}} is accepted in place of \code{\link[=across_filters]{across_filters()}} here.
 
 Each input is a keyword or a shiny input function, as described in
-\code{\link[=with_filter]{with_filter()}}.
+\code{\link[=with_filter]{with_filter()}}. A function or a single string is always read as an
+input; any other value is the column's data.
 
 For \code{select()}, the columns to keep, using
 <\code{\link[tidyselect:language]{tidy-select}}>.}
@@ -27,7 +31,8 @@ The updated configuration.
 }
 \description{
 \code{\link[dplyr:mutate]{dplyr::mutate()}} sets the input \code{\link[=filterInput]{filterInput()}} creates for a column of a
-configuration made by \code{\link[=shinyfilters]{shinyfilters()}}, like \code{\link[=with_filter]{with_filter()}} does.
+configuration made by \code{\link[=shinyfilters]{shinyfilters()}}, like \code{\link[=with_filter]{with_filter()}} does, and
+adds or replaces columns computed from the others.
 \code{\link[dplyr:select]{dplyr::select()}} keeps only the selected columns, and \code{\link[dplyr:pull]{dplyr::pull()}}
 returns one column's input.
 }
@@ -42,6 +47,9 @@ mutate(filters, origin = "radio", carrier = "selectize")
 
 # Or choose one input for several columns
 mutate(filters, across(where(is.numeric), "slider"))
+
+# Add a column computed from the others
+mutate(filters, air_time_hours = air_time / 60)
 
 # Keep only some columns
 select(filters, origin, carrier)
