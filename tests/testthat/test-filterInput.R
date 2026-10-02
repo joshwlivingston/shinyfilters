@@ -817,6 +817,44 @@ test_that("filterInput: arg supplied that is provided by args_filter_input()", {
 })
 
 ## `ns` ####
+test_that("ns argument accepts strings", {
+	ns <- "df_module"
+	res <- filterInput(test_df, ns = ns)
+	args_shiny_dte <- c(
+		list(
+			inputId = shiny::NS(ns)(get_input_ids(test_df[,
+				"dte_col",
+				drop = FALSE
+			])),
+			label = get_input_labels(test_df[, "dte_col", drop = FALSE])
+		),
+		args_filter_input(test_df$dte_col)
+	)
+	expect_identical(
+		res$dte_col,
+		do.call(shiny::dateInput, args_shiny_dte)
+	)
+})
+
+test_that("ns argument supports anything", {
+	ns <- class_data.frame
+	res <- filterInput(test_df, ns = ns)
+	args_shiny_dte <- c(
+		list(
+			inputId = shiny::NS(ns)(get_input_ids(test_df[,
+				"dte_col",
+				drop = FALSE
+			])),
+			label = get_input_labels(test_df[, "dte_col", drop = FALSE])
+		),
+		args_filter_input(test_df$dte_col)
+	)
+	expect_identical(
+		res$dte_col,
+		do.call(shiny::dateInput, args_shiny_dte)
+	)
+})
+
 test_that("ns must be result of shiny::NS()", {
 	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
 		filterInput(
