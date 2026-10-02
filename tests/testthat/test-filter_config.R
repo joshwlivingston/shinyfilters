@@ -339,6 +339,36 @@ test_that("with_ns() errors", {
 	})
 })
 
+test_that("with_defaults() adds, replaces, and removes defaults", {
+	cfg <- with_filter(shinyfilters(df_config, slider = TRUE), x = "radio")
+	expect_identical(
+		with_defaults(shinyfilters(df_config), slider = TRUE),
+		shinyfilters(df_config, slider = TRUE)
+	)
+	expect_identical(
+		filterInput(with_defaults(cfg, selectize = TRUE)),
+		filterInput(cfg, selectize = TRUE)
+	)
+	expect_identical(
+		filterInput(with_defaults(cfg, slider = FALSE)),
+		filterInput(cfg, slider = FALSE)
+	)
+	expect_identical(
+		with_defaults(cfg, slider = NULL),
+		with_filter(shinyfilters(df_config), x = "radio")
+	)
+	expect_identical(with_defaults(cfg), cfg)
+})
+
+test_that("with_defaults() errors", {
+	cfg <- shinyfilters(df_config)
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+		with_defaults(df_config, slider = TRUE)
+		with_defaults(cfg, TRUE)
+		with_defaults(cfg, ns = shiny::NS("m"))
+	})
+})
+
 test_that("print() shows the namespace with_ns() sets", {
 	cfg <- shinyfilters(df_config, ns = shiny::NS("m"))
 	expect_snapshot(variant = snapshot_variant(), {

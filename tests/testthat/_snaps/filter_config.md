@@ -234,6 +234,26 @@
       Error in `with_ns()`:
       ! `ns` must be a string, the result of calling `shiny::NS()`, or `NULL`, not a number.
 
+# with_defaults() errors
+
+    Code
+      with_defaults(df_config, slider = TRUE)
+    Condition
+      Error in `with_defaults()`:
+      ! `config` must be a <shinyfilters> object, not a data frame.
+      i Usage: `df_config |> shinyfilters() |> with_defaults(...)`
+    Code
+      with_defaults(cfg, TRUE)
+    Condition
+      Error in `with_defaults()`:
+      ! All elements of `...` must be named.
+    Code
+      with_defaults(cfg, ns = shiny::NS("m"))
+    Condition
+      Error in `with_defaults()`:
+      ! `ns` isn't a default argument.
+      i Use `with_ns()` to change the namespace.
+
 # print() shows the namespace with_ns() sets
 
     Code

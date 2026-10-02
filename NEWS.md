@@ -13,6 +13,7 @@
 * `select()` now keeps only the selected columns of a configuration (#105).
 * `shinyfilters()` and `with_filter()` now choose which input `filterInput()` creates for each column of a data frame (#111).
 * `shinyfilters()` objects can now be placed directly in a shiny UI, where they create their inputs like `filterInput()` does (#111).
+* `with_defaults()` is a new function that adds, replaces, or removes the arguments a configuration passes to `filterInput()` for every column (#105).
 * `with_filter()` now adds or replaces columns computed from the others, such as `with_filter(filters, delay_sq = dep_delay^2)` (#105).
 * `with_ns()` is a new function that adds, replaces, or removes the namespace of a configuration, given as a string or a `shiny::NS()` function, on its own or inside `mutate()` (#105).
 

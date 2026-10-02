@@ -766,6 +766,56 @@ method(with_ns, list(class_any, class_any)) <- function(config, ns, ...) {
 	)
 }
 
+# Function: with_defaults() ####
+#' Change the Default Arguments of a Configuration
+#'
+#' `with_defaults()` adds, replaces, or removes the arguments that a
+#' configuration made by [shinyfilters()] passes to [filterInput()] for every
+#' column.
+#'
+#' @param config A configuration created by [shinyfilters()].
+#' @param ... Named arguments passed to [filterInput()] for every column, such
+#'   as `slider = TRUE` or `selectize = TRUE`. An argument set to `NULL` is
+#'   removed. Arguments not named here keep their current values.
+#'
+#' @returns The updated configuration.
+#'
+#' @seealso [shinyfilters()], [with_filter()], [with_ns()]
+#'
+#' @examples
+#' filters <- shinyfilters(nyc_flights, slider = TRUE)
+#'
+#' # Add a default
+#' filters <- with_defaults(filters, range = TRUE)
+#' filters
+#'
+#' # Replace one
+#' with_defaults(filters, slider = FALSE)
+#'
+#' # Remove one
+#' with_defaults(filters, slider = NULL)
+#' @export
+with_defaults <- function(config, ...) {
+	if (!S7_inherits(config, class_shinyfilters)) {
+		cli_abort(c(
+			"{.arg config} must be a {.cls shinyfilters} object, not {.obj_type_friendly {config}}.",
+			"i" = "Usage: {.code {caller_arg(config)} |> shinyfilters() |> with_defaults(...)}"
+		))
+	}
+	args <- list(...)
+	if (length(args) > 0) {
+		check_named_list_or_null(args, arg = "...")
+	}
+	if ("ns" %in% names(args)) {
+		cli_abort(c(
+			"{.arg ns} isn't a default argument.",
+			"i" = "Use {.fn with_ns} to change the namespace."
+		))
+	}
+	args <- modifyList(config@args, args)
+	set_props(config, args = if (length(args) > 0) args else list())
+}
+
 # Generic: resolve_filter_override() ####
 resolve_filter_override <- new_generic("resolve_filter_override", "input")
 
