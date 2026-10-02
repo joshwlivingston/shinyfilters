@@ -6,7 +6,7 @@
       <shinyfilters> * 4 filters
       
       Filters
-        letters                <chr>  my_select     *
+        letters                <chr>  <custom>      *
         factors                <fct>  selectInput
         x                      <int>  numericInput
         a_very_very_long_name  <dbl>  numericInput
@@ -19,7 +19,7 @@
       <shinyfilters> * 4 filters
       
       Filters
-        letters                <chr>  my_select     *
+        letters                <chr>  <custom>      *
         factors                <fct>  selectInput
         x                      <int>  numericInput
         a_very_very_long_name  <dbl>  numericInput

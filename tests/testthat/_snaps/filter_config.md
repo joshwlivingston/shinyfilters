@@ -341,7 +341,7 @@
       <shinyfilters> * 4 filters * namespace "m"
       
       Filters
-        letters                <chr>  my_select     *
+        letters                <chr>  <custom>      *
         factors                <fct>  selectInput
         x                      <int>  radioButtons  *
         a_very_very_long_name  <dbl>  sliderInput   #
@@ -359,6 +359,19 @@
       Filters
         letters                <chr>  selectInput
         factors                <fct>  x "slider" isn't available for <factor> columns.  *
+        x                      <int>  numericInput
+        a_very_very_long_name  <dbl>  numericInput
+      
+      
+      * Filter chosen by `with_filter()`
+    Code
+      print(with_filter(shinyfilters(df_config), letters = shiny::radioButtons))
+    Output
+      <shinyfilters> * 4 filters
+      
+      Filters
+        letters                <chr>  radioButtons  *
+        factors                <fct>  selectInput
         x                      <int>  numericInput
         a_very_very_long_name  <dbl>  numericInput
       

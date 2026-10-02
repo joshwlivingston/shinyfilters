@@ -405,7 +405,7 @@ the$dry_run <- FALSE
 			if (inherits(res, "error") && !is.null(the$dry_run_fn)) {
 				res <- ._dry_run_result(the$dry_run_fn)
 			}
-			._dry_run_label(res, config@overrides[[name]])
+			._dry_run_label(res)
 		},
 		names(data),
 		get_input_ids(data),
@@ -414,7 +414,7 @@ the$dry_run <- FALSE
 	)
 }
 
-._dry_run_label <- function(res, override) {
+._dry_run_label <- function(res) {
 	if (inherits(res, "error")) {
 		while (inherits(res$parent, "error")) {
 			res <- res$parent
@@ -429,9 +429,6 @@ the$dry_run <- FALSE
 		if (identical(res$fn, SHINY_INPUTS[[name]])) {
 			return(name)
 		}
-	}
-	if (is.function(override$input)) {
-		return(override$label)
 	}
 	"<custom>"
 }
@@ -661,7 +658,6 @@ method(.with_filter, class_shinyfilters) <- function(
 		}
 		override <- list(
 			input = resolve_filter_override(value, call = call),
-			label = label,
 			fn = fn
 		)
 		return(._set_overrides(config, set_names(list(override), name)))
@@ -716,7 +712,6 @@ method(.with_filter, class_shinyfilters) <- function(
 	)
 	list(
 		input = resolve_filter_override(input, call = call),
-		label = label,
 		fn = fn
 	)
 }

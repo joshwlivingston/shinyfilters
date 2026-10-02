@@ -416,6 +416,7 @@ test_that("print() shows each column's input", {
 		print(shinyfilters(df_config))
 		print(cfg)
 		print(with_filter(shinyfilters(df_config), factors = "slider"))
+		print(with_filter(shinyfilters(df_config), letters = shiny::radioButtons))
 		print(shinyfilters(df_config, args_unique = "bad"))
 		print(shinyfilters(data.frame(stringsAsFactors = FALSE, x = "a")))
 	})
