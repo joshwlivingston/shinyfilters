@@ -32,11 +32,12 @@
       
         letters                <chr>  selectInput
         factors                <fct>  selectInput
-        x                      <dbl>  numericInput
+        x                      <dbl>  numericInput  *
         a_very_very_long_name  <dbl>  numericInput
         y                      <dbl>  numericInput  *
       
       * Column added by `mutate()`
+      * Column replaced by `mutate()`
     Code
       print(dplyr::mutate(cfg, y = "slider", letters = "radio"))
     Output
@@ -44,19 +45,22 @@
       
         letters                <chr>  radioButtons  *
         factors                <fct>  selectInput
-        x                      <dbl>  numericInput
+        x                      <dbl>  numericInput  *
         a_very_very_long_name  <dbl>  numericInput
         y                      <dbl>  sliderInput   **
       
       * Input chosen by `mutate()`
       * Column added by `mutate()`
+      * Column replaced by `mutate()`
     Code
       print(dplyr::select(cfg, x, letters))
     Output
       - <shinyfilters> - 2 filters
       
-        x        <dbl>  numericInput
+        x        <dbl>  numericInput  *
         letters  <chr>  selectInput
+      
+      * Column replaced by `mutate()`
     Code
       print(with_filter(cfg, z = y + 1, x = x / 2))
     Output
@@ -64,12 +68,13 @@
       
         letters                <chr>  selectInput
         factors                <fct>  selectInput
-        x                      <dbl>  numericInput
+        x                      <dbl>  numericInput  *
         a_very_very_long_name  <dbl>  numericInput
         y                      <dbl>  numericInput  *
         z                      <dbl>  numericInput  *
       
       * Column added by `mutate()` or `with_filter()`
+      * Column replaced by `with_filter()`
 
 # print() names the functions that chose inputs
 

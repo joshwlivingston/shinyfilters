@@ -14,6 +14,7 @@
 #' @importFrom cli col_green
 #' @importFrom cli col_grey
 #' @importFrom cli col_red
+#' @importFrom cli col_yellow
 #' @importFrom cli format_inline
 #' @importFrom cli is_utf8_output
 #' @importFrom cli qty

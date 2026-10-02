@@ -36,6 +36,34 @@
       
         x  <int>  numericInput
 
+# print() marks columns replaced by with_filter()
+
+    Code
+      print(cfg)
+    Output
+      - <shinyfilters> - 4 filters
+      
+        letters                <chr>  selectInput
+        factors                <fct>  selectInput
+        x                      <dbl>  numericInput  *
+        a_very_very_long_name  <dbl>  numericInput
+      
+      * Column replaced by `with_filter()`
+    Code
+      print(cfg["x"])
+    Output
+      - <shinyfilters> - 1 filter
+      
+        x  <dbl>  numericInput  *
+      
+      * Column replaced by `with_filter()`
+    Code
+      print(cfg["letters"])
+    Output
+      - <shinyfilters> - 1 filter
+      
+        letters  <chr>  selectInput
+
 # shinyfilters() and with_filter() errors
 
     Code

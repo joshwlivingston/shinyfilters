@@ -171,11 +171,13 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 		cli_abort("{.code {label}} doesn't select any columns.", call = call)
 	}
 	added <- x@added[intersect(names(x@added), cols)]
+	replaced <- x@replaced[intersect(names(x@replaced), cols)]
 	set_props(
 		x,
 		data = x@data[cols],
 		overrides = x@overrides[intersect(names(x@overrides), cols)],
-		added = if (length(added) > 0) added else character()
+		added = if (length(added) > 0) added else character(),
+		replaced = if (length(replaced) > 0) replaced else character()
 	)
 }
 
@@ -211,6 +213,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	nms <- names(data)
 	overridden <- nms %in% names(x@overrides)
 	added <- nms %in% names(x@added)
+	replaced <- nms %in% names(x@replaced)
 
 	n_filters <- ncol(data)
 	header <- format_inline("{n_filters} filter{?s}")
@@ -241,10 +244,12 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	dot <- if (is_utf8_output()) "\u25cf" else "*"
 	dot_input <- col_blue(dot)
 	dot_added <- col_green(dot)
+	dot_replaced <- col_yellow(dot)
 	marker <- paste0(
-		ifelse(overridden | added, "  ", ""),
+		ifelse(overridden | added | replaced, "  ", ""),
 		ifelse(overridden, dot_input, ""),
-		ifelse(added, dot_added, "")
+		ifelse(added, dot_added, ""),
+		ifelse(replaced, dot_replaced, "")
 	)
 	types <- vapply(data, ._type_abbr, character(1))
 	lines <- paste0(
@@ -258,7 +263,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	)
 	cat_line(sub("\\s+$", "", lines))
 
-	if (any(overridden) || any(added)) {
+	if (any(overridden) || any(added) || any(replaced)) {
 		cat_line()
 	}
 	if (any(overridden)) {
@@ -274,6 +279,13 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 		cat_line(
 			dot_added,
 			col_grey(format_inline(" Column added by {.or {.fn {fns}}}"))
+		)
+	}
+	if (any(replaced)) {
+		fns <- sort(unique(unname(x@replaced[nms[replaced]])))
+		cat_line(
+			dot_replaced,
+			col_grey(format_inline(" Column replaced by {.or {.fn {fns}}}"))
 		)
 	}
 	invisible(x)
@@ -623,11 +635,16 @@ method(.with_filter, class_shinyfilters) <- function(
 		)
 	}
 	added <- config@added
+	replaced <- config@replaced
+	value <- if (length(value) == 1) rep(value, n) else value
 	if (!(name %in% names(data))) {
 		added[[name]] <- fn
+	} else if (!(name %in% names(added)) && !identical(value, data[[name]])) {
+		# An unchanged column, e.g. `x = x`, isn't a replacement.
+		replaced[[name]] <- fn
 	}
-	data[[name]] <- if (length(value) == 1) rep(value, n) else value
-	set_props(config, data = data, added = added)
+	data[[name]] <- value
+	set_props(config, data = data, added = added, replaced = replaced)
 }
 
 ._set_overrides <- function(config, overrides) {

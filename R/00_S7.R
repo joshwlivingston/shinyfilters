@@ -65,7 +65,8 @@ class_shinyfilters <- new_class(
 		args = class_list,
 		ns = class_NULL | class_function,
 		overrides = class_list,
-		added = class_character
+		added = class_character,
+		replaced = class_character
 	),
 	validator = function(self) {
 		# properties are validated in the class validation to support S7 < 0.2.0

@@ -210,6 +210,15 @@ test_that("print() marks columns added by with_filter()", {
 	})
 })
 
+test_that("print() marks columns replaced by with_filter()", {
+	cfg <- with_filter(shinyfilters(df_config), x = x / 2, letters = letters)
+	expect_snapshot(variant = snapshot_variant(), {
+		print(cfg)
+		print(cfg["x"])
+		print(cfg["letters"])
+	})
+})
+
 test_that("filterInput(<shinyfilters>, ...) merges with global arguments", {
 	expect_identical(
 		filterInput(shinyfilters(df_config), slider = TRUE),
