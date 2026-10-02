@@ -51,5 +51,5 @@ filters$origin
 \dontshow{\}) # examplesIf}
 }
 \seealso{
-\code{\link[=with_filter]{with_filter()}}
+\code{\link[=with_filter]{with_filter()}}, \code{\link[=with_ns]{with_ns()}}
 }

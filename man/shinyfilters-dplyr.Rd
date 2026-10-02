@@ -6,8 +6,8 @@
 \arguments{
 \item{.data}{A configuration created by \code{\link[=shinyfilters]{shinyfilters()}}.}
 
-\item{...}{For \code{mutate()}, either named arguments or a call to
-\code{\link[=across_filters]{across_filters()}}:
+\item{...}{For \code{mutate()}, named arguments, calls to \code{\link[=across_filters]{across_filters()}}, or
+a call to \code{\link[=with_ns]{with_ns()}}:
 \itemize{
 \item \code{mutate(filters, col = input)}: each name is a column.
 \item \code{mutate(filters, col = expression)}: adds or replaces a column, like
@@ -18,6 +18,9 @@ with <\code{\link[tidyselect:language]{tidy-select}}>.
 }
 
 \code{\link[dplyr:across]{dplyr::across()}} is accepted in place of \code{\link[=across_filters]{across_filters()}} here.
+
+\code{mutate(filters, with_ns(ns))} changes the namespace, like \code{\link[=with_ns]{with_ns()}}
+does, and can be mixed with the other forms.
 
 Each input is a keyword or a shiny input function, as described in
 \code{\link[=with_filter]{with_filter()}}. A function or a single string is always read as an

@@ -101,6 +101,21 @@ test_that("mutate() chooses the input for a column it added", {
 	)
 })
 
+test_that("mutate() changes the namespace with with_ns()", {
+	skip_if_not_installed("dplyr")
+	cfg <- shinyfilters(df_config)
+	ns <- shiny::NS("m")
+	expect_identical(dplyr::mutate(cfg, with_ns(ns)), with_ns(cfg, ns))
+	expect_identical(
+		dplyr::mutate(cfg, with_ns(ns = ns), x = "radio", y = x * 2),
+		with_ns(dplyr::mutate(cfg, x = "radio", y = x * 2), ns)
+	)
+	expect_identical(
+		dplyr::mutate(with_ns(cfg, ns), shinyfilters::with_ns(NULL)),
+		cfg
+	)
+})
+
 test_that("mutate() labels a custom input the way with_filter() does", {
 	skip_if_not_installed("dplyr")
 	my_select <- function(inputId, label, choices) {
@@ -162,6 +177,10 @@ test_that("mutate() errors", {
 		dplyr::mutate(cfg, x = radio)
 		dplyr::mutate(cfg, y = 1:2)
 		dplyr::mutate(cfg, y = NULL)
+
+		dplyr::mutate(cfg, with_ns())
+		dplyr::mutate(cfg, with_ns(cfg, shiny::NS("m")))
+		dplyr::mutate(cfg, with_ns("m"))
 	})
 })
 

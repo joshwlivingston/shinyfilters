@@ -11,8 +11,8 @@
 #' returns one column's input.
 #'
 #' @param .data A configuration created by [shinyfilters()].
-#' @param ... For `mutate()`, either named arguments or a call to
-#'   [across_filters()]:
+#' @param ... For `mutate()`, named arguments, calls to [across_filters()], or
+#'   a call to [with_ns()]:
 #'
 #'   * `mutate(filters, col = input)`: each name is a column.
 #'   * `mutate(filters, col = expression)`: adds or replaces a column, like
@@ -22,6 +22,9 @@
 #'     with <[`tidy-select`][tidyselect::language]>.
 #'
 #'   [dplyr::across()] is accepted in place of [across_filters()] here.
+#'
+#'   `mutate(filters, with_ns(ns))` changes the namespace, like [with_ns()]
+#'   does, and can be mixed with the other forms.
 #'
 #'   Each input is a keyword or a shiny input function, as described in
 #'   [with_filter()]. A function or a single string is always read as an
@@ -114,7 +117,13 @@ MUTATE_ACROSS_NAMES <- c(SHINYFILTERS_ACROSS, DPLYR_ACROSS)
 		function(quo) ._is_across_call(quo_get_expr(quo)),
 		logical(1)
 	)
-	if (any(nms == "" & !is_across)) {
+	is_ns <- vapply(
+		quos,
+		function(quo) is_call(quo_get_expr(quo), "with_ns"),
+		logical(1)
+	)
+	is_ns <- is_ns & nms == ""
+	if (any(nms == "" & !is_across & !is_ns)) {
 		cli_abort(
 			c(
 				"Each argument to {.fn mutate} must be named or use {.fn across}.",
@@ -135,11 +144,31 @@ MUTATE_ACROSS_NAMES <- c(SHINYFILTERS_ACROSS, DPLYR_ACROSS)
 				.across = MUTATE_ACROSS_NAMES,
 				.fn = "mutate"
 			))
+		} else if (is_ns[[i]]) {
+			.data <- ._mutate_ns(.data, quos[[i]], call = call)
 		} else {
 			.data <- ._mutate_column(.data, nms[[i]], quos[[i]], call = call)
 		}
 	}
 	.data
+}
+
+# `with_ns()` takes the configuration from `mutate()`, so the call is captured
+# and only its `ns` is evaluated.
+._mutate_ns <- function(config, quo, call) {
+	args <- call_args(quo_get_expr(quo))
+	if (length(args) != 1 || !(names2(args) %in% c("", "ns"))) {
+		cli_abort(
+			c(
+				"{.fn with_ns} takes only {.arg ns} inside {.fn mutate}.",
+				i = "Set a namespace: {.code mutate(filters, with_ns(NS(\"id\")))}.",
+				i = "Remove it: {.code mutate(filters, with_ns(NULL))}."
+			),
+			call = call
+		)
+	}
+	ns <- eval_tidy(args[[1]], env = quo_get_env(quo))
+	._set_ns(config, ns, call = call)
 }
 
 # A function or a single string chooses the column's input; any other value is

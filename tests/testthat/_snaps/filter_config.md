@@ -130,6 +130,45 @@
       Error in `filterInput()`:
       ! Column a must have at least one non-missing value.
 
+# with_ns() errors
+
+    Code
+      with_ns(df_config, shiny::NS("m"))
+    Condition
+      Error in `with_ns()`:
+      ! `config` must be created by `shinyfilters()`, not a data frame.
+    Code
+      with_ns(cfg, function(x) x)
+    Condition
+      Error in `with_ns()`:
+      ! `ns` must be the result of calling `shiny::NS()`.
+    Code
+      with_ns(cfg, "m")
+    Condition
+      Error in `with_ns()`:
+      ! `ns` must be the result of calling `shiny::NS()`.
+
+# print() shows the namespace with_ns() sets
+
+    Code
+      print(with_ns(cfg, shiny::NS("other")))
+    Output
+      - <shinyfilters> - 4 filters * namespace "other"
+      
+        letters                <chr>  selectInput
+        factors                <fct>  selectInput
+        x                      <int>  numericInput
+        a_very_very_long_name  <dbl>  numericInput
+    Code
+      print(with_ns(cfg, NULL))
+    Output
+      - <shinyfilters> - 4 filters
+      
+        letters                <chr>  selectInput
+        factors                <fct>  selectInput
+        x                      <int>  numericInput
+        a_very_very_long_name  <dbl>  numericInput
+
 # print() shows each column's input
 
     Code

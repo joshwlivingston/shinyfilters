@@ -174,6 +174,25 @@
     Condition
       Error in `dplyr::mutate()`:
       ! Column y must be a vector, not NULL.
+    Code
+      dplyr::mutate(cfg, with_ns())
+    Condition
+      Error in `dplyr::mutate()`:
+      ! `with_ns()` takes only `ns` inside `mutate()`.
+      i Set a namespace: `mutate(filters, with_ns(NS("id")))`.
+      i Remove it: `mutate(filters, with_ns(NULL))`.
+    Code
+      dplyr::mutate(cfg, with_ns(cfg, shiny::NS("m")))
+    Condition
+      Error in `dplyr::mutate()`:
+      ! `with_ns()` takes only `ns` inside `mutate()`.
+      i Set a namespace: `mutate(filters, with_ns(NS("id")))`.
+      i Remove it: `mutate(filters, with_ns(NULL))`.
+    Code
+      dplyr::mutate(cfg, with_ns("m"))
+    Condition
+      Error in `dplyr::mutate()`:
+      ! `ns` must be the result of calling `shiny::NS()`.
 
 # pull() errors
 

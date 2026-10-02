@@ -29,7 +29,7 @@
 #'     <[`tidy-select`][tidyselect::language]>, like [with_filter()]; use
 #'     `all_of()` to select with a variable.
 #'
-#' @seealso [with_filter()]
+#' @seealso [with_filter()], [with_ns()]
 #'
 #' @examplesIf interactive()
 #' filters <- shinyfilters(nyc_flights)
@@ -586,6 +586,53 @@ method(.with_filter, class_shinyfilters) <- function(
 		label = label,
 		fn = fn
 	)
+}
+
+# Function: with_ns() ####
+#' Change the Namespace of a Configuration
+#'
+#' `with_ns()` adds, replaces, or removes the namespace that a configuration
+#' made by [shinyfilters()] applies to its input ids. Use it to build a
+#' configuration once and reuse it in several modules.
+#'
+#' Inside [dplyr::mutate()], call it without the configuration:
+#' `mutate(filters, with_ns(NS("id")))`.
+#'
+#' @param config A configuration created by [shinyfilters()].
+#' @param ns A namespace created by [shiny::NS()], or `NULL` to remove the
+#'   namespace.
+#'
+#' @returns The updated configuration.
+#'
+#' @seealso [shinyfilters()]
+#'
+#' @examples
+#' filters <- shinyfilters(nyc_flights)
+#'
+#' # Add a namespace
+#' filters <- with_ns(filters, shiny::NS("flights"))
+#' filters
+#'
+#' # Replace it
+#' with_ns(filters, shiny::NS("departures"))
+#'
+#' # Remove it
+#' with_ns(filters, NULL)
+#' @export
+with_ns <- function(config, ns) {
+	if (!S7_inherits(config, class_shinyfilters)) {
+		cli_abort(
+			"{.arg config} must be created by {.fn shinyfilters}, not {.obj_type_friendly {config}}."
+		)
+	}
+	._set_ns(config, ns, call = current_env())
+}
+
+._set_ns <- function(config, ns, call) {
+	if (!is.null(ns)) {
+		._check_valid_shiny_ns(ns, call = call)
+	}
+	set_props(config, ns = ns)
 }
 
 # Generic: resolve_filter_override() ####

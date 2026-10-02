@@ -251,6 +251,38 @@ test_that("shinyfilters() and with_filter() errors", {
 	})
 })
 
+test_that("with_ns() adds, replaces, and removes the namespace", {
+	cfg <- with_filter(shinyfilters(df_config, slider = TRUE), x = "radio")
+	added <- with_ns(cfg, shiny::NS("m"))
+	expect_identical(
+		filterInput(added),
+		filterInput(cfg, ns = shiny::NS("m"))
+	)
+	expect_identical(
+		filterInput(with_ns(added, shiny::NS("other"))),
+		filterInput(cfg, ns = shiny::NS("other"))
+	)
+	expect_identical(with_ns(added, NULL), cfg)
+	expect_identical(with_ns(cfg, NULL), cfg)
+})
+
+test_that("with_ns() errors", {
+	cfg <- shinyfilters(df_config)
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+		with_ns(df_config, shiny::NS("m"))
+		with_ns(cfg, function(x) x)
+		with_ns(cfg, "m")
+	})
+})
+
+test_that("print() shows the namespace with_ns() sets", {
+	cfg <- shinyfilters(df_config, ns = shiny::NS("m"))
+	expect_snapshot(variant = snapshot_variant(), {
+		print(with_ns(cfg, shiny::NS("other")))
+		print(with_ns(cfg, NULL))
+	})
+})
+
 test_that("print() shows each column's input", {
 	my_select <- function(inputId, label, choices) {
 		shiny::selectInput(inputId, label, choices)
