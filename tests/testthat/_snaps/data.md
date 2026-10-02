@@ -3,7 +3,7 @@
     Code
       shinyfilters(nyc_flights)
     Output
-      -- <shinyfilters> - 7 filters --------------------------------------------------
+      - <shinyfilters> - 7 filters
       
         date       <date>  dateInput
         carrier    <chr>   selectInput

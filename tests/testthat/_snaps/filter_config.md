@@ -135,7 +135,7 @@
     Code
       print(shinyfilters(df_config))
     Output
-      -- <shinyfilters> - 4 filters --------------------------------------------------
+      - <shinyfilters> - 4 filters
       
         letters                <chr>  selectInput
         factors                <fct>  selectInput
@@ -144,7 +144,7 @@
     Code
       print(cfg)
     Output
-      -- <shinyfilters> - 4 filters * namespace "m" ----------------------------------
+      - <shinyfilters> - 4 filters * namespace "m"
       Defaults  slider = TRUE
       
         letters                <chr>  my_select     *
@@ -152,22 +152,22 @@
         x                      <int>  radioButtons  *
         a_very_very_long_name  <dbl>  sliderInput
       
-      * set by with_filter()
+      * Input chosen by `with_filter()`
     Code
       print(with_filter(shinyfilters(df_config), factors = "slider"))
     Output
-      -- <shinyfilters> - 4 filters --------------------------------------------------
+      - <shinyfilters> - 4 filters
       
         letters                <chr>  selectInput
         factors                <fct>  x "slider" isn't available for <factor> columns.  *
         x                      <int>  numericInput
         a_very_very_long_name  <dbl>  numericInput
       
-      * set by with_filter()
+      * Input chosen by `with_filter()`
     Code
       print(shinyfilters(df_config, args_unique = "bad"))
     Output
-      -- <shinyfilters> - 4 filters --------------------------------------------------
+      - <shinyfilters> - 4 filters
       Defaults  args_unique = "bad"
       
         letters                <chr>  x `args_unique` must be a list, not a string.
@@ -177,7 +177,7 @@
     Code
       print(shinyfilters(data.frame(stringsAsFactors = FALSE, x = "a")))
     Output
-      -- <shinyfilters> - 1 filter ---------------------------------------------------
+      - <shinyfilters> - 1 filter
       
         x  <chr>  selectInput
 
@@ -186,7 +186,7 @@
     Code
       print(shinyfilters(df))
     Output
-      -- <shinyfilters> - 2 filters --------------------------------------------------
+      - <shinyfilters> - 2 filters
       
         radio   <chr>  radioButtons
         custom  <chr>  <custom>
@@ -224,13 +224,13 @@
     Code
       print(cfg[c("letters", "x")])
     Output
-      -- <shinyfilters> - 2 filters --------------------------------------------------
+      - <shinyfilters> - 2 filters
       Defaults  slider = TRUE
       
         letters  <chr>  selectInput
         x        <int>  radioButtons  *
       
-      * set by with_filter()
+      * Input chosen by `with_filter()`
 
 # `[` errors on unknown columns
 

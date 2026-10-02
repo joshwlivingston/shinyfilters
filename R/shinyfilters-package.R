@@ -11,6 +11,7 @@
 #' @importFrom cli cli_warn
 #' @importFrom cli col_blue
 #' @importFrom cli col_cyan
+#' @importFrom cli col_green
 #' @importFrom cli col_grey
 #' @importFrom cli col_red
 #' @importFrom cli format_inline

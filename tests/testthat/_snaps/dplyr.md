@@ -3,25 +3,96 @@
     Code
       print(dplyr::mutate(cfg, across(letters, my_select)))
     Output
-      -- <shinyfilters> - 4 filters --------------------------------------------------
+      - <shinyfilters> - 4 filters
       
         letters                <chr>  my_select     *
         factors                <fct>  selectInput
         x                      <int>  numericInput
         a_very_very_long_name  <dbl>  numericInput
       
-      * set by with_filter()
+      * Input chosen by `mutate()`
     Code
       print(dplyr::mutate(cfg, letters = my_select))
     Output
-      -- <shinyfilters> - 4 filters --------------------------------------------------
+      - <shinyfilters> - 4 filters
       
         letters                <chr>  my_select     *
         factors                <fct>  selectInput
         x                      <int>  numericInput
         a_very_very_long_name  <dbl>  numericInput
       
-      * set by with_filter()
+      * Input chosen by `mutate()`
+
+# print() marks columns added by mutate()
+
+    Code
+      print(cfg)
+    Output
+      - <shinyfilters> - 5 filters
+      
+        letters                <chr>  selectInput
+        factors                <fct>  selectInput
+        x                      <dbl>  numericInput
+        a_very_very_long_name  <dbl>  numericInput
+        y                      <dbl>  numericInput  *
+      
+      * Column added by `mutate()`
+    Code
+      print(dplyr::mutate(cfg, y = "slider", letters = "radio"))
+    Output
+      - <shinyfilters> - 5 filters
+      
+        letters                <chr>  radioButtons  *
+        factors                <fct>  selectInput
+        x                      <dbl>  numericInput
+        a_very_very_long_name  <dbl>  numericInput
+        y                      <dbl>  sliderInput   **
+      
+      * Input chosen by `mutate()`
+      * Column added by `mutate()`
+    Code
+      print(dplyr::select(cfg, x, letters))
+    Output
+      - <shinyfilters> - 2 filters
+      
+        x        <dbl>  numericInput
+        letters  <chr>  selectInput
+
+# print() names the functions that chose inputs
+
+    Code
+      print(cfg)
+    Output
+      - <shinyfilters> - 4 filters
+      
+        letters                <chr>  selectInput
+        factors                <fct>  selectInput
+        x                      <int>  sliderInput   *
+        a_very_very_long_name  <dbl>  numericInput
+      
+      * Input chosen by `mutate()`
+    Code
+      print(with_filter(cfg, letters = "radio"))
+    Output
+      - <shinyfilters> - 4 filters
+      
+        letters                <chr>  radioButtons  *
+        factors                <fct>  selectInput
+        x                      <int>  sliderInput   *
+        a_very_very_long_name  <dbl>  numericInput
+      
+      * Input chosen by `mutate()` or `with_filter()`
+    Code
+      print(with_filter(cfg, x = "radio"))
+    Output
+      - <shinyfilters> - 4 filters
+      
+        letters                <chr>  selectInput
+        factors                <fct>  selectInput
+        x                      <int>  radioButtons  *
+        a_very_very_long_name  <dbl>  numericInput
+      
+      * Input chosen by `with_filter()`
 
 # mutate() errors
 

@@ -113,6 +113,26 @@ test_that("mutate() labels a custom input the way with_filter() does", {
 	})
 })
 
+test_that("print() marks columns added by mutate()", {
+	skip_if_not_installed("dplyr")
+	cfg <- dplyr::mutate(shinyfilters(df_config), y = x * 2, x = x / 2)
+	expect_snapshot(variant = snapshot_variant(), {
+		print(cfg)
+		print(dplyr::mutate(cfg, y = "slider", letters = "radio"))
+		print(dplyr::select(cfg, x, letters))
+	})
+})
+
+test_that("print() names the functions that chose inputs", {
+	skip_if_not_installed("dplyr")
+	cfg <- dplyr::mutate(shinyfilters(df_config), x = "slider")
+	expect_snapshot(variant = snapshot_variant(), {
+		print(cfg)
+		print(with_filter(cfg, letters = "radio"))
+		print(with_filter(cfg, x = "radio"))
+	})
+})
+
 test_that("select() keeps the selected columns", {
 	skip_if_not_installed("dplyr")
 	cfg <- shinyfilters(df_config)

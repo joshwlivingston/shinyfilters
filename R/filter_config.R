@@ -173,7 +173,8 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	set_props(
 		x,
 		data = x@data[cols],
-		overrides = x@overrides[intersect(names(x@overrides), cols)]
+		overrides = x@overrides[intersect(names(x@overrides), cols)],
+		added = intersect(x@added, cols)
 	)
 }
 
@@ -208,6 +209,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	data <- x@data
 	nms <- names(data)
 	overridden <- nms %in% names(x@overrides)
+	added <- nms %in% x@added
 
 	n_filters <- ncol(data)
 	header <- format_inline("{n_filters} filter{?s}")
@@ -218,9 +220,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 			format_inline("namespace {.val {x@ns(character())}}")
 		)
 	}
-	cat_rule(
-		left = paste(col_blue("<shinyfilters>"), symbol$line, header)
-	)
+	cat_line(paste(symbol$line, col_blue("<shinyfilters>"), symbol$line, header))
 
 	if (length(x@args) > 0) {
 		values <- vapply(x@args, ._format_arg, character(1))
@@ -237,8 +237,14 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 		col_red(inputs),
 		col_cyan(ansi_align(inputs, width))
 	)
-	dot <- col_blue(if (is_utf8_output()) "\u25cf" else "*")
-	marker <- ifelse(overridden, paste0("  ", dot), "")
+	dot <- if (is_utf8_output()) "\u25cf" else "*"
+	dot_input <- col_blue(dot)
+	dot_added <- col_green(dot)
+	marker <- paste0(
+		ifelse(overridden | added, "  ", ""),
+		ifelse(overridden, dot_input, ""),
+		ifelse(added, dot_added, "")
+	)
 	types <- vapply(data, ._type_abbr, character(1))
 	lines <- paste0(
 		"  ",
@@ -251,9 +257,22 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	)
 	cat_line(sub("\\s+$", "", lines))
 
-	if (any(overridden)) {
+	if (any(overridden) || any(added)) {
 		cat_line()
-		cat_line(dot, col_grey(" set by with_filter()"))
+	}
+	if (any(overridden)) {
+		fns <- vapply(x@overrides[nms[overridden]], function(o) o$fn, "")
+		fns <- sort(unique(fns))
+		cat_line(
+			dot_input,
+			col_grey(format_inline(" Input chosen by {.or {.fn {fns}}}"))
+		)
+	}
+	if (any(added)) {
+		cat_line(
+			dot_added,
+			col_grey(format_inline(" Column added by {.fn mutate}"))
+		)
 	}
 	invisible(x)
 }
@@ -438,7 +457,8 @@ method(.with_filter, class_shinyfilters) <- function(
 	config,
 	...,
 	.call = caller_env(),
-	.across = SHINYFILTERS_ACROSS
+	.across = SHINYFILTERS_ACROSS,
+	.fn = "with_filter"
 ) {
 	quos <- enquos(...)
 	nms <- names2(quos)
@@ -457,7 +477,13 @@ method(.with_filter, class_shinyfilters) <- function(
 	}
 
 	if (!any(is_across) && length(quos) == 2 && !any(named)) {
-		return(._override_cols(config, quos[[1]], quos[[2]], call = .call))
+		return(._override_cols(
+			config,
+			quos[[1]],
+			quos[[2]],
+			call = .call,
+			fn = .fn
+		))
 	}
 
 	loose <- !named & !is_across
@@ -473,9 +499,15 @@ method(.with_filter, class_shinyfilters) <- function(
 	for (i in seq_along(quos)) {
 		if (is_across[[i]]) {
 			spec <- ._across_spec(quos[[i]], call = .call)
-			config <- ._override_cols(config, spec$cols, spec$input, call = .call)
+			config <- ._override_cols(
+				config,
+				spec$cols,
+				spec$input,
+				call = .call,
+				fn = .fn
+			)
 		} else {
-			config <- ._override_named(config, quos[i], call = .call)
+			config <- ._override_named(config, quos[i], call = .call, fn = .fn)
 		}
 	}
 
@@ -505,7 +537,7 @@ method(.with_filter, class_shinyfilters) <- function(
 	cli_abort(msg, call = call)
 }
 
-._override_cols <- function(config, cols, input, call) {
+._override_cols <- function(config, cols, input, call, fn) {
 	selected <- names(eval_select(
 		cols,
 		config@data,
@@ -518,13 +550,14 @@ method(.with_filter, class_shinyfilters) <- function(
 			call = call
 		)
 	}
-	overrides <- rep(list(._new_override(input, call = call)), length(selected))
+	override <- ._new_override(input, call = call, fn = fn)
+	overrides <- rep(list(override), length(selected))
 	names(overrides) <- selected
 	._set_overrides(config, overrides)
 }
 
-._override_named <- function(config, quos, call) {
-	._set_overrides(config, lapply(quos, ._new_override, call = call))
+._override_named <- function(config, quos, call, fn) {
+	._set_overrides(config, lapply(quos, ._new_override, call = call, fn = fn))
 }
 
 ._set_overrides <- function(config, overrides) {
@@ -533,7 +566,7 @@ method(.with_filter, class_shinyfilters) <- function(
 	set_props(config, overrides = overrides_all)
 }
 
-._new_override <- function(quo, call) {
+._new_override <- function(quo, call, fn) {
 	label <- as_label(quo)
 	input <- try_fetch(
 		eval_tidy(quo),
@@ -548,7 +581,11 @@ method(.with_filter, class_shinyfilters) <- function(
 			)
 		}
 	)
-	list(input = resolve_filter_override(input, call = call), label = label)
+	list(
+		input = resolve_filter_override(input, call = call),
+		label = label,
+		fn = fn
+	)
 }
 
 # Generic: resolve_filter_override() ####

@@ -132,7 +132,8 @@ MUTATE_ACROSS_NAMES <- c(SHINYFILTERS_ACROSS, DPLYR_ACROSS)
 				.data,
 				!!!quos[i],
 				.call = call,
-				.across = MUTATE_ACROSS_NAMES
+				.across = MUTATE_ACROSS_NAMES,
+				.fn = "mutate"
 			))
 		} else {
 			.data <- ._mutate_column(.data, nms[[i]], quos[[i]], call = call)
@@ -175,7 +176,8 @@ MUTATE_ACROSS_NAMES <- c(SHINYFILTERS_ACROSS, DPLYR_ACROSS)
 		}
 		override <- list(
 			input = resolve_filter_override(value, call = call),
-			label = label
+			label = label,
+			fn = "mutate"
 		)
 		return(._set_overrides(config, set_names(list(override), name)))
 	}
@@ -193,8 +195,9 @@ MUTATE_ACROSS_NAMES <- c(SHINYFILTERS_ACROSS, DPLYR_ACROSS)
 			call = call
 		)
 	}
+	added <- union(config@added, setdiff(name, names(data)))
 	data[[name]] <- if (length(value) == 1) rep(value, n) else value
-	set_props(config, data = data)
+	set_props(config, data = data, added = added)
 }
 
 # shiny renders the page after its restore context has closed, so inputs
