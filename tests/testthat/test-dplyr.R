@@ -139,6 +139,7 @@ test_that("print() marks columns added by mutate()", {
 		print(cfg)
 		print(dplyr::mutate(cfg, y = "slider", letters = "radio"))
 		print(dplyr::select(cfg, x, letters))
+		print(with_filter(cfg, z = y + 1, x = x / 2))
 	})
 })
 

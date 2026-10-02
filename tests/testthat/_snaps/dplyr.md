@@ -57,6 +57,19 @@
       
         x        <dbl>  numericInput
         letters  <chr>  selectInput
+    Code
+      print(with_filter(cfg, z = y + 1, x = x / 2))
+    Output
+      - <shinyfilters> - 6 filters
+      
+        letters                <chr>  selectInput
+        factors                <fct>  selectInput
+        x                      <dbl>  numericInput
+        a_very_very_long_name  <dbl>  numericInput
+        y                      <dbl>  numericInput  *
+        z                      <dbl>  numericInput  *
+      
+      * Column added by `mutate()` or `with_filter()`
 
 # print() names the functions that chose inputs
 

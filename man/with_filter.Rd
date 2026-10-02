@@ -19,7 +19,8 @@ and \code{\link[=across_filters]{across_filters()}} calls:
 \item \code{with_filter(config, col = expression, ...)}: adds or replaces a
 column, computed from the other columns. A replaced column keeps its
 input. A function or a single string is always read as an input; any
-other value is the column's data.
+other value is the column's data. A column takes precedence over a
+variable of the same name.
 \item \code{with_filter(config, across_filters(cols, input), ...)}:
 \code{\link[=across_filters]{across_filters()}} selects columns and names one input for all of
 them, and can be mixed with named columns.
