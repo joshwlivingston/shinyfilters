@@ -1,29 +1,53 @@
 # shinyfilters (development version)
 
-## New features
+## New API
 
-* Error and warning messages now use cli with richer formatting.
-* The tidyselect helpers, including `everything()`, `where()`, and `starts_with()`, are re-exported, so column selections work without attaching another package (#105).
-* `across_filters()` is a new function that chooses one input for the columns it selects, for use inside `with_filter()` or `mutate()` (#105).
-* `as.data.frame()`, `as_tibble()`, and `as.data.table()` now return a configuration's data (#105).
-* `filterInput()`'s `ns` argument now behaves like `shiny::NS()`, accepting any argument.
-* `mutate()` now chooses which input `filterInput()` creates for a column, either by column name or with `across_filters()` or `across()` to select several columns, and adds or replaces columns computed from the others (#105).
+`shinyfilters()` is a new function to configure filters. It displays an informative print and allows for configuration without extending methods directly. The functions listed here support `shinyfilters` objects (#111).
+
+### Select columns
+
+* `[` and `dplyr::select()` keep only the selected columns of a configuration (#105).
+* `[[` and `dplyr::pull()` return the input for one column of a configuration (#105).
+* The tidyselect helpers, such as `everything()` and `where()`, are re-exported and supported (#105).
+
+### Add, remove, or modify filters
+
+#### `with_filter()`
+
+* `with_filter()` chooses the input for columns, and adds or replaces computed columns (#105, #111).
+* `dplyr::mutate()` is supported, matching `with_filter()`'s behavior.
+* `dplyr::transmute()` is also supported, leaving only the columns called in `transmute()`.
+
+#### `across_filters()`
+
+* `across_filters()` mirrors `dplyr::across()`, for `shinyfilters` objects (#105).
+* `dplyr::across()` is also supported.
+
+### Update defaults
+
+* `with_defaults()` is sets or removes the arguments a configuration passes to `filterInput()` for every column (#105).
+
+### Update namespace
+
+* `with_ns()` is sets or removes the namespace of a configuration (#105).
+
+### Return data
+
+* `as.data.frame()`, `as_tibble()`, and `as.data.table()` return the data of a configuration (#105).
+
+## Other new features
+
+* Error and warning messages use cli formatting.
 * `nyc_flights` is a new example dataset of flights departing New York City (#36).
-* `pull()` now returns one column's input (#105).
-* `select()` now keeps only the selected columns of a configuration (#105).
-* `shinyfilters()` and `with_filter()` now choose which input `filterInput()` creates for each column of a data frame (#111).
-* `shinyfilters()` objects can now be placed directly in a shiny UI, where they create their inputs like `filterInput()` does (#111).
-* `with_defaults()` is a new function that adds, replaces, or removes the arguments a configuration passes to `filterInput()` for every column (#105).
-* `with_filter()` now adds or replaces columns computed from the others, such as `with_filter(filters, delay_sq = dep_delay^2)` (#105).
-* `with_ns()` is a new function that adds, replaces, or removes the namespace of a configuration, given as a string or a `shiny::NS()` function, on its own or inside `mutate()` (#105).
 
 ## Minor improvements
 
-* shinyfilters no longer requires S7 0.2.0 or later (#113).
+* shinyfilters now works with S7 0.1.0 (#113).
 
 ## Bugfixes
 
-* `filterInput()` now throws an error when the provided object is all missing.
+* `filterInput()` now errors when `x` is all missing.
+* `filterInput()`'s `ns` argument behaves like `shiny::NS()`, accepting any argument.
 
 # shinyfilters 0.3.1
 
