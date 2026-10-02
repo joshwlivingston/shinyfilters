@@ -107,6 +107,10 @@ test_that("mutate() changes the namespace with with_ns()", {
 	ns <- shiny::NS("m")
 	expect_identical(dplyr::mutate(cfg, with_ns(ns)), with_ns(cfg, ns))
 	expect_identical(
+		filterInput(dplyr::mutate(cfg, with_ns("m"))),
+		filterInput(with_ns(cfg, ns))
+	)
+	expect_identical(
 		dplyr::mutate(cfg, with_ns(ns = ns), x = "radio", y = x * 2),
 		with_ns(dplyr::mutate(cfg, x = "radio", y = x * 2), ns)
 	)
@@ -180,7 +184,7 @@ test_that("mutate() errors", {
 
 		dplyr::mutate(cfg, with_ns())
 		dplyr::mutate(cfg, with_ns(cfg, shiny::NS("m")))
-		dplyr::mutate(cfg, with_ns("m"))
+		dplyr::mutate(cfg, with_ns(1))
 	})
 })
 

@@ -129,7 +129,7 @@
       ! Each argument to `mutate()` must be named or use `across()` or `with_ns()`.
       i Named: `mutate(filters, origin = "radio")`.
       i `across()`: `mutate(filters, across(where(is.numeric), "slider"))`.
-      i `with_ns()`: `mutate(filters, with_ns(NS("id")))`.
+      i `with_ns()`: `mutate(filters, with_ns("id"))`.
     Code
       dplyr::mutate(cfg, nope = "radio")
     Condition
@@ -180,20 +180,20 @@
     Condition
       Error in `dplyr::mutate()`:
       ! `with_ns()` takes only `ns` inside `mutate()`.
-      i Set a namespace: `mutate(filters, with_ns(NS("id")))`.
+      i Set a namespace: `mutate(filters, with_ns("id"))`.
       i Remove it: `mutate(filters, with_ns(NULL))`.
     Code
       dplyr::mutate(cfg, with_ns(cfg, shiny::NS("m")))
     Condition
       Error in `dplyr::mutate()`:
       ! `with_ns()` takes only `ns` inside `mutate()`.
-      i Set a namespace: `mutate(filters, with_ns(NS("id")))`.
+      i Set a namespace: `mutate(filters, with_ns("id"))`.
       i Remove it: `mutate(filters, with_ns(NULL))`.
     Code
-      dplyr::mutate(cfg, with_ns("m"))
+      dplyr::mutate(cfg, with_ns(1))
     Condition
-      Error in `dplyr::mutate()`:
-      ! `ns` must be the result of calling `shiny::NS()`.
+      Error in `with_ns()`:
+      ! `ns` must be a string, the result of calling `shiny::NS()`, or `NULL`, not a number.
 
 # pull() errors
 

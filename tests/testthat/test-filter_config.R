@@ -266,12 +266,26 @@ test_that("with_ns() adds, replaces, and removes the namespace", {
 	expect_identical(with_ns(cfg, NULL), cfg)
 })
 
+test_that("with_ns() accepts a string", {
+	cfg <- shinyfilters(df_config)
+	expect_identical(
+		filterInput(with_ns(cfg, "m")),
+		filterInput(cfg, ns = shiny::NS("m"))
+	)
+	expect_identical(
+		filterInput(with_ns(with_ns(cfg, "m"), "other")),
+		filterInput(cfg, ns = shiny::NS("other"))
+	)
+})
+
 test_that("with_ns() errors", {
 	cfg <- shinyfilters(df_config)
 	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
 		with_ns(df_config, shiny::NS("m"))
 		with_ns(cfg, function(x) x)
-		with_ns(cfg, "m")
+		with_ns(cfg, c("m", "n"))
+		with_ns(cfg, NA_character_)
+		with_ns(cfg, 1)
 	})
 })
 

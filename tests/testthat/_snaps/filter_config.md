@@ -143,10 +143,20 @@
       Error in `with_ns()`:
       ! `ns` must be the result of calling `shiny::NS()`.
     Code
-      with_ns(cfg, "m")
+      with_ns(cfg, c("m", "n"))
     Condition
       Error in `with_ns()`:
-      ! `ns` must be the result of calling `shiny::NS()`.
+      ! `ns` must be a string, the result of calling `shiny::NS()`, or `NULL`, not a character vector.
+    Code
+      with_ns(cfg, NA_character_)
+    Condition
+      Error in `with_ns()`:
+      ! `ns` must be a string, the result of calling `shiny::NS()`, or `NULL`, not a character `NA`.
+    Code
+      with_ns(cfg, 1)
+    Condition
+      Error in `with_ns()`:
+      ! `ns` must be a string, the result of calling `shiny::NS()`, or `NULL`, not a number.
 
 # print() shows the namespace with_ns() sets
 

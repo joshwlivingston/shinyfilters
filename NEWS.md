@@ -20,7 +20,7 @@
 
 * `shinyfilters()` objects can now be placed directly in a shiny UI, where they create their inputs like `filterInput()` does (#111).
 
-* `with_ns()` is a new function that adds, replaces, or removes the namespace of a configuration, on its own or inside `mutate()` (#105).
+* `with_ns()` is a new function that adds, replaces, or removes the namespace of a configuration, given as a string or a `shiny::NS()` function, on its own or inside `mutate()` (#105).
 
 ## Minor improvements
 

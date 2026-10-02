@@ -596,11 +596,14 @@ method(.with_filter, class_shinyfilters) <- function(
 #' configuration once and reuse it in several modules.
 #'
 #' Inside [dplyr::mutate()], call it without the configuration:
-#' `mutate(filters, with_ns(NS("id")))`.
+#' `mutate(filters, with_ns("id"))`.
+#'
+#' `with_ns()` is a generic that dispatches on `config` and `ns`.
 #'
 #' @param config A configuration created by [shinyfilters()].
-#' @param ns A namespace created by [shiny::NS()], or `NULL` to remove the
-#'   namespace.
+#' @param ns The namespace: a string, used as the id passed to [shiny::NS()];
+#'   a namespace created by [shiny::NS()]; or `NULL` to remove the namespace.
+#' @param ... Not used.
 #'
 #' @returns The updated configuration.
 #'
@@ -610,29 +613,64 @@ method(.with_filter, class_shinyfilters) <- function(
 #' filters <- shinyfilters(nyc_flights)
 #'
 #' # Add a namespace
-#' filters <- with_ns(filters, shiny::NS("flights"))
+#' filters <- with_ns(filters, "flights")
 #' filters
 #'
-#' # Replace it
+#' # Replace it, here with a namespace created by NS()
 #' with_ns(filters, shiny::NS("departures"))
 #'
 #' # Remove it
 #' with_ns(filters, NULL)
 #' @export
-with_ns <- function(config, ns) {
-	if (!S7_inherits(config, class_shinyfilters)) {
-		cli_abort(
-			"{.arg config} must be created by {.fn shinyfilters}, not {.obj_type_friendly {config}}."
-		)
+with_ns <- new_generic(
+	name = "with_ns",
+	dispatch_args = c("config", "ns")
+)
+
+## Method: character ####
+method(
+	with_ns,
+	list(class_shinyfilters, class_character)
+) <- function(config, ns, ...) {
+	if (!is_string(ns) || is.na(ns)) {
+		._abort_ns_type(ns)
 	}
-	._set_ns(config, ns, call = current_env())
+	set_props(config, ns = NS(ns))
 }
 
-._set_ns <- function(config, ns, call) {
-	if (!is.null(ns)) {
-		._check_valid_shiny_ns(ns, call = call)
-	}
+## Method: function ####
+method(
+	with_ns,
+	list(class_shinyfilters, class_function)
+) <- function(config, ns, ...) {
+	._check_valid_shiny_ns(ns, call = call2("with_ns"))
 	set_props(config, ns = ns)
+}
+
+## Method: NULL ####
+method(
+	with_ns,
+	list(class_shinyfilters, class_NULL)
+) <- function(config, ns, ...) {
+	set_props(config, ns = NULL)
+}
+
+## Method: any ####
+method(with_ns, list(class_any, class_any)) <- function(config, ns, ...) {
+	if (!S7_inherits(config, class_shinyfilters)) {
+		cli_abort(
+			"{.arg config} must be created by {.fn shinyfilters}, not {.obj_type_friendly {config}}.",
+			call = call2("with_ns")
+		)
+	}
+	._abort_ns_type(ns)
+}
+
+._abort_ns_type <- function(ns) {
+	cli_abort(
+		"{.arg ns} must be a string, the result of calling {.fn shiny::NS}, or {.code NULL}, not {.obj_type_friendly {ns}}.",
+		call = call2("with_ns")
+	)
 }
 
 # Generic: resolve_filter_override() ####

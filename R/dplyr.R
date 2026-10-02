@@ -129,7 +129,7 @@ MUTATE_ACROSS_NAMES <- c(SHINYFILTERS_ACROSS, DPLYR_ACROSS)
 				"Each argument to {.fn mutate} must be named or use {.fn across} or {.fn with_ns}.",
 				i = "Named: {.code mutate(filters, origin = \"radio\")}.",
 				i = "{.fn across}: {.code mutate(filters, across(where(is.numeric), \"slider\"))}.",
-				i = "{.fn with_ns}: {.code mutate(filters, with_ns(NS(\"id\")))}."
+				i = "{.fn with_ns}: {.code mutate(filters, with_ns(\"id\"))}."
 			),
 			call = call
 		)
@@ -162,14 +162,14 @@ MUTATE_ACROSS_NAMES <- c(SHINYFILTERS_ACROSS, DPLYR_ACROSS)
 		cli_abort(
 			c(
 				"{.fn with_ns} takes only {.arg ns} inside {.fn mutate}.",
-				i = "Set a namespace: {.code mutate(filters, with_ns(NS(\"id\")))}.",
+				i = "Set a namespace: {.code mutate(filters, with_ns(\"id\"))}.",
 				i = "Remove it: {.code mutate(filters, with_ns(NULL))}."
 			),
 			call = call
 		)
 	}
 	ns <- eval_tidy(args[[1]], env = quo_get_env(quo))
-	._set_ns(config, ns, call = call)
+	with_ns(config, ns)
 }
 
 # A function or a single string chooses the column's input; any other value is

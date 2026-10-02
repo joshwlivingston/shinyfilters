@@ -4,13 +4,15 @@
 \alias{with_ns}
 \title{Change the Namespace of a Configuration}
 \usage{
-with_ns(config, ns)
+with_ns(config, ns, ...)
 }
 \arguments{
 \item{config}{A configuration created by \code{\link[=shinyfilters]{shinyfilters()}}.}
 
-\item{ns}{A namespace created by \code{\link[shiny:NS]{shiny::NS()}}, or \code{NULL} to remove the
-namespace.}
+\item{ns}{The namespace: a string, used as the id passed to \code{\link[shiny:NS]{shiny::NS()}};
+a namespace created by \code{\link[shiny:NS]{shiny::NS()}}; or \code{NULL} to remove the namespace.}
+
+\item{...}{Not used.}
 }
 \value{
 The updated configuration.
@@ -22,16 +24,18 @@ configuration once and reuse it in several modules.
 }
 \details{
 Inside \code{\link[dplyr:mutate]{dplyr::mutate()}}, call it without the configuration:
-\code{mutate(filters, with_ns(NS("id")))}.
+\code{mutate(filters, with_ns("id"))}.
+
+\code{with_ns()} is a generic that dispatches on \code{config} and \code{ns}.
 }
 \examples{
 filters <- shinyfilters(nyc_flights)
 
 # Add a namespace
-filters <- with_ns(filters, shiny::NS("flights"))
+filters <- with_ns(filters, "flights")
 filters
 
-# Replace it
+# Replace it, here with a namespace created by NS()
 with_ns(filters, shiny::NS("departures"))
 
 # Remove it
