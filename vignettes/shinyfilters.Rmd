@@ -77,10 +77,6 @@ filters <- nyc_flights %>%
 filters
 ```
 
-```{r, include = FALSE}
-filters_ns <- filters
-```
-
 ## Add and replace columns {.tabset}
 
 Compute columns with dplyr's `mutate()`, or with `with_filter()`, which needs
@@ -96,38 +92,25 @@ library(dplyr)
 ```
 
 ```{r, eval = getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE)}
-filters <- filters |>
+filters |>
 	mutate(dep_delay = -dep_delay, on_time = !delayed)
-
-filters
 ```
 
 ```{r, eval = !getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = !getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE)}
-filters <- filters %>%
+filters %>%
 	mutate(dep_delay = -dep_delay, on_time = !delayed)
-
-filters
-```
-
-```{r, include = FALSE}
-filters_dplyr <- filters
-filters <- filters_ns
 ```
 
 ### shinyfilters {#columns-shinyfilters}
 
 ```{r, eval = getRversion() >= "4.1", include = getRversion() >= "4.1"}
-filters <- filters |>
+filters |>
 	with_filter(dep_delay = -dep_delay, on_time = !delayed)
-
-filters
 ```
 
 ```{r, eval = !getRversion() >= "4.1", include = !getRversion() >= "4.1"}
-filters <- filters %>%
+filters %>%
 	with_filter(dep_delay = -dep_delay, on_time = !delayed)
-
-filters
 ```
 
 ## Choose inputs per column {.tabset}
@@ -141,11 +124,6 @@ select them with tidyselect:
 
 `r if (!requireNamespace("dplyr", quietly = TRUE)) "Install dplyr to see this example."`
 
-```{r, include = FALSE}
-filters_shinyfilters <- filters
-filters <- filters_dplyr
-```
-
 ```{r, eval = getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE)}
 filters |>
 	mutate(across(where(is.numeric), "slider"))
@@ -157,10 +135,6 @@ filters %>%
 ```
 
 ### shinyfilters {#inputs-shinyfilters}
-
-```{r, include = FALSE}
-filters <- filters_shinyfilters
-```
 
 ```{r, eval = getRversion() >= "4.1", include = getRversion() >= "4.1"}
 filters |>
@@ -174,7 +148,8 @@ filters %>%
 
 ## Put it together {.tabset}
 
-The steps chain into one pipeline:
+The steps chain into one pipeline, each seeing the columns the earlier ones
+computed:
 
 ### dplyr {#full-dplyr}
 
@@ -231,14 +206,20 @@ ids are prefixed (`sidebar-mod-origin`), so a module with the id
 ```{r, eval = FALSE}
 library(shiny)
 
+ns <- NS("sidebar-mod")
+
 ui <- fluidPage(
 	sidebarLayout(
 		sidebarPanel(filters),
-		mainPanel()
+		mainPanel(verbatimTextOutput(ns("selected")))
 	)
 )
 
-server <- function(input, output, session) {}
+server <- function(input, output, session) {
+	moduleServer("sidebar-mod", function(input, output, session) {
+		output$selected <- renderPrint(input$origin)
+	})
+}
 
 shinyApp(ui, server)
 ```
