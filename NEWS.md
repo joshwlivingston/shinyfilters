@@ -1,14 +1,14 @@
 # shinyfilters (development version)
 
-## Additions
+## New features
 
 * Error and warning messages now use cli with richer formatting.
-* The `ns` argument of `filterInput()` now behaves like `shiny::NS()`, accepting any argument.
 * The tidyselect helpers, including `everything()`, `where()`, and `starts_with()`, are re-exported, so column selections work without attaching another package (#105).
-* `nyc_flights` is a new example dataset of flights departing New York City (#36).
 * `across_filters()` is a new function that chooses one input for the columns it selects, for use inside `with_filter()` or `mutate()` (#105).
 * `as.data.frame()`, `as_tibble()`, and `as.data.table()` now return a configuration's data (#105).
+* `filterInput()`'s `ns` argument now behaves like `shiny::NS()`, accepting any argument.
 * `mutate()` now chooses which input `filterInput()` creates for a column, either by column name or with `across_filters()` or `across()` to select several columns, and adds or replaces columns computed from the others (#105).
+* `nyc_flights` is a new example dataset of flights departing New York City (#36).
 * `pull()` now returns one column's input (#105).
 * `select()` now keeps only the selected columns of a configuration (#105).
 * `shinyfilters()` and `with_filter()` now choose which input `filterInput()` creates for each column of a data frame (#111).
