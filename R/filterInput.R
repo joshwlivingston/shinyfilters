@@ -277,7 +277,7 @@ call_filter_input <- function(x, .f, ...) {
 # Generic: ._apply_ns ####
 ._apply_ns <- new_generic("._apply_ns", "ns")
 
-method(._apply_ns, class_character) <- function(ns, ..., call = caller_env()) {
+method(._apply_ns, class_any) <- function(ns, ..., call = caller_env()) {
 	._apply_ns(NS(ns), ..., call = call)
 }
 
