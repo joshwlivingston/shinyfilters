@@ -86,17 +86,18 @@
       Filters
         letters                <chr>  selectizeInput  #
         factors                <fct>  selectizeInput  #
-        x                      <dbl>  radioButtons    *
-        a_very_very_long_name  <dbl>  numericInput    *
-        y                      <dbl>  sliderInput     #
-        z                      <chr>  selectizeInput  #
+        x                      <dbl>  radioButtons    ~
+        a_very_very_long_name  <dbl>  numericInput    ~
+        y                      <dbl>  sliderInput     +
+        z                      <chr>  selectizeInput  +
       
       Default Overrides
         slider    = TRUE
         selectize = TRUE
       
-      * Filter chosen by `with_filter()`
       # Filter set by default argument
+      + Filter added by `with_filter()`
+      ~ Filter replaced by `with_filter()`
 
 # shinyfilters() and with_filter() errors
 

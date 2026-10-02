@@ -258,11 +258,14 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	diamond <- if (is_utf8_output()) "\u25c6" else "#"
 	dot_default <- col_magenta(diamond)
 
-	# One marker per row: whatever decided the input wins over where the column
-	# came from.
-	defaulted <- !overridden & !is_error & ._set_by_default(x, inputs)
-	added <- added & !overridden & !defaulted
-	replaced <- replaced & !overridden & !defaulted
+	# One marker per row: where the column came from wins over whatever decided
+	# the input.
+	overridden <- overridden & !added & !replaced
+	defaulted <- !overridden &
+		!added &
+		!replaced &
+		!is_error &
+		._set_by_default(x, inputs)
 	marker <- paste0(
 		ifelse(overridden | defaulted | added | replaced, "  ", ""),
 		ifelse(overridden, dot_input, ""),

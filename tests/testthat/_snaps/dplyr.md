@@ -54,10 +54,11 @@
         factors                <fct>  selectInput
         x                      <dbl>  numericInput  ~
         a_very_very_long_name  <dbl>  numericInput
-        y                      <dbl>  sliderInput   *
+        y                      <dbl>  sliderInput   +
       
       
       * Filter chosen by `mutate()`
+      + Filter added by `mutate()`
       ~ Filter replaced by `mutate()`
     Code
       print(dplyr::select(cfg, x, letters))
