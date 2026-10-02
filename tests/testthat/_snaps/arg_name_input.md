@@ -3,7 +3,7 @@
     Code
       filterInput(ClassCharacter(letters), ns = shiny::NS("mymodule"))
     Condition
-      Error in `filterInput()`:
+      Error:
       ! `arg_name_input_id(x)` must not return `NULL` when `ns` is provided.
 
 # arg_name_input_value: method not found for S7 object passed as list
