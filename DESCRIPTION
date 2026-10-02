@@ -29,6 +29,7 @@ Suggests:
     DT,
     knitr,
     magrittr,
+    nycflights13,
     rmarkdown,
     roxygen2,
     shinyWidgets,
