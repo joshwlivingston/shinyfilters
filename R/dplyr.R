@@ -47,7 +47,7 @@
 #' mutate(filters, across(where(is.numeric), "slider"))
 #'
 #' # Add a column computed from the others
-#' mutate(filters, air_time_hours = air_time / 60)
+#' mutate(filters, distance_km = distance * 1.609)
 #'
 #' # Keep only some columns
 #' select(filters, origin, carrier)
