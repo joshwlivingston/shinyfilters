@@ -1,0 +1,17 @@
+/* Printed output keeps its terminal colors as inline styles. The dark ones are
+   unreadable on the dark theme's background, so lighten them there. */
+[data-bs-theme="dark"] pre span[style*="color: #000000"] {
+  color: #f8f8f2 !important;
+}
+[data-bs-theme="dark"] pre span[style*="color: #555555"] {
+  color: #a8a8a8 !important;
+}
+[data-bs-theme="dark"] pre span[style*="color: #0000BB"] {
+  color: #7fb8ff !important;
+}
+[data-bs-theme="dark"] pre span[style*="color: #BB0000"] {
+  color: #ff8a80 !important;
+}
+[data-bs-theme="dark"] pre span[style*="color: #BB00BB"] {
+  color: #e6a0ff !important;
+}

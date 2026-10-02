@@ -4,7 +4,7 @@ test_that("get_filter_logical() returns all TRUE when val is empty", {
 	result <- get_filter_logical(x, val = numeric(0))
 	expect_equal(result, rep(TRUE, 10))
 
-	df <- data.frame(a = 1:5)
+	df <- data.frame(stringsAsFactors = FALSE, a = 1:5)
 	result <- get_filter_logical(df, val = character(0), column = "a")
 	expect_equal(result, rep(TRUE, 5))
 })
@@ -18,6 +18,7 @@ test_that("get_filter_logical() returns NULL for NULL input", {
 # data.frame methods ####
 test_that("get_filter_logical() filters data.frame columns correctly", {
 	df <- data.frame(
+		stringsAsFactors = FALSE,
 		chr_col = c("a", "b", "c", "a", "b"),
 		num_col = 1:5
 	)
@@ -37,7 +38,7 @@ test_that("get_filter_logical() filters data.frame columns correctly", {
 })
 
 test_that("get_filter_logical() throws error for missing column", {
-	df <- data.frame(a = 1:5, b = letters[1:5])
+	df <- data.frame(stringsAsFactors = FALSE, a = 1:5, b = letters[1:5])
 	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
 		get_filter_logical(df, val = "test", column = "nonexistent")
 	})
@@ -337,7 +338,10 @@ test_that("get_filter_logical: non-logical vector returned", {
 	) {
 		integer(length(x))
 	}
-	df <- data.frame(x = ClassCharacter(letters), stringsAsFactors = FALSE)
+	df <- data.frame(
+		stringsAsFactors = FALSE,
+		x = ClassCharacter(letters)
+	)
 	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
 		apply_filters(df, list(x = letters[1:5]))
 	})
@@ -351,7 +355,10 @@ test_that("get_filter_logical: logical vector of invalid length", {
 	) {
 		logical(length(x) - 1L)
 	}
-	df <- data.frame(x = ClassCharacter(letters), stringsAsFactors = FALSE)
+	df <- data.frame(
+		stringsAsFactors = FALSE,
+		x = ClassCharacter(letters)
+	)
 	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
 		apply_filters(df, list(x = letters[1:5]))
 	})

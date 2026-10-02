@@ -26,6 +26,7 @@ the names provided in \code{x}.
 \dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
 library(shiny)
 df <- data.frame(
+	 stringsAsFactors = FALSE,
   name = c("Alice", "Bob"),
   age = c(25, 30),
   completed = c(TRUE, FALSE)

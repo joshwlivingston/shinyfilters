@@ -157,6 +157,7 @@ use_text <- function(x) {
 
 # fmt: skip
 test_df <- data.frame(
+	stringsAsFactors = FALSE,
 	chr_col            =                sample(choices_chr, 10, TRUE),
 	chr_col_radio      = use_radio(     sample(choices_chr, 10, TRUE)),
 	chr_col_selectize  = use_selectize( sample(choices_chr, 10, TRUE)),

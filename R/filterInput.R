@@ -109,11 +109,15 @@ filterInput <- new_generic(
 	name = "filterInput",
 	dispatch_args = c("x"),
 	fun = function(x, ...) {
-		if (all(is.na(x))) {
+		if ((is.list(x) || is.atomic(x)) && all(is.na(x))) {
 			cli_abort("{.arg x} must have at least one non-missing element.")
 		}
 		args <- list(...)
-		if (!is.data.frame(x) && !is.null(args$ns)) {
+		if (
+			!is.data.frame(x) &&
+				!S7_inherits(x, class_shinyfilters) &&
+				!is.null(args$ns)
+		) {
 			args <- c(list(x = x), args)
 			args <- do.call(._apply_ns, args)
 			return(do.call("filterInput", args))
@@ -143,11 +147,7 @@ method(filterInput, class_character) <- function(x, ...) {
 ## Method: data.frame ####
 method(filterInput, class_data.frame) <- function(x, ...) {
 	filter_input <- function(x, id, nm) {
-		arg_name_id <- arg_name_input_id(x, ...)
-		arg_name_label <- arg_name_input_label(x, ...)
-		args <- list(x, id, nm)
-		names(args) <- c("x", arg_name_id, arg_name_label)
-		args <- c(args, list(...))
+		args <- c(list(x = x), ._id_label_args(x, id, nm, ...), list(...))
 		do.call("filterInput", args)
 	}
 	do.call(
@@ -254,6 +254,15 @@ call_filter_input <- function(x, .f, ...) {
 }
 
 ._call_filter_input <- function(x, .f, ..., call = caller_env()) {
+	args_prepared <- ._prepare_input_args(x, ..., call = call)
+	._call_input(.f, args_prepared, ...)
+}
+
+# Calls `.f` with `args`, plus any `...` that `.f` accepts and `args` lacks
+._call_input <- function(.f, args, ...) {
+	if (the$dry_run) {
+		return(._dry_run_result(.f))
+	}
 	args_provided <- list(...)
 	function_args <- formalArgs(.f)
 	if (identical(.f, selectizeInput)) {
@@ -262,46 +271,22 @@ call_filter_input <- function(x, .f, ...) {
 			setdiff(formalArgs(selectInput), "selectize")
 		)
 	}
-	args_prepared <- ._prepare_input_args(x, ..., call = call)
 	args <- c(
-		args_prepared,
+		args,
 		args_provided[
 			names(args_provided) %in%
 				function_args &
-				!(names(args_provided) %in% names(args_prepared))
+				!(names(args_provided) %in% names(args))
 		]
 	)
 	do.call(.f, args)
 }
 
-# Generic: ._apply_ns ####
-._apply_ns <- new_generic("._apply_ns", "ns")
-
-method(._apply_ns, class_any) <- function(ns, ..., call = caller_env()) {
-	._apply_ns(NS(ns), ..., call = call)
-}
-
-method(._apply_ns, class_function) <- function(ns, ..., call = caller_env()) {
-	._check_valid_shiny_ns(ns, call = call)
-
-	args <- list(...)
-
-	input_id_column <- arg_name_input_id(args$x)
-	if (is.null(input_id_column)) {
-		cli_abort(
-			"{.code arg_name_input_id(x)} must not return {.code NULL} when {.arg ns} is provided.",
-			call = call
-		)
-	}
-	if (is.null(args[[input_id_column]])) {
-		cli_abort(
-			"{.arg {input_id_column}} is required when {.arg ns} is provided.",
-			call = call
-		)
-	}
-
-	args[[input_id_column]] <- ns(args[[input_id_column]])
-	return(args)
+# Named inputId / label arguments for one column of a data.frame
+._id_label_args <- function(x, id, label, ...) {
+	args <- list(id, label)
+	names(args) <- c(arg_name_input_id(x, ...), arg_name_input_label(x, ...))
+	args
 }
 
 

@@ -22,6 +22,14 @@ reference:
 - contents: 
   - filterInput
   - updateFilterInput
+- title: Configure filters
+- contents:
+  - shinyfilters
+  - with_filter
+  - across_filters
+  - with_ns
+  - with_defaults
+  - shinyfilters-dplyr
 - title: Usage with shiny
 - contents: 
   - serverFilterInput
@@ -34,6 +42,9 @@ reference:
   - get_filter_logical  
   - get_input_ids
   - get_input_labels
+- title: Data
+- contents:
+  - nyc_flights
 - title: Internal functions
 - contents:
   - call_filter_input

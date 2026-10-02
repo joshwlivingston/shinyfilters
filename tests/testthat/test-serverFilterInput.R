@@ -13,7 +13,7 @@ test_that("._prepare_input() with reactiveExpr returns valid list for all test_d
 	testServer(app_shiny(), {
 		# Create reactive with all required columns from test_df
 		input_list <- reactive({
-			setNames(
+			set_names(
 				lapply(get_input_ids(test_df), function(x) NULL),
 				get_input_ids(test_df)
 			)
@@ -30,7 +30,7 @@ test_that("._prepare_input() with reactiveExpr filters out unsupported columns",
 		# Provide all required columns plus extras
 		input_list <- reactive({
 			c(
-				setNames(
+				set_names(
 					lapply(get_input_ids(test_df), function(x) NULL),
 					get_input_ids(test_df)
 				),

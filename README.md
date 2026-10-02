@@ -84,6 +84,7 @@ library(DT)
 library(shiny)
 
 df <- data.frame(
+    stringsAsFactors = FALSE,
     x = letters,
     y = sample(c("red", "green", "blue"), 26, replace = TRUE),
     z = round(runif(26, 0, 3.5), 2),
