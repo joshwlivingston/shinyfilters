@@ -272,7 +272,8 @@ filters <- nyc_flights |>
 		dep_delay = -dep_delay,
 		on_time = !delayed,
 		across(where(is.numeric), "slider"),
-		origin = shiny::radioButtons
+		origin = shiny::radioButtons,
+		dep_delay = as_filter(shiny::sliderInput, value = range(.x, na.rm = TRUE))
 	)
 
 filters
@@ -289,7 +290,8 @@ filters <- nyc_flights %>%
 		dep_delay = -dep_delay,
 		on_time = !delayed,
 		across(where(is.numeric), "slider"),
-		origin = shiny::radioButtons
+		origin = shiny::radioButtons,
+		dep_delay = as_filter(shiny::sliderInput, value = range(.x, na.rm = TRUE))
 	)
 
 filters
@@ -308,7 +310,8 @@ filters <- nyc_flights |>
 		dep_delay = -dep_delay,
 		on_time = !delayed,
 		across_filters(where(is.numeric), "slider"),
-		origin = shiny::radioButtons
+		origin = shiny::radioButtons,
+		dep_delay = as_filter(shiny::sliderInput, value = range(.x, na.rm = TRUE))
 	)
 
 filters
@@ -325,7 +328,8 @@ filters <- nyc_flights %>%
 		dep_delay = -dep_delay,
 		on_time = !delayed,
 		across_filters(where(is.numeric), "slider"),
-		origin = shiny::radioButtons
+		origin = shiny::radioButtons,
+		dep_delay = as_filter(shiny::sliderInput, value = range(.x, na.rm = TRUE))
 	)
 
 filters
