@@ -151,6 +151,28 @@ test_that("a new input keeps the as_filter() arguments it names", {
 	)
 })
 
+test_that("a new input that takes `...` keeps every as_filter() argument", {
+	my_slider <- function(inputId, label, ...) {
+		shiny::sliderInput(inputId, label, ...)
+	}
+	cfg <- with_filter(
+		shinyfilters(df_config),
+		x = as_filter("slider", step = 2, ticks = FALSE)
+	)
+	expect_identical(
+		with_filter(cfg, x = my_slider)$x,
+		shiny::sliderInput(
+			"x",
+			"x",
+			min = 2L,
+			max = 10L,
+			value = 10L,
+			step = 2,
+			ticks = FALSE
+		)
+	)
+})
+
 test_that("as_filter() arguments add to the ones set earlier", {
 	cfg <- shinyfilters(df_config)
 	expect_identical(

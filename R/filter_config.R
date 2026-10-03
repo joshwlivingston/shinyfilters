@@ -492,6 +492,10 @@ the$dry_run <- FALSE
 	"<custom>"
 }
 
+._is_shiny_input <- function(fn) {
+	any(vapply(SHINY_INPUTS, identical, logical(1), fn))
+}
+
 SHINY_INPUTS <- list(
 	dateInput = dateInput,
 	dateRangeInput = dateRangeInput,
@@ -812,14 +816,21 @@ method(.with_filter, class_shinyfilters) <- function(
 }
 
 # The arguments named by the input an override gives a column, or `NULL` when
-# a dry run can't tell which input that is.
+# it may take any: a dry run can't tell which input it is, or it is a function
+# with `...`. shiny's inputs don't count: they check their `...`, or pass them
+# to an input whose arguments `._input_arg_names()` already includes.
 ._override_arg_names <- function(config, name, override) {
 	overrides <- config@overrides
 	overrides[[name]] <- override[c("input", "fn")]
 	res <- ._dry_run(set_props(config, overrides = overrides), name)[[1]]
-	if (inherits(res, "shinyfilters_dry_run")) {
-		._input_arg_names(res$fn)
+	if (!inherits(res, "shinyfilters_dry_run")) {
+		return(NULL)
 	}
+	named <- ._input_arg_names(res$fn)
+	if ("..." %in% named && !._is_shiny_input(res$fn)) {
+		return(NULL)
+	}
+	named
 }
 
 ._new_override <- function(quo, call, fn) {
