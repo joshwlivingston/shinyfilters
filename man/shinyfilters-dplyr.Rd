@@ -13,8 +13,9 @@ a call to \code{\link[=with_ns]{with_ns()}}:
 \item \code{mutate(filters, col = expression)}: adds or replaces a column, like
 \code{\link[dplyr:mutate]{dplyr::mutate()}} does for a data frame. A replaced column keeps its
 input.
-\item \code{mutate(filters, across_filters(cols, input))}: \code{cols} selects columns
-with <\code{\link[tidyselect:language]{tidy-select}}>.
+\item \code{mutate(filters, across_filters(cols, input))} or
+\code{mutate(filters, cols ~ input)}: \code{cols} selects columns with
+<\code{\link[tidyselect:language]{tidy-select}}>.
 }
 
 \code{\link[dplyr:across]{dplyr::across()}} is accepted in place of \code{\link[=across_filters]{across_filters()}} here.

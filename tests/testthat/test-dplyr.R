@@ -73,6 +73,19 @@ test_that("mutate() and across() accept as_filter()", {
 	)
 })
 
+test_that("mutate() and transmute() take `cols ~ input` formulas", {
+	skip_if_not_installed("dplyr")
+	cfg <- shinyfilters(df_config)
+	expect_identical(
+		filterInput(dplyr::mutate(cfg, where(is.numeric) ~ "slider")),
+		filterInput(with_filter(cfg, where(is.numeric), "slider"))
+	)
+	expect_identical(
+		names(dplyr::transmute(cfg, where(is.numeric) ~ "slider")),
+		c("x", "a_very_very_long_name")
+	)
+})
+
 test_that("mutate() applies its arguments in order", {
 	skip_if_not_installed("dplyr")
 	cfg <- shinyfilters(df_config)

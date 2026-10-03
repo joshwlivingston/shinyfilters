@@ -486,8 +486,8 @@ SHINY_INPUTS <- list(
 #' last call wins.
 #'
 #' @param .config A configuration created by [shinyfilters()].
-#' @param ... Either two unnamed arguments, or any number of named arguments
-#'   and [across_filters()] calls:
+#' @param ... Either two unnamed arguments, or any number of named arguments,
+#'   formulas, and [across_filters()] calls:
 #'
 #'   * `with_filter(.config, cols, input)`: `cols` selects columns with
 #'     <[`tidy-select`][tidyselect::language]>, such as `cyl`,
@@ -498,9 +498,11 @@ SHINY_INPUTS <- list(
 #'     input. A function, a single string, or an [as_filter()] object is
 #'     always read as an input; any other value is the column's data. A column
 #'     takes precedence over a variable of the same name.
+#'   * `with_filter(.config, cols ~ input, ...)`: a two-sided formula selects
+#'     columns on its left, like `cols` above, and names one input for all of
+#'     them on its right. It can be mixed with named columns.
 #'   * `with_filter(.config, across_filters(cols, input), ...)`:
-#'     [across_filters()] selects columns and names one input for all of
-#'     them, and can be mixed with named columns.
+#'     [across_filters()] does the same as a formula.
 #'
 #'   Each input is either a keyword (`"area"`, `"radio"`, `"range"`,
 #'   `"selectize"`, `"slider"`, `"textbox"`) or a \pkg{shiny} input function,
@@ -529,7 +531,7 @@ SHINY_INPUTS <- list(
 #' # Or select columns and name others in one call
 #' with_filter(
 #'   filters,
-#'   across_filters(where(is.character), "selectize"),
+#'   where(is.character) ~ "selectize",
 #'   origin = "radio"
 #' )
 #'
@@ -573,13 +575,14 @@ method(.with_filter, class_shinyfilters) <- function(
 		},
 		logical(1)
 	)
+	is_formula <- !named & vapply(quos, ._is_cols_formula, logical(1))
 
 	if (any(is_across & named)) {
 		i <- which(is_across & named)[[1]]
 		._abort_across_named(quos[[i]], nms[[i]], call = .call)
 	}
 
-	if (!any(is_across) && length(quos) == 2 && !any(named)) {
+	if (!any(is_across | is_formula) && length(quos) == 2 && !any(named)) {
 		return(._override_cols(
 			config,
 			quos[[1]],
@@ -589,15 +592,19 @@ method(.with_filter, class_shinyfilters) <- function(
 		))
 	}
 
-	loose <- !named & !is_across
+	loose <- !named & !is_across & !is_formula
 	if (any(loose)) {
 		._abort_with_filter_form(quos[loose], call = .call)
 	}
 
 	# One argument at a time, so each sees the columns the earlier ones computed.
 	for (i in seq_along(quos)) {
-		if (is_across[[i]]) {
-			spec <- ._across_spec(quos[[i]], call = .call)
+		if (is_across[[i]] || is_formula[[i]]) {
+			spec <- if (is_formula[[i]]) {
+				._formula_spec(quos[[i]])
+			} else {
+				._across_spec(quos[[i]], call = .call)
+			}
 			config <- ._override_cols(
 				config,
 				spec$cols,
@@ -619,14 +626,28 @@ method(.with_filter, class_shinyfilters) <- function(
 	config
 }
 
+# `cols ~ input`: the left side selects columns, the right side is their input.
+._is_cols_formula <- function(quo) {
+	is_formula(quo_get_expr(quo), lhs = TRUE)
+}
+
+._formula_spec <- function(quo) {
+	expr <- quo_get_expr(quo)
+	env <- quo_get_env(quo)
+	list(
+		cols = new_quosure(f_lhs(expr), env),
+		input = new_quosure(f_rhs(expr), env)
+	)
+}
+
 # Reached only from `with_filter()`: `mutate()` checks its own argument shapes
 # before forwarding, so its wording never has to appear here.
 ._abort_with_filter_form <- function(quos, call) {
 	msg <- c(
-		"{.fn with_filter} takes two unnamed arguments, named arguments, or {.fn across_filters}.",
+		"{.fn with_filter} takes two unnamed arguments, or named arguments, formulas, and {.fn across_filters} calls.",
 		i = "Select columns: {.code with_filter(filters, c(a, b), \"radio\")}.",
 		i = "Name columns: {.code with_filter(filters, a = \"radio\", b = \"slider\")}.",
-		i = "Mix the two: {.code with_filter(filters, across_filters(c(a, b), \"radio\"), x = \"slider\")}."
+		i = "Mix the two: {.code with_filter(filters, c(a, b) ~ \"radio\", x = \"slider\")}."
 	)
 	used_across <- vapply(
 		quos,

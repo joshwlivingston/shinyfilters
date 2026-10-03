@@ -162,7 +162,8 @@
       dplyr::mutate(cfg, 1 + 1)
     Condition
       Error in `dplyr::mutate()`:
-      ! Each argument to `mutate()` must be named or use `across()` or `with_ns()`.
+      ! Each argument to `mutate()` must be named, a formula, or use `across()` or `with_ns()`.
+      i Formula: `mutate(filters, where(is.numeric) ~ "slider")`.
       i Named: `mutate(filters, origin = "radio")`.
       i `across()`: `mutate(filters, across(where(is.numeric), "slider"))`.
       i `with_ns()`: `mutate(filters, with_ns("id"))`.
@@ -249,7 +250,8 @@
       dplyr::transmute(cfg, 1 + 1)
     Condition
       Error in `dplyr::transmute()`:
-      ! Each argument to `transmute()` must be named or use `across()` or `with_ns()`.
+      ! Each argument to `transmute()` must be named, a formula, or use `across()` or `with_ns()`.
+      i Formula: `transmute(filters, where(is.numeric) ~ "slider")`.
       i Named: `transmute(filters, origin = "radio")`.
       i `across()`: `transmute(filters, across(where(is.numeric), "slider"))`.
       i `with_ns()`: `transmute(filters, with_ns("id"))`.

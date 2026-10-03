@@ -48,6 +48,35 @@ test_that("with_filter() call forms are equivalent", {
 	)
 })
 
+test_that("with_filter() takes `cols ~ input` formulas", {
+	cfg <- shinyfilters(df_config)
+	expect_identical(
+		filterInput(with_filter(cfg, where(is.numeric) ~ "slider")),
+		filterInput(with_filter(cfg, where(is.numeric), "slider"))
+	)
+	expect_identical(
+		filterInput(with_filter(
+			cfg,
+			x ~ shiny::radioButtons,
+			letters ~ "selectize"
+		)),
+		filterInput(with_filter(cfg, x = "radio", letters = "selectize"))
+	)
+	expect_identical(
+		filterInput(with_filter(
+			cfg,
+			everything() ~ "selectize",
+			x = "radio",
+			a_very_very_long_name ~ as_filter("slider", value = range(.x))
+		)),
+		filterInput(with_filter(
+			with_filter(cfg, everything(), "selectize"),
+			x = "radio",
+			a_very_very_long_name = as_filter("slider", value = range(.x))
+		))
+	)
+})
+
 test_that("with_filter() selects columns with tidyselect", {
 	expected <- filterInput(df_config, slider = TRUE)
 	expect_identical(
@@ -337,6 +366,10 @@ test_that("shinyfilters() and with_filter() errors", {
 		with_filter(cfg, nope, "radio")
 		with_filter(cfg, where(is.logical), "radio")
 		with_filter(cfg, x = "radioo")
+		with_filter(cfg, nope ~ "radio")
+		with_filter(cfg, where(is.logical) ~ "radio")
+		with_filter(cfg, x ~ "radioo")
+		with_filter(cfg, ~"radio")
 		with_filter(cfg, x, c("radio", "slider"))
 		with_filter(cfg, x, radio)
 		with_filter(cfg, y = nope * 2)

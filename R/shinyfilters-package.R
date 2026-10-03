@@ -38,6 +38,7 @@
 #' @importFrom rlang enquo
 #' @importFrom rlang enquos
 #' @importFrom rlang eval_tidy
+#' @importFrom rlang f_lhs
 #' @importFrom rlang f_rhs
 #' @importFrom rlang inject
 #' @importFrom rlang is_call

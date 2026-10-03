@@ -9,8 +9,8 @@ with_filter(.config, ...)
 \arguments{
 \item{.config}{A configuration created by \code{\link[=shinyfilters]{shinyfilters()}}.}
 
-\item{...}{Either two unnamed arguments, or any number of named arguments
-and \code{\link[=across_filters]{across_filters()}} calls:
+\item{...}{Either two unnamed arguments, or any number of named arguments,
+formulas, and \code{\link[=across_filters]{across_filters()}} calls:
 \itemize{
 \item \code{with_filter(.config, cols, input)}: \code{cols} selects columns with
 <\code{\link[tidyselect:language]{tidy-select}}>, such as \code{cyl},
@@ -21,9 +21,11 @@ column, computed from the other columns. A replaced column keeps its
 input. A function, a single string, or an \code{\link[=as_filter]{as_filter()}} object is
 always read as an input; any other value is the column's data. A column
 takes precedence over a variable of the same name.
+\item \code{with_filter(.config, cols ~ input, ...)}: a two-sided formula selects
+columns on its left, like \code{cols} above, and names one input for all of
+them on its right. It can be mixed with named columns.
 \item \code{with_filter(.config, across_filters(cols, input), ...)}:
-\code{\link[=across_filters]{across_filters()}} selects columns and names one input for all of
-them, and can be mixed with named columns.
+\code{\link[=across_filters]{across_filters()}} does the same as a formula.
 }
 
 Each input is either a keyword (\code{"area"}, \code{"radio"}, \code{"range"},
@@ -58,7 +60,7 @@ filterInput(filters)
 # Or select columns and name others in one call
 with_filter(
   filters,
-  across_filters(where(is.character), "selectize"),
+  where(is.character) ~ "selectize",
   origin = "radio"
 )
 
