@@ -64,6 +64,16 @@ test_that("as_filter() works in every with_filter() form", {
 		)),
 		expected
 	)
+	expect_identical(
+		filterInput(with_filter(
+			cfg,
+			across_filters(
+				where(is.numeric),
+				~ as_filter("slider", value = range(.x))
+			)
+		)),
+		expected
+	)
 })
 
 test_that("an argument that uses `.x` is computed when the input is created", {
