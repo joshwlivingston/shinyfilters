@@ -278,13 +278,21 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 		!replaced &
 		!is_error &
 		._set_by_default(x, inputs)
-	marker <- paste0(
-		ifelse(overridden | defaulted | added | replaced, "  ", ""),
-		ifelse(overridden, dot_input, ""),
-		ifelse(defaulted, dot_default, ""),
-		ifelse(added, dot_added, ""),
-		ifelse(replaced, dot_replaced, "")
-	)
+	marked <- overridden | defaulted | added | replaced
+	# Unmarked rows keep the marker column's width, so the columns line up. A
+	# print with no marked row has no marker column.
+	marker <- if (any(marked)) {
+		paste0(
+			"  ",
+			ifelse(overridden, dot_input, ""),
+			ifelse(defaulted, dot_default, ""),
+			ifelse(added, dot_added, ""),
+			ifelse(replaced, dot_replaced, ""),
+			ifelse(marked, "", " ")
+		)
+	} else {
+		""
+	}
 	types <- vapply(data, ._type_abbr, character(1))
 	lines <- paste0(
 		marker,
@@ -298,9 +306,10 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	# `as_filter()` arguments follow their filter's row, under its input.
 	indent <- strrep(
 		" ",
-		max(ansi_nchar(nms, type = "width")) +
+		ansi_nchar(marker[[1]], type = "width") +
+			max(ansi_nchar(nms, type = "width")) +
 			max(ansi_nchar(types, type = "width")) +
-			11
+			8
 	)
 	arg_lines <- lapply(nms, function(nm) {
 		args <- ._format_input_args(x@overrides[[nm]]$args)
@@ -324,7 +333,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 		))
 	}
 
-	if (any(overridden) || any(defaulted) || any(added) || any(replaced)) {
+	if (any(marked)) {
 		cat_line()
 	}
 	if (any(defaulted)) {

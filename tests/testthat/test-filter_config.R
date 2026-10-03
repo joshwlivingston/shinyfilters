@@ -276,6 +276,14 @@ test_that("print() markers are one column wide in UTF-8 output", {
 	expect_all_equal(nchar(sub(" Filter .*", "", legend), type = "width"), 1L)
 })
 
+test_that("print() lines up rows with and without a marker", {
+	cfg <- with_filter(shinyfilters(df_config), letters = "radio")
+	out <- capture.output(print(cfg))
+	rows <- grep("<(chr|fct|int|dbl)>", out, value = TRUE)
+	expect_length(rows, 4)
+	expect_length(unique(as.integer(regexpr("<", rows, fixed = TRUE))), 1)
+})
+
 test_that("print() shows one marker per row", {
 	cfg <- shinyfilters(df_config, slider = TRUE, selectize = TRUE)
 	cfg <- with_filter(cfg, y = x * 2, x = x / 2, z = letters)

@@ -6,26 +6,26 @@
       <shinyfilters> * 4 filters
       
       Filters
-        letters                <chr>  <custom>      *
-        factors                <fct>  selectInput
-        x                      <int>  numericInput
-        a_very_very_long_name  <dbl>  numericInput
+        *  letters                <chr>  <custom>
+           factors                <fct>  selectInput
+           x                      <int>  numericInput
+           a_very_very_long_name  <dbl>  numericInput
       
       
-      * Filter chosen by `mutate()`
+      * Filter set by `mutate()`
     Code
       print(dplyr::mutate(cfg, letters = my_select))
     Output
       <shinyfilters> * 4 filters
       
       Filters
-        letters                <chr>  <custom>      *
-        factors                <fct>  selectInput
-        x                      <int>  numericInput
-        a_very_very_long_name  <dbl>  numericInput
+        *  letters                <chr>  <custom>
+           factors                <fct>  selectInput
+           x                      <int>  numericInput
+           a_very_very_long_name  <dbl>  numericInput
       
       
-      * Filter chosen by `mutate()`
+      * Filter set by `mutate()`
 
 # print() marks columns added by mutate()
 
@@ -35,11 +35,11 @@
       <shinyfilters> * 5 filters
       
       Filters
-        letters                <chr>  selectInput
-        factors                <fct>  selectInput
-        x                      <dbl>  numericInput  ~
-        a_very_very_long_name  <dbl>  numericInput
-        y                      <dbl>  numericInput  +
+           letters                <chr>  selectInput
+           factors                <fct>  selectInput
+        ~  x                      <dbl>  numericInput
+           a_very_very_long_name  <dbl>  numericInput
+        +  y                      <dbl>  numericInput
       
       
       + Filter added by `mutate()`
@@ -50,14 +50,14 @@
       <shinyfilters> * 5 filters
       
       Filters
-        letters                <chr>  radioButtons  *
-        factors                <fct>  selectInput
-        x                      <dbl>  numericInput  ~
-        a_very_very_long_name  <dbl>  numericInput
-        y                      <dbl>  sliderInput   +
+        *  letters                <chr>  radioButtons
+           factors                <fct>  selectInput
+        ~  x                      <dbl>  numericInput
+           a_very_very_long_name  <dbl>  numericInput
+        +  y                      <dbl>  sliderInput
       
       
-      * Filter chosen by `mutate()`
+      * Filter set by `mutate()`
       + Filter added by `mutate()`
       ~ Filter replaced by `mutate()`
     Code
@@ -66,8 +66,8 @@
       <shinyfilters> * 2 filters
       
       Filters
-        x        <dbl>  numericInput  ~
-        letters  <chr>  selectInput
+        ~  x        <dbl>  numericInput
+           letters  <chr>  selectInput
       
       
       ~ Filter replaced by `mutate()`
@@ -77,12 +77,12 @@
       <shinyfilters> * 6 filters
       
       Filters
-        letters                <chr>  selectInput
-        factors                <fct>  selectInput
-        x                      <dbl>  numericInput  ~
-        a_very_very_long_name  <dbl>  numericInput
-        y                      <dbl>  numericInput  +
-        z                      <dbl>  numericInput  +
+           letters                <chr>  selectInput
+           factors                <fct>  selectInput
+        ~  x                      <dbl>  numericInput
+           a_very_very_long_name  <dbl>  numericInput
+        +  y                      <dbl>  numericInput
+        +  z                      <dbl>  numericInput
       
       
       + Filter added by `mutate()` or `with_filter()`
@@ -96,39 +96,39 @@
       <shinyfilters> * 4 filters
       
       Filters
-        letters                <chr>  selectInput
-        factors                <fct>  selectInput
-        x                      <int>  sliderInput   *
-        a_very_very_long_name  <dbl>  numericInput
+           letters                <chr>  selectInput
+           factors                <fct>  selectInput
+        *  x                      <int>  sliderInput
+           a_very_very_long_name  <dbl>  numericInput
       
       
-      * Filter chosen by `mutate()`
+      * Filter set by `mutate()`
     Code
       print(with_filter(cfg, letters = "radio"))
     Output
       <shinyfilters> * 4 filters
       
       Filters
-        letters                <chr>  radioButtons  *
-        factors                <fct>  selectInput
-        x                      <int>  sliderInput   *
-        a_very_very_long_name  <dbl>  numericInput
+        *  letters                <chr>  radioButtons
+           factors                <fct>  selectInput
+        *  x                      <int>  sliderInput
+           a_very_very_long_name  <dbl>  numericInput
       
       
-      * Filter chosen by `mutate()` or `with_filter()`
+      * Filter set by `mutate()` or `with_filter()`
     Code
       print(with_filter(cfg, x = "radio"))
     Output
       <shinyfilters> * 4 filters
       
       Filters
-        letters                <chr>  selectInput
-        factors                <fct>  selectInput
-        x                      <int>  radioButtons  *
-        a_very_very_long_name  <dbl>  numericInput
+           letters                <chr>  selectInput
+           factors                <fct>  selectInput
+        *  x                      <int>  radioButtons
+           a_very_very_long_name  <dbl>  numericInput
       
       
-      * Filter chosen by `with_filter()`
+      * Filter set by `with_filter()`
 
 # mutate() errors
 
