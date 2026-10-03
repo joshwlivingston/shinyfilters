@@ -4,6 +4,11 @@
 
 `shinyfilters()` is a new function to configure filters. It displays an informative print and allows for configuration without extending methods directly. The functions listed here support `shinyfilters` objects (#111).
 
+### View data
+
+* `print()` displays the current configuration and if/how any settings were applied.
+* `as.data.frame()`, `as_tibble()`, and `as.data.table()` return the data.frame behind a configuration (#105).
+
 ### Choose columns
 
 * `[` and `dplyr::select()` keep only the selected columns of a configuration (#105).
@@ -22,11 +27,6 @@
 
 * `with_defaults()` is sets or removes the arguments a configuration passed to `filterInput()` for every column (#105).
 * `with_ns()` is sets or removes the namespace of a configuration (#105).
-
-### View data
-
-* `print()` displays the current configuration and if/how any settings were applied.
-* `as.data.frame()`, `as_tibble()`, and `as.data.table()` return the data.frame behind a configuration (#105).
 
 ## Other new features
 
