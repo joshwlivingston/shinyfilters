@@ -77,6 +77,29 @@ test_that("an argument that uses `.x` is computed when the input is created", {
 	)
 })
 
+test_that("`.x` keeps the column's missing values", {
+	df <- data.frame(stringsAsFactors = FALSE, a = c(NA, 3L, 1L))
+	cfg <- with_filter(
+		shinyfilters(df),
+		a = as_filter(
+			"slider",
+			value = range(.x, na.rm = TRUE),
+			step = sum(is.na(.x))
+		)
+	)
+	expect_identical(
+		cfg$a,
+		shiny::sliderInput(
+			"a",
+			"a",
+			min = 1L,
+			max = 3L,
+			value = c(1L, 3L),
+			step = 1L
+		)
+	)
+})
+
 test_that("an argument that uses `.x` can use other columns", {
 	cfg <- with_filter(
 		shinyfilters(df_config),
