@@ -113,7 +113,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 			filter_input_override,
 			c(col_args, list(override = override$input))
 		),
-		shinyfilters_error_unsupported_input = function(cnd) {
+		error = function(cnd) {
 			cli_abort(
 				"Can't create an input for column {.field {name}}.",
 				parent = cnd,

@@ -303,6 +303,17 @@ test_that("function overrides receive args_filter_input() output", {
 	)
 })
 
+test_that("errors from a function override name the column", {
+	broken <- function(inputId, label, ...) {
+		rlang::abort("Not today.", call = NULL)
+	}
+	cfg <- with_filter(shinyfilters(df_config), x = broken)
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+		filterInput(cfg)
+		cfg$x
+	})
+})
+
 test_that("shinyfilters() and with_filter() errors", {
 	cfg <- shinyfilters(df_config)
 	expect_snapshot(error = TRUE, variant = snapshot_variant(), {

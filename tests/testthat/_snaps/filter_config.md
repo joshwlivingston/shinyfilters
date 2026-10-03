@@ -99,6 +99,23 @@
       + Filter added by `with_filter()`
       ~ Filter replaced by `with_filter()`
 
+# errors from a function override name the column
+
+    Code
+      filterInput(cfg)
+    Condition
+      Error in `filterInput()`:
+      ! Can't create an input for column x.
+      Caused by error:
+      ! Not today.
+    Code
+      cfg$x
+    Condition
+      Error in `cfg$x`:
+      ! Can't create an input for column x.
+      Caused by error:
+      ! Not today.
+
 # shinyfilters() and with_filter() errors
 
     Code
