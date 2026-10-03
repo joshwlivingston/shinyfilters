@@ -76,6 +76,38 @@ test_that("as_filter() works in every with_filter() form", {
 	)
 })
 
+test_that("a new input keeps the as_filter() arguments it names", {
+	cfg <- shinyfilters(df_config)
+	numeric <- with_filter(cfg, x = as_filter(shiny::numericInput, step = 2))
+	expect_identical(
+		with_filter(numeric, where(is.numeric) ~ "slider")$x,
+		shiny::sliderInput("x", "x", min = 2L, max = 10L, value = 10L, step = 2)
+	)
+
+	radio <- with_filter(
+		cfg,
+		letters = as_filter("radio", inline = TRUE, label = "Letters")
+	)
+	expect_identical(
+		with_filter(radio, letters = "selectize")$letters,
+		shiny::selectizeInput("letters", "Letters", choices = c("a", "b", "c"))
+	)
+})
+
+test_that("as_filter() arguments add to the ones set earlier", {
+	cfg <- shinyfilters(df_config)
+	expect_identical(
+		with_filter(
+			with_filter(cfg, x = as_filter("slider", step = 2, width = "50%")),
+			x = as_filter("slider", width = "100%", ticks = FALSE)
+		),
+		with_filter(
+			cfg,
+			x = as_filter("slider", step = 2, width = "100%", ticks = FALSE)
+		)
+	)
+})
+
 test_that("an argument that uses `.x` is computed when the input is created", {
 	cfg <- with_filter(
 		shinyfilters(df_config),

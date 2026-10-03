@@ -37,7 +37,8 @@ Other functions are called like \code{\link[=call_filter_input]{call_filter_inpu
 arguments \code{\link[=args_filter_input]{args_filter_input()}} returns for the column's type, plus any
 other arguments they accept.
 
-Wrap an input in \code{\link[=as_filter]{as_filter()}} to set its arguments.}
+Wrap an input in \code{\link[=as_filter]{as_filter()}} to set its arguments. They stay with the
+column: an input chosen later keeps the ones it has an argument for.}
 }
 \value{
 The updated configuration.

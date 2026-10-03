@@ -34,6 +34,11 @@ A \code{shinyfilters_filter} object, to use as an input in
 change the arguments shinyfilters passes for a column, such as a slider's
 \code{value}, or to add others, such as \code{step} or \code{width}.
 }
+\details{
+Arguments stay with their column. Setting the column again adds to them,
+replacing those of the same name, and a new input keeps the ones it has an
+argument for.
+}
 \examples{
 filters <- shinyfilters(nyc_flights)
 

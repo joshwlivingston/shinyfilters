@@ -419,6 +419,12 @@ the$dry_run <- FALSE
 }
 
 ._dry_run_inputs <- function(config) {
+	vapply(._dry_run(config), ._dry_run_label, character(1))
+}
+
+# One result per column: the input `._call_input()` was asked to call, or the
+# error that kept `filterInput()` from getting that far.
+._dry_run <- function(config, cols = names(config@data)) {
 	the$dry_run <- TRUE
 	on.exit({
 		assign("dry_run", FALSE, envir = the)
@@ -427,6 +433,7 @@ the$dry_run <- FALSE
 
 	data <- config@data
 	args <- ._config_args(config)
+	i <- match(cols, names(data))
 	mapply(
 		function(name, id, label) {
 			the$dry_run_fn <- NULL
@@ -441,11 +448,12 @@ the$dry_run <- FALSE
 			if (inherits(res, "error") && !is.null(the$dry_run_fn)) {
 				res <- ._dry_run_result(the$dry_run_fn)
 			}
-			._dry_run_label(res)
+			res
 		},
-		names(data),
-		get_input_ids(data),
-		get_input_labels(data),
+		cols,
+		get_input_ids(data)[i],
+		get_input_labels(data)[i],
+		SIMPLIFY = FALSE,
 		USE.NAMES = FALSE
 	)
 }
@@ -522,7 +530,8 @@ SHINY_INPUTS <- list(
 #'   arguments [args_filter_input()] returns for the column's type, plus any
 #'   other arguments they accept.
 #'
-#'   Wrap an input in [as_filter()] to set its arguments.
+#'   Wrap an input in [as_filter()] to set its arguments. They stay with the
+#'   column: an input chosen later keeps the ones it has an argument for.
 #'
 #' @returns The updated configuration.
 #'
@@ -755,8 +764,39 @@ method(.with_filter, class_shinyfilters) <- function(
 
 ._set_overrides <- function(config, overrides) {
 	overrides_all <- config@overrides
-	overrides_all[names(overrides)] <- overrides
+	for (name in names(overrides)) {
+		overrides_all[[name]] <- ._merge_override(config, name, overrides[[name]])
+	}
 	set_props(config, overrides = overrides_all)
+}
+
+# `as_filter()` arguments stay with their column: a new input keeps the ones it
+# names, and the override's own arguments are added to them.
+._merge_override <- function(config, name, override) {
+	args <- config@overrides[[name]]$args
+	if (length(args) > 0) {
+		named <- ._override_arg_names(config, name, override)
+		if (!is.null(named)) {
+			args <- args[names(args) %in% named]
+		}
+	}
+	args[names(override$args)] <- override$args
+	out <- list(input = override$input, args = args, fn = override$fn)
+	if (length(args) == 0) {
+		out$args <- NULL
+	}
+	out
+}
+
+# The arguments named by the input an override gives a column, or `NULL` when
+# a dry run can't tell which input that is.
+._override_arg_names <- function(config, name, override) {
+	overrides <- config@overrides
+	overrides[[name]] <- override[c("input", "fn")]
+	res <- ._dry_run(set_props(config, overrides = overrides), name)[[1]]
+	if (inherits(res, "shinyfilters_dry_run")) {
+		._input_arg_names(res$fn)
+	}
 }
 
 ._new_override <- function(quo, call, fn) {

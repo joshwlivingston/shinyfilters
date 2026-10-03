@@ -265,13 +265,7 @@ call_filter_input <- function(x, .f, ...) {
 		return(._dry_run_result(.f))
 	}
 	args_provided <- list(...)
-	function_args <- formalArgs(.f)
-	if (identical(.f, selectizeInput)) {
-		function_args <- union(
-			function_args,
-			setdiff(formalArgs(selectInput), "selectize")
-		)
-	}
+	function_args <- ._input_arg_names(.f)
 	args <- c(
 		args,
 		args_provided[
@@ -283,6 +277,19 @@ call_filter_input <- function(x, .f, ...) {
 	input_args <- args_provided[[INPUT_ARGS]]
 	args[names(input_args)] <- input_args
 	do.call(.f, args)
+}
+
+# The arguments an input names. `selectizeInput()` passes its `...` to
+# `selectInput()`, so it takes that function's arguments too.
+._input_arg_names <- function(.f) {
+	function_args <- formalArgs(.f)
+	if (identical(.f, selectizeInput)) {
+		function_args <- union(
+			function_args,
+			setdiff(formalArgs(selectInput), "selectize")
+		)
+	}
+	function_args
 }
 
 # Named inputId / label arguments for one column of a data.frame

@@ -11,6 +11,10 @@
 #' change the arguments shinyfilters passes for a column, such as a slider's
 #' `value`, or to add others, such as `step` or `width`.
 #'
+#' Arguments stay with their column. Setting the column again adds to them,
+#' replacing those of the same name, and a new input keeps the ones it has an
+#' argument for.
+#'
 #' @param input The input: a keyword or a \pkg{shiny} input function, as
 #'   described in [with_filter()].
 #' @param ... Named arguments for `input`. They replace the ones shinyfilters
