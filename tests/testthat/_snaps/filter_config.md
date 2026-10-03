@@ -15,11 +15,11 @@
       <shinyfilters> * 5 filters
       
       Filters
-        letters                <chr>  selectInput
-        factors                <fct>  selectInput
-        x                      <int>  numericInput
-        a_very_very_long_name  <dbl>  numericInput
-        y                      <dbl>  numericInput  +
+           letters                <chr>  selectInput
+           factors                <fct>  selectInput
+           x                      <int>  numericInput
+           a_very_very_long_name  <dbl>  numericInput
+        +  y                      <dbl>  numericInput
       
       
       + Filter added by `with_filter()`
@@ -29,7 +29,7 @@
       <shinyfilters> * 1 filter
       
       Filters
-        y  <dbl>  numericInput  +
+        +  y  <dbl>  numericInput
       
       
       + Filter added by `with_filter()`
@@ -50,10 +50,10 @@
       <shinyfilters> * 4 filters
       
       Filters
-        letters                <chr>  selectInput
-        factors                <fct>  selectInput
-        x                      <dbl>  numericInput  ~
-        a_very_very_long_name  <dbl>  numericInput
+           letters                <chr>  selectInput
+           factors                <fct>  selectInput
+        ~  x                      <dbl>  numericInput
+           a_very_very_long_name  <dbl>  numericInput
       
       
       ~ Filter replaced by `with_filter()`
@@ -63,7 +63,7 @@
       <shinyfilters> * 1 filter
       
       Filters
-        x  <dbl>  numericInput  ~
+        ~  x  <dbl>  numericInput
       
       
       ~ Filter replaced by `with_filter()`
@@ -84,12 +84,12 @@
       <shinyfilters> * 6 filters
       
       Filters
-        letters                <chr>  selectizeInput  #
-        factors                <fct>  selectizeInput  #
-        x                      <dbl>  radioButtons    ~
-        a_very_very_long_name  <dbl>  numericInput    ~
-        y                      <dbl>  sliderInput     +
-        z                      <chr>  selectizeInput  +
+        #  letters                <chr>  selectizeInput
+        #  factors                <fct>  selectizeInput
+        ~  x                      <dbl>  radioButtons
+        ~  a_very_very_long_name  <dbl>  numericInput
+        +  y                      <dbl>  sliderInput
+        +  z                      <chr>  selectizeInput
       
       Default Overrides
         slider    = TRUE
@@ -98,6 +98,23 @@
       # Filter set by default argument
       + Filter added by `with_filter()`
       ~ Filter replaced by `with_filter()`
+
+# errors from a function override name the column
+
+    Code
+      filterInput(cfg)
+    Condition
+      Error in `filterInput()`:
+      ! Can't create an input for column x.
+      Caused by error:
+      ! Not today.
+    Code
+      cfg$x
+    Condition
+      Error in `cfg$x`:
+      ! Can't create an input for column x.
+      Caused by error:
+      ! Not today.
 
 # shinyfilters() and with_filter() errors
 
@@ -125,34 +142,34 @@
       with_filter(cfg)
     Condition
       Error in `with_filter()`:
-      ! `with_filter()` takes two unnamed arguments, named arguments, or `across_filters()`.
+      ! `with_filter()` takes two unnamed arguments, or named arguments, `cols ~ input` formulas, and `across_filters()` calls.
       i Select columns: `with_filter(filters, c(a, b), "radio")`.
       i Name columns: `with_filter(filters, a = "radio", b = "slider")`.
-      i Mix the two: `with_filter(filters, across_filters(c(a, b), "radio"), x = "slider")`.
+      i Mix the two: `with_filter(filters, c(a, b) ~ "radio", x = "slider")`.
     Code
       with_filter(cfg, x)
     Condition
       Error in `with_filter()`:
-      ! `with_filter()` takes two unnamed arguments, named arguments, or `across_filters()`.
+      ! `with_filter()` takes two unnamed arguments, or named arguments, `cols ~ input` formulas, and `across_filters()` calls.
       i Select columns: `with_filter(filters, c(a, b), "radio")`.
       i Name columns: `with_filter(filters, a = "radio", b = "slider")`.
-      i Mix the two: `with_filter(filters, across_filters(c(a, b), "radio"), x = "slider")`.
+      i Mix the two: `with_filter(filters, c(a, b) ~ "radio", x = "slider")`.
     Code
       with_filter(cfg, x, "radio", "slider")
     Condition
       Error in `with_filter()`:
-      ! `with_filter()` takes two unnamed arguments, named arguments, or `across_filters()`.
+      ! `with_filter()` takes two unnamed arguments, or named arguments, `cols ~ input` formulas, and `across_filters()` calls.
       i Select columns: `with_filter(filters, c(a, b), "radio")`.
       i Name columns: `with_filter(filters, a = "radio", b = "slider")`.
-      i Mix the two: `with_filter(filters, across_filters(c(a, b), "radio"), x = "slider")`.
+      i Mix the two: `with_filter(filters, c(a, b) ~ "radio", x = "slider")`.
     Code
       with_filter(cfg, x = "radio", "letters")
     Condition
       Error in `with_filter()`:
-      ! `with_filter()` takes two unnamed arguments, named arguments, or `across_filters()`.
+      ! `with_filter()` takes two unnamed arguments, or named arguments, `cols ~ input` formulas, and `across_filters()` calls.
       i Select columns: `with_filter(filters, c(a, b), "radio")`.
       i Name columns: `with_filter(filters, a = "radio", b = "slider")`.
-      i Mix the two: `with_filter(filters, across_filters(c(a, b), "radio"), x = "slider")`.
+      i Mix the two: `with_filter(filters, c(a, b) ~ "radio", x = "slider")`.
     Code
       with_filter(cfg, nope = "radio")
     Condition
@@ -177,6 +194,31 @@
       Error in `with_filter()`:
       ! An input must be one of "area", "radio", "range", "selectize", "slider", or "textbox", or a function.
       x Got "radioo".
+    Code
+      with_filter(cfg, nope ~ "radio")
+    Condition
+      Error in `with_filter()`:
+      ! Can't select columns that don't exist.
+      x Column `nope` doesn't exist.
+    Code
+      with_filter(cfg, where(is.logical) ~ "radio")
+    Condition
+      Error in `with_filter()`:
+      ! `where(is.logical)` doesn't select any columns.
+    Code
+      with_filter(cfg, x ~ "radioo")
+    Condition
+      Error in `with_filter()`:
+      ! An input must be one of "area", "radio", "range", "selectize", "slider", or "textbox", or a function.
+      x Got "radioo".
+    Code
+      with_filter(cfg, ~"radio")
+    Condition
+      Error in `with_filter()`:
+      ! `with_filter()` takes two unnamed arguments, or named arguments, `cols ~ input` formulas, and `across_filters()` calls.
+      i Select columns: `with_filter(filters, c(a, b), "radio")`.
+      i Name columns: `with_filter(filters, a = "radio", b = "slider")`.
+      i Mix the two: `with_filter(filters, c(a, b) ~ "radio", x = "slider")`.
     Code
       with_filter(cfg, x, c("radio", "slider"))
     Condition
@@ -341,42 +383,42 @@
       <shinyfilters> * 4 filters * namespace "m"
       
       Filters
-        letters                <chr>  <custom>      *
-        factors                <fct>  selectInput
-        x                      <int>  radioButtons  *
-        a_very_very_long_name  <dbl>  sliderInput   #
+        *  letters                <chr>  <custom>
+           factors                <fct>  selectInput
+        *  x                      <int>  radioButtons
+        #  a_very_very_long_name  <dbl>  sliderInput
       
       Default Overrides
         slider = TRUE
       
-      * Filter chosen by `with_filter()`
       # Filter set by default argument
+      * Filter set by `with_filter()`
     Code
       print(with_filter(shinyfilters(df_config), factors = "slider"))
     Output
       <shinyfilters> * 4 filters
       
       Filters
-        letters                <chr>  selectInput
-        factors                <fct>  x "slider" isn't available for <factor> columns.  *
-        x                      <int>  numericInput
-        a_very_very_long_name  <dbl>  numericInput
+           letters                <chr>  selectInput
+        *  factors                <fct>  x "slider" isn't available for <factor> columns.
+           x                      <int>  numericInput
+           a_very_very_long_name  <dbl>  numericInput
       
       
-      * Filter chosen by `with_filter()`
+      * Filter set by `with_filter()`
     Code
       print(with_filter(shinyfilters(df_config), letters = shiny::radioButtons))
     Output
       <shinyfilters> * 4 filters
       
       Filters
-        letters                <chr>  radioButtons  *
-        factors                <fct>  selectInput
-        x                      <int>  numericInput
-        a_very_very_long_name  <dbl>  numericInput
+        *  letters                <chr>  radioButtons
+           factors                <fct>  selectInput
+           x                      <int>  numericInput
+           a_very_very_long_name  <dbl>  numericInput
       
       
-      * Filter chosen by `with_filter()`
+      * Filter set by `with_filter()`
     Code
       print(shinyfilters(df_config, args_unique = "bad"))
     Output
@@ -447,13 +489,13 @@
       <shinyfilters> * 2 filters
       
       Filters
-        letters  <chr>  selectInput
-        x        <int>  radioButtons  *
+           letters  <chr>  selectInput
+        *  x        <int>  radioButtons
       
       Default Overrides
         slider = TRUE
       
-      * Filter chosen by `with_filter()`
+      * Filter set by `with_filter()`
 
 # `[` errors on unknown columns
 

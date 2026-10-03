@@ -11,24 +11,25 @@
 #' returns one column's input.
 #'
 #' @param .data A configuration created by [shinyfilters()].
-#' @param ... For `mutate()`, named arguments, calls to [across_filters()], or
-#'   a call to [with_ns()]:
+#' @param ... For `mutate()`, named arguments, `cols ~ input` formulas, calls
+#'   to [across_filters()], or a call to [with_ns()]:
 #'
 #'   * `mutate(filters, col = input)`: each name is a column.
 #'   * `mutate(filters, col = expression)`: adds or replaces a column, like
 #'     [dplyr::mutate()] does for a data frame. A replaced column keeps its
 #'     input.
-#'   * `mutate(filters, across_filters(cols, input))`: `cols` selects columns
-#'     with <[`tidy-select`][tidyselect::language]>.
+#'   * `mutate(filters, across_filters(cols, input))` or
+#'     `mutate(filters, cols ~ input)`: `cols` selects columns with
+#'     <[`tidy-select`][tidyselect::language]>.
 #'
 #'   [dplyr::across()] is accepted in place of [across_filters()] here.
 #'
 #'   `mutate(filters, with_ns(ns))` changes the namespace, like [with_ns()]
 #'   does, and can be mixed with the other forms.
 #'
-#'   Each input is a keyword or a shiny input function, as described in
-#'   [with_filter()]. A function or a single string is always read as an
-#'   input; any other value is the column's data.
+#'   Each input is a keyword, a shiny input function, or an [as_filter()]
+#'   object, as described in [with_filter()]. Any of these is always read as
+#'   an input; any other value is the column's data.
 #'
 #'   For `select()`, the columns to keep, using
 #'   <[`tidy-select`][tidyselect::language]>.
@@ -125,10 +126,12 @@ MUTATE_ACROSS_NAMES <- c(SHINYFILTERS_ACROSS, DPLYR_ACROSS)
 		logical(1)
 	)
 	is_ns <- is_ns & nms == ""
-	if (any(nms == "" & !is_across & !is_ns)) {
+	is_formula <- nms == "" & vapply(quos, ._is_cols_formula, logical(1))
+	if (any(nms == "" & !is_across & !is_ns & !is_formula)) {
 		cli_abort(
 			c(
-				"Each argument to {.fn {fn}} must be named or use {.fn across} or {.fn with_ns}.",
+				"Each argument to {.fn {fn}} must be named, a {.code cols ~ input} formula, or use {.fn across} or {.fn with_ns}.",
+				i = "Formula: {.code {fn}(filters, where(is.numeric) ~ \"slider\")}.",
 				i = "Named: {.code {fn}(filters, origin = \"radio\")}.",
 				i = "{.fn across}: {.code {fn}(filters, across(where(is.numeric), \"slider\"))}.",
 				i = "{.fn with_ns}: {.code {fn}(filters, with_ns(\"id\"))}."
@@ -140,7 +143,7 @@ MUTATE_ACROSS_NAMES <- c(SHINYFILTERS_ACROSS, DPLYR_ACROSS)
 	used <- character()
 	# One argument at a time, so each sees the columns the earlier ones computed.
 	for (i in seq_along(quos)) {
-		if (is_across[[i]]) {
+		if (is_across[[i]] || is_formula[[i]]) {
 			.data <- inject(.with_filter(
 				.data,
 				!!!quos[i],
@@ -148,7 +151,11 @@ MUTATE_ACROSS_NAMES <- c(SHINYFILTERS_ACROSS, DPLYR_ACROSS)
 				.across = MUTATE_ACROSS_NAMES,
 				.fn = fn
 			))
-			cols <- ._across_spec(quos[[i]], call = .call)$cols
+			cols <- if (is_formula[[i]]) {
+				._formula_spec(quos[[i]])$cols
+			} else {
+				._across_spec(quos[[i]], call = .call)$cols
+			}
 			used <- c(used, names(eval_select(cols, .data@data)))
 		} else if (is_ns[[i]]) {
 			.data <- ._mutate_ns(.data, quos[[i]], call = .call, fn = fn)

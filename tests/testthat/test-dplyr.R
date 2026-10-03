@@ -59,6 +59,44 @@ test_that("mutate() accepts across_filters() too", {
 	)
 })
 
+test_that("mutate() and across() accept as_filter()", {
+	skip_if_not_installed("dplyr")
+	cfg <- shinyfilters(df_config)
+	range_slider <- as_filter("slider", value = range(.x))
+	expect_identical(
+		filterInput(dplyr::mutate(cfg, x = as_filter("slider", value = range(.x)))),
+		filterInput(with_filter(cfg, x = range_slider))
+	)
+	expect_identical(
+		filterInput(dplyr::mutate(cfg, across(where(is.numeric), range_slider))),
+		filterInput(with_filter(cfg, where(is.numeric), range_slider))
+	)
+
+	sliders <- shinyfilters(df_config, slider = TRUE)
+	range_value <- as_filter(value = range(.x))
+	expect_identical(
+		filterInput(dplyr::mutate(sliders, x = as_filter(value = range(.x)))),
+		filterInput(with_filter(sliders, x = range_value))
+	)
+	expect_identical(
+		filterInput(dplyr::mutate(sliders, across(where(is.numeric), range_value))),
+		filterInput(with_filter(sliders, where(is.numeric), range_value))
+	)
+})
+
+test_that("mutate() and transmute() take `cols ~ input` formulas", {
+	skip_if_not_installed("dplyr")
+	cfg <- shinyfilters(df_config)
+	expect_identical(
+		filterInput(dplyr::mutate(cfg, where(is.numeric) ~ "slider")),
+		filterInput(with_filter(cfg, where(is.numeric), "slider"))
+	)
+	expect_identical(
+		names(dplyr::transmute(cfg, where(is.numeric) ~ "slider")),
+		c("x", "a_very_very_long_name")
+	)
+})
+
 test_that("mutate() applies its arguments in order", {
 	skip_if_not_installed("dplyr")
 	cfg <- shinyfilters(df_config)

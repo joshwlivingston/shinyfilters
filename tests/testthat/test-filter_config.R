@@ -48,6 +48,35 @@ test_that("with_filter() call forms are equivalent", {
 	)
 })
 
+test_that("with_filter() takes `cols ~ input` formulas", {
+	cfg <- shinyfilters(df_config)
+	expect_identical(
+		filterInput(with_filter(cfg, where(is.numeric) ~ "slider")),
+		filterInput(with_filter(cfg, where(is.numeric), "slider"))
+	)
+	expect_identical(
+		filterInput(with_filter(
+			cfg,
+			x ~ shiny::radioButtons,
+			letters ~ "selectize"
+		)),
+		filterInput(with_filter(cfg, x = "radio", letters = "selectize"))
+	)
+	expect_identical(
+		filterInput(with_filter(
+			cfg,
+			everything() ~ "selectize",
+			x = "radio",
+			a_very_very_long_name ~ as_filter("slider", value = range(.x))
+		)),
+		filterInput(with_filter(
+			with_filter(cfg, everything(), "selectize"),
+			x = "radio",
+			a_very_very_long_name = as_filter("slider", value = range(.x))
+		))
+	)
+})
+
 test_that("with_filter() selects columns with tidyselect", {
 	expected <- filterInput(df_config, slider = TRUE)
 	expect_identical(
@@ -247,6 +276,14 @@ test_that("print() markers are one column wide in UTF-8 output", {
 	expect_all_equal(nchar(sub(" Filter .*", "", legend), type = "width"), 1L)
 })
 
+test_that("print() lines up rows with and without a marker", {
+	cfg <- with_filter(shinyfilters(df_config), letters = "radio")
+	out <- capture.output(print(cfg))
+	rows <- grep("<(chr|fct|int|dbl)>", out, value = TRUE)
+	expect_length(rows, 4)
+	expect_length(unique(as.integer(regexpr("<", rows, fixed = TRUE))), 1)
+})
+
 test_that("print() shows one marker per row", {
 	cfg <- shinyfilters(df_config, slider = TRUE, selectize = TRUE)
 	cfg <- with_filter(cfg, y = x * 2, x = x / 2, z = letters)
@@ -303,6 +340,25 @@ test_that("function overrides receive args_filter_input() output", {
 	)
 })
 
+test_that("errors from a function override name the column", {
+	broken <- function(inputId, label, ...) {
+		rlang::abort("Not today.", call = NULL)
+	}
+	cfg <- with_filter(shinyfilters(df_config), x = broken)
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+		filterInput(cfg)
+		cfg$x
+	})
+})
+
+test_that("a function override can use shiny::req()", {
+	needs_input <- function(inputId, label, ...) {
+		shiny::req(FALSE)
+	}
+	cfg <- with_filter(shinyfilters(df_config), x = needs_input)
+	expect_error(filterInput(cfg), class = "shiny.silent.error")
+})
+
 test_that("shinyfilters() and with_filter() errors", {
 	cfg <- shinyfilters(df_config)
 	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
@@ -318,6 +374,10 @@ test_that("shinyfilters() and with_filter() errors", {
 		with_filter(cfg, nope, "radio")
 		with_filter(cfg, where(is.logical), "radio")
 		with_filter(cfg, x = "radioo")
+		with_filter(cfg, nope ~ "radio")
+		with_filter(cfg, where(is.logical) ~ "radio")
+		with_filter(cfg, x ~ "radioo")
+		with_filter(cfg, ~"radio")
 		with_filter(cfg, x, c("radio", "slider"))
 		with_filter(cfg, x, radio)
 		with_filter(cfg, y = nope * 2)

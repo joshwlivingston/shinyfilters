@@ -9,8 +9,8 @@ with_filter(.config, ...)
 \arguments{
 \item{.config}{A configuration created by \code{\link[=shinyfilters]{shinyfilters()}}.}
 
-\item{...}{Either two unnamed arguments, or any number of named arguments
-and \code{\link[=across_filters]{across_filters()}} calls:
+\item{...}{Either two unnamed arguments, or any number of named arguments,
+formulas, and \code{\link[=across_filters]{across_filters()}} calls:
 \itemize{
 \item \code{with_filter(.config, cols, input)}: \code{cols} selects columns with
 <\code{\link[tidyselect:language]{tidy-select}}>, such as \code{cyl},
@@ -18,12 +18,14 @@ and \code{\link[=across_filters]{across_filters()}} calls:
 \item \code{with_filter(.config, col = input, ...)}: each name is a column.
 \item \code{with_filter(.config, col = expression, ...)}: adds or replaces a
 column, computed from the other columns. A replaced column keeps its
-input. A function or a single string is always read as an input; any
-other value is the column's data. A column takes precedence over a
-variable of the same name.
+input. A function, a single string, or an \code{\link[=as_filter]{as_filter()}} object is
+always read as an input; any other value is the column's data. A column
+takes precedence over a variable of the same name.
+\item \code{with_filter(.config, cols ~ input, ...)}: a two-sided formula selects
+columns on its left, like \code{cols} above, and names one input for all of
+them on its right. It can be mixed with named columns.
 \item \code{with_filter(.config, across_filters(cols, input), ...)}:
-\code{\link[=across_filters]{across_filters()}} selects columns and names one input for all of
-them, and can be mixed with named columns.
+\code{\link[=across_filters]{across_filters()}} does the same as a formula.
 }
 
 Each input is either a keyword (\code{"area"}, \code{"radio"}, \code{"range"},
@@ -33,7 +35,12 @@ with numeric columns, using the sorted unique values as choices.
 
 Other functions are called like \code{\link[=call_filter_input]{call_filter_input()}}: they receive the
 arguments \code{\link[=args_filter_input]{args_filter_input()}} returns for the column's type, plus any
-other arguments they accept.}
+other arguments they accept.
+
+Wrap an input in \code{\link[=as_filter]{as_filter()}} to set its arguments, or use \code{\link[=as_filter]{as_filter()}}
+without an input to set arguments for the input a column already has.
+Arguments stay with the column: an input chosen later keeps the ones it
+has an argument for.}
 }
 \value{
 The updated configuration.
@@ -41,8 +48,8 @@ The updated configuration.
 \description{
 \code{with_filter()} sets the input that \code{\link[=filterInput]{filterInput()}} creates for one or more
 columns of a configuration made by \code{\link[=shinyfilters]{shinyfilters()}}, and adds or replaces
-columns computed from the others. When a column is set more than once, the
-last call wins.
+columns computed from the others. When a column's input is chosen more than
+once, the last one wins; its \code{\link[=as_filter]{as_filter()}} arguments stay with the column.
 }
 \examples{
 filters <- shinyfilters(nyc_flights)
@@ -56,7 +63,7 @@ filterInput(filters)
 # Or select columns and name others in one call
 with_filter(
   filters,
-  across_filters(where(is.character), "selectize"),
+  where(is.character) ~ "selectize",
   origin = "radio"
 )
 
@@ -64,5 +71,5 @@ with_filter(
 with_filter(filters, delay_sq = dep_delay^2)
 }
 \seealso{
-\code{\link[=shinyfilters]{shinyfilters()}}, \code{\link[=across_filters]{across_filters()}}
+\code{\link[=shinyfilters]{shinyfilters()}}, \code{\link[=across_filters]{across_filters()}}, \code{\link[=as_filter]{as_filter()}}
 }

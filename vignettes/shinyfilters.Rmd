@@ -210,6 +210,48 @@ filters %>%
 	with_filter(c(carrier, dest), shinyWidgets::pickerInput)
 ```
 
+## Set an input's arguments {.tabset}
+
+`as_filter()` pairs an input with arguments for it. They replace the ones
+shinyfilters computes for the column, and an argument can use `.x`, the column
+itself. Here a slider's `value` covers the column's range, which makes it a
+range slider. `dep_delay` has missing values, so `range()` needs
+`na.rm = TRUE`:
+
+### dplyr {#args-dplyr}
+
+`r if (!requireNamespace("dplyr", quietly = TRUE)) "Install dplyr to see this example."`
+
+```{r, eval = getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE)}
+filters |>
+	mutate(
+		dep_delay = as_filter(shiny::sliderInput, value = range(.x, na.rm = TRUE))
+	)
+```
+
+```{r, eval = !getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = !getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE)}
+filters %>%
+	mutate(
+		dep_delay = as_filter(shiny::sliderInput, value = range(.x, na.rm = TRUE))
+	)
+```
+
+### shinyfilters {#args-shinyfilters}
+
+```{r, eval = getRversion() >= "4.1", include = getRversion() >= "4.1"}
+filters |>
+	with_filter(
+		dep_delay = as_filter(shiny::sliderInput, value = range(.x, na.rm = TRUE))
+	)
+```
+
+```{r, eval = !getRversion() >= "4.1", include = !getRversion() >= "4.1"}
+filters %>%
+	with_filter(
+		dep_delay = as_filter(shiny::sliderInput, value = range(.x, na.rm = TRUE))
+	)
+```
+
 ## Put it together {.tabset}
 
 The steps chain into one pipeline, each seeing the columns the earlier ones
@@ -221,22 +263,36 @@ computed:
 
 ```{r, eval = getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE)}
 filters <- nyc_flights |>
-	shinyfilters(range = TRUE, selectize = TRUE) |>
+	shinyfilters(
+		range = TRUE, 
+		selectize = TRUE
+	) |>
 	with_ns("sidebar-mod") |>
-	mutate(dep_delay = -dep_delay, on_time = !delayed) |>
-	mutate(across(where(is.numeric), "slider")) |>
-	mutate(origin = shiny::radioButtons)
+	mutate(
+		dep_delay = -dep_delay,
+		on_time = !delayed,
+		across(where(is.numeric), "slider"),
+		origin = shiny::radioButtons,
+		dep_delay = as_filter(shiny::sliderInput, value = range(.x, na.rm = TRUE))
+	)
 
 filters
 ```
 
 ```{r, eval = !getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = !getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE)}
 filters <- nyc_flights %>%
-	shinyfilters(range = TRUE, selectize = TRUE) %>%
+	shinyfilters(
+		range = TRUE, 
+		selectize = TRUE
+	) %>%
 	with_ns("sidebar-mod") %>%
-	mutate(dep_delay = -dep_delay, on_time = !delayed) %>%
-	mutate(across(where(is.numeric), "slider")) %>%
-	mutate(origin = shiny::radioButtons)
+	mutate(
+		dep_delay = -dep_delay,
+		on_time = !delayed,
+		across(where(is.numeric), "slider"),
+		origin = shiny::radioButtons,
+		dep_delay = as_filter(shiny::sliderInput, value = range(.x, na.rm = TRUE))
+	)
 
 filters
 ```
@@ -245,22 +301,36 @@ filters
 
 ```{r, eval = getRversion() >= "4.1", include = getRversion() >= "4.1"}
 filters <- nyc_flights |>
-	shinyfilters(range = TRUE, selectize = TRUE) |>
+	shinyfilters(
+		range = TRUE, 
+		selectize = TRUE
+	) |>
 	with_ns("sidebar-mod") |>
-	with_filter(dep_delay = -dep_delay, on_time = !delayed) |>
-	with_filter(where(is.numeric), "slider") |>
-	with_filter(origin = shiny::radioButtons)
+	with_filter(
+		dep_delay = -dep_delay,
+		on_time = !delayed,
+		across_filters(where(is.numeric), "slider"),
+		origin = shiny::radioButtons,
+		dep_delay = as_filter(shiny::sliderInput, value = range(.x, na.rm = TRUE))
+	)
 
 filters
 ```
 
 ```{r, eval = !getRversion() >= "4.1", include = !getRversion() >= "4.1"}
 filters <- nyc_flights %>%
-	shinyfilters(range = TRUE, selectize = TRUE) %>%
+	shinyfilters(
+		range = TRUE, 
+		selectize = TRUE
+	) %>%
 	with_ns("sidebar-mod") %>%
-	with_filter(dep_delay = -dep_delay, on_time = !delayed) %>%
-	with_filter(where(is.numeric), "slider") %>%
-	with_filter(origin = shiny::radioButtons)
+	with_filter(
+		dep_delay = -dep_delay,
+		on_time = !delayed,
+		across_filters(where(is.numeric), "slider"),
+		origin = shiny::radioButtons,
+		dep_delay = as_filter(shiny::sliderInput, value = range(.x, na.rm = TRUE))
+	)
 
 filters
 ```
