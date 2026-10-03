@@ -108,6 +108,10 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	if (is.null(override)) {
 		return(do.call(filterInput, col_args))
 	}
+	# `print()`'s dry run never evaluates `as_filter()` arguments.
+	if (!the$dry_run && length(override$args) > 0) {
+		col_args[[INPUT_ARGS]] <- ._input_args(override$args, config, name, call)
+	}
 	try_fetch(
 		do.call(
 			filter_input_override,
@@ -471,9 +475,9 @@ SHINY_INPUTS <- list(
 #'   * `with_filter(.config, col = input, ...)`: each name is a column.
 #'   * `with_filter(.config, col = expression, ...)`: adds or replaces a
 #'     column, computed from the other columns. A replaced column keeps its
-#'     input. A function or a single string is always read as an input; any
-#'     other value is the column's data. A column takes precedence over a
-#'     variable of the same name.
+#'     input. A function, a single string, or an [as_filter()] object is
+#'     always read as an input; any other value is the column's data. A column
+#'     takes precedence over a variable of the same name.
 #'   * `with_filter(.config, across_filters(cols, input), ...)`:
 #'     [across_filters()] selects columns and names one input for all of
 #'     them, and can be mixed with named columns.
@@ -487,9 +491,11 @@ SHINY_INPUTS <- list(
 #'   arguments [args_filter_input()] returns for the column's type, plus any
 #'   other arguments they accept.
 #'
+#'   Wrap an input in [as_filter()] to set its arguments.
+#'
 #' @returns The updated configuration.
 #'
-#' @seealso [shinyfilters()], [across_filters()]
+#' @seealso [shinyfilters()], [across_filters()], [as_filter()]
 #'
 #' @examples
 #' filters <- shinyfilters(nyc_flights)
@@ -635,8 +641,8 @@ method(.with_filter, class_shinyfilters) <- function(
 	._set_overrides(config, overrides)
 }
 
-# A function or a single string chooses the column's input; any other value is
-# the column's data, computed from the other columns.
+# A function, a single string, or an `as_filter()` object chooses the column's
+# input; any other value is the column's data, computed from the other columns.
 ._set_column <- function(config, name, quo, call, fn) {
 	label <- as_label(quo)
 	data <- config@data
@@ -656,7 +662,7 @@ method(.with_filter, class_shinyfilters) <- function(
 		}
 	)
 
-	if (is.function(value) || is_string(value)) {
+	if (is.function(value) || is_string(value) || ._is_filter(value)) {
 		if (!(name %in% names(data))) {
 			cli_abort(
 				c(
@@ -667,10 +673,7 @@ method(.with_filter, class_shinyfilters) <- function(
 				call = call
 			)
 		}
-		override <- list(
-			input = resolve_filter_override(value, call = call),
-			fn = fn
-		)
+		override <- ._override(value, call = call, fn = fn)
 		return(._set_overrides(config, set_names(list(override), name)))
 	}
 
@@ -721,10 +724,19 @@ method(.with_filter, class_shinyfilters) <- function(
 			)
 		}
 	)
-	list(
-		input = resolve_filter_override(input, call = call),
-		fn = fn
-	)
+	._override(input, call = call, fn = fn)
+}
+
+# An `as_filter()` object has already resolved its input. Its arguments are
+# stored only when it has some, so `as_filter("slider")` equals `"slider"`.
+._override <- function(input, call, fn) {
+	if (!._is_filter(input)) {
+		return(list(input = resolve_filter_override(input, call = call), fn = fn))
+	}
+	if (length(input$args) == 0) {
+		return(list(input = input$input, fn = fn))
+	}
+	list(input = input$input, args = input$args, fn = fn)
 }
 
 # Function: with_ns() ####

@@ -18,9 +18,10 @@
 #' @param .cols Columns to set, using
 #'   <[`tidy-select`][tidyselect::language]>, such as `origin`,
 #'   `c(origin, carrier)`, or `where(is.numeric)`. Defaults to every column.
-#' @param .fns The input for the selected columns: a keyword or a \pkg{shiny}
-#'   input function, as described in [with_filter()]. A one-sided formula
-#'   naming an input, such as `~ "slider"`, also works.
+#' @param .fns The input for the selected columns: a keyword, a \pkg{shiny}
+#'   input function, or an [as_filter()] object, as described in
+#'   [with_filter()]. A one-sided formula naming an input, such as
+#'   `~ "slider"`, also works.
 #' @param ... Not supported.
 #' @param .names Not supported. `across_filters()` chooses an input for the
 #'   selected columns; it doesn't rename them.

@@ -42,6 +42,7 @@
 #' @importFrom rlang inject
 #' @importFrom rlang is_call
 #' @importFrom rlang is_formula
+#' @importFrom rlang is_quosure
 #' @importFrom rlang is_string
 #' @importFrom rlang is_symbol
 #' @importFrom rlang is_vector

@@ -11,9 +11,10 @@ across_filters(.cols = everything(), .fns = NULL, ..., .names = NULL)
 <\code{\link[tidyselect:language]{tidy-select}}>, such as \code{origin},
 \code{c(origin, carrier)}, or \code{where(is.numeric)}. Defaults to every column.}
 
-\item{.fns}{The input for the selected columns: a keyword or a \pkg{shiny}
-input function, as described in \code{\link[=with_filter]{with_filter()}}. A one-sided formula
-naming an input, such as \code{~ "slider"}, also works.}
+\item{.fns}{The input for the selected columns: a keyword, a \pkg{shiny}
+input function, or an \code{\link[=as_filter]{as_filter()}} object, as described in
+\code{\link[=with_filter]{with_filter()}}. A one-sided formula naming an input, such as
+\code{~ "slider"}, also works.}
 
 \item{...}{Not supported.}
 

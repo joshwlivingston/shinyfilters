@@ -22,9 +22,9 @@ with <\code{\link[tidyselect:language]{tidy-select}}>.
 \code{mutate(filters, with_ns(ns))} changes the namespace, like \code{\link[=with_ns]{with_ns()}}
 does, and can be mixed with the other forms.
 
-Each input is a keyword or a shiny input function, as described in
-\code{\link[=with_filter]{with_filter()}}. A function or a single string is always read as an
-input; any other value is the column's data.
+Each input is a keyword, a shiny input function, or an \code{\link[=as_filter]{as_filter()}}
+object, as described in \code{\link[=with_filter]{with_filter()}}. Any of these is always read as
+an input; any other value is the column's data.
 
 For \code{select()}, the columns to keep, using
 <\code{\link[tidyselect:language]{tidy-select}}>.}

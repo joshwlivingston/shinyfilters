@@ -258,7 +258,8 @@ call_filter_input <- function(x, .f, ...) {
 	._call_input(.f, args_prepared, ...)
 }
 
-# Calls `.f` with `args`, plus any `...` that `.f` accepts and `args` lacks
+# Calls `.f` with `args`, plus any `...` that `.f` accepts and `args` lacks.
+# `as_filter()` arguments replace the others, and are passed as given.
 ._call_input <- function(.f, args, ...) {
 	if (the$dry_run) {
 		return(._dry_run_result(.f))
@@ -279,6 +280,8 @@ call_filter_input <- function(x, .f, ...) {
 				!(names(args_provided) %in% names(args))
 		]
 	)
+	input_args <- args_provided[[INPUT_ARGS]]
+	args[names(input_args)] <- input_args
 	do.call(.f, args)
 }
 

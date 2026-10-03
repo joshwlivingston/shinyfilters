@@ -9,6 +9,7 @@ export(arg_name_input_label)
 export(arg_name_input_value)
 export(args_filter_input)
 export(args_update_filter_input)
+export(as_filter)
 export(call_filter_input)
 export(call_update_filter_input)
 export(contains)
@@ -101,6 +102,7 @@ importFrom(rlang,
   inject,
   is_call,
   is_formula,
+  is_quosure,
   is_string,
   is_symbol,
   is_vector,

@@ -18,9 +18,9 @@ and \code{\link[=across_filters]{across_filters()}} calls:
 \item \code{with_filter(.config, col = input, ...)}: each name is a column.
 \item \code{with_filter(.config, col = expression, ...)}: adds or replaces a
 column, computed from the other columns. A replaced column keeps its
-input. A function or a single string is always read as an input; any
-other value is the column's data. A column takes precedence over a
-variable of the same name.
+input. A function, a single string, or an \code{\link[=as_filter]{as_filter()}} object is
+always read as an input; any other value is the column's data. A column
+takes precedence over a variable of the same name.
 \item \code{with_filter(.config, across_filters(cols, input), ...)}:
 \code{\link[=across_filters]{across_filters()}} selects columns and names one input for all of
 them, and can be mixed with named columns.
@@ -33,7 +33,9 @@ with numeric columns, using the sorted unique values as choices.
 
 Other functions are called like \code{\link[=call_filter_input]{call_filter_input()}}: they receive the
 arguments \code{\link[=args_filter_input]{args_filter_input()}} returns for the column's type, plus any
-other arguments they accept.}
+other arguments they accept.
+
+Wrap an input in \code{\link[=as_filter]{as_filter()}} to set its arguments.}
 }
 \value{
 The updated configuration.
@@ -64,5 +66,5 @@ with_filter(
 with_filter(filters, delay_sq = dep_delay^2)
 }
 \seealso{
-\code{\link[=shinyfilters]{shinyfilters()}}, \code{\link[=across_filters]{across_filters()}}
+\code{\link[=shinyfilters]{shinyfilters()}}, \code{\link[=across_filters]{across_filters()}}, \code{\link[=as_filter]{as_filter()}}
 }

@@ -26,9 +26,9 @@
 #'   `mutate(filters, with_ns(ns))` changes the namespace, like [with_ns()]
 #'   does, and can be mixed with the other forms.
 #'
-#'   Each input is a keyword or a shiny input function, as described in
-#'   [with_filter()]. A function or a single string is always read as an
-#'   input; any other value is the column's data.
+#'   Each input is a keyword, a shiny input function, or an [as_filter()]
+#'   object, as described in [with_filter()]. Any of these is always read as
+#'   an input; any other value is the column's data.
 #'
 #'   For `select()`, the columns to keep, using
 #'   <[`tidy-select`][tidyselect::language]>.
