@@ -15,7 +15,8 @@
 #'
 #' Arguments stay with their column. Setting the column again adds to them,
 #' replacing those of the same name, and a new input keeps the ones it has an
-#' argument for.
+#' argument for. They are matched by name only, so set an argument again if
+#' its value doesn't suit the new input.
 #'
 #' @param input The input: a keyword or a \pkg{shiny} input function, as
 #'   described in [with_filter()]. Leave it out to keep each column's input.

@@ -48,8 +48,8 @@ The updated configuration.
 \description{
 \code{with_filter()} sets the input that \code{\link[=filterInput]{filterInput()}} creates for one or more
 columns of a configuration made by \code{\link[=shinyfilters]{shinyfilters()}}, and adds or replaces
-columns computed from the others. When a column is set more than once, the
-last call wins.
+columns computed from the others. When a column's input is chosen more than
+once, the last one wins; its \code{\link[=as_filter]{as_filter()}} arguments stay with the column.
 }
 \examples{
 filters <- shinyfilters(nyc_flights)

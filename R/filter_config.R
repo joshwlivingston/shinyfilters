@@ -513,8 +513,8 @@ SHINY_INPUTS <- list(
 #'
 #' `with_filter()` sets the input that [filterInput()] creates for one or more
 #' columns of a configuration made by [shinyfilters()], and adds or replaces
-#' columns computed from the others. When a column is set more than once, the
-#' last call wins.
+#' columns computed from the others. When a column's input is chosen more than
+#' once, the last one wins; its [as_filter()] arguments stay with the column.
 #'
 #' @param .config A configuration created by [shinyfilters()].
 #' @param ... Either two unnamed arguments, or any number of named arguments,
