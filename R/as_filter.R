@@ -21,7 +21,11 @@
 #'   An argument that uses `.x` is computed for each column when its input is
 #'   created. `.x` is the column, missing values included, so pass
 #'   `na.rm = TRUE` where it matters. The configuration's other columns can be
-#'   used by name. Other arguments are evaluated right away.
+#'   used by name.
+#'
+#'   Other arguments are evaluated right away. Written inside
+#'   `with_filter(.config, col = as_filter(...))`, they can use the columns
+#'   too, as they are at that point.
 #'
 #' @returns A `shinyfilters_filter` object, to use as an input in
 #'   [with_filter()].
@@ -60,7 +64,8 @@ as_filter <- function(input, ...) {
 		))
 	}
 	# Only an argument that uses `.x` waits for its column. The rest are
-	# evaluated now, so they keep the values their variables have at the call.
+	# evaluated now, where `as_filter()` is called: they keep the values their
+	# variables have at the call, and see the columns inside `with_filter()`.
 	args <- lapply(args, function(arg) {
 		if (".x" %in% all.vars(quo_get_expr(arg))) arg else eval_tidy(arg)
 	})

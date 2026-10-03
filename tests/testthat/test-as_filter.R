@@ -128,6 +128,18 @@ test_that("other arguments are evaluated when as_filter() is called", {
 	)
 })
 
+test_that("other arguments can use columns inside with_filter(col = ...)", {
+	cfg <- with_filter(
+		shinyfilters(df_config),
+		x = as_filter("slider", max = max(a_very_very_long_name) * 10),
+		a_very_very_long_name = a_very_very_long_name * 2
+	)
+	expect_identical(
+		cfg$x,
+		shiny::sliderInput("x", "x", min = 2L, max = 35, value = 10L)
+	)
+})
+
 test_that("as_filter() arguments reach inputs that take `...`", {
 	cfg <- with_filter(
 		shinyfilters(df_config),
@@ -191,6 +203,7 @@ test_that("as_filter() errors", {
 
 		with_filter(cfg, nope = as_filter("slider"))
 		with_filter(cfg, x, as_filter("sldier"))
+		with_filter(cfg, x, as_filter("slider", max = max(a_very_very_long_name)))
 
 		filterInput(with_filter(cfg, x = as_filter("slider", value = nope(.x))))
 		filterInput(with_filter(cfg, x = as_filter("slider", valeu = 1)))
