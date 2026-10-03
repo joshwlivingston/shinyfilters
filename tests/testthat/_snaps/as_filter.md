@@ -29,6 +29,31 @@
     Output
       <shinyfilters_filter> * selectizeInput
 
+# print() marks a row by its input, not its as_filter() arguments
+
+    Code
+      print(cfg)
+    Output
+      <shinyfilters> * 4 filters
+      
+      Filters
+           letters                <chr>  selectInput
+                                           label = "Letters"
+           factors                <fct>  selectInput
+        #  x                      <int>  sliderInput
+                                           value = range(.x)
+        #  a_very_very_long_name  <dbl>  sliderInput
+      
+      Default Overrides
+        slider = TRUE
+      
+      # Filter set by default argument
+    Code
+      print(as_filter(value = range(.x)))
+    Output
+      <shinyfilters_filter> * the column's input
+        value = range(.x)
+
 # as_filter() errors
 
     Code
@@ -54,11 +79,23 @@
       ! Can't set `inputId` in `as_filter()`.
       i An input's id is always its column's name.
     Code
+      as_filter()
+    Condition
+      Error in `as_filter()`:
+      ! `as_filter()` needs an input or at least one argument.
+    Code
       with_filter(cfg, nope = as_filter("slider"))
     Condition
       Error in `with_filter()`:
       ! Can't find column nope.
       x `as_filter("slider")` chooses the input for an existing column.
+      i To add a column, compute it from the others: `with_filter(filters, nope = <expression>)`.
+    Code
+      with_filter(cfg, nope = as_filter(step = 2))
+    Condition
+      Error in `with_filter()`:
+      ! Can't find column nope.
+      x `as_filter(step = 2)` sets arguments for an existing column's input.
       i To add a column, compute it from the others: `with_filter(filters, nope = <expression>)`.
     Code
       with_filter(cfg, x, as_filter("sldier"))
@@ -97,4 +134,11 @@
       Caused by error:
       ! "slider" isn't available for <character> columns.
       i Use "area", "radio", "selectize", or "textbox" instead.
+    Code
+      filterInput(with_filter(cfg, letters = as_filter(valeu = 1)))
+    Condition
+      Error in `filterInput()`:
+      ! Can't create an input for column letters.
+      Caused by error:
+      ! unused argument (valeu = 1)
 

@@ -4,13 +4,13 @@
 \alias{as_filter}
 \title{Set the Arguments of an Input}
 \usage{
-as_filter(input, ...)
+as_filter(input = NULL, ...)
 }
 \arguments{
 \item{input}{The input: a keyword or a \pkg{shiny} input function, as
-described in \code{\link[=with_filter]{with_filter()}}.}
+described in \code{\link[=with_filter]{with_filter()}}. Leave it out to keep each column's input.}
 
-\item{...}{Named arguments for \code{input}. They replace the ones shinyfilters
+\item{...}{Named arguments for the input. They replace the ones shinyfilters
 passes for the column, such as \code{label}, \code{choices}, \code{min}, \code{max}, and
 \code{value}. \code{inputId} can't be set: an input's id is always its column's
 name.
@@ -29,10 +29,11 @@ A \code{shinyfilters_filter} object, to use as an input in
 \code{\link[=with_filter]{with_filter()}}.
 }
 \description{
-\code{as_filter()} pairs an input with arguments for it. Use it wherever
-\code{\link[=with_filter]{with_filter()}}, \code{\link[=across_filters]{across_filters()}}, or \code{\link[dplyr:mutate]{dplyr::mutate()}} take an input, to
-change the arguments shinyfilters passes for a column, such as a slider's
-\code{value}, or to add others, such as \code{step} or \code{width}.
+\code{as_filter()} sets arguments for a column's input, and can choose the input
+with them. Use it wherever \code{\link[=with_filter]{with_filter()}}, \code{\link[=across_filters]{across_filters()}}, or
+\code{\link[dplyr:mutate]{dplyr::mutate()}} take an input, to change the arguments shinyfilters passes
+for a column, such as a slider's \code{value}, or to add others, such as \code{step}
+or \code{width}.
 }
 \details{
 Arguments stay with their column. Setting the column again adds to them,
@@ -48,6 +49,9 @@ filters <- with_filter(
   dep_delay = as_filter(shiny::sliderInput, value = range(.x, na.rm = TRUE))
 )
 filters$dep_delay
+
+# Without an input, the column keeps the one it has
+with_filter(filters, dep_delay = as_filter(step = 5))
 
 # Reuse an input for several columns
 range_slider <- as_filter("slider", value = range(.x, na.rm = TRUE))

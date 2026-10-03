@@ -1,23 +1,25 @@
 # R/as_filter.R
 #
-# as_filter(): pair an input with arguments for it. Arguments that use `.x` are
-# captured, and evaluated for each column when its input is created.
+# as_filter(): set the arguments of a column's input, with or without choosing
+# the input. Arguments that use `.x` are captured, and evaluated for each
+# column when its input is created.
 
 # Function: as_filter() ####
 #' Set the Arguments of an Input
 #'
-#' `as_filter()` pairs an input with arguments for it. Use it wherever
-#' [with_filter()], [across_filters()], or [dplyr::mutate()] take an input, to
-#' change the arguments shinyfilters passes for a column, such as a slider's
-#' `value`, or to add others, such as `step` or `width`.
+#' `as_filter()` sets arguments for a column's input, and can choose the input
+#' with them. Use it wherever [with_filter()], [across_filters()], or
+#' [dplyr::mutate()] take an input, to change the arguments shinyfilters passes
+#' for a column, such as a slider's `value`, or to add others, such as `step`
+#' or `width`.
 #'
 #' Arguments stay with their column. Setting the column again adds to them,
 #' replacing those of the same name, and a new input keeps the ones it has an
 #' argument for.
 #'
 #' @param input The input: a keyword or a \pkg{shiny} input function, as
-#'   described in [with_filter()].
-#' @param ... Named arguments for `input`. They replace the ones shinyfilters
+#'   described in [with_filter()]. Leave it out to keep each column's input.
+#' @param ... Named arguments for the input. They replace the ones shinyfilters
 #'   passes for the column, such as `label`, `choices`, `min`, `max`, and
 #'   `value`. `inputId` can't be set: an input's id is always its column's
 #'   name.
@@ -46,6 +48,9 @@
 #' )
 #' filters$dep_delay
 #'
+#' # Without an input, the column keeps the one it has
+#' with_filter(filters, dep_delay = as_filter(step = 5))
+#'
 #' # Reuse an input for several columns
 #' range_slider <- as_filter("slider", value = range(.x, na.rm = TRUE))
 #' with_filter(filters, across_filters(where(is.numeric), range_slider))
@@ -56,7 +61,7 @@
 #'   origin = as_filter("radio", label = "Airport", inline = TRUE)
 #' )
 #' @export
-as_filter <- function(input, ...) {
+as_filter <- function(input = NULL, ...) {
 	args <- enquos(...)
 	if (length(args) > 0) {
 		check_named_list_or_null(args, arg = "...")
@@ -67,6 +72,9 @@ as_filter <- function(input, ...) {
 			i = "An input's id is always its column's name."
 		))
 	}
+	if (is.null(input) && length(args) == 0) {
+		cli_abort("{.fn as_filter} needs an input or at least one argument.")
+	}
 	# Only an argument that uses `.x` waits for its column. The rest are
 	# evaluated now, where `as_filter()` is called: they keep the values their
 	# variables have at the call, and see the columns inside `with_filter()`.
@@ -75,7 +83,9 @@ as_filter <- function(input, ...) {
 	})
 	structure(
 		list(
-			input = resolve_filter_override(input, call = current_env()),
+			input = if (!is.null(input)) {
+				resolve_filter_override(input, call = current_env())
+			},
 			args = args
 		),
 		class = "shinyfilters_filter"
@@ -89,13 +99,17 @@ as_filter <- function(input, ...) {
 ## Method: print() ####
 print.shinyfilters_filter <- function(x, ...) {
 	input <- x$input
-	if (!is.function(input)) {
+	if (is.character(input)) {
 		input <- INPUT_KEYWORDS[[unclass(input)]]$fn
 	}
 	cat_line(paste(
 		col_magenta("<shinyfilters_filter>"),
 		col_grey(symbol$bullet),
-		col_cyan(._input_name(input))
+		if (is.null(input)) {
+			col_grey("the column's input")
+		} else {
+			col_cyan(._input_name(input))
+		}
 	))
 	args <- ._format_input_args(x$args)
 	if (length(args) > 0) {

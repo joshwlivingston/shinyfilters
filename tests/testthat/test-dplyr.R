@@ -71,6 +71,17 @@ test_that("mutate() and across() accept as_filter()", {
 		filterInput(dplyr::mutate(cfg, across(where(is.numeric), range_slider))),
 		filterInput(with_filter(cfg, where(is.numeric), range_slider))
 	)
+
+	sliders <- shinyfilters(df_config, slider = TRUE)
+	range_value <- as_filter(value = range(.x))
+	expect_identical(
+		filterInput(dplyr::mutate(sliders, x = as_filter(value = range(.x)))),
+		filterInput(with_filter(sliders, x = range_value))
+	)
+	expect_identical(
+		filterInput(dplyr::mutate(sliders, across(where(is.numeric), range_value))),
+		filterInput(with_filter(sliders, where(is.numeric), range_value))
+	)
 })
 
 test_that("mutate() and transmute() take `cols ~ input` formulas", {

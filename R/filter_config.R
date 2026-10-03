@@ -112,11 +112,16 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	if (!the$dry_run && length(override$args) > 0) {
 		col_args[[INPUT_ARGS]] <- ._input_args(override$args, config, name, call)
 	}
+	# An `as_filter()` without an input leaves the choice to `filterInput()`.
 	try_fetch(
-		do.call(
-			filter_input_override,
-			c(col_args, list(override = override$input))
-		),
+		if (is.null(override$input)) {
+			do.call(filterInput, col_args)
+		} else {
+			do.call(
+				filter_input_override,
+				c(col_args, list(override = override$input))
+			)
+		},
 		error = function(cnd) {
 			._resignal_silent(cnd)
 			cli_abort(
@@ -231,7 +236,12 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 `print.shinyfilters::shinyfilters` <- function(x, ...) {
 	data <- x@data
 	nms <- names(data)
-	overridden <- nms %in% names(x@overrides)
+	# `as_filter()` arguments alone don't choose the input, or mark the row.
+	overridden <- vapply(
+		nms,
+		function(nm) !is.null(x@overrides[[nm]]$input),
+		logical(1)
+	)
 	added <- nms %in% names(x@added)
 	replaced <- nms %in% names(x@replaced)
 
@@ -530,8 +540,10 @@ SHINY_INPUTS <- list(
 #'   arguments [args_filter_input()] returns for the column's type, plus any
 #'   other arguments they accept.
 #'
-#'   Wrap an input in [as_filter()] to set its arguments. They stay with the
-#'   column: an input chosen later keeps the ones it has an argument for.
+#'   Wrap an input in [as_filter()] to set its arguments, or use [as_filter()]
+#'   without an input to set arguments for the input a column already has.
+#'   Arguments stay with the column: an input chosen later keeps the ones it
+#'   has an argument for.
 #'
 #' @returns The updated configuration.
 #'
@@ -726,7 +738,11 @@ method(.with_filter, class_shinyfilters) <- function(
 			cli_abort(
 				c(
 					"Can't find column {.field {name}}.",
-					x = "{.code {label}} chooses the input for an existing column.",
+					x = if (._is_filter(value) && is.null(value$input)) {
+						"{.code {label}} sets arguments for an existing column's input."
+					} else {
+						"{.code {label}} chooses the input for an existing column."
+					},
 					i = "To add a column, compute it from the others: {.code {fn}(filters, {name} = <expression>)}."
 				),
 				call = call
@@ -771,17 +787,24 @@ method(.with_filter, class_shinyfilters) <- function(
 }
 
 # `as_filter()` arguments stay with their column: a new input keeps the ones it
-# names, and the override's own arguments are added to them.
+# names, and the override's own arguments are added to them. An override
+# without an input, from `as_filter()`, keeps the column's input.
 ._merge_override <- function(config, name, override) {
-	args <- config@overrides[[name]]$args
-	if (length(args) > 0) {
+	old <- config@overrides[[name]]
+	input <- override$input
+	fn <- override$fn
+	args <- old$args
+	if (is.null(input) && !is.null(old)) {
+		input <- old$input
+		fn <- old$fn
+	} else if (length(args) > 0) {
 		named <- ._override_arg_names(config, name, override)
 		if (!is.null(named)) {
 			args <- args[names(args) %in% named]
 		}
 	}
 	args[names(override$args)] <- override$args
-	out <- list(input = override$input, args = args, fn = override$fn)
+	out <- list(input = input, args = args, fn = fn)
 	if (length(args) == 0) {
 		out$args <- NULL
 	}

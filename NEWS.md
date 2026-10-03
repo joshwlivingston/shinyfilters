@@ -22,7 +22,7 @@
 * `dplyr::transmute()` is also supported, leaving only the columns called in `transmute()`.
 * `across_filters()` mirrors `dplyr::across()`, for `shinyfilters` objects (#105).
 * `dplyr::across()` is also supported.
-* `as_filter()` sets the arguments of an input chosen in `with_filter()`, such as a slider's `value`, and can compute them from the column with `.x` (#134).
+* `as_filter()` sets the arguments of a column's input in `with_filter()`, such as a slider's `value`, with or without choosing the input, and can compute them from the column with `.x` (#134).
 
 ### Update defaults
 
