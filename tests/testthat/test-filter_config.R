@@ -314,6 +314,14 @@ test_that("errors from a function override name the column", {
 	})
 })
 
+test_that("a function override can use shiny::req()", {
+	needs_input <- function(inputId, label, ...) {
+		shiny::req(FALSE)
+	}
+	cfg <- with_filter(shinyfilters(df_config), x = needs_input)
+	expect_error(filterInput(cfg), class = "shiny.silent.error")
+})
+
 test_that("shinyfilters() and with_filter() errors", {
 	cfg <- shinyfilters(df_config)
 	expect_snapshot(error = TRUE, variant = snapshot_variant(), {

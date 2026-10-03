@@ -114,6 +114,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 			c(col_args, list(override = override$input))
 		),
 		error = function(cnd) {
+			._resignal_silent(cnd)
 			cli_abort(
 				"Can't create an input for column {.field {name}}.",
 				parent = cnd,
@@ -121,6 +122,14 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 			)
 		}
 	)
+}
+
+# shiny recognizes the errors `req()` and `validate()` signal by their class,
+# so they are re-signaled as they are instead of being wrapped.
+._resignal_silent <- function(cnd) {
+	if (inherits(cnd, "shiny.silent.error")) {
+		stop(cnd)
+	}
 }
 
 ## Methods: $, [[, [, names(), .DollarNames() ####
