@@ -11,8 +11,8 @@
 #' returns one column's input.
 #'
 #' @param .data A configuration created by [shinyfilters()].
-#' @param ... For `mutate()`, named arguments, calls to [across_filters()], or
-#'   a call to [with_ns()]:
+#' @param ... For `mutate()`, named arguments, `cols ~ input` formulas, calls
+#'   to [across_filters()], or a call to [with_ns()]:
 #'
 #'   * `mutate(filters, col = input)`: each name is a column.
 #'   * `mutate(filters, col = expression)`: adds or replaces a column, like
@@ -130,7 +130,7 @@ MUTATE_ACROSS_NAMES <- c(SHINYFILTERS_ACROSS, DPLYR_ACROSS)
 	if (any(nms == "" & !is_across & !is_ns & !is_formula)) {
 		cli_abort(
 			c(
-				"Each argument to {.fn {fn}} must be named, a formula, or use {.fn across} or {.fn with_ns}.",
+				"Each argument to {.fn {fn}} must be named, a {.code cols ~ input} formula, or use {.fn across} or {.fn with_ns}.",
 				i = "Formula: {.code {fn}(filters, where(is.numeric) ~ \"slider\")}.",
 				i = "Named: {.code {fn}(filters, origin = \"radio\")}.",
 				i = "{.fn across}: {.code {fn}(filters, across(where(is.numeric), \"slider\"))}.",

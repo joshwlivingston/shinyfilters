@@ -6,8 +6,8 @@
 \arguments{
 \item{.data}{A configuration created by \code{\link[=shinyfilters]{shinyfilters()}}.}
 
-\item{...}{For \code{mutate()}, named arguments, calls to \code{\link[=across_filters]{across_filters()}}, or
-a call to \code{\link[=with_ns]{with_ns()}}:
+\item{...}{For \code{mutate()}, named arguments, \code{cols ~ input} formulas, calls
+to \code{\link[=across_filters]{across_filters()}}, or a call to \code{\link[=with_ns]{with_ns()}}:
 \itemize{
 \item \code{mutate(filters, col = input)}: each name is a column.
 \item \code{mutate(filters, col = expression)}: adds or replaces a column, like

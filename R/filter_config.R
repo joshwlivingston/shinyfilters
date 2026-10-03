@@ -644,7 +644,7 @@ method(.with_filter, class_shinyfilters) <- function(
 # before forwarding, so its wording never has to appear here.
 ._abort_with_filter_form <- function(quos, call) {
 	msg <- c(
-		"{.fn with_filter} takes two unnamed arguments, or named arguments, formulas, and {.fn across_filters} calls.",
+		"{.fn with_filter} takes two unnamed arguments, or named arguments, {.code cols ~ input} formulas, and {.fn across_filters} calls.",
 		i = "Select columns: {.code with_filter(filters, c(a, b), \"radio\")}.",
 		i = "Name columns: {.code with_filter(filters, a = \"radio\", b = \"slider\")}.",
 		i = "Mix the two: {.code with_filter(filters, c(a, b) ~ \"radio\", x = \"slider\")}."

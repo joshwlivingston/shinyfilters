@@ -60,7 +60,7 @@
       with_filter(cfg, across(x, "radio"))
     Condition
       Error in `with_filter()`:
-      ! `with_filter()` takes two unnamed arguments, or named arguments, formulas, and `across_filters()` calls.
+      ! `with_filter()` takes two unnamed arguments, or named arguments, `cols ~ input` formulas, and `across_filters()` calls.
       i Select columns: `with_filter(filters, c(a, b), "radio")`.
       i Name columns: `with_filter(filters, a = "radio", b = "slider")`.
       i Mix the two: `with_filter(filters, c(a, b) ~ "radio", x = "slider")`.
