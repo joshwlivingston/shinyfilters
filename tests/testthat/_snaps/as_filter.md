@@ -1,3 +1,34 @@
+# print() shows as_filter() arguments
+
+    Code
+      print(cfg)
+    Output
+      <shinyfilters> * 4 filters
+      
+      Filters
+        letters                <chr>  radioButtons    *
+                                        inline = TRUE
+                                        label  = "Letters"
+        factors                <fct>  selectizeInput  *
+        x                      <int>  sliderInput     ~
+                                        value = range(.x)
+        a_very_very_long_name  <dbl>  sliderInput     *
+                                        value = range(.x)
+      
+      
+      * Filter chosen by `with_filter()`
+      ~ Filter replaced by `with_filter()`
+    Code
+      print(as_filter(shiny::sliderInput, value = range(.x), step = 2))
+    Output
+      <shinyfilters_filter> * sliderInput
+        value = range(.x)
+        step  = 2
+    Code
+      print(as_filter("selectize"))
+    Output
+      <shinyfilters_filter> * selectizeInput
+
 # as_filter() errors
 
     Code

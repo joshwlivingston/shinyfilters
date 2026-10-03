@@ -295,7 +295,22 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 		styled_inputs,
 		marker
 	)
-	cat_line(sub("\\s+$", "", lines))
+	# `as_filter()` arguments follow their filter's row, under its input.
+	indent <- strrep(
+		" ",
+		max(ansi_nchar(nms, type = "width")) +
+			max(ansi_nchar(types, type = "width")) +
+			8
+	)
+	arg_lines <- lapply(nms, function(nm) {
+		args <- ._format_input_args(x@overrides[[nm]]$args)
+		if (length(args) == 0) {
+			return(character())
+		}
+		paste0(indent, ._pad(names(args)), " = ", col_blue(args))
+	})
+	lines <- Map(c, sub("\\s+$", "", lines), arg_lines)
+	cat_line(unlist(lines, use.names = FALSE))
 
 	cat_line()
 	if (length(x@args) > 0) {
@@ -437,8 +452,13 @@ the$dry_run <- FALSE
 	if (!inherits(res, "shinyfilters_dry_run")) {
 		return("<custom>")
 	}
+	._input_name(res$fn)
+}
+
+# The name of a shiny input function, or `<custom>` for any other function
+._input_name <- function(fn) {
 	for (name in names(SHINY_INPUTS)) {
-		if (identical(res$fn, SHINY_INPUTS[[name]])) {
+		if (identical(fn, SHINY_INPUTS[[name]])) {
 			return(name)
 		}
 	}

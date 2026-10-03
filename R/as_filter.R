@@ -77,6 +77,36 @@ as_filter <- function(input, ...) {
 	inherits(x, "shinyfilters_filter")
 }
 
+## Method: print() ####
+print.shinyfilters_filter <- function(x, ...) {
+	input <- x$input
+	if (!is.function(input)) {
+		input <- INPUT_KEYWORDS[[unclass(input)]]$fn
+	}
+	cat_line(paste(
+		col_magenta("<shinyfilters_filter>"),
+		col_grey(symbol$bullet),
+		col_cyan(._input_name(input))
+	))
+	args <- ._format_input_args(x$args)
+	if (length(args) > 0) {
+		cat_line(paste0("  ", ._pad(names(args)), " = ", col_blue(args)))
+	}
+	invisible(x)
+}
+
+# One string per argument, for `print()`: an argument that uses `.x` as it was
+# written, the others as their value. Nothing is evaluated.
+._format_input_args <- function(args) {
+	vapply(
+		args,
+		function(arg) {
+			if (is_quosure(arg)) as_label(arg) else ._format_arg(arg)
+		},
+		character(1)
+	)
+}
+
 # The name `as_filter()` arguments travel under in `...`, from
 # `._config_input()` to `._call_input()`. No formal or `$` lookup on the way
 # partial-matches it.

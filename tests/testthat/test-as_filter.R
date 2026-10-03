@@ -135,6 +135,21 @@ test_that("`ns`, `[`, and `[[` apply to as_filter() inputs", {
 	expect_identical(cfg[["x"]], cfg$x)
 })
 
+test_that("print() shows as_filter() arguments", {
+	cfg <- with_filter(
+		shinyfilters(df_config),
+		across_filters(where(is.numeric), as_filter("slider", value = range(.x))),
+		letters = as_filter("radio", inline = TRUE, label = "Letters"),
+		factors = as_filter("selectize"),
+		x = x * 2L
+	)
+	expect_snapshot(variant = snapshot_variant(), {
+		print(cfg)
+		print(as_filter(shiny::sliderInput, value = range(.x), step = 2))
+		print(as_filter("selectize"))
+	})
+})
+
 test_that("an argument that uses `.x` can use shiny::req()", {
 	cfg <- with_filter(
 		shinyfilters(df_config),
