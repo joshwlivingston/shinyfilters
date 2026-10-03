@@ -287,27 +287,27 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	)
 	types <- vapply(data, ._type_abbr, character(1))
 	lines <- paste0(
+		marker,
 		"  ",
 		._pad(nms),
 		"  ",
 		col_grey(._pad(types)),
 		"  ",
-		styled_inputs,
-		marker
+		styled_inputs
 	)
 	# `as_filter()` arguments follow their filter's row, under its input.
 	indent <- strrep(
 		" ",
 		max(ansi_nchar(nms, type = "width")) +
 			max(ansi_nchar(types, type = "width")) +
-			8
+			11
 	)
 	arg_lines <- lapply(nms, function(nm) {
 		args <- ._format_input_args(x@overrides[[nm]]$args)
 		if (length(args) == 0) {
 			return(character())
 		}
-		paste0(indent, ._pad(names(args)), " = ", col_blue(args))
+		paste0(indent, ._pad(names(args)), col_grey(" = "), col_blue(args))
 	})
 	lines <- Map(c, sub("\\s+$", "", lines), arg_lines)
 	cat_line(unlist(lines, use.names = FALSE))
@@ -319,7 +319,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 		cat_line(paste0(
 			"  ",
 			._pad(names(values)),
-			" = ",
+			col_grey(" = "),
 			col_blue(values)
 		))
 	}
@@ -327,16 +327,16 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	if (any(overridden) || any(defaulted) || any(added) || any(replaced)) {
 		cat_line()
 	}
+	if (any(defaulted)) {
+		cat_line(dot_default, col_grey(" Filter set by default argument"))
+	}
 	if (any(overridden)) {
 		fns <- vapply(x@overrides[nms[overridden]], function(o) o$fn, "")
 		fns <- sort(unique(fns))
 		cat_line(
 			dot_input,
-			col_grey(format_inline(" Filter chosen by {.or {.fn {fns}}}"))
+			col_grey(format_inline(" Filter set by {.or {.fn {fns}}}"))
 		)
-	}
-	if (any(defaulted)) {
-		cat_line(dot_default, col_grey(" Filter set by default argument"))
 	}
 	if (any(added)) {
 		fns <- sort(unique(unname(x@added[nms[added]])))
