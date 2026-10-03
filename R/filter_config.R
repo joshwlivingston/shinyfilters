@@ -737,7 +737,9 @@ method(.with_filter, class_shinyfilters) <- function(
 			cli_abort(
 				c(
 					"Can't evaluate the input {.code {label}}.",
-					i = "Keywords are strings, e.g. {.code \"radio\"}."
+					i = if (is_symbol(quo_get_expr(quo))) {
+						"Keywords are strings, e.g. {.code \"radio\"}."
+					}
 				),
 				parent = cnd,
 				call = call

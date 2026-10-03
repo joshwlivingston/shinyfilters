@@ -65,7 +65,6 @@
     Condition
       Error in `with_filter()`:
       ! Can't evaluate the input `as_filter("sldier")`.
-      i Keywords are strings, e.g. `"radio"`.
       Caused by error in `as_filter()`:
       ! An input must be one of "area", "radio", "range", "selectize", "slider", or "textbox", or a function.
       x Got "sldier".
@@ -74,7 +73,6 @@
     Condition
       Error in `with_filter()`:
       ! Can't evaluate the input `as_filter("slider", max = max(a_very_very_long_name))`.
-      i Keywords are strings, e.g. `"radio"`.
       Caused by error:
       ! object 'a_very_very_long_name' not found
     Code
