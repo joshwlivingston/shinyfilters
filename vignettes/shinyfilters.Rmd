@@ -269,7 +269,6 @@ filters <- nyc_flights |>
 	) |>
 	with_ns("sidebar-mod") |>
 	mutate(
-		dep_delay = -dep_delay,
 		on_time = !delayed,
 		across(where(is.numeric), "slider"),
 		origin = shiny::radioButtons,
@@ -287,7 +286,6 @@ filters <- nyc_flights %>%
 	) %>%
 	with_ns("sidebar-mod") %>%
 	mutate(
-		dep_delay = -dep_delay,
 		on_time = !delayed,
 		across(where(is.numeric), "slider"),
 		origin = shiny::radioButtons,
@@ -307,7 +305,6 @@ filters <- nyc_flights |>
 	) |>
 	with_ns("sidebar-mod") |>
 	with_filter(
-		dep_delay = -dep_delay,
 		on_time = !delayed,
 		across_filters(where(is.numeric), "slider"),
 		origin = shiny::radioButtons,
@@ -325,7 +322,6 @@ filters <- nyc_flights %>%
 	) %>%
 	with_ns("sidebar-mod") %>%
 	with_filter(
-		dep_delay = -dep_delay,
 		on_time = !delayed,
 		across_filters(where(is.numeric), "slider"),
 		origin = shiny::radioButtons,
