@@ -2,9 +2,12 @@
 % Please edit documentation in R/filter_config.R
 \name{with_filter}
 \alias{with_filter}
+\alias{with_filters}
 \title{Choose the Input for Columns}
 \usage{
 with_filter(.config, ...)
+
+with_filters(.config, ...)
 }
 \arguments{
 \item{.config}{A configuration created by \code{\link[=shinyfilters]{shinyfilters()}}.}
