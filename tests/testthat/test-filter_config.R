@@ -293,11 +293,11 @@ test_that("print() shows one marker per row", {
 })
 
 test_that("print() handles long names", {
+	data <- nyc_flights
+	data$awpirgbeqaprkjgbaepirgfbawpirgbeqaprkjgbaepirgfbawpirgbe <- data$carrier
+	data$carrier <- NULL
 	filters <-
 		nyc_flights |>
-		dplyr::rename(
-			awpirgbeqaprkjgbaepirgfbawpirgbeqaprkjgbaepirgfbawpirgbe = carrier
-		) |>
 		shinyfilters(
 			range = TRUE,
 			selectize = TRUE
