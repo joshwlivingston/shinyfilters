@@ -58,6 +58,10 @@ shinyfilters <- function(data, ..., ns = NULL) {
 	if (length(args) > 0) {
 		check_named_list_or_null(args, arg = "...")
 	}
+	the$allowed <- TRUE
+	on.exit({
+		the$allowed <- FALSE
+	})
 	class_shinyfilters(data = data, args = ._drop_flags_off(args), ns = ns)
 }
 
@@ -197,6 +201,10 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	}
 	added <- x@added[intersect(names(x@added), cols)]
 	replaced <- x@replaced[intersect(names(x@replaced), cols)]
+	the$allowed <- TRUE
+	on.exit({
+		the$allowed <- FALSE
+	})
 	set_props(
 		x,
 		data = x@data[cols],
@@ -395,6 +403,10 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	if (length(config@args) == 0) {
 		return(rep(FALSE, length(inputs)))
 	}
+	the$allowed <- TRUE
+	on.exit({
+		the$allowed <- FALSE
+	})
 	inputs != ._dry_run_inputs(set_props(config, args = list()))
 }
 
@@ -806,6 +818,10 @@ method(.with_filter, class_shinyfilters) <- function(
 	for (name in names(overrides)) {
 		overrides_all[[name]] <- ._merge_override(config, name, overrides[[name]])
 	}
+	the$allowed <- TRUE
+	on.exit({
+		the$allowed <- FALSE
+	})
 	set_props(config, overrides = overrides_all)
 }
 
@@ -841,6 +857,10 @@ method(.with_filter, class_shinyfilters) <- function(
 ._override_arg_names <- function(config, name, override) {
 	overrides <- config@overrides
 	overrides[[name]] <- override[c("input", "fn")]
+	the$allowed <- TRUE
+	on.exit({
+		the$allowed <- FALSE
+	})
 	res <- ._dry_run(set_props(config, overrides = overrides), name)[[1]]
 	if (!inherits(res, "shinyfilters_dry_run")) {
 		return(NULL)
@@ -930,7 +950,11 @@ with_ns <- function(.config, ns) {
 	if (is.function(ns)) {
 		._check_valid_shiny_ns(ns)
 	}
-	set_props(.config, ns = ns)
+	the$allowed <- TRUE
+	on.exit({
+		the$allowed <- FALSE
+	})
+	set_props(.filters, ns = ns)
 }
 
 # Function: with_defaults() ####
@@ -987,7 +1011,11 @@ with_defaults <- function(.config, ...) {
 		defaults[[name]] <- args[[name]]
 	}
 	defaults <- ._drop_flags_off(defaults)
-	set_props(.config, args = if (length(defaults) > 0) defaults else list())
+	the$allowed <- TRUE
+	on.exit({
+		the$allowed <- FALSE
+	})
+	set_props(.filters, args = if (length(defaults) > 0) defaults else list())
 }
 
 # Generic: resolve_filter_override() ####

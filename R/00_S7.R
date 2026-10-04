@@ -61,12 +61,78 @@ class_shinyfilters <- new_class(
 	"shinyfilters",
 	package = "shinyfilters",
 	properties = list(
-		data = class_data.frame,
-		args = class_list,
-		ns = class_any,
-		overrides = class_list,
-		added = class_character,
-		replaced = class_character
+		data = new_property(
+			class = class_data.frame,
+			setter = function(self, value) {
+				if (!the$allowed) {
+					cli_abort("@data is read-only")
+				}
+				self@data <- value
+				self
+			},
+			getter = function(self) {
+				return(self@data)
+			}
+		),
+		args = new_property(
+			class = class_list,
+			setter = function(self, value) {
+				if (!the$allowed) {
+					cli_abort("Use `{.topic with_defaults}` to set @args")
+				}
+				self@args <- value
+				self
+			}
+		),
+		ns = new_property(
+			class = class_any,
+			setter = function(self, value) {
+				if (!the$allowed) {
+					cli_abort("Use `{.topic with_ns}` to set @ns")
+				}
+				self@ns <- value
+				self
+			}
+		),
+		overrides = new_property(
+			class = class_list,
+			setter = function(self, value) {
+				if (!the$allowed) {
+					cli_abort(c(
+						"@overrides is only allowed to be modified internally.",
+						"i" = "See `{.topic with_filter}` for the user-facing function."
+					))
+				}
+				self@overrides <- value
+				self
+			}
+		),
+		added = new_property(
+			class = class_character,
+			setter = function(self, value) {
+				if (!the$allowed) {
+					cli_abort(c(
+						"@added is only allowed to be modified internally.",
+						"i" = "See `{.topic with_filter}` for the user-facing function."
+					))
+				}
+				self@added <- value
+				self
+			}
+		),
+		replaced = new_property(
+			class = class_character,
+			setter = function(self, value) {
+				if (!the$allowed) {
+					cli_abort(c(
+						"@replaced is only allowed to be modified internally.",
+						"i" = "See `{.topic with_filter}` for the user-facing function."
+					))
+				}
+				self@replaced <- value
+				self
+			}
+		)
 	),
 	validator = function(self) {
 		# properties are validated in the class validation to support S7 < 0.2.0
