@@ -256,7 +256,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 			paste0(
 				col_blue("\""),
 				ansi_strtrim(
-					col_blue(format_inline("{ns(character())}}")),
+					col_blue(format_inline("{ns(character())}")),
 					22
 				),
 				col_blue("\"")
@@ -335,9 +335,12 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 		}
 		paste0(
 			indent,
-			._pad(ansi_strtrim(names(args), 25)),
+			._pad(ansi_strtrim(
+				names(args),
+				max(36, console_width() - nchar(indent))
+			)),
 			col_grey(" = "),
-			ansi_strtrim(col_blue(args), 25)
+			ansi_strtrim(col_blue(args), max(36, console_width() - nchar(indent)))
 		)
 	})
 	lines <- Map(c, sub("\\s+$", "", lines), arg_lines)

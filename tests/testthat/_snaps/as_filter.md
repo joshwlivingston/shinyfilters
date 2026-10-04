@@ -11,9 +11,9 @@
                                            label  = "Letters"
         *  factors                <fct>  selectizeInput
         ~  x                      <int>  sliderInput
-                                           value = range(.x)
+                                           value = range(.x, na.rm = TRUE)
         *  a_very_very_long_name  <dbl>  sliderInput
-                                           value = range(.x)
+                                           value = range(.x, na.rm = TRUE)
       
       
       * Filter set by `with_filter()`
@@ -22,7 +22,7 @@
       print(as_filter(shiny::sliderInput, value = range(.x), step = 2))
     Output
       <shinyfilters_filter> * sliderInput
-        value = range(.x)
+        value = range(.x, na.rm = TRUE)
         step  = 2
     Code
       print(as_filter("selectize"))
@@ -41,7 +41,7 @@
                                            label = "Letters"
            factors                <fct>  selectInput
         #  x                      <int>  sliderInput
-                                           value = range(.x)
+                                           value = range(.x, na.rm = TRUE)
         #  a_very_very_long_name  <dbl>  sliderInput
       
       Default Overrides
@@ -52,7 +52,7 @@
       print(as_filter(value = range(.x)))
     Output
       <shinyfilters_filter> * the column's input
-        value = range(.x)
+        value = range(.x, na.rm = TRUE)
 
 # as_filter() errors
 

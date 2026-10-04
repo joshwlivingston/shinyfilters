@@ -275,7 +275,9 @@ call_filter_input <- function(x, .f, ...) {
 		]
 	)
 	input_args <- args_provided[[INPUT_ARGS]]
-	args[names(input_args)] <- input_args
+	if (!is.null(args) && !is.null(input_args)) {
+		args <- modifyList(args, input_args, keep.null = TRUE)
+	}
 	do.call(.f, args)
 }
 

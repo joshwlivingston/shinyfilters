@@ -229,7 +229,7 @@
     Code
       dplyr::mutate(cfg, with_ns(1))
     Output
-      <shinyfilters> * 4 filters * namespace "1}"
+      <shinyfilters> * 4 filters * namespace "1"
       
       Filters
         letters                <chr>  selectInput

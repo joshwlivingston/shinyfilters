@@ -25,11 +25,6 @@
 #'   `value`. `inputId` can't be set: an input's id is always its column's
 #'   name.
 #'
-#'   An argument that uses `.x` is computed for each column when its input is
-#'   created. `.x` is the column, missing values included, so pass
-#'   `na.rm = TRUE` where it matters. The configuration's other columns can be
-#'   used by name.
-#'
 #'   Other arguments are evaluated right away. Written inside
 #'   `with_filter(.config, col = as_filter(...))`, they can use the columns
 #'   too, as they are at that point.
@@ -80,7 +75,11 @@ as_filter <- function(input = NULL, ...) {
 	# evaluated now, where `as_filter()` is called: they keep the values their
 	# variables have at the call, and see the columns inside `with_filter()`.
 	args <- lapply(args, function(arg) {
-		if (".x" %in% all.vars(quo_get_expr(arg))) arg else eval_tidy(arg)
+		if (".x" %in% all.vars(quo_get_expr(arg))) {
+			quo_inject_narm(arg)
+		} else {
+			eval_tidy(arg)
+		}
 	})
 	structure(
 		list(
@@ -144,15 +143,17 @@ INPUT_ARGS <- ".shinyfilters_args"
 # Returns the arguments of an `as_filter()` override for one column. The data
 # mask holds the configuration's columns, like `with_filter()`'s, plus `.x`.
 ._input_args <- function(args, config, name, call) {
-	mask <- as.list(config@data)
-	mask$.x <- config@data[[name]]
+	.data <- config@data
+	.data$.x <- .data[[name]]
 	lapply(set_names(nm = names(args)), function(arg) {
 		value <- args[[arg]]
 		if (!is_quosure(value)) {
 			return(value)
 		}
 		try_fetch(
-			eval_tidy(value, data = mask),
+			{
+				eval_tidy(value, rlang::as_data_mask(.data))
+			},
 			error = function(cnd) {
 				._resignal_silent(cnd)
 				cli_abort(
