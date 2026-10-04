@@ -1,16 +1,47 @@
 # shinyfilters (development version)
 
-## Additions
-* Error and warning messages now use cli with richer formatting.
-* The `ns` argument of `filterInput()` now behaves like `shiny::NS()`, accepting any argument.
+## New API
+
+`shinyfilters()` is a new function to configure filters. It displays an informative print and allows for configuration without extending methods directly. The functions listed here support `shinyfilters` objects (#111).
+
+### View data
+
+* `print()` displays the current configuration and if/how any settings were applied.
+* `as.data.frame()`, `as_tibble()`, and `as.data.table()` return the data.frame behind a configuration (#105).
+
+### Choose columns
+
+* `[` and `dplyr::select()` keep only the selected columns of a configuration (#105).
+* `[[`, `$`, and `dplyr::pull()` return the input for one column of a configuration (#105).
+* The tidyselect helpers, such as `everything()` and `where()`, are re-exported and supported in `dplyr` functions, as well as `[` and `[[`.
+
+### Add, remove, or modify filters
+
+* `with_filter()` chooses the input for columns, and adds or replaces computed columns (#105, #111).
+* `dplyr::mutate()` is supported, matching `with_filter()`'s behavior.
+* `dplyr::transmute()` is also supported, leaving only the columns called in `transmute()`.
+* `across_filters()` mirrors `dplyr::across()`, for `shinyfilters` objects (#105).
+* `dplyr::across()` is also supported.
+* `as_filter()` sets the arguments of a column's input in `with_filter()`, such as a slider's `value`, with or without choosing the input, and can compute them from the column with `.x` (#134).
+
+### Update defaults
+
+* `with_defaults()` is sets or removes the arguments a configuration passed to `filterInput()` for every column (#105).
+* `with_ns()` is sets or removes the namespace of a configuration (#105).
+
+## Other new features
+
+* Error and warning messages use cli formatting.
+* `nyc_flights` is a new example dataset of [flights departing New York City](https://nycflights13.tidyverse.org/) (#36).
 
 ## Minor improvements
 
-* shinyfilters no longer requires S7 0.2.0 or later (#113).
+* shinyfilters now works with S7 0.1.0 (#113).
 
 ## Bugfixes
 
-* `filterInput()` now throws an error when the provided object is all missing.
+* `filterInput()` now errors when `x` is all missing.
+* `filterInput()`'s `ns` argument behaves like `shiny::NS()`, accepting any argument.
 
 # shinyfilters 0.3.1
 

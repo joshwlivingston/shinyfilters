@@ -23,6 +23,7 @@
 #' @examples
 #' library(S7)
 #' df <- data.frame(
+#'  stringsAsFactors = FALSE,
 #'  category = rep(letters[1:3], each = 4),
 #'  value = 1:12,
 #'  date = as.Date('2024-01-01') + 0:11

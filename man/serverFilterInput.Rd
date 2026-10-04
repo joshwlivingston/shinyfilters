@@ -58,6 +58,7 @@ use_radio <- function(x) {
 }
 
 df_shared <- data.frame(
+  stringsAsFactors = FALSE,
 	 x = letters,
 	 y = use_radio(sample(c("red", "green", "blue"), 26, replace = TRUE)),
 	 z = round(runif(26, 0, 3.5), 2),
