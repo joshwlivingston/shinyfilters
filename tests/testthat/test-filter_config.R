@@ -297,7 +297,7 @@ test_that("print() handles long names", {
 	data$awpirgbeqaprkjgbaepirgfbawpirgbeqaprkjgbaepirgfbawpirgbe <- data$carrier
 	data$carrier <- NULL
 	filters <-
-		nyc_flights |>
+		data |>
 		shinyfilters(
 			range = TRUE,
 			selectize = TRUE

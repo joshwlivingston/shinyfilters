@@ -108,13 +108,13 @@
       
       Filters
         #  date                       <date>  dateRangeInput
-        #  awpirgbeqaprkjgbaepirg...  <chr>   selectizeInput
         *  origin                     <fct>   radioButtons
         #  dest                       <chr>   selectizeInput
            dep_delay                  <dbl>   numericInput
                                                 value = urgfjkbhqaewpqaedoufikljshygbqaeoli...
         *  distance                   <dbl>   sliderInput
         #  delayed                    <lgl>   selectizeInput
+        #  awpirgbeqaprkjgbaepirg...  <chr>   selectizeInput
         +  on_time                    <lgl>   selectizeInput
       
       Default Overrides
