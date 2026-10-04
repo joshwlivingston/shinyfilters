@@ -15,11 +15,6 @@ passes for the column, such as \code{label}, \code{choices}, \code{min}, \code{m
 \code{value}. \code{inputId} can't be set: an input's id is always its column's
 name.
 
-An argument that uses \code{.x} is computed for each column when its input is
-created. \code{.x} is the column, missing values included, so pass
-\code{na.rm = TRUE} where it matters. The configuration's other columns can be
-used by name.
-
 Other arguments are evaluated right away. Written inside
 \code{with_filter(.config, col = as_filter(...))}, they can use the columns
 too, as they are at that point.}
