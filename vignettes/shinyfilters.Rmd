@@ -333,26 +333,27 @@ filters
 
 ## Use in a shiny app
 
-Place the filters in a UI to create their inputs. With the namespace, their
-ids are prefixed (`sidebar-mod-origin`), so a module with the id
-`"sidebar-mod"` reads them as `input$origin`:
+Place the filters in a UI to create their inputs.
 
 ```{r, eval = FALSE}
+library(bslib)
+library(DT)
 library(shiny)
 
-ns <- NS("sidebar-mod")
-
-ui <- fluidPage(
-	sidebarLayout(
-		sidebarPanel(filters),
-		mainPanel(verbatimTextOutput(ns("selected")))
-	)
+ui <- page_sidebar(
+	sidebar = sidebar(
+		filters
+	),
+	DTOutput("data")
 )
+```
+<br>
 
+Use `shinyfilters_server()` in the server to enable interdependency:
+```{r, eval = FALSE}
 server <- function(input, output, session) {
-	moduleServer("sidebar-mod", function(input, output, session) {
-		output$selected <- renderPrint(input$origin)
-	})
+	sidebar <- shinyfilters_server(filters)
+	output$data <- renderDT(datatable(sidebar$filtered))
 }
 
 shinyApp(ui, server)
