@@ -32,6 +32,7 @@ export(selectInput)
 export(selectizeInput)
 export(serverFilterInput)
 export(shinyfilters)
+export(shinyfilters_server)
 export(sliderInput)
 export(starts_with)
 export(textAreaInput)
@@ -92,6 +93,11 @@ importFrom(cli,
   symbol
 )
 importFrom(htmltools,tagList)
+importFrom(lifecycle,
+  deprecate_warn,
+  deprecated,
+  is_present
+)
 importFrom(methods,
   formalArgs,
   functionBody

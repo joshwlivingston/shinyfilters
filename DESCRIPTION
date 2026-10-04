@@ -16,6 +16,7 @@ BugReports: https://github.com/joshwlivingston/shinyfilters/issues
 Imports:
     cli,
     htmltools,
+    lifecycle,
     methods,
     rlang,
     S7,
@@ -23,7 +24,6 @@ Imports:
     tidyselect (>= 1.2.0),
     utils
 Suggests:
-    asciicast,
     bslib,
     data.table,
     dplyr,

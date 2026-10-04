@@ -2,21 +2,29 @@
 % Please edit documentation in R/shiny.R
 \name{serverFilterInput}
 \alias{serverFilterInput}
+\alias{shinyfilters_server}
 \title{Run the backend server for filterInput}
 \usage{
 serverFilterInput(
   x,
-  input,
+  session = getDefaultReactiveDomain(),
   filter_combine_method = "and",
   args_apply_filters = NULL,
-  ...
+  ...,
+  input = deprecated()
+)
+
+shinyfilters_server(
+  x,
+  session = getDefaultReactiveDomain(),
+  filter_combine_method = "and",
+  args_apply_filters = NULL,
+  ...,
+  input = deprecated()
 )
 }
 \arguments{
-\item{x}{An object being filtered; typically a data.frame.}
-
-\item{input}{A \pkg{shiny} \code{input} object, or a reactive that resolves to a
-list of named values.}
+\item{x}{An object being filtered; typically the result of \code{\link[=shinyfilters]{shinyfilters()}}.}
 
 \item{filter_combine_method}{A string or function indicating how to combine
 multiple filters. If a string, it can be "and" (or "&") for logical AND,
@@ -27,13 +35,18 @@ vectors and return a combined logical vector.}
 \code{\link[=apply_filters]{apply_filters()}}.}
 
 \item{...}{Additional arguments passed to \code{\link[=updateFilterInput]{updateFilterInput()}}.}
+
+\item{input}{A \pkg{shiny} \code{input} object, or a reactive that resolves to a
+list of named values.}
 }
 \value{
 A reactiveValues list with a single element, \code{input_values}, which
 contains the current filter input values as a named list.
 }
 \description{
-Run the backend server for filterInput
+\code{shinyfilters_server()} runs an observer that makes your filters
+interdependent. \code{serverFilterInput()} is an alias of
+\code{shinyfilters_server()}.
 }
 \examples{
 \dontshow{if (interactive() && requireNamespace("bslib") && requireNamespace("DT")) withAutoprint(\{ # examplesIf}

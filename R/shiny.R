@@ -4,7 +4,11 @@
 
 #' Run the backend server for filterInput
 #'
-#' @param x An object being filtered; typically a data.frame.
+#' `shinyfilters_server()` runs an observer that makes your filters
+#' interdependent. `serverFilterInput()` is an alias of
+#' `shinyfilters_server()`.
+#'
+#' @param x An object being filtered; typically the result of [shinyfilters()].
 #' @param input A \pkg{shiny} `input` object, or a reactive that resolves to a
 #'   list of named values.
 #' @inheritParams apply_filters
@@ -84,14 +88,31 @@
 #' @export
 serverFilterInput <- function(
 	x,
-	input,
+	session = getDefaultReactiveDomain(),
 	filter_combine_method = "and",
 	args_apply_filters = NULL,
-	...
+	...,
+	input = deprecated()
 ) {
 	error_call <- current_call()
 	out_input <- reactiveValues()
 	observe({
+		if (is_present(input)) {
+			# Match lifecycle depcrecation warning
+			#
+			# lifecycle sees an environment belonging to shiny and directs user to
+			# submit a bug to shiny. so we use cli directly
+			cli_warn(
+				c(
+					"The {.arg input} argument of {.fn shinyfilters_server} is deprecated as of shinyfilters 0.4.0.",
+					"i" = "Please omit, or provide the {.arg session} argument instead."
+				),
+				.frequency = "once",
+				.frequency_id = "shinyfilters_server_input_arg"
+			)
+		} else {
+			input <- session$input
+		}
 		input <- ._prepare_input(input, x = x, call = error_call)
 		args_apply_filters <- c(
 			list(
@@ -104,6 +125,7 @@ serverFilterInput <- function(
 			args_apply_filters
 		)
 		x_filt <- do.call(apply_filters, args_apply_filters)
+		out_input$filtered <- x_filt
 		update_input <- function(col, id) {
 			val <- input[[id]]
 			if (!is.null(val) || !identical(length(val), 0L)) {
@@ -118,6 +140,10 @@ serverFilterInput <- function(
 	})
 	return(out_input)
 }
+
+#' @rdname serverFilterInput
+#' @export
+shinyfilters_server <- serverFilterInput
 
 #' Get Multiple Values from a \pkg{shiny} Input Object
 #'
@@ -163,6 +189,13 @@ get_input_values <- new_generic(
 	name = "get_input_values",
 	dispatch_args = c("input", "x")
 )
+
+method(
+	get_input_values,
+	list(class_reactivevalues, class_shinyfilters)
+) <- function(input, x) {
+	get_input_values(input, x@data)
+}
 
 method(
 	get_input_values,

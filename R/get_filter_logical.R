@@ -81,6 +81,17 @@ method(get_filter_logical, list(x = class_any, val = class_any)) <- function(
 
 method(
 	get_filter_logical,
+	list(x = class_shinyfilters, val = class_any)
+) <- function(
+	x,
+	val,
+	...
+) {
+	get_filter_logical(x@data, val, ...)
+}
+
+method(
+	get_filter_logical,
 	list(x = class_data.frame, val = class_any)
 ) <- function(
 	x,

@@ -145,7 +145,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	}
 }
 
-## Methods: $, [[, [, names(), .DollarNames() ####
+## Methods: $, [[, [, names(), dim(), .DollarNames() ####
 `$.shinyfilters::shinyfilters` <- function(x, name) {
 	._config_column(x, name, call = call("$", substitute(x), as.name(name)))
 }
@@ -179,6 +179,10 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	}
 	selection <- new_quosure(substitute(i), parent.frame())
 	._select_columns(x, selection, as_label(selection), call)
+}
+
+`dim.shinyfilters::shinyfilters` <- function(x) {
+	dim(x@data)
 }
 
 # Shared by `[` and dplyr's `select()`. Each passes the user's selection and

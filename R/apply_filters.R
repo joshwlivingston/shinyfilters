@@ -77,6 +77,9 @@ apply_filters <- function(
 		call = current_env()
 	)
 
+	if (S7_inherits(x, class_shinyfilters)) {
+		x <- x@data
+	}
 	if (is.data.frame(x)) {
 		if (!is.null(cols)) {
 			return(x[filter_logical, cols, drop = FALSE])
