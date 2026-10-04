@@ -264,3 +264,39 @@ method(._prepare_input, class_reactivevalues) <- function(input, x, ...) {
 method(._prepare_input_list, class_list) <- function(input) {
 	return(input)
 }
+
+#' @importFrom shiny dateInput
+#' @export
+shiny::dateInput
+
+#' @importFrom shiny dateRangeInput
+#' @export
+shiny::dateRangeInput
+
+#' @importFrom shiny numericInput
+#' @export
+shiny::numericInput
+
+#' @importFrom shiny radioButtons
+#' @export
+shiny::radioButtons
+
+#' @importFrom shiny selectInput
+#' @export
+shiny::selectInput
+
+#' @importFrom shiny selectizeInput
+#' @export
+shiny::selectizeInput
+
+#' @importFrom shiny sliderInput
+#' @export
+shiny::sliderInput
+
+#' @importFrom shiny textAreaInput
+#' @export
+shiny::textAreaInput
+
+#' @importFrom shiny textInput
+#' @export
+shiny::textInput
