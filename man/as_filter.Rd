@@ -16,7 +16,7 @@ passes for the column, such as \code{label}, \code{choices}, \code{min}, \code{m
 name.
 
 Other arguments are evaluated right away. Written inside
-\code{with_filter(.config, col = as_filter(...))}, they can use the columns
+\code{with_filter(.filters, col = as_filter(...))}, they can use the columns
 too, as they are at that point.}
 }
 \value{

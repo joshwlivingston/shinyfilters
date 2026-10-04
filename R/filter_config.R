@@ -547,19 +547,19 @@ SHINY_INPUTS <- list(
 #' @param ... Either two unnamed arguments, or any number of named arguments,
 #'   formulas, and [across_filters()] calls:
 #'
-#'   * `with_filter(.config, cols, input)`: `cols` selects columns with
+#'   * `with_filter(.filters, cols, input)`: `cols` selects columns with
 #'     <[`tidy-select`][tidyselect::language]>, such as `cyl`,
 #'     `c(mpg, disp)`, or `where(is.numeric)`.
-#'   * `with_filter(.config, col = input, ...)`: each name is a column.
-#'   * `with_filter(.config, col = expression, ...)`: adds or replaces a
+#'   * `with_filter(.filters, col = input, ...)`: each name is a column.
+#'   * `with_filter(.filters, col = expression, ...)`: adds or replaces a
 #'     column, computed from the other columns. A replaced column keeps its
 #'     input. A function, a single string, or an [as_filter()] object is
 #'     always read as an input; any other value is the column's data. A column
 #'     takes precedence over a variable of the same name.
-#'   * `with_filter(.config, cols ~ input, ...)`: a two-sided formula selects
+#'   * `with_filter(.filters, cols ~ input, ...)`: a two-sided formula selects
 #'     columns on its left, like `cols` above, and names one input for all of
 #'     them on its right. It can be mixed with named columns.
-#'   * `with_filter(.config, across_filters(cols, input), ...)`:
+#'   * `with_filter(.filters, across_filters(cols, input), ...)`:
 #'     [across_filters()] does the same as a formula.
 #'
 #'   Each input is either a keyword (`"area"`, `"radio"`, `"range"`,
@@ -599,37 +599,35 @@ SHINY_INPUTS <- list(
 #' # Add a column computed from the others
 #' with_filter(filters, delay_sq = dep_delay^2)
 #' @export
-with_filter <- function(.config, ...) {
-	if (!S7_inherits(.config, class_shinyfilters)) {
+with_filter <- function(.filters, ...) {
+	if (!S7_inherits(.filters, class_shinyfilters)) {
 		cli_abort(
-			"{.arg .config} must be created by {.fn shinyfilters}, not {.obj_type_friendly {(.config)}}."
+			"{.arg .filters} must be created by {.fn shinyfilters}, not {.obj_type_friendly {(.filters)}}."
 		)
 	}
 	if (...length() == 0) {
 		._abort_with_filter_form(list(), call = current_env())
 	}
-	.with_filter(.config, ..., .call = current_env())
+	.with_filter(.filters, ..., .call = current_env())
 }
 
 #' @rdname with_filter
 #' @export
 with_filters <- with_filter
 
-# `.config`, not `config`: a column named `c` or `con` in `...` would
-# partial-match it.
-.with_filter <- new_generic(".with_filter", ".config")
+.with_filter <- new_generic(".with_filter", ".filters")
 
 # `.across` names the calls that select columns and name one input for all of
 # them. `with_filter()` takes `across_filters()`; `mutate()` also takes
 # `across()`, which is unambiguous there.
 method(.with_filter, class_shinyfilters) <- function(
-	.config,
+	.filters,
 	...,
 	.call = caller_env(),
 	.across = SHINYFILTERS_ACROSS,
 	.fn = "with_filter"
 ) {
-	config <- .config
+	config <- .filters
 	quos <- enquos(...)
 	nms <- names2(quos)
 	named <- nms != ""
@@ -914,7 +912,7 @@ method(.with_filter, class_shinyfilters) <- function(
 #' Inside [dplyr::mutate()], call it without the configuration:
 #' `mutate(filters, with_ns("id"))`.
 #'
-#' @param .config A configuration created by [shinyfilters()].
+#' @param .filters A configuration created by [shinyfilters()].
 #' @param ns The namespace: a string, used as the id passed to [shiny::NS()];
 #'   a namespace created by [shiny::NS()]; or `NULL` to remove the namespace.
 #'
@@ -935,16 +933,16 @@ method(.with_filter, class_shinyfilters) <- function(
 #' # Remove it
 #' with_ns(filters, NULL)
 #' @export
-with_ns <- function(.config, ns) {
+with_ns <- function(.filters, ns) {
 	if (missing(ns)) {
 		cli_abort(
 			"{.arg ns} must be supplied. Use {.code NULL} to remove the namespace."
 		)
 	}
-	if (!S7_inherits(.config, class_shinyfilters)) {
+	if (!S7_inherits(.filters, class_shinyfilters)) {
 		cli_abort(c(
-			"{.arg .config} must be a {.cls shinyfilters} object, not {.obj_type_friendly {(.config)}}.",
-			"i" = "Usage: {.code {caller_arg(.config)} |> shinyfilters() |> with_ns({caller_arg(ns)})}"
+			"{.arg .filters} must be a {.cls shinyfilters} object, not {.obj_type_friendly {(.filters)}}.",
+			"i" = "Usage: {.code {caller_arg(.filters)} |> shinyfilters() |> with_ns({caller_arg(ns)})}"
 		))
 	}
 	if (is.function(ns)) {
@@ -964,7 +962,7 @@ with_ns <- function(.config, ns) {
 #' configuration made by [shinyfilters()] passes to [filterInput()] for every
 #' column.
 #'
-#' @param .config A configuration created by [shinyfilters()].
+#' @param .filters A configuration created by [shinyfilters()].
 #' @param ... Named arguments passed to [filterInput()] for every column, such
 #'   as `slider = TRUE` or `selectize = TRUE`. An argument set to `NULL`, or
 #'   an input flag such as `slider` set to `FALSE`, its default, is removed.
@@ -988,11 +986,11 @@ with_ns <- function(.config, ns) {
 #' with_defaults(filters, slider = NULL)
 #' with_defaults(filters, range = FALSE)
 #' @export
-with_defaults <- function(.config, ...) {
-	if (!S7_inherits(.config, class_shinyfilters)) {
+with_defaults <- function(.filters, ...) {
+	if (!S7_inherits(.filters, class_shinyfilters)) {
 		cli_abort(c(
-			"{.arg .config} must be a {.cls shinyfilters} object, not {.obj_type_friendly {(.config)}}.",
-			"i" = "Usage: {.code {caller_arg(.config)} |> shinyfilters() |> with_defaults(...)}"
+			"{.arg .filters} must be a {.cls shinyfilters} object, not {.obj_type_friendly {(.filters)}}.",
+			"i" = "Usage: {.code {caller_arg(.filters)} |> shinyfilters() |> with_defaults(...)}"
 		))
 	}
 	args <- list(...)
@@ -1006,7 +1004,7 @@ with_defaults <- function(.config, ...) {
 		))
 	}
 	# Not `modifyList()`: it merges list values instead of replacing them.
-	defaults <- .config@args
+	defaults <- .filters@args
 	for (name in names(args)) {
 		defaults[[name]] <- args[[name]]
 	}

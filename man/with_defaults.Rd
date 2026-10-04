@@ -4,10 +4,10 @@
 \alias{with_defaults}
 \title{Change the Default Arguments of a Configuration}
 \usage{
-with_defaults(.config, ...)
+with_defaults(.filters, ...)
 }
 \arguments{
-\item{.config}{A configuration created by \code{\link[=shinyfilters]{shinyfilters()}}.}
+\item{.filters}{A configuration created by \code{\link[=shinyfilters]{shinyfilters()}}.}
 
 \item{...}{Named arguments passed to \code{\link[=filterInput]{filterInput()}} for every column, such
 as \code{slider = TRUE} or \code{selectize = TRUE}. An argument set to \code{NULL}, or

@@ -4,10 +4,10 @@
 \alias{with_ns}
 \title{Change the Namespace of a Configuration}
 \usage{
-with_ns(.config, ns)
+with_ns(.filters, ns)
 }
 \arguments{
-\item{.config}{A configuration created by \code{\link[=shinyfilters]{shinyfilters()}}.}
+\item{.filters}{A configuration created by \code{\link[=shinyfilters]{shinyfilters()}}.}
 
 \item{ns}{The namespace: a string, used as the id passed to \code{\link[shiny:NS]{shiny::NS()}};
 a namespace created by \code{\link[shiny:NS]{shiny::NS()}}; or \code{NULL} to remove the namespace.}

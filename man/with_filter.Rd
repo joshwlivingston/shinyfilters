@@ -5,29 +5,29 @@
 \alias{with_filters}
 \title{Choose the Input for Columns}
 \usage{
-with_filter(.config, ...)
+with_filter(.filters, ...)
 
-with_filters(.config, ...)
+with_filters(.filters, ...)
 }
 \arguments{
-\item{.config}{A configuration created by \code{\link[=shinyfilters]{shinyfilters()}}.}
+\item{.filters}{A configuration created by \code{\link[=shinyfilters]{shinyfilters()}}.}
 
 \item{...}{Either two unnamed arguments, or any number of named arguments,
 formulas, and \code{\link[=across_filters]{across_filters()}} calls:
 \itemize{
-\item \code{with_filter(.config, cols, input)}: \code{cols} selects columns with
+\item \code{with_filter(.filters, cols, input)}: \code{cols} selects columns with
 <\code{\link[tidyselect:language]{tidy-select}}>, such as \code{cyl},
 \code{c(mpg, disp)}, or \code{where(is.numeric)}.
-\item \code{with_filter(.config, col = input, ...)}: each name is a column.
-\item \code{with_filter(.config, col = expression, ...)}: adds or replaces a
+\item \code{with_filter(.filters, col = input, ...)}: each name is a column.
+\item \code{with_filter(.filters, col = expression, ...)}: adds or replaces a
 column, computed from the other columns. A replaced column keeps its
 input. A function, a single string, or an \code{\link[=as_filter]{as_filter()}} object is
 always read as an input; any other value is the column's data. A column
 takes precedence over a variable of the same name.
-\item \code{with_filter(.config, cols ~ input, ...)}: a two-sided formula selects
+\item \code{with_filter(.filters, cols ~ input, ...)}: a two-sided formula selects
 columns on its left, like \code{cols} above, and names one input for all of
 them on its right. It can be mixed with named columns.
-\item \code{with_filter(.config, across_filters(cols, input), ...)}:
+\item \code{with_filter(.filters, across_filters(cols, input), ...)}:
 \code{\link[=across_filters]{across_filters()}} does the same as a formula.
 }
 

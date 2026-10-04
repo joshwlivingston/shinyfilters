@@ -26,7 +26,7 @@
 #'   name.
 #'
 #'   Other arguments are evaluated right away. Written inside
-#'   `with_filter(.config, col = as_filter(...))`, they can use the columns
+#'   `with_filter(.filters, col = as_filter(...))`, they can use the columns
 #'   too, as they are at that point.
 #'
 #' @returns A `shinyfilters_filter` object, to use as an input in
