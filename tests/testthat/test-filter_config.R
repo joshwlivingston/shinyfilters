@@ -292,6 +292,28 @@ test_that("print() shows one marker per row", {
 	expect_snapshot(print(cfg), variant = snapshot_variant())
 })
 
+test_that("print() handles long names", {
+	filters <-
+		nyc_flights |>
+		dplyr::rename(
+			awpirgbeqaprkjgbaepirgfbawpirgbeqaprkjgbaepirgfbawpirgbe = carrier
+		) |>
+		shinyfilters(
+			range = TRUE,
+			selectize = TRUE
+		) |>
+		with_ns("sidebar-mod") |>
+		with_filter(
+			on_time = !delayed,
+			across_filters(where(is.numeric) & !dep_delay, "slider"),
+			origin = shiny::radioButtons,
+			dep_delay = as_filter(
+				value = urgfjkbhqaewpqaedoufikljshygbqaeoliurgfjkbhqaewp(.x)
+			)
+		)
+	expect_snapshot(print(filters), variant = snapshot_variant())
+})
+
 test_that("filterInput(<shinyfilters>, ...) merges with global arguments", {
 	expect_identical(
 		filterInput(shinyfilters(df_config), slider = TRUE),

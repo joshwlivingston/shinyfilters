@@ -15,11 +15,11 @@
       <shinyfilters> * 5 filters
       
       Filters
-           letters                <chr>  selectInput
-           factors                <fct>  selectInput
-           x                      <int>  numericInput
-           a_very_very_long_name  <dbl>  numericInput
-        +  y                      <dbl>  numericInput
+           letters          <chr>  selectInput
+           factors          <fct>  selectInput
+           x                <int>  numericInput
+           a_very_very_...  <dbl>  numericInput
+        +  y                <dbl>  numericInput
       
       
       + Filter added by `with_filter()`
@@ -50,10 +50,10 @@
       <shinyfilters> * 4 filters
       
       Filters
-           letters                <chr>  selectInput
-           factors                <fct>  selectInput
-        ~  x                      <dbl>  numericInput
-           a_very_very_long_name  <dbl>  numericInput
+           letters          <chr>  selectInput
+           factors          <fct>  selectInput
+        ~  x                <dbl>  numericInput
+           a_very_very_...  <dbl>  numericInput
       
       
       ~ Filter replaced by `with_filter()`
@@ -84,12 +84,12 @@
       <shinyfilters> * 6 filters
       
       Filters
-        #  letters                <chr>  selectizeInput
-        #  factors                <fct>  selectizeInput
-        ~  x                      <dbl>  radioButtons
-        ~  a_very_very_long_name  <dbl>  numericInput
-        +  y                      <dbl>  sliderInput
-        +  z                      <chr>  selectizeInput
+        #  letters          <chr>  selectizeInput
+        #  factors          <fct>  selectizeInput
+        ~  x                <dbl>  radioButtons
+        ~  a_very_very_...  <dbl>  numericInput
+        +  y                <dbl>  sliderInput
+        +  z                <chr>  selectizeInput
       
       Default Overrides
         slider    = TRUE
@@ -328,10 +328,10 @@
       <shinyfilters> * 4 filters * namespace "m-n"
       
       Filters
-        letters                <chr>  selectInput
-        factors                <fct>  selectInput
-        x                      <int>  numericInput
-        a_very_very_long_name  <dbl>  numericInput
+        letters          <chr>  selectInput
+        factors          <fct>  selectInput
+        x                <int>  numericInput
+        a_very_very_...  <dbl>  numericInput
       
     Code
       with_ns(cfg, NA_character_)
@@ -339,10 +339,10 @@
       <shinyfilters> * 4 filters * namespace "NA"
       
       Filters
-        letters                <chr>  selectInput
-        factors                <fct>  selectInput
-        x                      <int>  numericInput
-        a_very_very_long_name  <dbl>  numericInput
+        letters          <chr>  selectInput
+        factors          <fct>  selectInput
+        x                <int>  numericInput
+        a_very_very_...  <dbl>  numericInput
       
 
 # with_defaults() errors
@@ -373,10 +373,10 @@
       <shinyfilters> * 4 filters * namespace "other"
       
       Filters
-        letters                <chr>  selectInput
-        factors                <fct>  selectInput
-        x                      <int>  numericInput
-        a_very_very_long_name  <dbl>  numericInput
+        letters          <chr>  selectInput
+        factors          <fct>  selectInput
+        x                <int>  numericInput
+        a_very_very_...  <dbl>  numericInput
       
     Code
       print(with_ns(cfg, NULL))
@@ -384,10 +384,10 @@
       <shinyfilters> * 4 filters
       
       Filters
-        letters                <chr>  selectInput
-        factors                <fct>  selectInput
-        x                      <int>  numericInput
-        a_very_very_long_name  <dbl>  numericInput
+        letters          <chr>  selectInput
+        factors          <fct>  selectInput
+        x                <int>  numericInput
+        a_very_very_...  <dbl>  numericInput
       
 
 # print() shows each column's input
@@ -398,10 +398,10 @@
       <shinyfilters> * 4 filters
       
       Filters
-        letters                <chr>  selectInput
-        factors                <fct>  selectInput
-        x                      <int>  numericInput
-        a_very_very_long_name  <dbl>  numericInput
+        letters          <chr>  selectInput
+        factors          <fct>  selectInput
+        x                <int>  numericInput
+        a_very_very_...  <dbl>  numericInput
       
     Code
       print(cfg)
@@ -409,10 +409,10 @@
       <shinyfilters> * 4 filters * namespace "m"
       
       Filters
-        *  letters                <chr>  <custom>
-           factors                <fct>  selectInput
-        *  x                      <int>  radioButtons
-        #  a_very_very_long_name  <dbl>  sliderInput
+        *  letters          <chr>  <custom>
+           factors          <fct>  selectInput
+        *  x                <int>  radioButtons
+        #  a_very_very_...  <dbl>  sliderInput
       
       Default Overrides
         slider = TRUE
@@ -425,10 +425,10 @@
       <shinyfilters> * 4 filters
       
       Filters
-           letters                <chr>  selectInput
-        *  factors                <fct>  x "slider" isn't available for <factor> columns.
-           x                      <int>  numericInput
-           a_very_very_long_name  <dbl>  numericInput
+           letters          <chr>  selectInput
+        *  factors          <fct>  x "slider" isn't available for <factor> columns.
+           x                <int>  numericInput
+           a_very_very_...  <dbl>  numericInput
       
       
       * Filter set by `with_filter()`
@@ -438,10 +438,10 @@
       <shinyfilters> * 4 filters
       
       Filters
-        *  letters                <chr>  radioButtons
-           factors                <fct>  selectInput
-           x                      <int>  numericInput
-           a_very_very_long_name  <dbl>  numericInput
+        *  letters          <chr>  radioButtons
+           factors          <fct>  selectInput
+           x                <int>  numericInput
+           a_very_very_...  <dbl>  numericInput
       
       
       * Filter set by `with_filter()`
@@ -451,10 +451,10 @@
       <shinyfilters> * 4 filters
       
       Filters
-        letters                <chr>  x `args_unique` must be a list, not a string.
-        factors                <fct>  x `args_unique` must be a list, not a string.
-        x                      <int>  numericInput
-        a_very_very_long_name  <dbl>  numericInput
+        letters          <chr>  x `args_unique` must be a list, not a string.
+        factors          <fct>  x `args_unique` must be a list, not a string.
+        x                <int>  numericInput
+        a_very_very_...  <dbl>  numericInput
       
       Default Overrides
         args_unique = "bad"

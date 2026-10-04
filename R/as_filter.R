@@ -114,7 +114,12 @@ print.shinyfilters_filter <- function(x, ...) {
 	))
 	args <- ._format_input_args(x$args)
 	if (length(args) > 0) {
-		cat_line(paste0("  ", ._pad(names(args)), " = ", col_blue(args)))
+		cat_line(paste0(
+			"  ",
+			._pad(ansi_strtrim(names(args), 15)),
+			col_grey(" = "),
+			ansi_strtrim(col_blue(args), 15)
+		))
 	}
 	invisible(x)
 }

@@ -307,7 +307,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	lines <- paste0(
 		marker,
 		"  ",
-		._pad(nms),
+		._pad(ansi_strtrim(nms, 15)),
 		"  ",
 		col_grey(._pad(types)),
 		"  ",
@@ -317,8 +317,8 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	indent <- strrep(
 		" ",
 		ansi_nchar(marker[[1]], type = "width") +
-			max(ansi_nchar(nms, type = "width")) +
-			max(ansi_nchar(types, type = "width")) +
+			min(15, max(ansi_nchar(nms, type = "width"))) +
+			min(15, max(ansi_nchar(types, type = "width"))) +
 			8
 	)
 	arg_lines <- lapply(nms, function(nm) {
@@ -326,7 +326,12 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 		if (length(args) == 0) {
 			return(character())
 		}
-		paste0(indent, ._pad(names(args)), col_grey(" = "), col_blue(args))
+		paste0(
+			indent,
+			._pad(ansi_strtrim(names(args), 15)),
+			col_grey(" = "),
+			ansi_strtrim(col_blue(args), 15)
+		)
 	})
 	lines <- Map(c, sub("\\s+$", "", lines), arg_lines)
 	cat_line(unlist(lines, use.names = FALSE))
