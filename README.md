@@ -46,25 +46,37 @@ Build interdependent filters in 3 steps:
 ``` r
 library(shinyfilters)
 
-filters <- shinyfilters(nyc_flights)
+filters <- shinyfilters(nyc_flights, multiple = TRUE)
 filters
+#> <shinyfilters> • 7 filters
+#> 
+#> Filters
+#>   date       <date>  dateInput
+#>   carrier    <chr>   selectInput
+#>   origin     <fct>   selectInput
+#>   dest       <chr>   selectInput
+#>   dep_delay  <dbl>   numericInput
+#>   distance   <dbl>   numericInput
+#>   delayed    <lgl>   selectInput
+#> 
+#> Default Overrides
+#>   multiple = TRUE
 ```
 
-<picture>
-<source media="(prefers-color-scheme: dark)" srcset="man/figures/README-/filters-dark.svg">
-<img src="man/figures/README-/filters.svg" alt="" width="100%" />
-</picture> <br>
+<br>
 
 2.  Place the filters in your ui
 
 ``` r
 # pak::pak("bslib")
 library(bslib)
+library(DT)
 
 ui <- page_sidebar(
     sidebar = sidebar(
         filters
-    )
+    ),
+    DTOutput("data")
 )
 ```
 
@@ -73,8 +85,9 @@ ui <- page_sidebar(
 3.  Place the filters in your server
 
 ``` r
-server <- function(...) {
-    shinyfilters_server(filters)
+server <- function(input, output, session) {
+    sidebar <- shinyfilters_server(filters)
+    output$data <- renderDT(datatable(sidebar$filtered))
 }
 ```
 

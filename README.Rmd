@@ -11,19 +11,6 @@ knitr::opts_chunk$set(
 	fig.path = "man/figures/README-",
 	out.width = "100%"
 )
-asciicast::init_knitr_engine(
-	echo = TRUE,
-	startup = bquote({
-		.libPaths(.(.libPaths()))
-		options(cli.num_colors = 256)
-		library(cli)
-	}),
-	echo_input = FALSE
-)
-# Light and dark SVGs, picked by GitHub's color mode
-options(asciicast_theme = "readme")
-# Skip simulated keystrokes to speed up rendering
-options(asciicast_typing_speed = 0)
 ```
 
 # shinyfilters
@@ -58,46 +45,44 @@ pak::pak("joshwlivingston/shinyfilters")
 Build interdependent filters in 3 steps:
 
 1. Create the filters from a data.frame:
-```{asciicast filters}
+```{r filters}
 library(shinyfilters)
 
-filters <- shinyfilters(nyc_flights)
+filters <- shinyfilters(nyc_flights, multiple = TRUE)
 filters
 ```
 <br>
 
 2. Place the filters in your ui
 ```r
-# pak::pak("bslib")
+# pak::pak(c("bslib", "DT"))
 library(bslib)
+library(DT)
+library(shiny)
 
 ui <- page_sidebar(
 	sidebar = sidebar(
 		filters
-	)
+	),
+	DTOutput("data")
 )
 ```
 <br>
 
 3. Place the filters in your server
 ```r
-server <- function(...) {
-	shinyfilters_server(filters)
+server <- function(input, output, session) {
+	sidebar <- shinyfilters_server(filters)
+	output$data <- renderDT(datatable(sidebar$filtered))
 }
-```
-<br>
 
-Your app now has interdependent filters!
-```r
-library(shiny)
 shinyApp(ui, server)
 ```
 <br>
 
 ## Customizing filters
 
-`{shinyfilters}` is fully customizable. See
-[`vignette("shinyfilters")`](https://joshwlivingston.github.io/shinyfilters/shinyfilters.html)
-for a full tour.
+`{shinyfilters}` is fully customizable. See `vignette("shinyfilters")` for a
+full tour.
 
 <br>
