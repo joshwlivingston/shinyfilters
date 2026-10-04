@@ -23,6 +23,7 @@ Imports:
     tidyselect (>= 1.2.0),
     utils
 Suggests:
+    asciicast,
     bslib,
     data.table,
     dplyr,
