@@ -538,7 +538,7 @@ SHINY_INPUTS <- list(
 #' columns computed from the others. When a column's input is chosen more than
 #' once, the last one wins; its [as_filter()] arguments stay with the column.
 #'
-#' @param .config A configuration created by [shinyfilters()].
+#' @param .filters A configuration created by [shinyfilters()].
 #' @param ... Either two unnamed arguments, or any number of named arguments,
 #'   formulas, and [across_filters()] calls:
 #'
