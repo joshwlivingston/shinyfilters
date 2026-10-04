@@ -163,7 +163,7 @@
       with_filter(df_config, x = "radio")
     Condition
       Error in `with_filter()`:
-      ! `.config` must be created by `shinyfilters()`, not a data frame.
+      ! `.filters` must be created by `shinyfilters()`, not a data frame.
     Code
       with_filter(cfg)
     Condition
@@ -310,7 +310,7 @@
       with_ns(df_config, shiny::NS("m"))
     Condition
       Error in `with_ns()`:
-      ! `.config` must be a <shinyfilters> object, not a data frame.
+      ! `.filters` must be a <shinyfilters> object, not a data frame.
       i Usage: `df_config |> shinyfilters() |> with_ns(shiny::NS("m"))`
     Code
       with_ns(cfg, function(x) x)
@@ -351,7 +351,7 @@
       with_defaults(df_config, slider = TRUE)
     Condition
       Error in `with_defaults()`:
-      ! `.config` must be a <shinyfilters> object, not a data frame.
+      ! `.filters` must be a <shinyfilters> object, not a data frame.
       i Usage: `df_config |> shinyfilters() |> with_defaults(...)`
     Code
       with_defaults(cfg, TRUE)
