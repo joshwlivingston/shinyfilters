@@ -599,6 +599,10 @@ with_filter <- function(.config, ...) {
 	.with_filter(.config, ..., .call = current_env())
 }
 
+#' @rdname with_filter
+#' @export
+with_filters <- with_filter
+
 # `.config`, not `config`: a column named `c` or `con` in `...` would
 # partial-match it.
 .with_filter <- new_generic(".with_filter", ".config")

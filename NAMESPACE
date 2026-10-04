@@ -31,6 +31,7 @@ export(updateFilterInput)
 export(where)
 export(with_defaults)
 export(with_filter)
+export(with_filters)
 export(with_ns)
 if (getRversion() < "4.3.0") importFrom(S7, "@")
 importFrom(S7,
