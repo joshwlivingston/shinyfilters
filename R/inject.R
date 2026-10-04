@@ -1,9 +1,4 @@
-#' Recursively inject na.rm into a quosure
-#'
-#' @param q A quosure
-#' @param value The value to inject (default: TRUE)
-#' @param overwrite Whether to overwrite na.rm if the user already provided it (default: FALSE)
-#' @return A new quosure with na.rm injected
+# Recursively inject na.rm into a quosure
 quo_inject_narm <- function(q, value = TRUE, overwrite = FALSE) {
 	quo_inject(q, "na.rm", value, overwrite)
 }
