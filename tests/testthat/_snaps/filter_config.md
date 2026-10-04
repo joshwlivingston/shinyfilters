@@ -104,18 +104,18 @@
     Code
       print(filters)
     Output
-      <shinyfilters> * 8 filters * namespace "sidebar-mod"
+      <shinyfilters> * 8 filters * namespace "sidebar-mod}"
       
       Filters
-        #  date             <date>  dateRangeInput
-        #  awpirgbeqapr...  <chr>   selectizeInput
-        *  origin           <fct>   radioButtons
-        #  dest             <chr>   selectizeInput
-           dep_delay        <dbl>   numericInput
-                                                                               value = urgfjkbhqaew...
-        *  distance         <dbl>   sliderInput
-        #  delayed          <lgl>   selectizeInput
-        +  on_time          <lgl>   selectizeInput
+        #  date                       <date>  dateRangeInput
+        #  awpirgbeqaprkjgbaepirg...  <chr>   selectizeInput
+        *  origin                     <fct>   radioButtons
+        #  dest                       <chr>   selectizeInput
+           dep_delay                  <dbl>   numericInput
+                                                value = urgfjkbhqaewpqaedoufik...
+        *  distance                   <dbl>   sliderInput
+        #  delayed                    <lgl>   selectizeInput
+        +  on_time                    <lgl>   selectizeInput
       
       Default Overrides
         range     = TRUE
@@ -325,7 +325,7 @@
     Code
       with_ns(cfg, c("m", "n"))
     Output
-      <shinyfilters> * 4 filters * namespace "m-n"
+      <shinyfilters> * 4 filters * namespace "m-n}"
       
       Filters
         letters                <chr>  selectInput
@@ -336,7 +336,7 @@
     Code
       with_ns(cfg, NA_character_)
     Output
-      <shinyfilters> * 4 filters * namespace "NA"
+      <shinyfilters> * 4 filters * namespace "NA}"
       
       Filters
         letters                <chr>  selectInput
@@ -370,7 +370,7 @@
     Code
       print(with_ns(cfg, shiny::NS("other")))
     Output
-      <shinyfilters> * 4 filters * namespace "other"
+      <shinyfilters> * 4 filters * namespace "other}"
       
       Filters
         letters                <chr>  selectInput
@@ -406,7 +406,7 @@
     Code
       print(cfg)
     Output
-      <shinyfilters> * 4 filters * namespace "m"
+      <shinyfilters> * 4 filters * namespace "m}"
       
       Filters
         *  letters                <chr>  <custom>

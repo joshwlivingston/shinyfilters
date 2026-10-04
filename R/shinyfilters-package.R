@@ -12,6 +12,7 @@
 #' @importFrom cli cli_bullets
 #' @importFrom cli cli_warn
 #' @importFrom cli col_blue
+#' @importFrom cli col_br_white
 #' @importFrom cli col_cyan
 #' @importFrom cli col_green
 #' @importFrom cli col_grey

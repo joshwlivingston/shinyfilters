@@ -250,10 +250,17 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	if (!is.null(x@ns)) {
 		ns <- ._resolve_ns(x@ns)
 		header <- paste(
-			cli::col_br_white(header),
+			col_br_white(header),
 			col_grey(symbol$bullet),
 			col_grey("namespace"),
-			format_inline("{.val {ns(character())}}")
+			paste0(
+				col_blue("\""),
+				ansi_strtrim(
+					col_blue(format_inline("{ns(character())}}")),
+					22
+				),
+				col_blue("\"")
+			)
 		)
 	}
 	cat_line(paste(
@@ -307,7 +314,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	lines <- paste0(
 		marker,
 		"  ",
-		._pad(ansi_strtrim(nms, 15)),
+		._pad(ansi_strtrim(nms, 25)),
 		"  ",
 		col_grey(._pad(types)),
 		"  ",
@@ -317,8 +324,8 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	indent <- strrep(
 		" ",
 		ansi_nchar(marker[[1]], type = "width") +
-			min(15, max(ansi_nchar(nms, type = "width"))) +
-			min(15, max(ansi_nchar(types, type = "width"))) +
+			min(25, max(ansi_nchar(nms, type = "width"))) +
+			min(25, max(ansi_nchar(types, type = "width"))) +
 			8
 	)
 	arg_lines <- lapply(nms, function(nm) {
@@ -328,9 +335,9 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 		}
 		paste0(
 			indent,
-			._pad(ansi_strtrim(names(args), 15)),
+			._pad(ansi_strtrim(names(args), 25)),
 			col_grey(" = "),
-			ansi_strtrim(col_blue(args), 15)
+			ansi_strtrim(col_blue(args), 25)
 		)
 	})
 	lines <- Map(c, sub("\\s+$", "", lines), arg_lines)
@@ -342,9 +349,9 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 		cat_line(col_grey("Default Overrides"))
 		cat_line(paste0(
 			"  ",
-			._pad(names(values)),
+			._pad(ansi_strtrim(names(values), 25)),
 			col_grey(" = "),
-			col_blue(values)
+			ansi_strtrim(col_blue(values), 25)
 		))
 	}
 
