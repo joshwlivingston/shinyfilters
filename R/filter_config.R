@@ -444,11 +444,6 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 }
 
 # Dry run of dispatch -------------------------------------------------------
-#
-# While `the$dry_run` is TRUE, the input callers return the input function
-# instead of calling it, so print() can show which input each column uses.
-the <- new.env(parent = emptyenv())
-the$dry_run <- FALSE
 
 ._dry_run_result <- function(.f) {
 	the$dry_run_fn <- .f
@@ -808,6 +803,10 @@ method(.with_filter, class_shinyfilters) <- function(
 		replaced[[name]] <- fn
 	}
 	data[[name]] <- value
+	the$allowed <- TRUE
+	on.exit({
+		the$allowed <- FALSE
+	})
 	set_props(config, data = data, added = added, replaced = replaced)
 }
 

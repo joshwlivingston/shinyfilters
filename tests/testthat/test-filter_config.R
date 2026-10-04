@@ -609,6 +609,6 @@ test_that("`[` errors on unknown columns", {
 
 test_that("the `ns` property defaults to NULL", {
 	expect_null(
-		class_shinyfilters(data = data.frame(stringsAsFactors = FALSE, a = 1:3))@ns
+		shinyfilters(data = data.frame(stringsAsFactors = FALSE, a = 1:3))@ns
 	)
 })
