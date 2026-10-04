@@ -1,2 +1,3 @@
 [lint.per-file-ignores]
 "R/release.R" = ["unused_function"]
+"tests/testthat/test-filter_config.R" = ["duplicated_arguments"]

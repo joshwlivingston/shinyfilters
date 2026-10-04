@@ -29,11 +29,13 @@ Suggests:
     DT,
     knitr,
     magrittr,
+    nycflights13,
     rmarkdown,
     roxygen2,
     shinyWidgets,
     testthat (>= 3.2.0),
-    tibble
+    tibble,
+    withr
 VignetteBuilder: 
     knitr
 Config/roxygen2/version: 8.1.0

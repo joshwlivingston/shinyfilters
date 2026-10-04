@@ -108,12 +108,22 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	if (is.null(override)) {
 		return(do.call(filterInput, col_args))
 	}
+	# `print()`'s dry run never evaluates `as_filter()` arguments.
+	if (!the$dry_run && length(override$args) > 0) {
+		col_args[[INPUT_ARGS]] <- ._input_args(override$args, config, name, call)
+	}
+	# An `as_filter()` without an input leaves the choice to `filterInput()`.
 	try_fetch(
-		do.call(
-			filter_input_override,
-			c(col_args, list(override = override$input))
-		),
-		shinyfilters_error_unsupported_input = function(cnd) {
+		if (is.null(override$input)) {
+			do.call(filterInput, col_args)
+		} else {
+			do.call(
+				filter_input_override,
+				c(col_args, list(override = override$input))
+			)
+		},
+		error = function(cnd) {
+			._resignal_silent(cnd)
 			cli_abort(
 				"Can't create an input for column {.field {name}}.",
 				parent = cnd,
@@ -121,6 +131,14 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 			)
 		}
 	)
+}
+
+# shiny recognizes the errors `req()` and `validate()` signal by their class,
+# so they are re-signaled as they are instead of being wrapped.
+._resignal_silent <- function(cnd) {
+	if (inherits(cnd, "shiny.silent.error")) {
+		stop(cnd)
+	}
 }
 
 ## Methods: $, [[, [, names(), .DollarNames() ####
@@ -218,7 +236,12 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 `print.shinyfilters::shinyfilters` <- function(x, ...) {
 	data <- x@data
 	nms <- names(data)
-	overridden <- nms %in% names(x@overrides)
+	# `as_filter()` arguments alone don't choose the input, or mark the row.
+	overridden <- vapply(
+		nms,
+		function(nm) !is.null(x@overrides[[nm]]$input),
+		logical(1)
+	)
 	added <- nms %in% names(x@added)
 	replaced <- nms %in% names(x@replaced)
 
@@ -227,10 +250,17 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	if (!is.null(x@ns)) {
 		ns <- ._resolve_ns(x@ns)
 		header <- paste(
-			cli::col_br_white(header),
+			col_br_white(header),
 			col_grey(symbol$bullet),
 			col_grey("namespace"),
-			format_inline("{.val {ns(character())}}")
+			paste0(
+				col_blue("\""),
+				ansi_strtrim(
+					col_blue(format_inline("{ns(character())}")),
+					22
+				),
+				col_blue("\"")
+			)
 		)
 	}
 	cat_line(paste(
@@ -265,24 +295,56 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 		!replaced &
 		!is_error &
 		._set_by_default(x, inputs)
-	marker <- paste0(
-		ifelse(overridden | defaulted | added | replaced, "  ", ""),
-		ifelse(overridden, dot_input, ""),
-		ifelse(defaulted, dot_default, ""),
-		ifelse(added, dot_added, ""),
-		ifelse(replaced, dot_replaced, "")
-	)
+	marked <- overridden | defaulted | added | replaced
+	# Unmarked rows keep the marker column's width, so the columns line up. A
+	# print with no marked row has no marker column.
+	marker <- if (any(marked)) {
+		paste0(
+			"  ",
+			ifelse(overridden, dot_input, ""),
+			ifelse(defaulted, dot_default, ""),
+			ifelse(added, dot_added, ""),
+			ifelse(replaced, dot_replaced, ""),
+			ifelse(marked, "", " ")
+		)
+	} else {
+		""
+	}
 	types <- vapply(data, ._type_abbr, character(1))
 	lines <- paste0(
+		marker,
 		"  ",
-		._pad(nms),
+		._pad(ansi_strtrim(nms, 25)),
 		"  ",
 		col_grey(._pad(types)),
 		"  ",
-		styled_inputs,
-		marker
+		styled_inputs
 	)
-	cat_line(sub("\\s+$", "", lines))
+	# `as_filter()` arguments follow their filter's row, under its input.
+	indent <- strrep(
+		" ",
+		ansi_nchar(marker[[1]], type = "width") +
+			min(25, max(ansi_nchar(nms, type = "width"))) +
+			min(25, max(ansi_nchar(types, type = "width"))) +
+			8
+	)
+	arg_lines <- lapply(nms, function(nm) {
+		args <- ._format_input_args(x@overrides[[nm]]$args)
+		if (length(args) == 0) {
+			return(character())
+		}
+		paste0(
+			indent,
+			._pad(ansi_strtrim(
+				names(args),
+				max(36, console_width() - nchar(indent))
+			)),
+			col_grey(" = "),
+			ansi_strtrim(col_blue(args), max(36, console_width() - nchar(indent)))
+		)
+	})
+	lines <- Map(c, sub("\\s+$", "", lines), arg_lines)
+	cat_line(unlist(lines, use.names = FALSE))
 
 	cat_line()
 	if (length(x@args) > 0) {
@@ -290,25 +352,25 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 		cat_line(col_grey("Default Overrides"))
 		cat_line(paste0(
 			"  ",
-			._pad(names(values)),
-			" = ",
-			col_blue(values)
+			._pad(ansi_strtrim(names(values), 25)),
+			col_grey(" = "),
+			ansi_strtrim(col_blue(values), 25)
 		))
 	}
 
-	if (any(overridden) || any(defaulted) || any(added) || any(replaced)) {
+	if (any(marked)) {
 		cat_line()
+	}
+	if (any(defaulted)) {
+		cat_line(dot_default, col_grey(" Filter set by default argument"))
 	}
 	if (any(overridden)) {
 		fns <- vapply(x@overrides[nms[overridden]], function(o) o$fn, "")
 		fns <- sort(unique(fns))
 		cat_line(
 			dot_input,
-			col_grey(format_inline(" Filter chosen by {.or {.fn {fns}}}"))
+			col_grey(format_inline(" Filter set by {.or {.fn {fns}}}"))
 		)
-	}
-	if (any(defaulted)) {
-		cat_line(dot_default, col_grey(" Filter set by default argument"))
 	}
 	if (any(added)) {
 		fns <- sort(unique(unname(x@added[nms[added]])))
@@ -382,6 +444,12 @@ the$dry_run <- FALSE
 }
 
 ._dry_run_inputs <- function(config) {
+	vapply(._dry_run(config), ._dry_run_label, character(1))
+}
+
+# One result per column: the input `._call_input()` was asked to call, or the
+# error that kept `filterInput()` from getting that far.
+._dry_run <- function(config, cols = names(config@data)) {
 	the$dry_run <- TRUE
 	on.exit({
 		assign("dry_run", FALSE, envir = the)
@@ -390,6 +458,7 @@ the$dry_run <- FALSE
 
 	data <- config@data
 	args <- ._config_args(config)
+	i <- match(cols, names(data))
 	mapply(
 		function(name, id, label) {
 			the$dry_run_fn <- NULL
@@ -404,11 +473,12 @@ the$dry_run <- FALSE
 			if (inherits(res, "error") && !is.null(the$dry_run_fn)) {
 				res <- ._dry_run_result(the$dry_run_fn)
 			}
-			._dry_run_label(res)
+			res
 		},
-		names(data),
-		get_input_ids(data),
-		get_input_labels(data),
+		cols,
+		get_input_ids(data)[i],
+		get_input_labels(data)[i],
+		SIMPLIFY = FALSE,
 		USE.NAMES = FALSE
 	)
 }
@@ -424,12 +494,21 @@ the$dry_run <- FALSE
 	if (!inherits(res, "shinyfilters_dry_run")) {
 		return("<custom>")
 	}
+	._input_name(res$fn)
+}
+
+# The name of a shiny input function, or `<custom>` for any other function
+._input_name <- function(fn) {
 	for (name in names(SHINY_INPUTS)) {
-		if (identical(res$fn, SHINY_INPUTS[[name]])) {
+		if (identical(fn, SHINY_INPUTS[[name]])) {
 			return(name)
 		}
 	}
 	"<custom>"
+}
+
+._is_shiny_input <- function(fn) {
+	any(vapply(SHINY_INPUTS, identical, logical(1), fn))
 }
 
 SHINY_INPUTS <- list(
@@ -449,12 +528,12 @@ SHINY_INPUTS <- list(
 #'
 #' `with_filter()` sets the input that [filterInput()] creates for one or more
 #' columns of a configuration made by [shinyfilters()], and adds or replaces
-#' columns computed from the others. When a column is set more than once, the
-#' last call wins.
+#' columns computed from the others. When a column's input is chosen more than
+#' once, the last one wins; its [as_filter()] arguments stay with the column.
 #'
 #' @param .config A configuration created by [shinyfilters()].
-#' @param ... Either two unnamed arguments, or any number of named arguments
-#'   and [across_filters()] calls:
+#' @param ... Either two unnamed arguments, or any number of named arguments,
+#'   formulas, and [across_filters()] calls:
 #'
 #'   * `with_filter(.config, cols, input)`: `cols` selects columns with
 #'     <[`tidy-select`][tidyselect::language]>, such as `cyl`,
@@ -462,12 +541,14 @@ SHINY_INPUTS <- list(
 #'   * `with_filter(.config, col = input, ...)`: each name is a column.
 #'   * `with_filter(.config, col = expression, ...)`: adds or replaces a
 #'     column, computed from the other columns. A replaced column keeps its
-#'     input. A function or a single string is always read as an input; any
-#'     other value is the column's data. A column takes precedence over a
-#'     variable of the same name.
+#'     input. A function, a single string, or an [as_filter()] object is
+#'     always read as an input; any other value is the column's data. A column
+#'     takes precedence over a variable of the same name.
+#'   * `with_filter(.config, cols ~ input, ...)`: a two-sided formula selects
+#'     columns on its left, like `cols` above, and names one input for all of
+#'     them on its right. It can be mixed with named columns.
 #'   * `with_filter(.config, across_filters(cols, input), ...)`:
-#'     [across_filters()] selects columns and names one input for all of
-#'     them, and can be mixed with named columns.
+#'     [across_filters()] does the same as a formula.
 #'
 #'   Each input is either a keyword (`"area"`, `"radio"`, `"range"`,
 #'   `"selectize"`, `"slider"`, `"textbox"`) or a \pkg{shiny} input function,
@@ -478,9 +559,14 @@ SHINY_INPUTS <- list(
 #'   arguments [args_filter_input()] returns for the column's type, plus any
 #'   other arguments they accept.
 #'
+#'   Wrap an input in [as_filter()] to set its arguments, or use [as_filter()]
+#'   without an input to set arguments for the input a column already has.
+#'   Arguments stay with the column: an input chosen later keeps the ones it
+#'   has an argument for.
+#'
 #' @returns The updated configuration.
 #'
-#' @seealso [shinyfilters()], [across_filters()]
+#' @seealso [shinyfilters()], [across_filters()], [as_filter()]
 #'
 #' @examples
 #' filters <- shinyfilters(nyc_flights)
@@ -494,7 +580,7 @@ SHINY_INPUTS <- list(
 #' # Or select columns and name others in one call
 #' with_filter(
 #'   filters,
-#'   across_filters(where(is.character), "selectize"),
+#'   where(is.character) ~ "selectize",
 #'   origin = "radio"
 #' )
 #'
@@ -538,13 +624,14 @@ method(.with_filter, class_shinyfilters) <- function(
 		},
 		logical(1)
 	)
+	is_formula <- !named & vapply(quos, ._is_cols_formula, logical(1))
 
 	if (any(is_across & named)) {
 		i <- which(is_across & named)[[1]]
 		._abort_across_named(quos[[i]], nms[[i]], call = .call)
 	}
 
-	if (!any(is_across) && length(quos) == 2 && !any(named)) {
+	if (!any(is_across | is_formula) && length(quos) == 2 && !any(named)) {
 		return(._override_cols(
 			config,
 			quos[[1]],
@@ -554,15 +641,19 @@ method(.with_filter, class_shinyfilters) <- function(
 		))
 	}
 
-	loose <- !named & !is_across
+	loose <- !named & !is_across & !is_formula
 	if (any(loose)) {
 		._abort_with_filter_form(quos[loose], call = .call)
 	}
 
 	# One argument at a time, so each sees the columns the earlier ones computed.
 	for (i in seq_along(quos)) {
-		if (is_across[[i]]) {
-			spec <- ._across_spec(quos[[i]], call = .call)
+		if (is_across[[i]] || is_formula[[i]]) {
+			spec <- if (is_formula[[i]]) {
+				._formula_spec(quos[[i]])
+			} else {
+				._across_spec(quos[[i]], call = .call)
+			}
 			config <- ._override_cols(
 				config,
 				spec$cols,
@@ -584,14 +675,28 @@ method(.with_filter, class_shinyfilters) <- function(
 	config
 }
 
+# `cols ~ input`: the left side selects columns, the right side is their input.
+._is_cols_formula <- function(quo) {
+	is_formula(quo_get_expr(quo), lhs = TRUE)
+}
+
+._formula_spec <- function(quo) {
+	expr <- quo_get_expr(quo)
+	env <- quo_get_env(quo)
+	list(
+		cols = new_quosure(f_lhs(expr), env),
+		input = new_quosure(f_rhs(expr), env)
+	)
+}
+
 # Reached only from `with_filter()`: `mutate()` checks its own argument shapes
 # before forwarding, so its wording never has to appear here.
 ._abort_with_filter_form <- function(quos, call) {
 	msg <- c(
-		"{.fn with_filter} takes two unnamed arguments, named arguments, or {.fn across_filters}.",
+		"{.fn with_filter} takes two unnamed arguments, or named arguments, {.code cols ~ input} formulas, and {.fn across_filters} calls.",
 		i = "Select columns: {.code with_filter(filters, c(a, b), \"radio\")}.",
 		i = "Name columns: {.code with_filter(filters, a = \"radio\", b = \"slider\")}.",
-		i = "Mix the two: {.code with_filter(filters, across_filters(c(a, b), \"radio\"), x = \"slider\")}."
+		i = "Mix the two: {.code with_filter(filters, c(a, b) ~ \"radio\", x = \"slider\")}."
 	)
 	used_across <- vapply(
 		quos,
@@ -626,8 +731,8 @@ method(.with_filter, class_shinyfilters) <- function(
 	._set_overrides(config, overrides)
 }
 
-# A function or a single string chooses the column's input; any other value is
-# the column's data, computed from the other columns.
+# A function, a single string, or an `as_filter()` object chooses the column's
+# input; any other value is the column's data, computed from the other columns.
 ._set_column <- function(config, name, quo, call, fn) {
 	label <- as_label(quo)
 	data <- config@data
@@ -647,21 +752,22 @@ method(.with_filter, class_shinyfilters) <- function(
 		}
 	)
 
-	if (is.function(value) || is_string(value)) {
+	if (is.function(value) || is_string(value) || ._is_filter(value)) {
 		if (!(name %in% names(data))) {
 			cli_abort(
 				c(
 					"Can't find column {.field {name}}.",
-					x = "{.code {label}} chooses the input for an existing column.",
+					x = if (._is_filter(value) && is.null(value$input)) {
+						"{.code {label}} sets arguments for an existing column's input."
+					} else {
+						"{.code {label}} chooses the input for an existing column."
+					},
 					i = "To add a column, compute it from the others: {.code {fn}(filters, {name} = <expression>)}."
 				),
 				call = call
 			)
 		}
-		override <- list(
-			input = resolve_filter_override(value, call = call),
-			fn = fn
-		)
+		override <- ._override(value, call = call, fn = fn)
 		return(._set_overrides(config, set_names(list(override), name)))
 	}
 
@@ -693,8 +799,53 @@ method(.with_filter, class_shinyfilters) <- function(
 
 ._set_overrides <- function(config, overrides) {
 	overrides_all <- config@overrides
-	overrides_all[names(overrides)] <- overrides
+	for (name in names(overrides)) {
+		overrides_all[[name]] <- ._merge_override(config, name, overrides[[name]])
+	}
 	set_props(config, overrides = overrides_all)
+}
+
+# `as_filter()` arguments stay with their column: a new input keeps the ones it
+# names, and the override's own arguments are added to them. An override
+# without an input, from `as_filter()`, keeps the column's input.
+._merge_override <- function(config, name, override) {
+	old <- config@overrides[[name]]
+	input <- override$input
+	fn <- override$fn
+	args <- old$args
+	if (is.null(input) && !is.null(old)) {
+		input <- old$input
+		fn <- old$fn
+	} else if (length(args) > 0) {
+		named <- ._override_arg_names(config, name, override)
+		if (!is.null(named)) {
+			args <- args[names(args) %in% named]
+		}
+	}
+	args[names(override$args)] <- override$args
+	out <- list(input = input, args = args, fn = fn)
+	if (length(args) == 0) {
+		out$args <- NULL
+	}
+	out
+}
+
+# The arguments named by the input an override gives a column, or `NULL` when
+# it may take any: a dry run can't tell which input it is, or it is a function
+# with `...`. shiny's inputs don't count: they check their `...`, or pass them
+# to an input whose arguments `._input_arg_names()` already includes.
+._override_arg_names <- function(config, name, override) {
+	overrides <- config@overrides
+	overrides[[name]] <- override[c("input", "fn")]
+	res <- ._dry_run(set_props(config, overrides = overrides), name)[[1]]
+	if (!inherits(res, "shinyfilters_dry_run")) {
+		return(NULL)
+	}
+	named <- ._input_arg_names(res$fn)
+	if ("..." %in% named && !._is_shiny_input(res$fn)) {
+		return(NULL)
+	}
+	named
 }
 
 ._new_override <- function(quo, call, fn) {
@@ -705,17 +856,28 @@ method(.with_filter, class_shinyfilters) <- function(
 			cli_abort(
 				c(
 					"Can't evaluate the input {.code {label}}.",
-					i = "Keywords are strings, e.g. {.code \"radio\"}."
+					i = if (is_symbol(quo_get_expr(quo))) {
+						"Keywords are strings, e.g. {.code \"radio\"}."
+					}
 				),
 				parent = cnd,
 				call = call
 			)
 		}
 	)
-	list(
-		input = resolve_filter_override(input, call = call),
-		fn = fn
-	)
+	._override(input, call = call, fn = fn)
+}
+
+# An `as_filter()` object has already resolved its input. Its arguments are
+# stored only when it has some, so `as_filter("slider")` equals `"slider"`.
+._override <- function(input, call, fn) {
+	if (!._is_filter(input)) {
+		return(list(input = resolve_filter_override(input, call = call), fn = fn))
+	}
+	if (length(input$args) == 0) {
+		return(list(input = input$input, fn = fn))
+	}
+	list(input = input$input, args = input$args, fn = fn)
 }
 
 # Function: with_ns() ####

@@ -27,6 +27,7 @@ reference:
   - shinyfilters
   - with_filter
   - across_filters
+  - as_filter
   - with_ns
   - with_defaults
   - shinyfilters-dplyr

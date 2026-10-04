@@ -18,9 +18,10 @@
 #' @param .cols Columns to set, using
 #'   <[`tidy-select`][tidyselect::language]>, such as `origin`,
 #'   `c(origin, carrier)`, or `where(is.numeric)`. Defaults to every column.
-#' @param .fns The input for the selected columns: a keyword or a \pkg{shiny}
-#'   input function, as described in [with_filter()]. A one-sided formula
-#'   naming an input, such as `~ "slider"`, also works.
+#' @param .fns The input for the selected columns: a keyword, a \pkg{shiny}
+#'   input function, or an [as_filter()] object, as described in
+#'   [with_filter()]. A one-sided formula naming an input, such as
+#'   `~ "slider"`, also works.
 #' @param ... Not supported.
 #' @param .names Not supported. `across_filters()` chooses an input for the
 #'   selected columns; it doesn't rename them.
@@ -124,7 +125,8 @@ across_filters <- function(
 }
 
 # `across_filters(cols, ~ "slider")` reads naturally to a dplyr user, so unwrap
-# a one-sided formula that names an input. A purrr-style lambda means something
+# a one-sided formula that names an input, or wraps one in `as_filter()`, whose
+# arguments use the lambda pronoun `.x`. A purrr-style lambda means something
 # else entirely here: `.fns` names an input, it doesn't transform values.
 ._across_input <- function(input, fn, call) {
 	if (!is_formula(input)) {
@@ -144,5 +146,7 @@ across_filters <- function(
 }
 
 ._is_input_name <- function(expr) {
-	is_string(expr) || is_symbol(expr) || is_call(expr, c("::", ":::"))
+	is_string(expr) ||
+		is_symbol(expr) ||
+		is_call(expr, c("::", ":::", "as_filter"))
 }
