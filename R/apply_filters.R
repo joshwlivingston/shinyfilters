@@ -77,8 +77,6 @@ apply_filters <- function(
 		...,
 		call = current_env()
 	)
-	# A missing value matches a filter only when `NA` is one of its values.
-	filter_logical[is.na(filter_logical)] <- FALSE
 
 	if (S7_inherits(x, class_shinyfilters)) {
 		x <- x@data
@@ -137,6 +135,9 @@ apply_filters <- function(
 							...
 						)
 					._check_filter_logical(res, x_length, column_name, call = call)
+					# A missing value matches a filter only when `NA` is one of its
+					# values.
+					res[is.na(res)] <- FALSE
 					return(res)
 				}
 			)

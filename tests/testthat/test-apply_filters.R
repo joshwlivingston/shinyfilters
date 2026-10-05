@@ -174,6 +174,31 @@ test_that("apply_filters() drops rows with a missing value in a filtered column"
 	expect_identical(apply_filters(c(1, NA, 3), list(x = c(0, 5))), c(1, 3))
 })
 
+test_that("apply_filters() combines filters after a missing value fails its own", {
+	df <- data.frame(
+		stringsAsFactors = FALSE,
+		num = c(1, NA, 3),
+		chr = c("x", "x", "z")
+	)
+	filter_list <- list(num = c(0, 5), chr = "z")
+	expect_identical(
+		apply_filters(df, filter_list, filter_combine_method = "or"),
+		df[c(1, 3), ]
+	)
+	expect_identical(
+		apply_filters(df, filter_list, filter_combine_method = xor),
+		df[1, ]
+	)
+	expect_identical(
+		apply_filters(
+			df,
+			list(num = c(0, 5), chr = "x"),
+			filter_combine_method = xor
+		),
+		df[2:3, ]
+	)
+})
+
 test_that("apply_filters() keeps a missing value when NA is a filter value", {
 	df <- data.frame(stringsAsFactors = FALSE, num = c(1, NA, 3))
 	expect_identical(
