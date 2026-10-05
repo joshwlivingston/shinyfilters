@@ -117,8 +117,11 @@ test_that("shinyfilters_server() updates a configuration's empty inputs", {
 
 test_that("shinyfilters_server() reads and updates the inputs of a namespace", {
 	cfg <- with_ns(shinyfilters(df_config), "m")
+	# Radio buttons carry the session's namespace in their options, so the
+	# messages differ if the module's session sends them.
+	cfg <- with_filter(cfg, letters = "radio")
 	expected <- update_messages({
-		shiny::updateSelectInput(
+		shiny::updateRadioButtons(
 			inputId = "m-letters",
 			choices = c("a", "c"),
 			selected = character(0)

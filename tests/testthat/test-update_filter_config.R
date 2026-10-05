@@ -195,8 +195,11 @@ test_that("updateFilterInput() calls a shinyWidgets update function", {
 })
 
 test_that("updateFilterInput() updates the inputs of a namespace", {
-	cfg <- with_ns(shinyfilters(df_config), "m")["letters"]
-	expected <- update_messages(shiny::updateSelectInput(
+	cfg <- with_ns(shinyfilters(df_config), "m")
+	# Radio buttons carry the session's namespace in their options, so the
+	# messages differ if the module's session sends them.
+	cfg <- with_filter(cfg, letters = "radio")["letters"]
+	expected <- update_messages(shiny::updateRadioButtons(
 		inputId = "m-letters",
 		choices = c("a", "b", "c")
 	))
@@ -209,6 +212,36 @@ test_that("updateFilterInput() updates the inputs of a namespace", {
 			session
 		),
 		expected
+	)
+})
+
+test_that("arguments passed to updateFilterInput() win over a default", {
+	cfg <- shinyfilters(df_config, slider = TRUE)["x"]
+	expect_identical(
+		update_messages(updateFilterInput(cfg, slider = FALSE)),
+		update_messages(
+			shiny::updateNumericInput(inputId = "x", min = 2L, max = 10L)
+		)
+	)
+})
+
+test_that("updateFilterInput() follows the range and textbox keywords", {
+	df <- data.frame(
+		stringsAsFactors = FALSE,
+		day = as.Date("2024-01-01") + 0:2,
+		name = c("a", "b", "c")
+	)
+	cfg <- with_filter(shinyfilters(df), day = "range", name = "textbox")
+	expect_identical(
+		update_messages(updateFilterInput(cfg)),
+		update_messages({
+			shiny::updateDateRangeInput(
+				inputId = "day",
+				min = df$day[[1]],
+				max = df$day[[3]]
+			)
+			shiny::updateTextInput(inputId = "name")
+		})
 	)
 })
 
