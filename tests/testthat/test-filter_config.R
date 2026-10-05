@@ -667,6 +667,14 @@ test_that("print() shows each column's input", {
 	})
 })
 
+test_that("print() shows a datetime column's type", {
+	df <- data.frame(
+		dte = as.Date("2024-01-01") + 0:1,
+		dtm = as.POSIXct("2024-01-01", tz = "UTC") + 0:1 * 86400
+	)
+	expect_snapshot(print(shinyfilters(df)), variant = snapshot_variant())
+})
+
 test_that("print() resolves custom methods", {
 	ClassRadio <- S7::new_class("ClassRadio", S7::class_character)
 	ClassCustom <- S7::new_class("ClassCustom", S7::class_character)
@@ -681,6 +689,20 @@ test_that("print() resolves custom methods", {
 			radio = ClassRadio(c("a", "b")),
 			custom = ClassCustom(c("a", "b"))
 		),
+		class = "data.frame",
+		row.names = 1:2
+	)
+	expect_snapshot(print(shinyfilters(df)), variant = snapshot_variant())
+})
+
+test_that("print() names the input of a method that changes it", {
+	ClassTagged <- S7::new_class("ClassTagged", S7::class_character)
+	S7::method(filterInput, ClassTagged) <- function(x, ...) {
+		input <- call_filter_input(x, shiny::radioButtons, ...)
+		htmltools::tagQuery(input)$addClass("wide")$allTags()
+	}
+	df <- structure(
+		list(tagged = ClassTagged(c("a", "b"))),
 		class = "data.frame",
 		row.names = 1:2
 	)

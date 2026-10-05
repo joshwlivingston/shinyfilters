@@ -29,6 +29,21 @@
     Output
       <shinyfilters_filter> * selectizeInput
 
+# print() shortens a long as_filter() argument
+
+    Code
+      print(cfg)
+    Output
+      <shinyfilters> * 4 filters
+      
+      Filters
+        letters                <chr>  selectInput
+                                        label = "A label that runs past thirt...
+        factors                <fct>  selectInput
+        x                      <int>  numericInput
+        a_very_very_long_name  <dbl>  numericInput
+      
+
 # print() marks a row by its input, not its as_filter() arguments
 
     Code

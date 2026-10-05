@@ -509,6 +509,18 @@
         x  <chr>  selectInput
       
 
+# print() shows a datetime column's type
+
+    Code
+      print(shinyfilters(df))
+    Output
+      <shinyfilters> * 2 filters
+      
+      Filters
+        dte  <date>  dateInput
+        dtm  <dttm>  dateInput
+      
+
 # print() resolves custom methods
 
     Code
@@ -519,6 +531,17 @@
       Filters
         radio   <chr>  radioButtons
         custom  <chr>  <custom>
+      
+
+# print() names the input of a method that changes it
+
+    Code
+      print(shinyfilters(df))
+    Output
+      <shinyfilters> * 1 filter
+      
+      Filters
+        tagged  <chr>  radioButtons
       
 
 # `$` and `[[` error on unknown columns

@@ -343,6 +343,14 @@ test_that("print() shows as_filter() arguments", {
 	})
 })
 
+test_that("print() shortens a long as_filter() argument", {
+	cfg <- with_filter(
+		shinyfilters(df_config),
+		letters = as_filter(label = "A label that runs past thirty characters")
+	)
+	expect_snapshot(print(cfg), variant = snapshot_variant())
+})
+
 test_that("print() marks a row by its input, not its as_filter() arguments", {
 	cfg <- with_filter(
 		shinyfilters(df_config, slider = TRUE),
