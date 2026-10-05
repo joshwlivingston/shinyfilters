@@ -291,6 +291,23 @@ test_that("a call in an argument that uses `.x` gets `na.rm = TRUE`", {
 	)
 })
 
+test_that("a namespaced call in an argument that uses `.x` gets `na.rm = TRUE`", {
+	df <- data.frame(stringsAsFactors = FALSE, a = c(NA, 3L, 1L))
+	cfg <- shinyfilters(df)
+	expected <- shiny::sliderInput("a", "a", min = 1L, max = 3L, value = 2)
+	expect_identical(
+		with_filter(cfg, a = as_filter("slider", value = base::mean(.x)))$a,
+		expected
+	)
+	expect_identical(
+		with_filter(
+			cfg,
+			a = as_filter("slider", value = stats::quantile(.x, 0.5, names = FALSE))
+		)$a,
+		expected
+	)
+})
+
 test_that("an argument that uses `.x` can use other columns", {
 	cfg <- with_filter(
 		shinyfilters(df_config),

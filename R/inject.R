@@ -113,7 +113,7 @@ fn_accepts_arg <- function(fn, arg, fn_name = NULL) {
 						regexpr('UseMethod\\(\\"[^\\"]+\\"\\)', bdy_char)
 					)
 					if (length(match) > 0) {
-						gen_name <- gsub('UseMethod\\(\\"\vert{}\\"\\)', '', match[1])
+						gen_name <- gsub('UseMethod\\("|"\\)', "", match[1])
 					}
 				}
 
