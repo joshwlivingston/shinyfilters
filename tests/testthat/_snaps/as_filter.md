@@ -54,6 +54,29 @@
       <shinyfilters_filter> * the column's input
         value = range(.x, na.rm = TRUE)
 
+# print() shows `.update_fn`
+
+    Code
+      print(cfg)
+    Output
+      <shinyfilters> * 4 filters
+      
+      Filters
+        *  letters                <chr>  <custom>
+                                           inline     = TRUE
+                                           .update_fn = shiny::updateCheckboxGroupInput
+           factors                <fct>  selectInput
+           x                      <int>  numericInput
+           a_very_very_long_name  <dbl>  numericInput
+      
+      
+      * Filter set by `with_filter()`
+    Code
+      print(as_filter(.update_fn = shiny::updateCheckboxGroupInput))
+    Output
+      <shinyfilters_filter> * the column's input
+        .update_fn = shiny::updateCheckboxG...
+
 # as_filter() errors
 
     Code
@@ -83,6 +106,11 @@
     Condition
       Error in `as_filter()`:
       ! `as_filter()` needs an input or at least one argument.
+    Code
+      as_filter("slider", .update_fn = "updateSliderInput")
+    Condition
+      Error in `as_filter()`:
+      ! `.update_fn` must be a function or `NULL`, not a string.
     Code
       with_filter(cfg, nope = as_filter("slider"))
     Condition

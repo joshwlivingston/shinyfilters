@@ -16,7 +16,8 @@
 #' Arguments stay with their column. Setting the column again adds to them,
 #' replacing those of the same name, and a new input keeps the ones it has an
 #' argument for. They are matched by name only, so set an argument again if
-#' its value doesn't suit the new input.
+#' its value doesn't suit the new input. `.update_fn` stays with the input
+#' instead: a new input drops it.
 #'
 #' @param input The input: a keyword or a \pkg{shiny} input function, as
 #'   described in [with_filter()]. Leave it out to keep each column's input.
@@ -28,6 +29,13 @@
 #'   Other arguments are evaluated right away. Written inside
 #'   `with_filter(.filters, col = as_filter(...))`, they can use the columns
 #'   too, as they are at that point.
+#' @param .update_fn The function that updates the input, such as
+#'   `shinyWidgets::updatePickerInput` for `shinyWidgets::pickerInput`.
+#'   [shinyfilters_server()] and [updateFilterInput()] need it for an input
+#'   that isn't a \pkg{shiny} input they know. It is called like
+#'   [call_update_filter_input()]: it receives the arguments
+#'   [args_update_filter_input()] returns for the column's type, plus
+#'   `session`, `inputId`, and any argument set here that it names.
 #'
 #' @returns A `shinyfilters_filter` object, to use as an input in
 #'   [with_filter()].
@@ -56,9 +64,19 @@
 #'   filters,
 #'   origin = as_filter("radio", label = "Airport", inline = TRUE)
 #' )
+#'
+#' # Name the function that updates an input shinyfilters doesn't know
+#' with_filter(
+#'   filters,
+#'   origin = as_filter(
+#'     shiny::checkboxGroupInput,
+#'     .update_fn = shiny::updateCheckboxGroupInput
+#'   )
+#' )
 #' @export
-as_filter <- function(input = NULL, ...) {
+as_filter <- function(input = NULL, ..., .update_fn = NULL) {
 	args <- enquos(...)
+	update <- enquo(.update_fn)
 	if (length(args) > 0) {
 		check_named_list_or_null(args, arg = "...")
 	}
@@ -68,7 +86,12 @@ as_filter <- function(input = NULL, ...) {
 			i = "An input's id is always its column's name."
 		))
 	}
-	if (is.null(input) && length(args) == 0) {
+	if (!is.null(.update_fn) && !is.function(.update_fn)) {
+		cli_abort(
+			"{.arg .update_fn} must be a function or {.code NULL}, not {.obj_type_friendly {(.update_fn)}}."
+		)
+	}
+	if (is.null(input) && length(args) == 0 && is.null(.update_fn)) {
 		cli_abort("{.fn as_filter} needs an input or at least one argument.")
 	}
 	# Only an argument that uses `.x` waits for its column. The rest are
@@ -81,15 +104,18 @@ as_filter <- function(input = NULL, ...) {
 			eval_tidy(arg)
 		}
 	})
-	structure(
-		list(
-			input = if (!is.null(input)) {
-				resolve_filter_override(input, call = current_env())
-			},
-			args = args
-		),
-		class = "shinyfilters_filter"
+	out <- list(
+		input = if (!is.null(input)) {
+			resolve_filter_override(input, call = current_env())
+		},
+		args = args
 	)
+	# Stored only when set, so `as_filter("slider")` equals `"slider"`. The
+	# label is the argument as it was written, for `print()`.
+	if (!is.null(.update_fn)) {
+		out$update <- list(fn = .update_fn, label = as_label(update))
+	}
+	structure(out, class = "shinyfilters_filter")
 }
 
 ._is_filter <- function(x) {
@@ -111,7 +137,7 @@ print.shinyfilters_filter <- function(x, ...) {
 			col_cyan(._input_name(input))
 		}
 	))
-	args <- ._format_input_args(x$args)
+	args <- ._format_override_args(x)
 	if (length(args) > 0) {
 		cat_line(paste0(
 			"  ",
@@ -133,6 +159,16 @@ print.shinyfilters_filter <- function(x, ...) {
 		},
 		character(1)
 	)
+}
+
+# The lines `print()` shows under a filter: its `as_filter()` arguments, then
+# its update function as it was written.
+._format_override_args <- function(override) {
+	args <- ._format_input_args(override$args)
+	if (!is.null(override$update)) {
+		args[[".update_fn"]] <- override$update$label
+	}
+	args
 }
 
 # The name `as_filter()` arguments travel under in `...`, from

@@ -187,6 +187,39 @@ test_that("as_filter() arguments add to the ones set earlier", {
 	)
 })
 
+test_that("`.update_fn` stays with the input it updates", {
+	cfg <- shinyfilters(df_config)
+	set <- with_filter(
+		cfg,
+		letters = as_filter(
+			shiny::checkboxGroupInput,
+			.update_fn = shiny::updateCheckboxGroupInput
+		)
+	)
+	expect_identical(
+		with_filter(set, letters = as_filter(inline = TRUE)),
+		with_filter(
+			cfg,
+			letters = as_filter(
+				shiny::checkboxGroupInput,
+				inline = TRUE,
+				.update_fn = shiny::updateCheckboxGroupInput
+			)
+		)
+	)
+	expect_identical(
+		with_filter(
+			with_filter(cfg, letters = shiny::checkboxGroupInput),
+			letters = as_filter(.update_fn = shiny::updateCheckboxGroupInput)
+		),
+		set
+	)
+	expect_identical(
+		with_filter(set, letters = "radio"),
+		with_filter(cfg, letters = "radio")
+	)
+})
+
 test_that("an argument that uses `.x` is computed when the input is created", {
 	cfg <- with_filter(
 		shinyfilters(df_config),
@@ -318,6 +351,21 @@ test_that("print() marks a row by its input, not its as_filter() arguments", {
 	})
 })
 
+test_that("print() shows `.update_fn`", {
+	cfg <- with_filter(
+		shinyfilters(df_config),
+		letters = as_filter(
+			shiny::checkboxGroupInput,
+			inline = TRUE,
+			.update_fn = shiny::updateCheckboxGroupInput
+		)
+	)
+	expect_snapshot(variant = snapshot_variant(), {
+		print(cfg)
+		print(as_filter(.update_fn = shiny::updateCheckboxGroupInput))
+	})
+})
+
 test_that("an argument that uses `.x` can use shiny::req()", {
 	cfg <- with_filter(
 		shinyfilters(df_config),
@@ -334,6 +382,7 @@ test_that("as_filter() errors", {
 		as_filter("slider", range(.x))
 		as_filter("slider", inputId = "x")
 		as_filter()
+		as_filter("slider", .update_fn = "updateSliderInput")
 
 		with_filter(cfg, nope = as_filter("slider"))
 		with_filter(cfg, nope = as_filter(step = 2))

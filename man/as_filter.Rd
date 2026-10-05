@@ -4,7 +4,7 @@
 \alias{as_filter}
 \title{Set the Arguments of an Input}
 \usage{
-as_filter(input = NULL, ...)
+as_filter(input = NULL, ..., .update_fn = NULL)
 }
 \arguments{
 \item{input}{The input: a keyword or a \pkg{shiny} input function, as
@@ -18,6 +18,14 @@ name.
 Other arguments are evaluated right away. Written inside
 \code{with_filter(.filters, col = as_filter(...))}, they can use the columns
 too, as they are at that point.}
+
+\item{.update_fn}{The function that updates the input, such as
+\code{shinyWidgets::updatePickerInput} for \code{shinyWidgets::pickerInput}.
+\code{\link[=shinyfilters_server]{shinyfilters_server()}} and \code{\link[=updateFilterInput]{updateFilterInput()}} need it for an input
+that isn't a \pkg{shiny} input they know. It is called like
+\code{\link[=call_update_filter_input]{call_update_filter_input()}}: it receives the arguments
+\code{\link[=args_update_filter_input]{args_update_filter_input()}} returns for the column's type, plus
+\code{session}, \code{inputId}, and any argument set here that it names.}
 }
 \value{
 A \code{shinyfilters_filter} object, to use as an input in
@@ -34,7 +42,8 @@ or \code{width}.
 Arguments stay with their column. Setting the column again adds to them,
 replacing those of the same name, and a new input keeps the ones it has an
 argument for. They are matched by name only, so set an argument again if
-its value doesn't suit the new input.
+its value doesn't suit the new input. \code{.update_fn} stays with the input
+instead: a new input drops it.
 }
 \examples{
 filters <- shinyfilters(nyc_flights)
@@ -57,6 +66,15 @@ with_filter(filters, across_filters(where(is.numeric), range_slider))
 with_filter(
   filters,
   origin = as_filter("radio", label = "Airport", inline = TRUE)
+)
+
+# Name the function that updates an input shinyfilters doesn't know
+with_filter(
+  filters,
+  origin = as_filter(
+    shiny::checkboxGroupInput,
+    .update_fn = shiny::updateCheckboxGroupInput
+  )
 )
 }
 \seealso{

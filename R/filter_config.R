@@ -341,7 +341,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 			8
 	)
 	arg_lines <- lapply(nms, function(nm) {
-		args <- ._format_input_args(x@overrides[[nm]]$args)
+		args <- ._format_override_args(x@overrides[[nm]])
 		if (length(args) == 0) {
 			return(character())
 		}
@@ -568,7 +568,8 @@ SHINY_INPUTS <- list(
 #'
 #'   Other functions are called like [call_filter_input()]: they receive the
 #'   arguments [args_filter_input()] returns for the column's type, plus any
-#'   other arguments they accept.
+#'   other arguments they accept. To use one with [shinyfilters_server()],
+#'   name the function that updates it with [as_filter()]'s `.update_fn`.
 #'
 #'   Wrap an input in [as_filter()] to set its arguments, or use [as_filter()]
 #'   without an input to set arguments for the input a column already has.
@@ -828,15 +829,20 @@ method(.with_filter, class_shinyfilters) <- function(
 
 # `as_filter()` arguments stay with their column: a new input keeps the ones it
 # names, and the override's own arguments are added to them. An override
-# without an input, from `as_filter()`, keeps the column's input.
+# without an input, from `as_filter()`, keeps the column's input, and with it
+# the function that updates that input.
 ._merge_override <- function(config, name, override) {
 	old <- config@overrides[[name]]
 	input <- override$input
 	fn <- override$fn
 	args <- old$args
+	update <- override$update
 	if (is.null(input) && !is.null(old)) {
 		input <- old$input
 		fn <- old$fn
+		if (is.null(update)) {
+			update <- old$update
+		}
 	} else if (length(args) > 0) {
 		named <- ._override_arg_names(config, name, override)
 		if (!is.null(named)) {
@@ -848,6 +854,7 @@ method(.with_filter, class_shinyfilters) <- function(
 	if (length(args) == 0) {
 		out$args <- NULL
 	}
+	out$update <- update
 	out
 }
 
@@ -893,16 +900,19 @@ method(.with_filter, class_shinyfilters) <- function(
 	._override(input, call = call, fn = fn)
 }
 
-# An `as_filter()` object has already resolved its input. Its arguments are
-# stored only when it has some, so `as_filter("slider")` equals `"slider"`.
+# An `as_filter()` object has already resolved its input. Its arguments and
+# update function are stored only when it has some, so `as_filter("slider")`
+# equals `"slider"`.
 ._override <- function(input, call, fn) {
 	if (!._is_filter(input)) {
 		return(list(input = resolve_filter_override(input, call = call), fn = fn))
 	}
+	out <- list(input = input$input, args = input$args, fn = fn)
 	if (length(input$args) == 0) {
-		return(list(input = input$input, fn = fn))
+		out$args <- NULL
 	}
-	list(input = input$input, args = input$args, fn = fn)
+	out$update <- input$update
+	out
 }
 
 # Function: with_ns() ####
