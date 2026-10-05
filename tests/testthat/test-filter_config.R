@@ -412,6 +412,17 @@ test_that("radio override on Date and POSIXct columns -> dates as choices", {
 	)
 })
 
+test_that("radio override on a column of any other class -> its text as choices", {
+	df <- data.frame(id = 1:3)
+	df$dur <- as.difftime(c(3, 1, 1), units = "mins")
+	cfg <- with_filter(shinyfilters(df), dur = "radio")
+	expect_identical(
+		cfg$dur,
+		shiny::radioButtons("dur", "dur", choices = c("1", "3"))
+	)
+	expect_identical(apply_filters(cfg, list(dur = "1")), df[2:3, ])
+})
+
 test_that("radio override on logical columns", {
 	df <- data.frame(stringsAsFactors = FALSE, lgl = c(TRUE, FALSE))
 	res <- filterInput(with_filter(shinyfilters(df), lgl = "radio"))

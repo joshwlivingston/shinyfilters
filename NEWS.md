@@ -44,6 +44,7 @@
 ## Minor improvements
 
 * shinyfilters now works with S7 0.1.0 (#113).
+* `arg_name_input_id()` and `arg_name_input_label()` now return `"inputId"` and `"label"` for an `x` of any class, so `with_filter()` can give a column of any class a radio or select input (#111).
 
 ## Bugfixes
 

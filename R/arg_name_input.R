@@ -34,17 +34,8 @@ arg_name_input_id <- new_generic(
 	dispatch_args = c("x")
 )
 
-## Method: character | Date | factor | logical | list | numeric | POSIXt ####
-method(
-	arg_name_input_id,
-	class_character |
-		class_Date |
-		class_factor |
-		class_logical |
-		class_list |
-		class_numeric |
-		class_POSIXt
-) <- function(x, ...) {
+## Method: any ####
+method(arg_name_input_id, class_any) <- function(x, ...) {
 	"inputId"
 }
 
@@ -56,17 +47,8 @@ arg_name_input_label <- new_generic(
 	dispatch_args = c("x")
 )
 
-## Method: character | Date | factor | logical | list | numeric | POSIXt ####
-method(
-	arg_name_input_label,
-	class_character |
-		class_Date |
-		class_factor |
-		class_logical |
-		class_list |
-		class_numeric |
-		class_POSIXt
-) <- function(x, ...) {
+## Method: any ####
+method(arg_name_input_label, class_any) <- function(x, ...) {
 	"label"
 }
 

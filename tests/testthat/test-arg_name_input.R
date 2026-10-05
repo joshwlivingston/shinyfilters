@@ -7,6 +7,7 @@ test_that("arg_name_input_id() returns 'inputId' for all types", {
 	expect_identical(arg_name_input_id(factor("a")), "inputId")
 	expect_identical(arg_name_input_id(TRUE), "inputId")
 	expect_identical(arg_name_input_id(list(a = 1)), "inputId")
+	expect_identical(arg_name_input_id(as.difftime(1, units = "mins")), "inputId")
 })
 
 # arg_name_input_label() ####
@@ -18,6 +19,10 @@ test_that("arg_name_input_label() returns 'label' for all types", {
 	expect_identical(arg_name_input_label(factor("a")), "label")
 	expect_identical(arg_name_input_label(TRUE), "label")
 	expect_identical(arg_name_input_label(list(a = 1)), "label")
+	expect_identical(
+		arg_name_input_label(as.difftime(1, units = "mins")),
+		"label"
+	)
 })
 
 # arg_name_input_value() ####
