@@ -68,9 +68,10 @@ filters
 2.  Place the filters in your ui
 
 ``` r
-# pak::pak("bslib")
+# pak::pak(c("bslib", "DT"))
 library(bslib)
 library(DT)
+library(shiny)
 
 ui <- page_sidebar(
     sidebar = sidebar(
@@ -89,14 +90,7 @@ server <- function(input, output, session) {
     sidebar <- shinyfilters_server(filters)
     output$data <- renderDT(datatable(sidebar$filtered))
 }
-```
 
-<br>
-
-Your app now has interdependent filters!
-
-``` r
-library(shiny)
 shinyApp(ui, server)
 ```
 
@@ -104,8 +98,7 @@ shinyApp(ui, server)
 
 ## Customizing filters
 
-`{shinyfilters}` is fully customizable. See
-[`vignette("shinyfilters")`](https://joshwlivingston.github.io/shinyfilters/shinyfilters.html)
+`{shinyfilters}` is fully customizable. See `vignette("shinyfilters")`
 for a full tour.
 
 <br>
