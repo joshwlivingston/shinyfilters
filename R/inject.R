@@ -4,9 +4,6 @@ quo_inject_narm <- function(q, value = TRUE, overwrite = FALSE) {
 }
 
 quo_inject <- function(q, arg, value, overwrite = FALSE) {
-	if (!is_quosure(q)) {
-		stop("Input must be a quosure")
-	}
 	expr <- quo_get_expr(q)
 	env <- quo_get_env(q)
 	new_expr <- expr_inject(expr, env, arg, value, overwrite)
@@ -69,10 +66,6 @@ expr_inject <- function(expr, env, arg, value, overwrite) {
 # Function Inspector
 # ---------------------------------------------------------
 fn_accepts_arg <- function(fn, arg, fn_name = NULL) {
-	if (!is.function(fn)) {
-		return(FALSE)
-	}
-
 	fmls <- fn_formals(fn)
 
 	if (is.null(fmls)) {
