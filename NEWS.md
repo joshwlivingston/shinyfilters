@@ -52,7 +52,7 @@
 * `args_update_filter_input()` now leaves out `start` and `end` when `range = TRUE`, as it leaves out the value of every other input (#136).
 * `filterInput()` now errors when `x` is all missing.
 * `filterInput()`'s `ns` argument behaves like `shiny::NS()`, accepting any argument.
-* `get_filter_logical()` now filters a numeric `x` by a character `val`, the value of a select or radio input on a numeric column, instead of keeping every element (#136).
+* `get_filter_logical()` now filters an `x` that isn't a character, factor, or logical vector by a character `val`, the value of a select or radio input, instead of keeping every element (#136).
 * `serverFilterInput()` now leaves a radio input with no selection unselected when it updates its choices, instead of selecting the first one (#136).
 
 # shinyfilters 0.3.1

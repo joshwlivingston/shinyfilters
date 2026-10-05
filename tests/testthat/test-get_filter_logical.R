@@ -163,6 +163,31 @@ test_that("get_filter_logical() filters numeric vectors by character values", {
 	expect_identical(apply_filters(df_config, list(x = "9")), df_config[2, ])
 })
 
+test_that("get_filter_logical() filters dates and lists by character values", {
+	df <- data.frame(day = as.Date("2024-01-03") - c(0, 2, 2))
+	df$time <- as.POSIXct(
+		c("2024-01-03 10:00", "2024-01-01 09:00", "2024-01-01 17:30"),
+		tz = "UTC"
+	)
+	expect_identical(
+		get_filter_logical(df$day, val = "2024-01-01"),
+		c(FALSE, TRUE, TRUE)
+	)
+	expect_identical(
+		get_filter_logical(df$time, val = "2024-01-01"),
+		c(FALSE, TRUE, TRUE)
+	)
+	expect_identical(
+		get_filter_logical(list("a", "b", "a"), val = "a"),
+		c(TRUE, FALSE, TRUE)
+	)
+	# The filtered columns keep their types
+	expect_identical(
+		apply_filters(df, list(day = "2024-01-01", time = "2024-01-01")),
+		df[2:3, ]
+	)
+})
+
 ## NA handling ####
 test_that("get_filter_logical() handles NA values in numeric data", {
 	x <- c(1, 2, NA, 4, 5)
@@ -270,7 +295,7 @@ test_that("get_filter_logical() falls back to all TRUE for every unsupported x/v
 		(x %in% chr_like && val %in% chr_like) ||
 			(x %in% date_like && val %in% date_like) ||
 			(x %in% time_like && val %in% time_like) ||
-			(x == "numeric" && val == "character")
+			val == "character"
 	}
 
 	for (x_type in names(xs)) {

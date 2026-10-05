@@ -38,8 +38,9 @@ numeric or Date, \code{lte} controls whether to use \code{<=} (\code{TRUE}, defa
 or \code{<} (\code{FALSE}) on \code{val[[2]]}.}
 }
 
-When \code{x} is numeric and \code{val} is a character vector, such as the value of a
-select or radio input, the elements of \code{x} are compared as text.
+When \code{val} is a character vector, such as the value of a select or radio
+input, and \code{x} isn't a character, factor, or logical vector, the elements of
+\code{x} are compared as text. A datetime is compared as its date.
 }
 \examples{
 df <- data.frame(
