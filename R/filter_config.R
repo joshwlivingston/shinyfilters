@@ -829,8 +829,8 @@ method(.with_filter, class_shinyfilters) <- function(
 
 # `as_filter()` arguments stay with their column: a new input keeps the ones it
 # names, and the override's own arguments are added to them. An override
-# without an input, from `as_filter()`, keeps the column's input, and with it
-# the function that updates that input.
+# without an input, from `as_filter()`, keeps the column's input. The function
+# that updates an input stays with that input, until another one is named.
 ._merge_override <- function(config, name, override) {
 	old <- config@overrides[[name]]
 	input <- override$input
@@ -840,14 +840,14 @@ method(.with_filter, class_shinyfilters) <- function(
 	if (is.null(input) && !is.null(old)) {
 		input <- old$input
 		fn <- old$fn
-		if (is.null(update)) {
-			update <- old$update
-		}
 	} else if (length(args) > 0) {
 		named <- ._override_arg_names(config, name, override)
 		if (!is.null(named)) {
 			args <- args[names(args) %in% named]
 		}
+	}
+	if (is.null(update) && identical(input, old$input)) {
+		update <- old$update
 	}
 	args[names(override$args)] <- override$args
 	out <- list(input = input, args = args, fn = fn)

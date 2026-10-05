@@ -215,6 +215,10 @@ test_that("`.update_fn` stays with the input it updates", {
 		set
 	)
 	expect_identical(
+		with_filter(set, letters = shiny::checkboxGroupInput),
+		set
+	)
+	expect_identical(
 		with_filter(set, letters = "radio"),
 		with_filter(cfg, letters = "radio")
 	)
