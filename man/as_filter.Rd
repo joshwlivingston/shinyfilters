@@ -15,6 +15,10 @@ passes for the column, such as \code{label}, \code{choices}, \code{min}, \code{m
 \code{value}. \code{inputId} can't be set: an input's id is always its column's
 name.
 
+An argument can use \code{.x}, the column the input is created for. It is
+evaluated when the input is created, and a call in it that takes \code{na.rm},
+such as \code{range(.x)}, gets \code{na.rm = TRUE} unless it sets \code{na.rm} itself.
+
 Other arguments are evaluated right away. Written inside
 \code{with_filter(.filters, col = as_filter(...))}, they can use the columns
 too, as they are at that point.}

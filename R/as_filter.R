@@ -26,6 +26,10 @@
 #'   `value`. `inputId` can't be set: an input's id is always its column's
 #'   name.
 #'
+#'   An argument can use `.x`, the column the input is created for. It is
+#'   evaluated when the input is created, and a call in it that takes `na.rm`,
+#'   such as `range(.x)`, gets `na.rm = TRUE` unless it sets `na.rm` itself.
+#'
 #'   Other arguments are evaluated right away. Written inside
 #'   `with_filter(.filters, col = as_filter(...))`, they can use the columns
 #'   too, as they are at that point.

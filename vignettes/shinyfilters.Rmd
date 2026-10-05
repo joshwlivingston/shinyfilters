@@ -215,8 +215,8 @@ filters %>%
 `as_filter()` pairs an input with arguments for it. They replace the ones
 shinyfilters computes for the column, and an argument can use `.x`, the column
 itself. Here a slider's `value` covers the column's range, which makes it a
-range slider. `dep_delay` has missing values, so `range()` needs
-`na.rm = TRUE`:
+range slider. `dep_delay` has missing values. A call that takes `na.rm`, such
+as `range()`, gets `na.rm = TRUE` by default, so writing it out is optional:
 
 ### dplyr {#args-dplyr}
 
