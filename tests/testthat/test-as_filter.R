@@ -267,6 +267,30 @@ test_that("`.x` keeps the column's missing values", {
 	)
 })
 
+test_that("a call in an argument that uses `.x` gets `na.rm = TRUE`", {
+	df <- data.frame(stringsAsFactors = FALSE, a = c(NA, 3L, 1L))
+	cfg <- shinyfilters(df)
+	spread <- function(x, ...) {
+		dots <- list(...)
+		diff(range(x, na.rm = isTRUE(dots$na.rm)))
+	}
+	expect_identical(
+		with_filter(cfg, a = as_filter("slider", value = mean(.x)))$a,
+		shiny::sliderInput("a", "a", min = 1L, max = 3L, value = 2)
+	)
+	expect_identical(
+		with_filter(cfg, a = as_filter("slider", step = spread(.x)))$a,
+		shiny::sliderInput("a", "a", min = 1L, max = 3L, value = 3L, step = 2L)
+	)
+	expect_identical(
+		with_filter(
+			cfg,
+			a = as_filter("slider", label = paste(max(.x, na.rm = FALSE)))
+		)$a,
+		shiny::sliderInput("a", "NA", min = 1L, max = 3L, value = 3L)
+	)
+})
+
 test_that("an argument that uses `.x` can use other columns", {
 	cfg <- with_filter(
 		shinyfilters(df_config),
