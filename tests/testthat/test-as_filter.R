@@ -308,6 +308,20 @@ test_that("a namespaced call in an argument that uses `.x` gets `na.rm = TRUE`",
 	)
 })
 
+test_that("an argument that uses `.x` can use `[`, parentheses, and `if`", {
+	expect_no_warning(
+		slider <- as_filter(
+			"slider",
+			value = (.x[3] + 1L) * 2L,
+			step = if (is.integer(.x)) 2L else 0.5
+		)
+	)
+	expect_identical(
+		with_filter(shinyfilters(df_config), x = slider)$x,
+		shiny::sliderInput("x", "x", min = 2L, max = 10L, value = 6L, step = 2L)
+	)
+})
+
 test_that("an argument that uses `.x` can use other columns", {
 	cfg <- with_filter(
 		shinyfilters(df_config),

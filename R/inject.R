@@ -73,13 +73,7 @@ fn_accepts_arg <- function(fn, arg, fn_name = NULL) {
 		return(FALSE)
 	}
 
-	# Safely get formal arguments (handles closures and primitives like `range` and `sum`)
-	fmls <- tryCatch(
-		{
-			if (is.primitive(fn)) formals(args(fn)) else formals(fn)
-		},
-		error = function(e) NULL
-	)
+	fmls <- fn_formals(fn)
 
 	if (is.null(fmls)) {
 		return(FALSE)
@@ -135,14 +129,7 @@ fn_accepts_arg <- function(fn, arg, fn_name = NULL) {
 						)
 
 						if (is.function(m_fn)) {
-							m_fmls <- tryCatch(
-								{
-									if (is.primitive(m_fn)) formals(args(m_fn)) else formals(m_fn)
-								},
-								error = function(e) NULL
-							)
-
-							if (arg %in% names(m_fmls)) return(TRUE)
+							if (arg %in% names(fn_formals(m_fn))) return(TRUE)
 						}
 					}
 				}
@@ -151,4 +138,14 @@ fn_accepts_arg <- function(fn, arg, fn_name = NULL) {
 	}
 
 	return(FALSE)
+}
+
+# The formal arguments of a closure or a primitive like `range` and `sum`.
+# `args()` returns `NULL` for language primitives such as `[` and `(`, which
+# have none.
+fn_formals <- function(fn) {
+	if (is.primitive(fn)) {
+		fn <- args(fn)
+	}
+	if (is.null(fn)) NULL else formals(fn)
 }
