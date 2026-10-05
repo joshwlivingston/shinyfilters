@@ -43,6 +43,7 @@
 * `apply_filters()` now drops a row whose filtered value is missing, instead of returning a row of `NA`s, unless `NA` is one of the filter's values (#136).
 * `filterInput()` now errors when `x` is all missing.
 * `filterInput()`'s `ns` argument behaves like `shiny::NS()`, accepting any argument.
+* `get_filter_logical()` now filters a numeric `x` by a character `val`, the value of a select or radio input on a numeric column, instead of keeping every element (#136).
 
 # shinyfilters 0.3.1
 

@@ -148,6 +148,21 @@ test_that("get_filter_logical() filters numeric vectors with multiple values", {
 	expect_equal(result, x %in% c(2, 5, 8))
 })
 
+## character values ####
+test_that("get_filter_logical() filters numeric vectors by character values", {
+	x <- c(2, 100000, 0.1 + 0.2, NA)
+	expect_identical(
+		get_filter_logical(x, val = "0.3"),
+		c(FALSE, FALSE, TRUE, FALSE)
+	)
+	expect_identical(
+		get_filter_logical(x, val = c("2", "1e+05")),
+		c(TRUE, TRUE, FALSE, FALSE)
+	)
+	expect_identical(get_filter_logical(1:3, val = "a"), c(FALSE, FALSE, FALSE))
+	expect_identical(apply_filters(df_config, list(x = "9")), df_config[2, ])
+})
+
 ## NA handling ####
 test_that("get_filter_logical() handles NA values in numeric data", {
 	x <- c(1, 2, NA, 4, 5)
@@ -254,7 +269,8 @@ test_that("get_filter_logical() falls back to all TRUE for every unsupported x/v
 	is_supported <- function(x, val) {
 		(x %in% chr_like && val %in% chr_like) ||
 			(x %in% date_like && val %in% date_like) ||
-			(x %in% time_like && val %in% time_like)
+			(x %in% time_like && val %in% time_like) ||
+			(x == "numeric" && val == "character")
 	}
 
 	for (x_type in names(xs)) {
@@ -279,7 +295,10 @@ test_that("get_filter_logical() falls back to all TRUE for every unsupported x/v
 })
 
 test_that("get_filter_logical() warns when falling back for mismatched types", {
-	expect_snapshot(get_filter_logical(1:3, "a"), variant = snapshot_variant())
+	expect_snapshot(
+		get_filter_logical(letters[1:3], 1),
+		variant = snapshot_variant()
+	)
 })
 
 # Empty inputs ####

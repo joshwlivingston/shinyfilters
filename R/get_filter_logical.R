@@ -24,6 +24,9 @@
 #'      or `<` (`FALSE`) on `val[[2]]`.}
 #' }
 #'
+#' When `x` is numeric and `val` is a character vector, such as the value of a
+#' select or radio input, the elements of `x` are compared as text.
+#'
 #' @returns A logical vector indicating which elements of `x` match the filter
 #'   criteria specified by `val`.
 #'
@@ -167,6 +170,15 @@ method(
 		logical_out <- na_bool | logical_out
 	}
 	return(logical_out)
+}
+
+# A select or radio input on a numeric column returns the choices as shiny
+# wrote them, with `as.character()`.
+method(
+	get_filter_logical,
+	list(x = class_numeric, val = class_character)
+) <- function(x, val, ...) {
+	as.character(x) %in% val
 }
 
 method(get_filter_logical, list(class_POSIXt, class_POSIXt)) <- function(

@@ -9,10 +9,10 @@
 # get_filter_logical() warns when falling back for mismatched types
 
     Code
-      get_filter_logical(1:3, "a")
+      get_filter_logical(letters[1:3], 1)
     Condition
       Warning in `get_filter_logical()`:
-      ! No `get_filter_logical()` method for `x` of class <integer> and `val` of class <character>.
+      ! No `get_filter_logical()` method for `x` of class <character> and `val` of class <numeric>.
       i Returning `TRUE` for all elements.
     Output
       [1] TRUE TRUE TRUE
