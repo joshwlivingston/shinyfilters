@@ -95,7 +95,7 @@ class_shinyfilters <- new_class(
 			class = class_list,
 			setter = function(self, value) {
 				if (!the$allowed) {
-					cli_abort("Use `{.topic with_defaults}` to set @args")
+					cli_abort("Use {.topic with_defaults} to set @args")
 				}
 				self@args <- value
 				self
@@ -105,7 +105,7 @@ class_shinyfilters <- new_class(
 			class = class_any,
 			setter = function(self, value) {
 				if (!the$allowed) {
-					cli_abort("Use `{.topic with_ns}` to set @ns")
+					cli_abort("Use {.topic with_ns} to set @ns")
 				}
 				self@ns <- value
 				self
@@ -117,7 +117,7 @@ class_shinyfilters <- new_class(
 				if (!the$allowed) {
 					cli_abort(c(
 						"@overrides is only allowed to be modified internally.",
-						"i" = "See `{.topic with_filter}` for the user-facing function."
+						"i" = "See {.topic with_filter} for the user-facing function."
 					))
 				}
 				self@overrides <- value
@@ -130,7 +130,7 @@ class_shinyfilters <- new_class(
 				if (!the$allowed) {
 					cli_abort(c(
 						"@added is only allowed to be modified internally.",
-						"i" = "See `{.topic with_filter}` for the user-facing function."
+						"i" = "See {.topic with_filter} for the user-facing function."
 					))
 				}
 				self@added <- value
@@ -143,7 +143,7 @@ class_shinyfilters <- new_class(
 				if (!the$allowed) {
 					cli_abort(c(
 						"@replaced is only allowed to be modified internally.",
-						"i" = "See `{.topic with_filter}` for the user-facing function."
+						"i" = "See {.topic with_filter} for the user-facing function."
 					))
 				}
 				self@replaced <- value

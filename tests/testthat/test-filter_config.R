@@ -771,6 +771,18 @@ test_that("`[` errors on unknown columns", {
 	})
 })
 
+test_that("a shinyfilters object's properties are read-only", {
+	cfg <- shinyfilters(df_config)
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+		cfg@data <- df_config
+		cfg@args <- list(slider = TRUE)
+		cfg@ns <- shiny::NS("m")
+		cfg@overrides <- list()
+		cfg@added <- character()
+		cfg@replaced <- character()
+	})
+})
+
 test_that("the `ns` property defaults to NULL", {
 	expect_null(
 		shinyfilters(data = data.frame(stringsAsFactors = FALSE, a = 1:3))@ns

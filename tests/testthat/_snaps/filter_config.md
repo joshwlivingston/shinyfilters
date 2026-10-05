@@ -644,3 +644,39 @@
       ! Can't select columns that don't exist.
       x Column `t` doesn't exist.
 
+# a shinyfilters object's properties are read-only
+
+    Code
+      cfg@data <- df_config
+    Condition
+      Error:
+      ! @data is read-only
+    Code
+      cfg@args <- list(slider = TRUE)
+    Condition
+      Error:
+      ! Use `?with_defaults` to set @args
+    Code
+      cfg@ns <- shiny::NS("m")
+    Condition
+      Error:
+      ! Use `?with_ns` to set @ns
+    Code
+      cfg@overrides <- list()
+    Condition
+      Error:
+      ! @overrides is only allowed to be modified internally.
+      i See `?with_filter` for the user-facing function.
+    Code
+      cfg@added <- character()
+    Condition
+      Error:
+      ! @added is only allowed to be modified internally.
+      i See `?with_filter` for the user-facing function.
+    Code
+      cfg@replaced <- character()
+    Condition
+      Error:
+      ! @replaced is only allowed to be modified internally.
+      i See `?with_filter` for the user-facing function.
+
