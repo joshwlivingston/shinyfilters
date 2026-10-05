@@ -307,7 +307,7 @@
       ! Can't create an input for column a.
       Caused by error:
       ! "numeric" isn't available for <Date> columns.
-      i Use "date" or "range" instead.
+      i Use "date", "radio", "range", "select", or "selectize" instead.
     Code
       filterInput(with_filter(shinyfilters(data.frame(stringsAsFactors = FALSE, a = NA_integer_)),
       a = "radio"))

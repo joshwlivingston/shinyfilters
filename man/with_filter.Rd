@@ -37,8 +37,8 @@ are \code{"area"}, \code{"date"}, \code{"numeric"}, \code{"radio"}, \code{"range
 \code{"selectize"}, \code{"slider"}, and \code{"textbox"}. \code{"date"}, \code{"numeric"}, and
 \code{"select"} are the inputs columns have by default: use them to opt a
 column out of a default argument such as \code{slider = TRUE}. \code{"radio"},
-\code{"select"}, and \code{"selectize"} also work with numeric columns, using the
-sorted unique values as choices.
+\code{"select"}, and \code{"selectize"} work with any column: a number or a date
+uses its sorted unique values as choices, and a datetime its dates.
 
 Other functions are called like \code{\link[=call_filter_input]{call_filter_input()}}: they receive the
 arguments \code{\link[=args_filter_input]{args_filter_input()}} returns for the column's type, plus any

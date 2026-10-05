@@ -567,8 +567,8 @@ SHINY_INPUTS <- list(
 #'   `"selectize"`, `"slider"`, and `"textbox"`. `"date"`, `"numeric"`, and
 #'   `"select"` are the inputs columns have by default: use them to opt a
 #'   column out of a default argument such as `slider = TRUE`. `"radio"`,
-#'   `"select"`, and `"selectize"` also work with numeric columns, using the
-#'   sorted unique values as choices.
+#'   `"select"`, and `"selectize"` work with any column: a number or a date
+#'   uses its sorted unique values as choices, and a datetime its dates.
 #'
 #'   Other functions are called like [call_filter_input()]: they receive the
 #'   arguments [args_filter_input()] returns for the column's type, plus any
@@ -1141,26 +1141,39 @@ method(
 	list(class_Date | class_POSIXt, class_input_date | class_input_range)
 ) <- ._filter_input_keyword
 
-## Numeric discrete choices ####
+## Discrete choices for a column that isn't discrete ####
 method(
 	filter_input_override,
 	list(
-		class_numeric,
+		class_any,
 		class_input_radio | class_input_select | class_input_selectize
 	)
 ) <- function(x, override, ...) {
 	args <- ._keyword_args(list(...), override)
-	choices <- ._discrete_choice_inputs(
-		x,
-		choices_asis = isTRUE(args$choices_asis),
-		args_unique = args$args_unique,
-		args_sort = args$args_sort,
-		server = args$server
-	)
+	choices <- ._coerced_choices(x, args, server = args$server)
 	do.call(
 		._call_input,
 		c(list(INPUT_KEYWORDS[[unclass(override)]]$fn, choices), args)
 	)
+}
+
+# The choices of a column coerced to a discrete input: its unique values in
+# their own order, as the text `as_discrete()` gives them. Values with the same
+# text are one choice.
+._coerced_choices <- function(x, args, ...) {
+	choices_asis <- isTRUE(args$choices_asis)
+	choices <- ._discrete_choice_inputs(
+		x,
+		choices_asis = choices_asis,
+		args_unique = args$args_unique,
+		args_sort = args$args_sort,
+		...
+	)
+	choices <- as_discrete(choices$choices)
+	if (!choices_asis) {
+		choices <- unique(choices)
+	}
+	list(choices = choices)
 }
 
 ## Function ####

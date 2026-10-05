@@ -180,21 +180,15 @@ method(
 	list(class_Date | class_POSIXt, class_input_date | class_input_range)
 ) <- ._update_filter_input_keyword
 
-## Numeric discrete choices ####
+## Discrete choices for a column that isn't discrete ####
 method(
 	update_filter_input_override,
 	list(
-		class_numeric,
+		class_any,
 		class_input_radio | class_input_select | class_input_selectize
 	)
 ) <- function(x, override, ...) {
-	args <- list(...)
-	choices <- ._discrete_choice_inputs(
-		x,
-		choices_asis = isTRUE(args$choices_asis),
-		args_unique = args$args_unique,
-		args_sort = args$args_sort
-	)
+	choices <- ._coerced_choices(x, list(...))
 	update <- ._update_fn(INPUT_KEYWORDS[[unclass(override)]]$fn)
 	._call_update_input(update, choices, ...)
 }

@@ -97,6 +97,23 @@ test_that("numeric + radio / select / selectize -> choices are updated", {
 	)
 })
 
+test_that("radio on Date and POSIXct columns -> dates are updated", {
+	df <- data.frame(dte = as.Date("2024-01-02") - c(0, 1, 1))
+	df$dtm <- as.POSIXct(
+		c("2024-01-02 10:00", "2024-01-01 09:00", "2024-01-01 17:30"),
+		tz = "UTC"
+	)
+	cfg <- with_filter(shinyfilters(df), everything(), "radio")
+	dates <- as.Date("2024-01-01") + 0:1
+	expect_identical(
+		update_messages(updateFilterInput(cfg)),
+		update_messages({
+			shiny::updateRadioButtons(inputId = "dte", choices = dates)
+			shiny::updateRadioButtons(inputId = "dtm", choices = dates)
+		})
+	)
+})
+
 test_that("updateFilterInput() passes the as_filter() arguments an update takes", {
 	cfg <- shinyfilters(df_config)
 	slider <- as_filter("slider", value = range(.x), step = 2, width = "50%")

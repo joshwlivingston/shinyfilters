@@ -394,6 +394,24 @@ test_that("range override on Date and POSIXct columns", {
 	)
 })
 
+test_that("radio override on Date and POSIXct columns -> dates as choices", {
+	df <- data.frame(dte = as.Date("2024-01-02") - c(0, 1, 1))
+	df$dtm <- as.POSIXct(
+		c("2024-01-02 10:00", "2024-01-01 09:00", "2024-01-01 17:30"),
+		tz = "UTC"
+	)
+	cfg <- with_filter(shinyfilters(df), everything(), "radio")
+	res <- filterInput(cfg)
+	dates <- as.Date("2024-01-01") + 0:1
+	expect_identical(res[[1]], shiny::radioButtons("dte", "dte", choices = dates))
+	expect_identical(res[[2]], shiny::radioButtons("dtm", "dtm", choices = dates))
+	# A choice filters the columns, which keep their types
+	expect_identical(
+		apply_filters(cfg, list(dte = "2024-01-01", dtm = "2024-01-01")),
+		df[2:3, ]
+	)
+})
+
 test_that("radio override on logical columns", {
 	df <- data.frame(stringsAsFactors = FALSE, lgl = c(TRUE, FALSE))
 	res <- filterInput(with_filter(shinyfilters(df), lgl = "radio"))
