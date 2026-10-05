@@ -301,6 +301,9 @@ test_that("updateFilterInput() errors for an input it can't update", {
 		updateFilterInput(
 			with_filter(cfg, c(letters, factors), shiny::checkboxGroupInput)
 		)
+		update_messages(
+			updateFilterInput(with_filter(cfg, factors = "slider")["factors"])
+		)
 
 		update_messages(updateFilterInput(with_filter(
 			cfg,

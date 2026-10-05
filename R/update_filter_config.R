@@ -192,3 +192,9 @@ method(
 	update <- ._update_fn(INPUT_KEYWORDS[[unclass(override)]]$fn)
 	._call_update_input(update, choices, ...)
 }
+
+## Unsupported keyword ####
+method(
+	update_filter_input_override,
+	list(class_any, class_input_keyword)
+) <- ._abort_unsupported_keyword

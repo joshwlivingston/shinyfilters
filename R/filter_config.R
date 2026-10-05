@@ -1208,10 +1208,7 @@ method(
 }
 
 ## Unsupported keyword ####
-method(
-	filter_input_override,
-	list(class_any, class_input_keyword)
-) <- function(x, override, ...) {
+._abort_unsupported_keyword <- function(x, override, ...) {
 	keyword <- unclass(override)
 	supported <- ._supported_keywords(x)
 	cli_abort(
@@ -1225,6 +1222,11 @@ method(
 		call = NULL
 	)
 }
+
+method(
+	filter_input_override,
+	list(class_any, class_input_keyword)
+) <- ._abort_unsupported_keyword
 
 ._supported_keywords <- function(x) {
 	fallback <- method(
