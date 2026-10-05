@@ -133,7 +133,20 @@ serverFilterInput <- function(
 			}
 			args <- list(col, id)
 			names(args) <- c("x", arg_name_input_id(col))
-			do.call(updateFilterInput, c(args, list(...)))
+			args_provided <- list(...)
+			args <- c(args, args_provided)
+			input_args <- args_provided[[INPUT_ARGS]]
+			if (
+				S7_inherits(x, class_shinyfilters) && !is.null(x@overrides[[id]]$args)
+			) {
+				args[[INPUT_ARGS]] <- ._input_args(
+					x@overrides[[id]]$args,
+					x,
+					id,
+					current_env()
+				)
+			}
+			do.call(updateFilterInput, args)
 		}
 		mapply(update_input, x_filt, get_input_ids(x_filt))
 		out_input$input_values <- input

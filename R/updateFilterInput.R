@@ -255,5 +255,11 @@ call_update_filter_input <- function(x, .f, ...) {
 				!(names(args_provided) %in% names(args_prepared))
 		]
 	)
+	input_args <- args_provided[[INPUT_ARGS]]
+	if (is.null(args)) {
+		args <- input_args
+	} else if (!is.null(input_args)) {
+		args <- modifyList(args, input_args, keep.null = TRUE)
+	}
 	do.call(.f, args)
 }
