@@ -367,8 +367,8 @@ shinyApp(ui, server)
 
 `shinyfilters_server()` updates each input with the function that matches it.
 It knows the one for every shiny input `filterInput()` creates. For any other
-input, such as `shinyWidgets::pickerInput`, name it with `as_filter()`, or
-`shinyfilters_server()` errors:
+input, such as `shinyWidgets::pickerInput`, name its update function with
+`as_filter()`, or `shinyfilters_server()` errors:
 
 ```{r, eval = FALSE}
 as_filter(
