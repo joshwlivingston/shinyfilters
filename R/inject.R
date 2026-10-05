@@ -117,7 +117,7 @@ fn_accepts_arg <- function(fn, arg, fn_name = NULL) {
 						m_fn <- tryCatch(
 							getS3method(gen_name, cls),
 							error = function(e) {
-								tryCatch(match.fun(m), error = function(e) NULL)
+								tryCatch(match.fun(m), error = function(e) NULL) # nocov
 							}
 						)
 

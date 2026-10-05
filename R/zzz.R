@@ -1,3 +1,4 @@
+# nocov start
 .onLoad <- function(libname, pkgname) {
 	methods_register()
 
@@ -43,6 +44,7 @@
 		`as.data.table.shinyfilters::shinyfilters`
 	)
 }
+# nocov end
 
 the <- new.env(parent = emptyenv())
 
