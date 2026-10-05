@@ -51,21 +51,24 @@ filters
 #> <shinyfilters> • 7 filters
 #> 
 #> Filters
-#>   date       <date>  dateInput
-#>   carrier    <chr>   selectInput
-#>   origin     <fct>   selectInput
-#>   dest       <chr>   selectInput
-#>   dep_delay  <dbl>   numericInput
-#>   distance   <dbl>   numericInput
-#>   delayed    <lgl>   selectInput
+#>   ○  date       <date>  dateRangeInput
+#>   ○  carrier    <chr>   selectizeInput
+#>   ○  origin     <fct>   selectizeInput
+#>   ○  dest       <chr>   selectizeInput
+#>   ○  dep_delay  <dbl>   sliderInput
+#>   ○  distance   <dbl>   sliderInput
+#>   ○  delayed    <lgl>   selectizeInput
 #> 
 #> Default Overrides
-#>   multiple = TRUE
+#>   range     = TRUE
+#>   selectize = TRUE
+#>   multiple  = TRUE
+#>   slider    = TRUE
+#> 
+#> ○ Filter set by default argument
 ```
 
-<br>
-
-2.  Place the filters in your ui
+2.  Place the filters in your ui:
 
 ``` r
 # pak::pak(c("bslib", "DT"))
@@ -81,9 +84,7 @@ ui <- page_sidebar(
 )
 ```
 
-<br>
-
-3.  Place the filters in your server
+3.  Place the filters in your server:
 
 ``` r
 server <- function(input, output, session) {

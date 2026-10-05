@@ -51,9 +51,8 @@ library(shinyfilters)
 filters <- shinyfilters(nyc_flights, multiple = TRUE)
 filters
 ```
-<br>
 
-2. Place the filters in your ui
+2. Place the filters in your ui:
 ```r
 # pak::pak(c("bslib", "DT"))
 library(bslib)
@@ -67,9 +66,8 @@ ui <- page_sidebar(
 	DTOutput("data")
 )
 ```
-<br>
 
-3. Place the filters in your server
+3. Place the filters in your server:
 ```r
 server <- function(input, output, session) {
 	sidebar <- shinyfilters_server(filters)
