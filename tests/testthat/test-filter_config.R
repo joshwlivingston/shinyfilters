@@ -402,21 +402,17 @@ test_that("print() handles long names", {
 	data <- nyc_flights
 	data$awpirgbeqaprkjgbaepirgfbawpirgbeqaprkjgbaepirgfbawpirgbe <- data$carrier
 	data$carrier <- NULL
-	filters <-
-		data |>
-		shinyfilters(
-			range = TRUE,
-			selectize = TRUE
-		) |>
-		with_ns("sidebar-mod") |>
-		with_filter(
-			on_time = !delayed,
-			across_filters(where(is.numeric) & !dep_delay, "slider"),
-			origin = shiny::radioButtons,
-			dep_delay = as_filter(
-				value = urgfjkbhqaewpqaedoufikljshygbqaeoliurgfjkbhqaewp(.x)
-			)
+	filters <- shinyfilters(data, range = TRUE, selectize = TRUE)
+	filters <- with_ns(filters, "sidebar-mod")
+	filters <- with_filter(
+		filters,
+		on_time = !delayed,
+		across_filters(where(is.numeric) & !dep_delay, "slider"),
+		origin = shiny::radioButtons,
+		dep_delay = as_filter(
+			value = urgfjkbhqaewpqaedoufikljshygbqaeoliurgfjkbhqaewp(.x)
 		)
+	)
 	expect_snapshot(print(filters), variant = snapshot_variant())
 })
 
