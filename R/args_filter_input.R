@@ -168,8 +168,9 @@ args_update_filter_input <- function(x, ...) {
 		args_provided$server <- FALSE
 	}
 	args <- do.call(args_filter_input, c(list(x = x), args_provided))
-	if (all(arg_name_input_value(x) %in% names(args))) {
-		args <- args[names(args) != arg_name_input_value(x)]
+	value_args <- do.call(arg_name_input_value, c(list(x = x), args_provided))
+	if (all(value_args %in% names(args))) {
+		args <- args[!(names(args) %in% value_args)]
 		if (identical(length(args), 0L)) {
 			return(NULL)
 		}

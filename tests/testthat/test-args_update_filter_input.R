@@ -59,13 +59,11 @@ test_that("args_update_filter_input() returns min/max without value for Date", {
 	expect_identical(result, expected)
 })
 
-test_that("args_update_filter_input() with range = TRUE returns min/max with start/end for Date", {
+test_that("args_update_filter_input() with range = TRUE returns min/max without start/end for Date", {
 	result <- args_update_filter_input(choices_dte_with_na, range = TRUE)
 	expected <- list(
 		min = min(choices_dte_with_na, na.rm = TRUE),
-		max = max(choices_dte_with_na, na.rm = TRUE),
-		start = min(choices_dte_with_na, na.rm = TRUE),
-		end = max(choices_dte_with_na, na.rm = TRUE)
+		max = max(choices_dte_with_na, na.rm = TRUE)
 	)
 	expect_identical(result, expected)
 })
@@ -80,13 +78,11 @@ test_that("args_update_filter_input() returns min/max Dates without value for PO
 	expect_identical(result, expected)
 })
 
-test_that("args_update_filter_input() with range = TRUE returns min/max with start/end for POSIXct", {
+test_that("args_update_filter_input() with range = TRUE returns min/max without start/end for POSIXct", {
 	result <- args_update_filter_input(choices_psc_with_na, range = TRUE)
 	expected <- list(
 		min = min(as.Date(choices_psc_with_na), na.rm = TRUE),
-		max = max(as.Date(choices_psc_with_na), na.rm = TRUE),
-		start = min(as.Date(choices_psc_with_na), na.rm = TRUE),
-		end = max(as.Date(choices_psc_with_na), na.rm = TRUE)
+		max = max(as.Date(choices_psc_with_na), na.rm = TRUE)
 	)
 	expect_identical(result, expected)
 })
@@ -105,9 +101,7 @@ test_that("args_update_filter_input() with range = TRUE returns min/max without 
 	result <- args_update_filter_input(choices_psl_with_na, range = TRUE)
 	expected <- list(
 		min = min(as.Date(choices_psl_with_na), na.rm = TRUE),
-		max = max(as.Date(choices_psl_with_na), na.rm = TRUE),
-		start = min(as.Date(choices_psl_with_na), na.rm = TRUE),
-		end = max(as.Date(choices_psl_with_na), na.rm = TRUE)
+		max = max(as.Date(choices_psl_with_na), na.rm = TRUE)
 	)
 	expect_identical(result, expected)
 })
