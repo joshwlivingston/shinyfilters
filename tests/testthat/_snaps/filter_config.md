@@ -680,3 +680,30 @@
       ! @replaced is only allowed to be modified internally.
       i See `?with_filter` for the user-facing function.
 
+# a shinyfilters object changed through its attributes is invalid
+
+    Code
+      S7::validate(unnamed)
+    Condition
+      Error:
+      ! <shinyfilters::shinyfilters> object is invalid:
+      - @args must have all elements named
+    Code
+      S7::validate(duplicated)
+    Condition
+      Error:
+      ! <shinyfilters::shinyfilters> object is invalid:
+      - @args must have unique names
+    Code
+      S7::validate(custom_ns)
+    Condition
+      Error:
+      ! <shinyfilters::shinyfilters> object is invalid:
+      - @ns must be created using shiny::NS()
+    Code
+      with_defaults(unnamed, slider = TRUE)
+    Condition
+      Error:
+      ! <shinyfilters::shinyfilters> object is invalid:
+      - @args must have all elements named
+

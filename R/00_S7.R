@@ -157,16 +157,16 @@ class_shinyfilters <- new_class(
 		# args
 		if (length(self@args) != 0) {
 			if (is.null(names(self@args)) || any(names(self@args) == "")) {
-				return("must have all elements named")
+				return("@args must have all elements named")
 			}
 			if (anyDuplicated(names(self@args))) {
-				return("must have unique names")
+				return("@args must have unique names")
 			}
 		}
 
 		# ns
 		if (is.function(self@ns) && !._is_valid_ns_function(self@ns)) {
-			return("must be created using shiny::NS()")
+			return("@ns must be created using shiny::NS()")
 		}
 	}
 )

@@ -783,6 +783,21 @@ test_that("a shinyfilters object's properties are read-only", {
 	})
 })
 
+test_that("a shinyfilters object changed through its attributes is invalid", {
+	unnamed <- shinyfilters(df_config)
+	attr(unnamed, "args") <- list(TRUE)
+	duplicated <- shinyfilters(df_config)
+	attr(duplicated, "args") <- list(slider = TRUE, slider = FALSE)
+	custom_ns <- shinyfilters(df_config)
+	attr(custom_ns, "ns") <- function(id) id
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+		S7::validate(unnamed)
+		S7::validate(duplicated)
+		S7::validate(custom_ns)
+		with_defaults(unnamed, slider = TRUE)
+	})
+})
+
 test_that("the `ns` property defaults to NULL", {
 	expect_null(
 		shinyfilters(data = data.frame(stringsAsFactors = FALSE, a = 1:3))@ns
