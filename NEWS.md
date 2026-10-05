@@ -40,6 +40,7 @@
 
 ## Bugfixes
 
+* `apply_filters()` now drops a row whose filtered value is missing, instead of returning a row of `NA`s, unless `NA` is one of the filter's values (#136).
 * `filterInput()` now errors when `x` is all missing.
 * `filterInput()`'s `ns` argument behaves like `shiny::NS()`, accepting any argument.
 

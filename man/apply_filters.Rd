@@ -17,7 +17,8 @@ apply_filters(
 \item{x}{An object to filter; typically a data.frame.}
 
 \item{filter_list}{A named list of filter values, used to filter the values
-in \code{x}. If \code{filter_list} is \code{NULL}, \code{x} is returned unmodified.}
+in \code{x}. If \code{filter_list} is \code{NULL}, \code{x} is returned unmodified. A missing
+value in \code{x} matches a filter only when \code{NA} is one of its values.}
 
 \item{filter_combine_method}{A string or function indicating how to combine
 multiple filters. If a string, it can be "and" (or "&") for logical AND,

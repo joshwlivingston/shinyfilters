@@ -4,7 +4,8 @@
 #'
 #' @param x An object to filter; typically a data.frame.
 #' @param filter_list A named list of filter values, used to filter the values
-#'   in `x`. If `filter_list` is `NULL`, `x` is returned unmodified.
+#'   in `x`. If `filter_list` is `NULL`, `x` is returned unmodified. A missing
+#'   value in `x` matches a filter only when `NA` is one of its values.
 #' @param filter_combine_method A string or function indicating how to combine
 #'   multiple filters. If a string, it can be "and" (or "&") for logical AND,
 #'   or "or" (or "|") for logical OR. If a function, it should take two logical
@@ -76,6 +77,8 @@ apply_filters <- function(
 		...,
 		call = current_env()
 	)
+	# A missing value matches a filter only when `NA` is one of its values.
+	filter_logical[is.na(filter_logical)] <- FALSE
 
 	if (S7_inherits(x, class_shinyfilters)) {
 		x <- x@data

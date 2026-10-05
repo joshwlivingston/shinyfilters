@@ -162,6 +162,26 @@ test_that("apply_filters() filters vectors", {
 	expect_identical(result, expected)
 })
 
+# Missing values ####
+test_that("apply_filters() drops rows with a missing value in a filtered column", {
+	df <- data.frame(
+		stringsAsFactors = FALSE,
+		num = c(1, NA, 3),
+		chr = c("x", NA, "z")
+	)
+	expect_identical(apply_filters(df, list(num = c(0, 5))), df[c(1, 3), ])
+	expect_identical(apply_filters(df, list(chr = "x")), df[1, ])
+	expect_identical(apply_filters(c(1, NA, 3), list(x = c(0, 5))), c(1, 3))
+})
+
+test_that("apply_filters() keeps a missing value when NA is a filter value", {
+	df <- data.frame(stringsAsFactors = FALSE, num = c(1, NA, 3))
+	expect_identical(
+		apply_filters(df, list(num = c(1, NA))),
+		df[1:2, , drop = FALSE]
+	)
+})
+
 # Combination tests ####
 test_that("apply_filters() with expanded and cols works together", {
 	filter_list <- list(
