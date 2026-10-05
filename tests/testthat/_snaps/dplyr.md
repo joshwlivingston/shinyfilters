@@ -178,7 +178,7 @@
       dplyr::mutate(cfg, x = "radioo")
     Condition
       Error in `dplyr::mutate()`:
-      ! An input must be one of "area", "radio", "range", "selectize", "slider", or "textbox", or a function.
+      ! An input must be one of "area", "date", "numeric", "radio", "range", "select", "selectize", "slider", or "textbox", or a function.
       x Got "radioo".
     Code
       dplyr::mutate(cfg, y = shiny::selectInput)

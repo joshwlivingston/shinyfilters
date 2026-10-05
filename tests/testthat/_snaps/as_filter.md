@@ -83,7 +83,7 @@
       as_filter("sldier")
     Condition
       Error in `as_filter()`:
-      ! An input must be one of "area", "radio", "range", "selectize", "slider", or "textbox", or a function.
+      ! An input must be one of "area", "date", "numeric", "radio", "range", "select", "selectize", "slider", or "textbox", or a function.
       x Got "sldier".
     Code
       as_filter(1:3)
@@ -131,7 +131,7 @@
       Error in `with_filter()`:
       ! Can't evaluate the input `as_filter("sldier")`.
       Caused by error in `as_filter()`:
-      ! An input must be one of "area", "radio", "range", "selectize", "slider", or "textbox", or a function.
+      ! An input must be one of "area", "date", "numeric", "radio", "range", "select", "selectize", "slider", or "textbox", or a function.
       x Got "sldier".
     Code
       with_filter(cfg, x, as_filter("slider", max = max(a_very_very_long_name)))
@@ -161,7 +161,7 @@
       ! Can't create an input for column letters.
       Caused by error:
       ! "slider" isn't available for <character> columns.
-      i Use "area", "radio", "selectize", or "textbox" instead.
+      i Use "area", "radio", "select", "selectize", or "textbox" instead.
     Code
       filterInput(with_filter(cfg, letters = as_filter(valeu = 1)))
     Condition

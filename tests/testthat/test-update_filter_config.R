@@ -72,11 +72,18 @@ test_that("an input chosen with with_filter() wins over a default", {
 	)
 })
 
-test_that("numeric + radio / selectize -> choices are updated", {
+test_that("numeric + radio / select / selectize -> choices are updated", {
 	cfg <- shinyfilters(df_config)
 	expect_identical(
 		update_messages(updateFilterInput(with_filter(cfg, x = "radio")["x"])),
 		update_messages(shiny::updateRadioButtons(
+			inputId = "x",
+			choices = c(2L, 9L, 10L)
+		))
+	)
+	expect_identical(
+		update_messages(updateFilterInput(with_filter(cfg, x = "select")["x"])),
+		update_messages(shiny::updateSelectInput(
 			inputId = "x",
 			choices = c(2L, 9L, 10L)
 		))
@@ -241,6 +248,29 @@ test_that("updateFilterInput() follows the range and textbox keywords", {
 				max = df$day[[3]]
 			)
 			shiny::updateTextInput(inputId = "name")
+		})
+	)
+})
+
+test_that("updateFilterInput() follows the date, numeric, and select keywords", {
+	df <- data.frame(
+		stringsAsFactors = FALSE,
+		day = as.Date("2024-01-01") + 0:2,
+		name = c("a", "b", "c"),
+		n = c(1.5, 2.5, 3.5)
+	)
+	cfg <- shinyfilters(df, range = TRUE, textbox = TRUE, slider = TRUE)
+	cfg <- with_filter(cfg, day = "date", name = "select", n = "numeric")
+	expect_identical(
+		update_messages(updateFilterInput(cfg)),
+		update_messages({
+			shiny::updateDateInput(
+				inputId = "day",
+				min = df$day[[1]],
+				max = df$day[[3]]
+			)
+			shiny::updateSelectInput(inputId = "name", choices = c("a", "b", "c"))
+			shiny::updateNumericInput(inputId = "n", min = 1.5, max = 3.5)
 		})
 	)
 })

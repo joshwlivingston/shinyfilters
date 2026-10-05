@@ -25,12 +25,21 @@ class_POSIXt <- new_S3_class("POSIXt")
 # keyword sets; `fn` is the matching shiny input.
 INPUT_KEYWORDS <- list(
 	area = list(args = list(textbox = TRUE, area = TRUE), fn = textAreaInput),
+	date = list(args = list(), fn = dateInput),
+	numeric = list(args = list(), fn = numericInput),
 	radio = list(args = list(radio = TRUE), fn = radioButtons),
 	range = list(args = list(range = TRUE), fn = dateRangeInput),
+	select = list(args = list(), fn = selectInput),
 	selectize = list(args = list(selectize = TRUE), fn = selectizeInput),
 	slider = list(args = list(slider = TRUE), fn = sliderInput),
 	textbox = list(args = list(textbox = TRUE), fn = textInput)
 )
+
+# The `filterInput()` flags. A keyword for a default input sets none.
+INPUT_FLAGS <- unique(unlist(
+	lapply(INPUT_KEYWORDS, function(keyword) names(keyword$args)),
+	use.names = FALSE
+))
 
 input_keyword <- function(keyword) {
 	structure(
@@ -41,8 +50,11 @@ input_keyword <- function(keyword) {
 
 class_input_keyword <- new_S3_class("shinyfilters_input")
 class_input_area <- new_S3_class("shinyfilters_input_area")
+class_input_date <- new_S3_class("shinyfilters_input_date")
+class_input_numeric <- new_S3_class("shinyfilters_input_numeric")
 class_input_radio <- new_S3_class("shinyfilters_input_radio")
 class_input_range <- new_S3_class("shinyfilters_input_range")
+class_input_select <- new_S3_class("shinyfilters_input_select")
 class_input_selectize <- new_S3_class("shinyfilters_input_selectize")
 class_input_slider <- new_S3_class("shinyfilters_input_slider")
 class_input_textbox <- new_S3_class("shinyfilters_input_textbox")

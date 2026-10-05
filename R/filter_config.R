@@ -67,7 +67,7 @@ shinyfilters <- function(data, ..., ns = NULL) {
 
 # Drops input flags set to `FALSE`, their default
 ._drop_flags_off <- function(args) {
-	is_flag <- names(args) %in% names(INPUT_KEYWORDS)
+	is_flag <- names(args) %in% INPUT_FLAGS
 	is_off <- vapply(args, isFALSE, logical(1))
 	args[!(is_flag & is_off)]
 }
@@ -561,16 +561,19 @@ SHINY_INPUTS <- list(
 #'   * `with_filter(.filters, across_filters(cols, input), ...)`:
 #'     [across_filters()] does the same as a formula.
 #'
-#'   Each input is either a keyword (`"area"`, `"radio"`, `"range"`,
-#'   `"selectize"`, `"slider"`, `"textbox"`) or a \pkg{shiny} input function,
-#'   such as [shiny::radioButtons()]. `"radio"` and `"selectize"` also work
-#'   with numeric columns, using the sorted unique values as choices.
+#'   Each input is either a keyword or the \pkg{shiny} input function it
+#'   stands for, such as [shiny::radioButtons()] for `"radio"`. The keywords
+#'   are `"area"`, `"date"`, `"numeric"`, `"radio"`, `"range"`, `"select"`,
+#'   `"selectize"`, `"slider"`, and `"textbox"`. `"date"`, `"numeric"`, and
+#'   `"select"` are the inputs columns have by default: use them to opt a
+#'   column out of a default argument such as `slider = TRUE`. `"radio"`,
+#'   `"select"`, and `"selectize"` also work with numeric columns, using the
+#'   sorted unique values as choices.
 #'
 #'   Other functions are called like [call_filter_input()]: they receive the
 #'   arguments [args_filter_input()] returns for the column's type, plus any
 #'   other arguments they accept. [shinyfilters_server()] needs the function
-#'   that updates one, unless it is a \pkg{shiny} input [filterInput()]
-#'   creates: name it with [as_filter()]'s `.update_fn`.
+#'   that updates one: name it with [as_filter()]'s `.update_fn`.
 #'
 #'   Wrap an input in [as_filter()] to set its arguments, or use [as_filter()]
 #'   without an input to set arguments for the input a column already has.
@@ -599,6 +602,10 @@ SHINY_INPUTS <- list(
 #'
 #' # Add a column computed from the others
 #' with_filter(filters, delay_sq = dep_delay^2)
+#'
+#' # Give one column the input it has by default
+#' filters <- shinyfilters(nyc_flights, slider = TRUE)
+#' with_filter(filters, distance = "numeric")
 #' @export
 with_filter <- function(.filters, ...) {
 	if (!S7_inherits(.filters, class_shinyfilters)) {
@@ -1092,17 +1099,16 @@ filter_input_override <- new_generic(
 
 ## Keyword flags supported by filterInput() ####
 ._filter_input_keyword <- function(x, override, ...) {
-	args <- modifyList(list(...), ._keyword_flags(override))
+	args <- ._keyword_args(list(...), override)
 	do.call(filterInput, c(list(x = x), args))
 }
 
-# The `filterInput()` flags a keyword sets, with every other flag off
-._keyword_flags <- function(keyword) {
-	flags_off <- set_names(
-		rep(list(FALSE), length(INPUT_KEYWORDS)),
-		names(INPUT_KEYWORDS)
-	)
-	modifyList(flags_off, INPUT_KEYWORDS[[unclass(keyword)]]$args)
+# `args` with the `filterInput()` flags a keyword sets, and no other flag. A
+# flag left out isn't one set to `FALSE`: `selectInput()` has a `selectize`
+# argument of its own.
+._keyword_args <- function(args, keyword) {
+	args <- args[!(names(args) %in% INPUT_FLAGS)]
+	c(args, INPUT_KEYWORDS[[unclass(keyword)]]$args)
 }
 
 method(
@@ -1111,6 +1117,7 @@ method(
 		class_character,
 		class_input_area |
 			class_input_radio |
+			class_input_select |
 			class_input_selectize |
 			class_input_textbox
 	)
@@ -1120,26 +1127,29 @@ method(
 	filter_input_override,
 	list(
 		class_factor | class_logical | class_list,
-		class_input_radio | class_input_selectize
+		class_input_radio | class_input_select | class_input_selectize
 	)
 ) <- ._filter_input_keyword
 
 method(
 	filter_input_override,
-	list(class_numeric, class_input_slider)
+	list(class_numeric, class_input_numeric | class_input_slider)
 ) <- ._filter_input_keyword
 
 method(
 	filter_input_override,
-	list(class_Date | class_POSIXt, class_input_range)
+	list(class_Date | class_POSIXt, class_input_date | class_input_range)
 ) <- ._filter_input_keyword
 
 ## Numeric discrete choices ####
 method(
 	filter_input_override,
-	list(class_numeric, class_input_radio | class_input_selectize)
+	list(
+		class_numeric,
+		class_input_radio | class_input_select | class_input_selectize
+	)
 ) <- function(x, override, ...) {
-	args <- list(...)
+	args <- ._keyword_args(list(...), override)
 	choices <- ._discrete_choice_inputs(
 		x,
 		choices_asis = isTRUE(args$choices_asis),
@@ -1147,7 +1157,10 @@ method(
 		args_sort = args$args_sort,
 		server = args$server
 	)
-	._call_input(INPUT_KEYWORDS[[unclass(override)]]$fn, choices, ...)
+	do.call(
+		._call_input,
+		c(list(INPUT_KEYWORDS[[unclass(override)]]$fn, choices), args)
+	)
 }
 
 ## Function ####

@@ -218,7 +218,7 @@
       with_filter(cfg, x = "radioo")
     Condition
       Error in `with_filter()`:
-      ! An input must be one of "area", "radio", "range", "selectize", "slider", or "textbox", or a function.
+      ! An input must be one of "area", "date", "numeric", "radio", "range", "select", "selectize", "slider", or "textbox", or a function.
       x Got "radioo".
     Code
       with_filter(cfg, nope ~ "radio")
@@ -235,7 +235,7 @@
       with_filter(cfg, x ~ "radioo")
     Condition
       Error in `with_filter()`:
-      ! An input must be one of "area", "radio", "range", "selectize", "slider", or "textbox", or a function.
+      ! An input must be one of "area", "date", "numeric", "radio", "range", "select", "selectize", "slider", or "textbox", or a function.
       x Got "radioo".
     Code
       with_filter(cfg, ~"radio")
@@ -249,7 +249,7 @@
       with_filter(cfg, x, c("radio", "slider"))
     Condition
       Error in `with_filter()`:
-      ! An input must be one of "area", "radio", "range", "selectize", "slider", or "textbox", or a function.
+      ! An input must be one of "area", "date", "numeric", "radio", "range", "select", "selectize", "slider", or "textbox", or a function.
       x Got "radio" and "slider".
     Code
       with_filter(cfg, x, radio)
@@ -283,7 +283,7 @@
       ! Can't create an input for column factors.
       Caused by error:
       ! "slider" isn't available for <factor> columns.
-      i Use "radio" or "selectize" instead.
+      i Use "radio", "select", or "selectize" instead.
     Code
       filterInput(with_filter(cfg, a_very_very_long_name = "range"))
     Condition
@@ -291,7 +291,23 @@
       ! Can't create an input for column a_very_very_long_name.
       Caused by error:
       ! "range" isn't available for <numeric> columns.
-      i Use "radio", "selectize", or "slider" instead.
+      i Use "numeric", "radio", "select", "selectize", or "slider" instead.
+    Code
+      filterInput(with_filter(cfg, x = shiny::dateInput))
+    Condition
+      Error in `filterInput()`:
+      ! Can't create an input for column x.
+      Caused by error:
+      ! "date" isn't available for <integer> columns.
+      i Use "numeric", "radio", "select", "selectize", or "slider" instead.
+    Code
+      filterInput(with_filter(shinyfilters(data.frame(a = as.Date("2024-01-01"))), a = shiny::numericInput))
+    Condition
+      Error in `filterInput()`:
+      ! Can't create an input for column a.
+      Caused by error:
+      ! "numeric" isn't available for <Date> columns.
+      i Use "date" or "range" instead.
     Code
       filterInput(with_filter(shinyfilters(data.frame(stringsAsFactors = FALSE, a = NA_integer_)),
       a = "radio"))

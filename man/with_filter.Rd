@@ -31,16 +31,19 @@ them on its right. It can be mixed with named columns.
 \code{\link[=across_filters]{across_filters()}} does the same as a formula.
 }
 
-Each input is either a keyword (\code{"area"}, \code{"radio"}, \code{"range"},
-\code{"selectize"}, \code{"slider"}, \code{"textbox"}) or a \pkg{shiny} input function,
-such as \code{\link[shiny:radioButtons]{shiny::radioButtons()}}. \code{"radio"} and \code{"selectize"} also work
-with numeric columns, using the sorted unique values as choices.
+Each input is either a keyword or the \pkg{shiny} input function it
+stands for, such as \code{\link[shiny:radioButtons]{shiny::radioButtons()}} for \code{"radio"}. The keywords
+are \code{"area"}, \code{"date"}, \code{"numeric"}, \code{"radio"}, \code{"range"}, \code{"select"},
+\code{"selectize"}, \code{"slider"}, and \code{"textbox"}. \code{"date"}, \code{"numeric"}, and
+\code{"select"} are the inputs columns have by default: use them to opt a
+column out of a default argument such as \code{slider = TRUE}. \code{"radio"},
+\code{"select"}, and \code{"selectize"} also work with numeric columns, using the
+sorted unique values as choices.
 
 Other functions are called like \code{\link[=call_filter_input]{call_filter_input()}}: they receive the
 arguments \code{\link[=args_filter_input]{args_filter_input()}} returns for the column's type, plus any
 other arguments they accept. \code{\link[=shinyfilters_server]{shinyfilters_server()}} needs the function
-that updates one, unless it is a \pkg{shiny} input \code{\link[=filterInput]{filterInput()}}
-creates: name it with \code{\link[=as_filter]{as_filter()}}'s \code{.update_fn}.
+that updates one: name it with \code{\link[=as_filter]{as_filter()}}'s \code{.update_fn}.
 
 Wrap an input in \code{\link[=as_filter]{as_filter()}} to set its arguments, or use \code{\link[=as_filter]{as_filter()}}
 without an input to set arguments for the input a column already has.
@@ -74,6 +77,10 @@ with_filter(
 
 # Add a column computed from the others
 with_filter(filters, delay_sq = dep_delay^2)
+
+# Give one column the input it has by default
+filters <- shinyfilters(nyc_flights, slider = TRUE)
+with_filter(filters, distance = "numeric")
 }
 \seealso{
 \code{\link[=shinyfilters]{shinyfilters()}}, \code{\link[=across_filters]{across_filters()}}, \code{\link[=as_filter]{as_filter()}}

@@ -146,7 +146,7 @@ update_filter_input_override <- new_generic(
 
 ## Keyword flags supported by updateFilterInput() ####
 ._update_filter_input_keyword <- function(x, override, ...) {
-	args <- modifyList(list(...), ._keyword_flags(override))
+	args <- ._keyword_args(list(...), override)
 	do.call(updateFilterInput, c(list(x = x), args))
 }
 
@@ -156,6 +156,7 @@ method(
 		class_character,
 		class_input_area |
 			class_input_radio |
+			class_input_select |
 			class_input_selectize |
 			class_input_textbox
 	)
@@ -165,24 +166,27 @@ method(
 	update_filter_input_override,
 	list(
 		class_factor | class_logical | class_list,
-		class_input_radio | class_input_selectize
+		class_input_radio | class_input_select | class_input_selectize
 	)
 ) <- ._update_filter_input_keyword
 
 method(
 	update_filter_input_override,
-	list(class_numeric, class_input_slider)
+	list(class_numeric, class_input_numeric | class_input_slider)
 ) <- ._update_filter_input_keyword
 
 method(
 	update_filter_input_override,
-	list(class_Date | class_POSIXt, class_input_range)
+	list(class_Date | class_POSIXt, class_input_date | class_input_range)
 ) <- ._update_filter_input_keyword
 
 ## Numeric discrete choices ####
 method(
 	update_filter_input_override,
-	list(class_numeric, class_input_radio | class_input_selectize)
+	list(
+		class_numeric,
+		class_input_radio | class_input_select | class_input_selectize
+	)
 ) <- function(x, override, ...) {
 	args <- list(...)
 	choices <- ._discrete_choice_inputs(

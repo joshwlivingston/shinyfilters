@@ -97,11 +97,16 @@ test_that("with_filter() selects columns with tidyselect", {
 	)
 })
 
-test_that("numeric + radio / selectize -> choices in numeric order", {
+test_that("numeric + radio / select / selectize -> choices in numeric order", {
 	res <- filterInput(with_filter(shinyfilters(df_config), x = "radio"))
 	expect_identical(
 		res[[3]],
 		shiny::radioButtons("x", "x", choices = c(2L, 9L, 10L))
+	)
+	res <- filterInput(with_filter(shinyfilters(df_config), x = "select"))
+	expect_identical(
+		res[[3]],
+		shiny::selectInput("x", "x", choices = c(2L, 9L, 10L))
 	)
 	res <- filterInput(with_filter(shinyfilters(df_config), x = "selectize"))
 	expect_identical(
@@ -144,11 +149,58 @@ test_that("keyword override replaces conflicting global flags", {
 			radio = TRUE
 		)
 	)
+	res <- filterInput(
+		with_filter(shinyfilters(df_config), letters = "select", x = "select"),
+		selectize = FALSE
+	)
+	expect_identical(
+		res[[1]],
+		shiny::selectInput("letters", "letters", choices = c("a", "b", "c"))
+	)
+	expect_identical(
+		res[[3]],
+		shiny::selectInput("x", "x", choices = c(2L, 9L, 10L))
+	)
 })
 
 test_that("area -> shiny::textAreaInput", {
 	res <- filterInput(with_filter(shinyfilters(df_config), letters = "area"))
 	expect_identical(res[[1]], shiny::textAreaInput("letters", "letters"))
+})
+
+test_that("date / numeric / select -> the input a column has by default", {
+	df <- data.frame(
+		stringsAsFactors = FALSE,
+		chr = c("b", "a"),
+		fct = factor(c("hi", "lo")),
+		lgl = c(TRUE, FALSE),
+		num = c(2.5, 1.5),
+		dte = as.Date("2024-01-01") + 0:1,
+		dtm = as.POSIXct("2024-01-01", tz = "UTC") + 0:1 * 86400
+	)
+	cfg <- shinyfilters(
+		df,
+		textbox = TRUE,
+		selectize = TRUE,
+		slider = TRUE,
+		range = TRUE
+	)
+	keywords <- with_filter(
+		cfg,
+		c(chr, fct, lgl) ~ "select",
+		num = "numeric",
+		c(dte, dtm) ~ "date"
+	)
+	expect_identical(filterInput(keywords), filterInput(df))
+	expect_identical(
+		with_filter(
+			cfg,
+			c(chr, fct, lgl) ~ shiny::selectInput,
+			num = shiny::numericInput,
+			c(dte, dtm) ~ shiny::dateInput
+		),
+		keywords
+	)
 })
 
 test_that("overrides work on columns with NA", {
@@ -407,6 +459,11 @@ test_that("shinyfilters() and with_filter() errors", {
 		with_filter(cfg, y = NULL)
 		filterInput(with_filter(cfg, factors = "slider"))
 		filterInput(with_filter(cfg, a_very_very_long_name = "range"))
+		filterInput(with_filter(cfg, x = shiny::dateInput))
+		filterInput(with_filter(
+			shinyfilters(data.frame(a = as.Date("2024-01-01"))),
+			a = shiny::numericInput
+		))
 		filterInput(with_filter(
 			shinyfilters(data.frame(stringsAsFactors = FALSE, a = NA_integer_)),
 			a = "radio"
@@ -482,6 +539,10 @@ test_that("with_defaults() adds, replaces, and removes defaults", {
 	expect_identical(
 		shinyfilters(df_config, slider = FALSE, width = FALSE)@args,
 		list(width = FALSE)
+	)
+	expect_identical(
+		shinyfilters(df_config, slider = FALSE, select = FALSE)@args,
+		list(select = FALSE)
 	)
 	expect_identical(
 		with_defaults(
