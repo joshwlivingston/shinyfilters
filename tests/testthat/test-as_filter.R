@@ -173,6 +173,15 @@ test_that("a new input that takes `...` keeps every as_filter() argument", {
 	)
 })
 
+test_that("an input a column doesn't support keeps every as_filter() argument", {
+	cfg <- shinyfilters(df_config)
+	set <- with_filter(cfg, factors = as_filter(inline = TRUE))
+	expect_identical(
+		with_filter(with_filter(set, factors = "slider"), factors = "radio"),
+		with_filter(cfg, factors = as_filter("radio", inline = TRUE))
+	)
+})
+
 test_that("as_filter() arguments add to the ones set earlier", {
 	cfg <- shinyfilters(df_config)
 	expect_identical(
