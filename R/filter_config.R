@@ -929,6 +929,8 @@ method(.with_filter, class_shinyfilters) <- function(
 #' @param .filters A configuration created by [shinyfilters()].
 #' @param ns The namespace: a string, used as the id passed to [shiny::NS()];
 #'   a namespace created by [shiny::NS()]; or `NULL` to remove the namespace.
+#'   [shinyfilters_server()] finds the inputs by it, so it is the full
+#'   namespace of their ids.
 #'
 #' @returns The updated configuration.
 #'

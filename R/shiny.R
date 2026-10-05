@@ -13,7 +13,9 @@
 #'   Defaults to the current session. The inputs of a configuration with a
 #'   namespace (see [with_ns()]) are found from any session of the app, so
 #'   `shinyfilters_server()` can be called at the top level of the server or
-#'   inside the module.
+#'   inside the module. The namespace is the full one, as in the UI: inside a
+#'   module's server that is `session$ns(NULL)`, which differs from the
+#'   module's `id` when modules are nested.
 #' @inheritParams apply_filters
 #' @param args_apply_filters A named list of additional arguments passed to
 #'   [apply_filters()].

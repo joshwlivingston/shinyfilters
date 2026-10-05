@@ -10,7 +10,9 @@ with_ns(.filters, ns)
 \item{.filters}{A configuration created by \code{\link[=shinyfilters]{shinyfilters()}}.}
 
 \item{ns}{The namespace: a string, used as the id passed to \code{\link[shiny:NS]{shiny::NS()}};
-a namespace created by \code{\link[shiny:NS]{shiny::NS()}}; or \code{NULL} to remove the namespace.}
+a namespace created by \code{\link[shiny:NS]{shiny::NS()}}; or \code{NULL} to remove the namespace.
+\code{\link[=shinyfilters_server]{shinyfilters_server()}} finds the inputs by it, so it is the full
+namespace of their ids.}
 }
 \value{
 The updated configuration.

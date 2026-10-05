@@ -30,7 +30,9 @@ shinyfilters_server(
 Defaults to the current session. The inputs of a configuration with a
 namespace (see \code{\link[=with_ns]{with_ns()}}) are found from any session of the app, so
 \code{shinyfilters_server()} can be called at the top level of the server or
-inside the module.}
+inside the module. The namespace is the full one, as in the UI: inside a
+module's server that is \code{session$ns(NULL)}, which differs from the
+module's \code{id} when modules are nested.}
 
 \item{filter_combine_method}{A string or function indicating how to combine
 multiple filters. If a string, it can be "and" (or "&") for logical AND,
