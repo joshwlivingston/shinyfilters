@@ -776,6 +776,7 @@ method(.with_filter, class_shinyfilters) <- function(
 	)
 
 	if (is.function(value) || is_string(value) || ._is_filter(value)) {
+		._check_keyword_symbol(quo, value, call = call)
 		if (!(name %in% names(data))) {
 			cli_abort(
 				c(
@@ -906,7 +907,27 @@ method(.with_filter, class_shinyfilters) <- function(
 			)
 		}
 	)
+	._check_keyword_symbol(quo, input, call = call)
 	._override(input, call = call, fn = fn)
+}
+
+# An unquoted keyword that names a function, such as `range`, is a mistake:
+# the function would be called as the input.
+._check_keyword_symbol <- function(quo, input, call) {
+	expr <- quo_get_expr(quo)
+	if (!is_symbol(expr) || !is.function(input)) {
+		return(invisible())
+	}
+	keyword <- as.character(expr)
+	if (keyword %in% names(INPUT_KEYWORDS)) {
+		cli_abort(
+			c(
+				"Can't use the function {.fn {keyword}} as an input.",
+				i = "Keywords are strings: {.code \"{keyword}\"}."
+			),
+			call = call
+		)
+	}
 }
 
 # An `as_filter()` object has already resolved its input. Its arguments and

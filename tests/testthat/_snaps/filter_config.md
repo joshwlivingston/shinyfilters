@@ -260,6 +260,18 @@
       Caused by error:
       ! object 'radio' not found
     Code
+      with_filter(cfg, x, range)
+    Condition
+      Error in `with_filter()`:
+      ! Can't use the function `range()` as an input.
+      i Keywords are strings: `"range"`.
+    Code
+      with_filter(cfg, x = numeric)
+    Condition
+      Error in `with_filter()`:
+      ! Can't use the function `numeric()` as an input.
+      i Keywords are strings: `"numeric"`.
+    Code
       with_filter(cfg, y = nope * 2)
     Condition
       Error in `with_filter()`:
