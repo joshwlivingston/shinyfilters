@@ -124,6 +124,25 @@ test_that("updateFilterInput() passes the as_filter() arguments an update takes"
 	)
 })
 
+test_that("updateFilterInput() leaves out a default that sets a value", {
+	cfg <- shinyfilters(df_config, selected = "a")["letters"]
+	expect_identical(
+		update_messages(updateFilterInput(cfg)),
+		update_messages(shiny::updateSelectInput(
+			inputId = "letters",
+			choices = c("a", "b", "c")
+		))
+	)
+	expect_identical(
+		update_messages(updateFilterInput(cfg, selected = "b")),
+		update_messages(shiny::updateSelectInput(
+			inputId = "letters",
+			choices = c("a", "b", "c"),
+			selected = "b"
+		))
+	)
+})
+
 test_that("as_filter() arguments are computed from the data being updated", {
 	cfg <- with_filter(
 		shinyfilters(df_config),

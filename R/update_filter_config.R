@@ -32,11 +32,12 @@ method(updateFilterInput, class_shinyfilters) <- function(x, ...) {
 	set_props(config, data = data)
 }
 
-# The arguments every column's update gets: the configuration's defaults and
-# the session. A namespaced id is complete, so it goes through the root
-# session.
+# The arguments every column's update gets: the configuration's defaults,
+# except the ones that set a value, and the session. A namespaced id is
+# complete, so it goes through the root session.
 ._config_update_args <- function(config, args) {
-	args <- modifyList(config@args, args)
+	defaults <- config@args[!(names(config@args) %in% VALUE_ARGS)]
+	args <- modifyList(defaults, args)
 	session <- args$session
 	if (is.null(session)) {
 		session <- getDefaultReactiveDomain()
