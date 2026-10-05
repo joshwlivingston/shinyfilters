@@ -262,7 +262,7 @@ filterInput(
 ## `textInput`
 
 ### character
-- `text = TRUE`
+- `textbox = TRUE`
 ```{r ex-textInput-character}
 filterInput(
 	x = letters[1:10],

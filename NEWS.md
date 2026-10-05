@@ -27,8 +27,8 @@
 
 ### Update defaults
 
-* `with_defaults()` is sets or removes the arguments a configuration passed to `filterInput()` for every column (#105).
-* `with_ns()` is sets or removes the namespace of a configuration (#105).
+* `with_defaults()` sets or removes the arguments a configuration passes to `filterInput()` for every column (#105).
+* `with_ns()` sets or removes the namespace of a configuration (#105).
 
 ### Run the server
 
