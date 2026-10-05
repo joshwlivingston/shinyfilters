@@ -92,8 +92,8 @@ filters_ui <- function(id) {
 
 filters_server <- function(id) {
 	 moduleServer(id, function(input, output, session) {
- 		# serverFilterInput() returns a observe() expressionc
- 		serverFilterInput(df_shared, input = input, range = TRUE)
+ 		# serverFilterInput() returns a reactiveValues list
+ 		serverFilterInput(df_shared, range = TRUE)
  	})
 }
 

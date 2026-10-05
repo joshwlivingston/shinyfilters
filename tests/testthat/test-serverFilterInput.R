@@ -2,10 +2,29 @@
 
 test_that("serverFilterInput works with data.frames", {
 	testServer(app_shiny(), {
+		res <- serverFilterInput(test_df)
+		session$flushReact()
+		expect_named(res$input_values, get_input_ids(test_df))
+		expect_identical(nrow(res$filtered), nrow(test_df))
+
+		session$setInputs(chr_col = test_df$chr_col[[1]])
+		expect_identical(
+			res$filtered,
+			test_df[test_df$chr_col == test_df$chr_col[[1]], ]
+		)
+	})
+})
+
+test_that("serverFilterInput() still takes `input`, with a warning", {
+	withr::local_options(rlib_warning_verbosity = "verbose")
+	testServer(app_shiny(), {
 		res <- serverFilterInput(test_df, input)
-		test_df_filt <- apply_filters(test_df, res$input_values)
-		expect_s3_class(test_df_filt, "data.frame")
-		expect_lte(nrow(test_df_filt), nrow(test_df))
+		expect_snapshot(session$flushReact(), variant = snapshot_variant())
+		expect_named(res$input_values, get_input_ids(test_df))
+
+		res <- serverFilterInput(test_df, input = input)
+		expect_snapshot(session$flushReact(), variant = snapshot_variant())
+		expect_named(res$input_values, get_input_ids(test_df))
 	})
 })
 
@@ -20,8 +39,9 @@ test_that("._prepare_input() with reactiveExpr returns valid list for all test_d
 		})
 
 		res <- serverFilterInput(test_df, input = input_list)
+		suppressWarnings(session$flushReact())
 		expect_s3_class(res, "reactivevalues")
-		expect_named(res$input_values, names(input_list))
+		expect_named(res$input_values, get_input_ids(test_df))
 	})
 })
 
@@ -38,23 +58,22 @@ test_that("._prepare_input() with reactiveExpr filters out unsupported columns",
 			)
 		})
 
-		suppressWarnings({
-			res <- serverFilterInput(test_df, input = input_list)
-		})
+		res <- serverFilterInput(test_df, input = input_list)
+		suppressWarnings(session$flushReact())
 
 		# Verify unsupported column was filtered out
-		expect_false("unsupported_col" %in% names(res$input_values))
-		expect_true(all(names(res$input_values) %in% get_input_ids(test_df)))
+		expect_named(res$input_values, get_input_ids(test_df))
 	})
 })
 
 test_that("._prepare_input() with reactivevalues extracts values correctly", {
 	testServer(app_shiny(), {
 		# Using default input (reactivevalues)
-		res <- serverFilterInput(test_df, input)
+		res <- serverFilterInput(test_df)
+		session$flushReact()
 
 		expect_s3_class(res, "reactivevalues")
-		expect_true(all(names(res$input_values) %in% get_input_ids(test_df)))
+		expect_named(res$input_values, get_input_ids(test_df))
 	})
 })
 

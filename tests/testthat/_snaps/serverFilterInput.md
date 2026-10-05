@@ -1,3 +1,23 @@
+# serverFilterInput() still takes `input`, with a warning
+
+    Code
+      session$flushReact()
+    Condition
+      Warning:
+      The `input` argument of `shinyfilters_server()` is deprecated as of shinyfilters 0.4.0.
+      i Please omit, or provide the `session` argument instead.
+      This warning is displayed once per session.
+
+---
+
+    Code
+      session$flushReact()
+    Condition
+      Warning:
+      The `input` argument of `shinyfilters_server()` is deprecated as of shinyfilters 0.4.0.
+      i Please omit, or provide the `session` argument instead.
+      This warning is displayed once per session.
+
 # serverFilterInput() with reactive() throws error when missing required columns
 
     Code

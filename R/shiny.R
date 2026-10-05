@@ -62,8 +62,8 @@
 #'
 #' filters_server <- function(id) {
 #' 	 moduleServer(id, function(input, output, session) {
-#'  		# serverFilterInput() returns a observe() expressionc
-#'  		serverFilterInput(df_shared, input = input, range = TRUE)
+#'  		# serverFilterInput() returns a reactiveValues list
+#'  		serverFilterInput(df_shared, range = TRUE)
 #'  	})
 #' }
 #'
@@ -95,6 +95,11 @@ serverFilterInput <- function(
 	input = deprecated()
 ) {
 	error_call <- current_call()
+	# `input` was the second argument before 0.4.0
+	if (inherits(session, c("reactivevalues", "reactiveExpr"))) {
+		input <- session
+		session <- getDefaultReactiveDomain()
+	}
 	out_input <- reactiveValues()
 	observe({
 		if (is_present(input)) {
