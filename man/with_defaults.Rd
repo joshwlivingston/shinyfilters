@@ -12,6 +12,7 @@ with_defaults(.filters, ...)
 \item{...}{Named arguments passed to \code{\link[=filterInput]{filterInput()}} for every column, such
 as \code{slider = TRUE} or \code{selectize = TRUE}. An argument set to \code{NULL}, or
 an input flag such as \code{slider} set to \code{FALSE}, its default, is removed.
+\code{selectize = FALSE} is kept: \code{\link[shiny:selectInput]{shiny::selectInput()}} takes it too.
 Arguments not named here keep their current values.}
 }
 \value{

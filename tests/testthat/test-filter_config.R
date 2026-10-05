@@ -155,11 +155,39 @@ test_that("keyword override replaces conflicting global flags", {
 	)
 	expect_identical(
 		res[[1]],
-		shiny::selectInput("letters", "letters", choices = c("a", "b", "c"))
+		shiny::selectInput(
+			"letters",
+			"letters",
+			choices = c("a", "b", "c"),
+			selectize = FALSE
+		)
 	)
 	expect_identical(
 		res[[3]],
-		shiny::selectInput("x", "x", choices = c(2L, 9L, 10L))
+		shiny::selectInput(
+			"x",
+			"x",
+			choices = c(2L, 9L, 10L),
+			selectize = FALSE
+		)
+	)
+})
+
+test_that("`selectize = FALSE` is the same wherever it is set", {
+	expected <- filterInput(df_config, selectize = FALSE)
+	cfg <- shinyfilters(df_config, selectize = FALSE)
+	expect_identical(filterInput(cfg), expected)
+	expect_identical(
+		filterInput(with_defaults(shinyfilters(df_config), selectize = FALSE)),
+		expected
+	)
+	expect_identical(
+		filterInput(with_filter(cfg, c(letters, factors), "select")),
+		expected
+	)
+	expect_identical(
+		filterInput(with_filter(cfg, letters = shiny::selectInput)),
+		expected
 	)
 })
 

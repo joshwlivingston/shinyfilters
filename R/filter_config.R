@@ -65,9 +65,10 @@ shinyfilters <- function(data, ..., ns = NULL) {
 	class_shinyfilters(data = data, args = ._drop_flags_off(args), ns = ns)
 }
 
-# Drops input flags set to `FALSE`, their default
+# Drops input flags set to `FALSE`, their default. `selectize` stays: it is an
+# argument of `selectInput()` too, where `FALSE` isn't the default.
 ._drop_flags_off <- function(args) {
-	is_flag <- names(args) %in% INPUT_FLAGS
+	is_flag <- names(args) %in% setdiff(INPUT_FLAGS, "selectize")
 	is_off <- vapply(args, isFALSE, logical(1))
 	args[!(is_flag & is_off)]
 }
@@ -989,6 +990,7 @@ with_ns <- function(.filters, ns) {
 #' @param ... Named arguments passed to [filterInput()] for every column, such
 #'   as `slider = TRUE` or `selectize = TRUE`. An argument set to `NULL`, or
 #'   an input flag such as `slider` set to `FALSE`, its default, is removed.
+#'   `selectize = FALSE` is kept: [shiny::selectInput()] takes it too.
 #'   Arguments not named here keep their current values.
 #'
 #' @returns The updated configuration.
@@ -1103,12 +1105,12 @@ filter_input_override <- new_generic(
 	do.call(filterInput, c(list(x = x), args))
 }
 
-# `args` with the `filterInput()` flags a keyword sets, and no other flag. A
-# flag left out isn't one set to `FALSE`: `selectInput()` has a `selectize`
-# argument of its own.
+# `args` with the `filterInput()` flags a keyword sets, and no other flag that
+# is on. A flag that is off is left as it is, not set to `FALSE` or removed:
+# `selectize = FALSE` is an argument of `selectInput()` too.
 ._keyword_args <- function(args, keyword) {
-	args <- args[!(names(args) %in% INPUT_FLAGS)]
-	c(args, INPUT_KEYWORDS[[unclass(keyword)]]$args)
+	is_on <- names(args) %in% INPUT_FLAGS & !vapply(args, isFALSE, logical(1))
+	modifyList(args[!is_on], INPUT_KEYWORDS[[unclass(keyword)]]$args)
 }
 
 method(
