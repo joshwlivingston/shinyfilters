@@ -7,7 +7,8 @@
 #'
 #' Updates a \pkg{shiny} input based the type of object `x` and other arguments.
 #'
-#' @param x The object used to create the input.
+#' @param x The object used to create the input, or a configuration made by
+#'   [shinyfilters()].
 #' @param ... Arguments used for input selection or passed to the selected
 #'   input update function. See details.
 #'
@@ -54,6 +55,14 @@
 #'
 #' Remaining arguments passed to `...` are passed to
 #' [args_update_filter_input()] or the selected input update function.
+#'
+#' When `x` is a configuration made by [shinyfilters()], each column's input
+#' is updated with the function and arguments that match the input
+#' [filterInput()] creates for it: the configuration's defaults, the input
+#' [with_filter()] chose, and its [as_filter()] arguments, computed from the
+#' configuration's data. The arguments that set an input's value (`value`,
+#' `selected`, `start`, and `end`) are left out, and the configuration's
+#' namespace is applied to the ids.
 #'
 #' @returns The result of the following \pkg{shiny} input updates is returned,
 #' based on the type of object passed to `x`, and other specified arguments.
@@ -243,23 +252,26 @@ call_update_filter_input <- function(x, .f, ...) {
 }
 
 ._call_update_filter_input <- function(x, .f, ..., call = caller_env()) {
+	args_prepared <- ._prepare_update_input_args(x, ..., call = call)
+	._call_update_input(.f, args_prepared, ...)
+}
+
+# Calls `.f` with `args`, plus any `...` that `.f` accepts and `args` lacks.
+# `as_filter()` arguments replace the others when `.f` has them: they were
+# written for the input, which takes arguments its update doesn't.
+._call_update_input <- function(.f, args, ...) {
 	args_provided <- list(...)
 	function_args <- formalArgs(.f)
-
-	args_prepared <- ._prepare_update_input_args(x, ..., call = call)
 	args <- c(
-		args_prepared,
+		args,
 		args_provided[
 			names(args_provided) %in%
 				function_args &
-				!(names(args_provided) %in% names(args_prepared))
+				!(names(args_provided) %in% names(args))
 		]
 	)
 	input_args <- args_provided[[INPUT_ARGS]]
-	if (is.null(args)) {
-		args <- input_args
-	} else if (!is.null(input_args)) {
-		args <- modifyList(args, input_args, keep.null = TRUE)
-	}
+	input_args <- input_args[names(input_args) %in% function_args]
+	args[names(input_args)] <- input_args
 	do.call(.f, args)
 }

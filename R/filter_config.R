@@ -1089,13 +1089,17 @@ filter_input_override <- new_generic(
 
 ## Keyword flags supported by filterInput() ####
 ._filter_input_keyword <- function(x, override, ...) {
+	args <- modifyList(list(...), ._keyword_flags(override))
+	do.call(filterInput, c(list(x = x), args))
+}
+
+# The `filterInput()` flags a keyword sets, with every other flag off
+._keyword_flags <- function(keyword) {
 	flags_off <- set_names(
 		rep(list(FALSE), length(INPUT_KEYWORDS)),
 		names(INPUT_KEYWORDS)
 	)
-	flags <- modifyList(flags_off, INPUT_KEYWORDS[[unclass(override)]]$args)
-	args <- modifyList(list(...), flags)
-	do.call(filterInput, c(list(x = x), args))
+	modifyList(flags_off, INPUT_KEYWORDS[[unclass(keyword)]]$args)
 }
 
 method(

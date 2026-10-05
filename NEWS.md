@@ -30,6 +30,10 @@
 * `with_defaults()` is sets or removes the arguments a configuration passed to `filterInput()` for every column (#105).
 * `with_ns()` is sets or removes the namespace of a configuration (#105).
 
+### Run the server
+
+* `updateFilterInput()` updates the inputs of a configuration, each with the function and arguments that match the input its column uses (#105).
+
 ## Other new features
 
 * Error and warning messages use cli formatting.

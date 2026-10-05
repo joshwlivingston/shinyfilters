@@ -7,7 +7,8 @@
 updateFilterInput(x, ...)
 }
 \arguments{
-\item{x}{The object used to create the input.}
+\item{x}{The object used to create the input, or a configuration made by
+\code{\link[=shinyfilters]{shinyfilters()}}.}
 
 \item{...}{Arguments used for input selection or passed to the selected
 input update function. See details.}
@@ -69,6 +70,14 @@ The following arguments passed to \code{...} are supported:
 
 Remaining arguments passed to \code{...} are passed to
 \code{\link[=args_update_filter_input]{args_update_filter_input()}} or the selected input update function.
+
+When \code{x} is a configuration made by \code{\link[=shinyfilters]{shinyfilters()}}, each column's input
+is updated with the function and arguments that match the input
+\code{\link[=filterInput]{filterInput()}} creates for it: the configuration's defaults, the input
+\code{\link[=with_filter]{with_filter()}} chose, and its \code{\link[=as_filter]{as_filter()}} arguments, computed from the
+configuration's data. The arguments that set an input's value (\code{value},
+\code{selected}, \code{start}, and \code{end}) are left out, and the configuration's
+namespace is applied to the ids.
 }
 \examples{
 \dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
