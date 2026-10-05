@@ -22,8 +22,8 @@ too, as they are at that point.}
 \item{.update_fn}{The function that updates the input, such as
 \code{shinyWidgets::updatePickerInput} for \code{shinyWidgets::pickerInput}.
 \code{\link[=shinyfilters_server]{shinyfilters_server()}} and \code{\link[=updateFilterInput]{updateFilterInput()}} need it for an input
-that isn't a \pkg{shiny} input they know. It is called like
-\code{\link[=call_update_filter_input]{call_update_filter_input()}}: it receives the arguments
+other than the \pkg{shiny} inputs \code{\link[=filterInput]{filterInput()}} creates. It is called
+like \code{\link[=call_update_filter_input]{call_update_filter_input()}}: it receives the arguments
 \code{\link[=args_update_filter_input]{args_update_filter_input()}} returns for the column's type, plus
 \code{session}, \code{inputId}, and any argument set here that it names.}
 }

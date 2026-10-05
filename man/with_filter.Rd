@@ -38,8 +38,9 @@ with numeric columns, using the sorted unique values as choices.
 
 Other functions are called like \code{\link[=call_filter_input]{call_filter_input()}}: they receive the
 arguments \code{\link[=args_filter_input]{args_filter_input()}} returns for the column's type, plus any
-other arguments they accept. To use one with \code{\link[=shinyfilters_server]{shinyfilters_server()}},
-name the function that updates it with \code{\link[=as_filter]{as_filter()}}'s \code{.update_fn}.
+other arguments they accept. \code{\link[=shinyfilters_server]{shinyfilters_server()}} needs the function
+that updates one, unless it is a \pkg{shiny} input \code{\link[=filterInput]{filterInput()}}
+creates: name it with \code{\link[=as_filter]{as_filter()}}'s \code{.update_fn}.
 
 Wrap an input in \code{\link[=as_filter]{as_filter()}} to set its arguments, or use \code{\link[=as_filter]{as_filter()}}
 without an input to set arguments for the input a column already has.

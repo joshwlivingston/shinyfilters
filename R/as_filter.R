@@ -32,8 +32,8 @@
 #' @param .update_fn The function that updates the input, such as
 #'   `shinyWidgets::updatePickerInput` for `shinyWidgets::pickerInput`.
 #'   [shinyfilters_server()] and [updateFilterInput()] need it for an input
-#'   that isn't a \pkg{shiny} input they know. It is called like
-#'   [call_update_filter_input()]: it receives the arguments
+#'   other than the \pkg{shiny} inputs [filterInput()] creates. It is called
+#'   like [call_update_filter_input()]: it receives the arguments
 #'   [args_update_filter_input()] returns for the column's type, plus
 #'   `session`, `inputId`, and any argument set here that it names.
 #'

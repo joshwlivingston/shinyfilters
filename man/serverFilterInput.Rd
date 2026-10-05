@@ -60,9 +60,10 @@ Only the inputs that have no value are updated, and they are left without
 one. The inputs of a configuration made by \code{\link[=shinyfilters]{shinyfilters()}} are updated as
 \code{\link[=updateFilterInput]{updateFilterInput()}} updates them, from the filtered data.
 
-An input set by a function that isn't a \pkg{shiny} input needs the
-function that updates it, named with \code{\link[=as_filter]{as_filter()}}'s \code{.update_fn}. Without
-it, \code{shinyfilters_server()} errors.
+An input set by a function other than the \pkg{shiny} inputs
+\code{\link[=filterInput]{filterInput()}} creates, such as \code{shiny::checkboxGroupInput} or
+\code{shinyWidgets::pickerInput}, needs the function that updates it, named with
+\code{\link[=as_filter]{as_filter()}}'s \code{.update_fn}. Without it, \code{shinyfilters_server()} errors.
 }
 \examples{
 \dontshow{if (interactive() && requireNamespace("bslib") && requireNamespace("DT")) withAutoprint(\{ # examplesIf}

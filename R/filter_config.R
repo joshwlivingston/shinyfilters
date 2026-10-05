@@ -568,8 +568,9 @@ SHINY_INPUTS <- list(
 #'
 #'   Other functions are called like [call_filter_input()]: they receive the
 #'   arguments [args_filter_input()] returns for the column's type, plus any
-#'   other arguments they accept. To use one with [shinyfilters_server()],
-#'   name the function that updates it with [as_filter()]'s `.update_fn`.
+#'   other arguments they accept. [shinyfilters_server()] needs the function
+#'   that updates one, unless it is a \pkg{shiny} input [filterInput()]
+#'   creates: name it with [as_filter()]'s `.update_fn`.
 #'
 #'   Wrap an input in [as_filter()] to set its arguments, or use [as_filter()]
 #'   without an input to set arguments for the input a column already has.
