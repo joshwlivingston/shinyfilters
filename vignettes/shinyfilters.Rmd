@@ -255,7 +255,9 @@ filters %>%
 ## Put it together {.tabset}
 
 The steps chain into one pipeline, each seeing the columns the earlier ones
-computed:
+computed. `multiple = TRUE` is one more default: a select input that takes
+several values starts with none, so the app below opens without filtering on
+it:
 
 ### dplyr {#full-dplyr}
 
@@ -264,8 +266,9 @@ computed:
 ```{r, eval = getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE)}
 filters <- nyc_flights |>
 	shinyfilters(
-		range = TRUE, 
-		selectize = TRUE
+		range = TRUE,
+		selectize = TRUE,
+		multiple = TRUE
 	) |>
 	with_ns("sidebar-mod") |>
 	mutate(
@@ -281,8 +284,9 @@ filters
 ```{r, eval = !getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = !getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE)}
 filters <- nyc_flights %>%
 	shinyfilters(
-		range = TRUE, 
-		selectize = TRUE
+		range = TRUE,
+		selectize = TRUE,
+		multiple = TRUE
 	) %>%
 	with_ns("sidebar-mod") %>%
 	mutate(
@@ -300,8 +304,9 @@ filters
 ```{r, eval = getRversion() >= "4.1", include = getRversion() >= "4.1"}
 filters <- nyc_flights |>
 	shinyfilters(
-		range = TRUE, 
-		selectize = TRUE
+		range = TRUE,
+		selectize = TRUE,
+		multiple = TRUE
 	) |>
 	with_ns("sidebar-mod") |>
 	with_filter(
@@ -317,8 +322,9 @@ filters
 ```{r, eval = !getRversion() >= "4.1", include = !getRversion() >= "4.1"}
 filters <- nyc_flights %>%
 	shinyfilters(
-		range = TRUE, 
-		selectize = TRUE
+		range = TRUE,
+		selectize = TRUE,
+		multiple = TRUE
 	) %>%
 	with_ns("sidebar-mod") %>%
 	with_filter(
