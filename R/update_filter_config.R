@@ -93,16 +93,15 @@ VALUE_ARGS <- c("value", "selected", "start", "end")
 	)
 }
 
-# An input set by a function can be updated when it is a shiny input, or
-# `as_filter()` named the function that updates it.
+# An input set by a function can be updated only when `as_filter()` named the
+# function that updates it. A shiny input `filterInput()` creates is never set
+# by a function: it resolves to its keyword.
 ._check_update_fns <- function(config, cols, call) {
 	unknown <- vapply(
 		cols,
 		function(name) {
 			override <- config@overrides[[name]]
-			is.function(override$input) &&
-				is.null(override$update) &&
-				is.null(._update_fn(override$input))
+			is.function(override$input) && is.null(override$update)
 		},
 		logical(1)
 	)
@@ -137,8 +136,9 @@ VALUE_ARGS <- c("value", "selected", "start", "end")
 
 # Generic: update_filter_input_override() ####
 #
-# Mirrors `filter_input_override()`: the same signatures choose the update
-# that matches the input.
+# Mirrors `filter_input_override()` for keywords: the same signatures choose
+# the update that matches the input. An input set by a function is updated by
+# its `.update_fn` instead.
 update_filter_input_override <- new_generic(
 	"update_filter_input_override",
 	c("x", "override")
@@ -191,12 +191,4 @@ method(
 	choices <- ._coerced_choices(x, list(...))
 	update <- ._update_fn(INPUT_KEYWORDS[[unclass(override)]]$fn)
 	._call_update_input(update, choices, ...)
-}
-
-## Function ####
-method(
-	update_filter_input_override,
-	list(class_any, class_function)
-) <- function(x, override, ...) {
-	._call_update_filter_input(x, ._update_fn(override), ...)
 }
