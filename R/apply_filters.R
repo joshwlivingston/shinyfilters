@@ -19,9 +19,8 @@
 #' @param ... Additional arguments passed to [get_filter_logical()].
 #'
 #' @returns A filtered object, or a named list of filtered objects if
-#'   `expanded = TRUE`. The columns of a filtered data frame keep their
-#'   attributes, such as a class that chooses their input, even when the class
-#'   has no `[` method.
+#'   `expanded = TRUE`. In a filtered data frame, a column whose class has no
+#'   `[` method keeps its attributes, such as a class that chooses its input.
 #'
 #' @examples
 #' library(S7)
@@ -96,21 +95,29 @@ apply_filters <- function(
 
 # Base `[` drops the attributes of a column whose class has no `[` method, and
 # with them the class that chooses the column's input. A tibble puts them
-# back; this does the same for any data frame. A column whose `[` method kept
-# an attribute is left as it is.
+# back; this does the same for any data frame. A class with a `[` method
+# decides what its subset keeps: a `ts` column drops its attributes on purpose.
 ._restore_attributes <- function(filtered, x) {
 	for (name in names(filtered)) {
-		dropped <- attributes(x[[name]])
-		dropped[c("names", "dim", "dimnames")] <- NULL
-		col <- filtered[[name]]
-		kept <- setdiff(names(attributes(col)), "names")
-		if (length(dropped) == 0 || length(kept) > 0) {
+		col <- x[[name]]
+		kept <- c(names(attributes(filtered[[name]])), "names", "dim", "dimnames")
+		dropped <- attributes(col)
+		dropped <- dropped[setdiff(names(dropped), kept)]
+		if (length(dropped) == 0 || ._has_subset_method(col)) {
 			next
 		}
-		attributes(col) <- c(attributes(col), dropped)
-		filtered[[name]] <- col
+		attributes(filtered[[name]]) <- c(attributes(filtered[[name]]), dropped)
 	}
 	filtered
+}
+
+._has_subset_method <- function(x) {
+	for (cls in oldClass(x)) {
+		if (!is.null(getS3method("[", cls, optional = TRUE))) {
+			return(TRUE)
+		}
+	}
+	FALSE
 }
 
 ._prepare_filter_logical <- function(

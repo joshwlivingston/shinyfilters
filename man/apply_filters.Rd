@@ -37,9 +37,8 @@ retained.}
 }
 \value{
 A filtered object, or a named list of filtered objects if
-\code{expanded = TRUE}. The columns of a filtered data frame keep their
-attributes, such as a class that chooses their input, even when the class
-has no \code{[} method.
+\code{expanded = TRUE}. In a filtered data frame, a column whose class has no
+\code{[} method keeps its attributes, such as a class that chooses its input.
 }
 \description{
 Applies a list of filters to an object, returning the filtered object.

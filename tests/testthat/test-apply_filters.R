@@ -174,6 +174,15 @@ test_that("apply_filters() keeps the column attributes row subsetting drops", {
 	)
 })
 
+test_that("apply_filters() leaves a column to its own `[` method", {
+	df <- data.frame(
+		stringsAsFactors = FALSE,
+		series = stats::ts(1:4),
+		group = c("a", "a", "b", "b")
+	)
+	expect_identical(apply_filters(df, list(group = "a"))$series, 1:2)
+})
+
 # Missing values ####
 test_that("apply_filters() drops rows with a missing value in a filtered column", {
 	df <- data.frame(
