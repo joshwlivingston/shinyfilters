@@ -7,3 +7,13 @@ snapshot_variant <- function() {
 	}
 	variant
 }
+
+# The rows `i` of a data frame, with the classes of its columns kept. Base `[`
+# drops a class that has no `[` method.
+rows_with_classes <- function(df, i) {
+	out <- df[i, , drop = FALSE]
+	for (name in names(df)) {
+		oldClass(out[[name]]) <- oldClass(df[[name]])
+	}
+	out
+}

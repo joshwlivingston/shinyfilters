@@ -10,7 +10,29 @@ test_that("serverFilterInput works with data.frames", {
 		session$setInputs(chr_col = test_df$chr_col[[1]])
 		expect_identical(
 			res$filtered,
-			test_df[test_df$chr_col == test_df$chr_col[[1]], ]
+			rows_with_classes(test_df, test_df$chr_col == test_df$chr_col[[1]])
+		)
+	})
+})
+
+test_that("serverFilterInput() updates a column of a custom class with its method", {
+	df <- data.frame(
+		stringsAsFactors = FALSE,
+		color = c("red", "green", "blue"),
+		group = c("a", "a", "b")
+	)
+	df$color <- use_radio(df$color)
+	testServer(function(input, output, session) {}, {
+		sent <- record_messages(session)
+		serverFilterInput(df)
+		session$setInputs(group = "a")
+		expect_identical(
+			sent(),
+			update_messages(shiny::updateRadioButtons(
+				inputId = "color",
+				choices = c("green", "red"),
+				selected = character(0)
+			))
 		)
 	})
 })

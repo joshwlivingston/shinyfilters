@@ -19,7 +19,9 @@
 #' @param ... Additional arguments passed to [get_filter_logical()].
 #'
 #' @returns A filtered object, or a named list of filtered objects if
-#'   `expanded = TRUE`.
+#'   `expanded = TRUE`. The columns of a filtered data frame keep their
+#'   attributes, such as a class that chooses their input, even when the class
+#'   has no `[` method.
 #'
 #' @examples
 #' library(S7)
@@ -83,11 +85,32 @@ apply_filters <- function(
 	}
 	if (is.data.frame(x)) {
 		if (!is.null(cols)) {
-			return(x[filter_logical, cols, drop = FALSE])
+			filtered <- x[filter_logical, cols, drop = FALSE]
+		} else {
+			filtered <- x[filter_logical, , drop = FALSE]
 		}
-		return(x[filter_logical, , drop = FALSE])
+		return(._restore_attributes(filtered, x))
 	}
 	return(x[filter_logical])
+}
+
+# Base `[` drops the attributes of a column whose class has no `[` method, and
+# with them the class that chooses the column's input. A tibble puts them
+# back; this does the same for any data frame. A column whose `[` method kept
+# an attribute is left as it is.
+._restore_attributes <- function(filtered, x) {
+	for (name in names(filtered)) {
+		dropped <- attributes(x[[name]])
+		dropped[c("names", "dim", "dimnames")] <- NULL
+		col <- filtered[[name]]
+		kept <- setdiff(names(attributes(col)), "names")
+		if (length(dropped) == 0 || length(kept) > 0) {
+			next
+		}
+		attributes(col) <- c(attributes(col), dropped)
+		filtered[[name]] <- col
+	}
+	filtered
 }
 
 ._prepare_filter_logical <- function(

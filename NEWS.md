@@ -48,6 +48,7 @@
 ## Bugfixes
 
 * `apply_filters()` now drops a row whose filtered value is missing, instead of returning a row of `NA`s, unless `NA` is one of the filter's values (#136).
+* `apply_filters()` now keeps the attributes of a data frame's columns, as it does for a tibble, so `serverFilterInput()` updates a column of a custom class with that class's `updateFilterInput()` method (#136).
 * `args_update_filter_input()` now leaves out `start` and `end` when `range = TRUE`, as it leaves out the value of every other input (#136).
 * `filterInput()` now errors when `x` is all missing.
 * `filterInput()`'s `ns` argument behaves like `shiny::NS()`, accepting any argument.
