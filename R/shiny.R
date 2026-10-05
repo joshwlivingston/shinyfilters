@@ -9,19 +9,22 @@
 #' `shinyfilters_server()`.
 #'
 #' @param x An object being filtered; typically the result of [shinyfilters()].
-#' @param input A \pkg{shiny} `input` object, or a reactive that resolves to a
-#'   list of named values.
+#' @param session The \pkg{shiny} session whose inputs are read. Defaults to
+#'   the current session.
 #' @inheritParams apply_filters
 #' @param args_apply_filters A named list of additional arguments passed to
 #'   [apply_filters()].
 #' @param ... Additional arguments passed to [updateFilterInput()].
+#' @param input Deprecated: omit it, or use `session`. A \pkg{shiny} `input`
+#'   object, or a reactive that resolves to a list of named values.
 #'
 #' @details
 #' Only the inputs that have no value are updated, and they are left without
 #' one.
 #'
-#' @returns A reactiveValues list with a single element, `input_values`, which
-#'   contains the current filter input values as a named list.
+#' @returns A reactiveValues list with two elements: `filtered`, the filtered
+#'   data, and `input_values`, the current filter input values as a named
+#'   list.
 #'
 #' @examplesIf interactive() && requireNamespace("bslib") && requireNamespace("DT")
 #' library(bslib)

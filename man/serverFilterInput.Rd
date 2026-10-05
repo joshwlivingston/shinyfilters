@@ -26,6 +26,9 @@ shinyfilters_server(
 \arguments{
 \item{x}{An object being filtered; typically the result of \code{\link[=shinyfilters]{shinyfilters()}}.}
 
+\item{session}{The \pkg{shiny} session whose inputs are read. Defaults to
+the current session.}
+
 \item{filter_combine_method}{A string or function indicating how to combine
 multiple filters. If a string, it can be "and" (or "&") for logical AND,
 or "or" (or "|") for logical OR. If a function, it should take two logical
@@ -36,12 +39,13 @@ vectors and return a combined logical vector.}
 
 \item{...}{Additional arguments passed to \code{\link[=updateFilterInput]{updateFilterInput()}}.}
 
-\item{input}{A \pkg{shiny} \code{input} object, or a reactive that resolves to a
-list of named values.}
+\item{input}{Deprecated: omit it, or use \code{session}. A \pkg{shiny} \code{input}
+object, or a reactive that resolves to a list of named values.}
 }
 \value{
-A reactiveValues list with a single element, \code{input_values}, which
-contains the current filter input values as a named list.
+A reactiveValues list with two elements: \code{filtered}, the filtered
+data, and \code{input_values}, the current filter input values as a named
+list.
 }
 \description{
 \code{shinyfilters_server()} runs an observer that makes your filters
