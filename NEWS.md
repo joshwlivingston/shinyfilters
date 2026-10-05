@@ -45,6 +45,7 @@
 * `filterInput()` now errors when `x` is all missing.
 * `filterInput()`'s `ns` argument behaves like `shiny::NS()`, accepting any argument.
 * `get_filter_logical()` now filters a numeric `x` by a character `val`, the value of a select or radio input on a numeric column, instead of keeping every element (#136).
+* `serverFilterInput()` now leaves a radio input with no selection unselected when it updates its choices, instead of selecting the first one (#136).
 
 # shinyfilters 0.3.1
 

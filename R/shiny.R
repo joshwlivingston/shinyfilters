@@ -16,6 +16,10 @@
 #'   [apply_filters()].
 #' @param ... Additional arguments passed to [updateFilterInput()].
 #'
+#' @details
+#' Only the inputs that have no value are updated, and they are left without
+#' one.
+#'
 #' @returns A reactiveValues list with a single element, `input_values`, which
 #'   contains the current filter input values as a named list.
 #'
@@ -101,6 +105,12 @@ serverFilterInput <- function(
 		session <- getDefaultReactiveDomain()
 	}
 	out_input <- reactiveValues()
+	# An input the server updates has no value, and keeps none: without
+	# `selected`, `updateRadioButtons()` selects the first choice.
+	args_update <- list(...)
+	if (!("selected" %in% names(args_update))) {
+		args_update$selected <- character(0)
+	}
 	observe({
 		if (is_present(input)) {
 			# Match lifecycle depcrecation warning
@@ -138,9 +148,7 @@ serverFilterInput <- function(
 			}
 			args <- list(col, id)
 			names(args) <- c("x", arg_name_input_id(col))
-			args_provided <- list(...)
-			args <- c(args, args_provided)
-			input_args <- args_provided[[INPUT_ARGS]]
+			args <- c(args, args_update)
 			if (
 				S7_inherits(x, class_shinyfilters) && !is.null(x@overrides[[id]]$args)
 			) {

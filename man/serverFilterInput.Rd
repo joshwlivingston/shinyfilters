@@ -48,6 +48,10 @@ contains the current filter input values as a named list.
 interdependent. \code{serverFilterInput()} is an alias of
 \code{shinyfilters_server()}.
 }
+\details{
+Only the inputs that have no value are updated, and they are left without
+one.
+}
 \examples{
 \dontshow{if (interactive() && requireNamespace("bslib") && requireNamespace("DT")) withAutoprint(\{ # examplesIf}
 library(bslib)

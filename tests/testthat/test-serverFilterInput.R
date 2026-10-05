@@ -28,6 +28,50 @@ test_that("serverFilterInput() still takes `input`, with a warning", {
 	})
 })
 
+test_that("serverFilterInput() leaves an empty input empty", {
+	testServer(function(input, output, session) {}, {
+		sent <- record_messages(session)
+		serverFilterInput(df_config, radio = TRUE)
+		session$setInputs(x = 9L)
+		expect_identical(
+			sent(),
+			update_messages({
+				shiny::updateRadioButtons(
+					inputId = "letters",
+					choices = c("a", "c"),
+					selected = character(0)
+				)
+				shiny::updateRadioButtons(
+					inputId = "factors",
+					choices = factor("lo", levels = c("lo", "hi")),
+					selected = character(0)
+				)
+				shiny::updateNumericInput(
+					inputId = "a_very_very_long_name",
+					min = 2.5,
+					max = 3.5
+				)
+			})
+		)
+	})
+})
+
+test_that("serverFilterInput() passes on a `selected` it is given", {
+	testServer(function(input, output, session) {}, {
+		sent <- record_messages(session)
+		serverFilterInput(df_config["letters"], selected = "a")
+		session$flushReact()
+		expect_identical(
+			sent(),
+			update_messages(shiny::updateSelectInput(
+				inputId = "letters",
+				choices = c("a", "b", "c"),
+				selected = "a"
+			))
+		)
+	})
+})
+
 test_that("._prepare_input() with reactiveExpr returns valid list for all test_df columns", {
 	testServer(app_shiny(), {
 		# Create reactive with all required columns from test_df
