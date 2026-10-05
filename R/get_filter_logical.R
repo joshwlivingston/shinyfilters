@@ -26,7 +26,8 @@
 #'
 #' When `val` is a character vector, such as the value of a select or radio
 #' input, and `x` isn't a character, factor, or logical vector, the elements of
-#' `x` are compared as text. A datetime is compared as its date.
+#' `x` are compared as text. A datetime `x` is compared as its date, whether
+#' `val` is text, a Date, or a datetime.
 #'
 #' @returns A logical vector indicating which elements of `x` match the filter
 #'   criteria specified by `val`.
@@ -182,10 +183,10 @@ method(
 	as_discrete(x) %in% val
 }
 
-method(get_filter_logical, list(class_POSIXt, class_POSIXt)) <- function(
-	x,
-	val,
-	...
-) {
+# A datetime column's date input returns a Date.
+method(
+	get_filter_logical,
+	list(class_POSIXt, class_Date | class_POSIXt)
+) <- function(x, val, ...) {
 	get_filter_logical(x = as.Date(x), val = as.Date(val), ...)
 }

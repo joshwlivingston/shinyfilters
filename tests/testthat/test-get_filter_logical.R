@@ -254,6 +254,16 @@ test_that("get_filter_logical() filters POSIXct vectors", {
 		result,
 		as.Date(x) >= as.Date(x[3]) & as.Date(x) <= as.Date(x[7])
 	)
+
+	# The Date a date input returns
+	expect_identical(
+		get_filter_logical(x, val = as.Date(x[5])),
+		as.Date(x) <= as.Date(x[5])
+	)
+	expect_identical(
+		get_filter_logical(x, val = as.Date(c(x[3], x[7]))),
+		as.Date(x) >= as.Date(x[3]) & as.Date(x) <= as.Date(x[7])
+	)
 })
 
 # POSIXlt `x` provided ####
@@ -294,7 +304,7 @@ test_that("get_filter_logical() falls back to all TRUE for every unsupported x/v
 	is_supported <- function(x, val) {
 		(x %in% chr_like && val %in% chr_like) ||
 			(x %in% date_like && val %in% date_like) ||
-			(x %in% time_like && val %in% time_like) ||
+			(x %in% time_like && val %in% c(time_like, "Date")) ||
 			val == "character"
 	}
 
