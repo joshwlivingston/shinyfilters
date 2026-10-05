@@ -48,6 +48,19 @@ test_that("with_filter() call forms are equivalent", {
 	)
 })
 
+test_that("a shiny input is matched as it is now, not as it was when built", {
+	upgraded <- function(inputId, label, choices, ...) {
+		shiny::selectInput(inputId, label, choices, ...)
+	}
+	local_mocked_bindings(selectInput = upgraded)
+	cfg <- shinyfilters(df_config)
+	expect_identical(
+		with_filter(cfg, letters = upgraded),
+		with_filter(cfg, letters = "select")
+	)
+	expect_snapshot(print(cfg), variant = snapshot_variant())
+})
+
 test_that("with_filter() takes `cols ~ input` formulas", {
 	cfg <- shinyfilters(df_config)
 	expect_identical(

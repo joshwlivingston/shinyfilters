@@ -126,7 +126,7 @@ as_filter <- function(input = NULL, ..., .update_fn = NULL) {
 print.shinyfilters_filter <- function(x, ...) {
 	input <- x$input
 	if (is.character(input)) {
-		input <- INPUT_KEYWORDS[[unclass(input)]]$fn
+		input <- ._keyword_fn(input)
 	}
 	cat_line(paste(
 		col_magenta("<shinyfilters_filter>"),

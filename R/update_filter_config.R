@@ -189,7 +189,7 @@ method(
 	)
 ) <- function(x, override, ...) {
 	choices <- ._coerced_choices(x, list(...))
-	update <- ._update_fn(INPUT_KEYWORDS[[unclass(override)]]$fn)
+	update <- ._update_fn(._keyword_fn(override))
 	._call_update_input(update, choices, ...)
 }
 

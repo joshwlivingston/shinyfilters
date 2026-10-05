@@ -7,6 +7,20 @@
       Error in `shinyfilters()`:
       ! `ns` must not be a custom function.
 
+# a shiny input is matched as it is now, not as it was when built
+
+    Code
+      print(cfg)
+    Output
+      <shinyfilters> * 4 filters
+      
+      Filters
+        letters                <chr>  selectInput
+        factors                <fct>  selectInput
+        x                      <int>  numericInput
+        a_very_very_long_name  <dbl>  numericInput
+      
+
 # print() marks columns added by with_filter()
 
     Code

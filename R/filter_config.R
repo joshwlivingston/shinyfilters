@@ -511,8 +511,9 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 
 # The name of a shiny input function, or `<custom>` for any other function
 ._input_name <- function(fn) {
-	for (name in names(SHINY_INPUTS)) {
-		if (identical(fn, SHINY_INPUTS[[name]])) {
+	inputs <- ._shiny_inputs()
+	for (name in names(inputs)) {
+		if (identical(fn, inputs[[name]])) {
 			return(name)
 		}
 	}
@@ -520,20 +521,25 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 }
 
 ._is_shiny_input <- function(fn) {
-	any(vapply(SHINY_INPUTS, identical, logical(1), fn))
+	any(vapply(._shiny_inputs(), identical, logical(1), fn))
 }
 
-SHINY_INPUTS <- list(
-	dateInput = dateInput,
-	dateRangeInput = dateRangeInput,
-	numericInput = numericInput,
-	radioButtons = radioButtons,
-	selectInput = selectInput,
-	selectizeInput = selectizeInput,
-	sliderInput = sliderInput,
-	textAreaInput = textAreaInput,
-	textInput = textInput
-)
+# The shiny inputs `filterInput()` creates. A function, so they are looked up
+# when it is called: a list made when the package is built would hold the
+# functions of the shiny installed then, which a later shiny no longer matches.
+._shiny_inputs <- function() {
+	list(
+		dateInput = dateInput,
+		dateRangeInput = dateRangeInput,
+		numericInput = numericInput,
+		radioButtons = radioButtons,
+		selectInput = selectInput,
+		selectizeInput = selectizeInput,
+		sliderInput = sliderInput,
+		textAreaInput = textAreaInput,
+		textInput = textInput
+	)
+}
 
 # Function: with_filter() ####
 #' Choose the Input for Columns
@@ -1085,7 +1091,7 @@ method(resolve_filter_override, class_character) <- function(
 
 method(resolve_filter_override, class_function) <- function(input, ...) {
 	for (keyword in names(INPUT_KEYWORDS)) {
-		if (identical(input, INPUT_KEYWORDS[[keyword]]$fn)) {
+		if (identical(input, ._keyword_fn(keyword))) {
 			return(input_keyword(keyword))
 		}
 	}
@@ -1176,7 +1182,7 @@ method(
 	choices <- ._coerced_choices(x, args, server = args$server)
 	do.call(
 		._call_input,
-		c(list(INPUT_KEYWORDS[[unclass(override)]]$fn, choices), args)
+		c(list(._keyword_fn(override), choices), args)
 	)
 }
 
