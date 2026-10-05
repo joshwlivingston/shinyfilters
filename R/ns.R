@@ -9,6 +9,14 @@ method(._resolve_ns, class_function) <- function(ns, call = caller_env()) {
 	return(ns)
 }
 
+# The session whose `input` holds a configuration's inputs by column name
+._config_session <- function(config, session) {
+	if (is.null(config@ns) || is.null(session)) {
+		return(session)
+	}
+	session$rootScope()$makeScope(._resolve_ns(config@ns)(character()))
+}
+
 ._apply_ns <- function(ns, ..., call = caller_env()) {
 	ns <- ._resolve_ns(ns, call = call)
 	args <- list(...)

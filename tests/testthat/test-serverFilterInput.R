@@ -72,6 +72,97 @@ test_that("serverFilterInput() passes on a `selected` it is given", {
 	})
 })
 
+test_that("shinyfilters_server() updates a configuration's empty inputs", {
+	cfg <- with_filter(
+		shinyfilters(df_config),
+		letters = as_filter(
+			"radio",
+			choices = toupper(sort(unique(.x))),
+			inline = TRUE
+		),
+		factors = as_filter(
+			shiny::checkboxGroupInput,
+			.update_fn = shiny::updateCheckboxGroupInput
+		),
+		a_very_very_long_name = "slider"
+	)
+	testServer(function(input, output, session) {}, {
+		sent <- record_messages(session)
+		res <- shinyfilters_server(cfg)
+		session$setInputs(x = 9L)
+		expect_identical(res$filtered, df_config[2:3, ])
+		expect_identical(
+			sent(),
+			update_messages({
+				shiny::updateRadioButtons(
+					inputId = "letters",
+					choices = c("A", "C"),
+					selected = character(0),
+					inline = TRUE
+				)
+				shiny::updateCheckboxGroupInput(
+					inputId = "factors",
+					choices = factor("lo", levels = c("lo", "hi")),
+					selected = character(0)
+				)
+				shiny::updateSliderInput(
+					inputId = "a_very_very_long_name",
+					min = 2.5,
+					max = 3.5
+				)
+			})
+		)
+	})
+})
+
+test_that("shinyfilters_server() reads and updates the inputs of a namespace", {
+	cfg <- with_ns(shinyfilters(df_config), "m")
+	expected <- update_messages({
+		shiny::updateSelectInput(
+			inputId = "m-letters",
+			choices = c("a", "c"),
+			selected = character(0)
+		)
+		shiny::updateSelectInput(
+			inputId = "m-factors",
+			choices = factor("lo", levels = c("lo", "hi")),
+			selected = character(0)
+		)
+		shiny::updateNumericInput(
+			inputId = "m-a_very_very_long_name",
+			min = 2.5,
+			max = 3.5
+		)
+	})
+	testServer(function(input, output, session) {}, {
+		sent <- record_messages(session)
+		res <- shinyfilters_server(cfg)
+		session$setInputs(`m-x` = 9L)
+		expect_identical(res$filtered, df_config[2:3, ])
+		expect_identical(sent(), expected)
+	})
+	testServer(function(input, output, session) {}, {
+		sent <- record_messages(session)
+		res <- shiny::withReactiveDomain(
+			session$makeScope("m"),
+			shinyfilters_server(cfg)
+		)
+		session$setInputs(`m-x` = 9L)
+		expect_identical(res$filtered, df_config[2:3, ])
+		expect_identical(sent(), expected)
+	})
+})
+
+test_that("shinyfilters_server() errors when called, for an input it can't update", {
+	cfg <- with_filter(
+		shinyfilters(df_config),
+		letters = shiny::checkboxGroupInput
+	)
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+		shinyfilters_server(cfg)
+	})
+})
+
 test_that("._prepare_input() with reactiveExpr returns valid list for all test_df columns", {
 	testServer(app_shiny(), {
 		# Create reactive with all required columns from test_df

@@ -26,8 +26,11 @@ shinyfilters_server(
 \arguments{
 \item{x}{An object being filtered; typically the result of \code{\link[=shinyfilters]{shinyfilters()}}.}
 
-\item{session}{The \pkg{shiny} session whose inputs are read. Defaults to
-the current session.}
+\item{session}{The \pkg{shiny} session whose inputs are read and updated.
+Defaults to the current session. The inputs of a configuration with a
+namespace (see \code{\link[=with_ns]{with_ns()}}) are found from any session of the app, so
+\code{shinyfilters_server()} can be called at the top level of the server or
+inside the module.}
 
 \item{filter_combine_method}{A string or function indicating how to combine
 multiple filters. If a string, it can be "and" (or "&") for logical AND,
@@ -54,7 +57,12 @@ interdependent. \code{serverFilterInput()} is an alias of
 }
 \details{
 Only the inputs that have no value are updated, and they are left without
-one.
+one. The inputs of a configuration made by \code{\link[=shinyfilters]{shinyfilters()}} are updated as
+\code{\link[=updateFilterInput]{updateFilterInput()}} updates them, from the filtered data.
+
+An input set by a function that isn't a \pkg{shiny} input needs the
+function that updates it, named with \code{\link[=as_filter]{as_filter()}}'s \code{.update_fn}. Without
+it, \code{shinyfilters_server()} errors.
 }
 \examples{
 \dontshow{if (interactive() && requireNamespace("bslib") && requireNamespace("DT")) withAutoprint(\{ # examplesIf}

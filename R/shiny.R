@@ -9,8 +9,11 @@
 #' `shinyfilters_server()`.
 #'
 #' @param x An object being filtered; typically the result of [shinyfilters()].
-#' @param session The \pkg{shiny} session whose inputs are read. Defaults to
-#'   the current session.
+#' @param session The \pkg{shiny} session whose inputs are read and updated.
+#'   Defaults to the current session. The inputs of a configuration with a
+#'   namespace (see [with_ns()]) are found from any session of the app, so
+#'   `shinyfilters_server()` can be called at the top level of the server or
+#'   inside the module.
 #' @inheritParams apply_filters
 #' @param args_apply_filters A named list of additional arguments passed to
 #'   [apply_filters()].
@@ -20,7 +23,12 @@
 #'
 #' @details
 #' Only the inputs that have no value are updated, and they are left without
-#' one.
+#' one. The inputs of a configuration made by [shinyfilters()] are updated as
+#' [updateFilterInput()] updates them, from the filtered data.
+#'
+#' An input set by a function that isn't a \pkg{shiny} input needs the
+#' function that updates it, named with [as_filter()]'s `.update_fn`. Without
+#' it, `shinyfilters_server()` errors.
 #'
 #' @returns A reactiveValues list with two elements: `filtered`, the filtered
 #'   data, and `input_values`, the current filter input values as a named
@@ -108,9 +116,17 @@ serverFilterInput <- function(
 		session <- getDefaultReactiveDomain()
 	}
 	out_input <- reactiveValues()
+	is_config <- S7_inherits(x, class_shinyfilters)
+	input_session <- session
+	if (is_config) {
+		# Raised here, not in the observer, which only updates the inputs that
+		# happen to be empty.
+		._check_update_fns(x, names(x@data), error_call)
+		input_session <- ._config_session(x, session)
+	}
 	# An input the server updates has no value, and keeps none: without
 	# `selected`, `updateRadioButtons()` selects the first choice.
-	args_update <- list(...)
+	args_update <- c(list(session = session), list(...))
 	if (!("selected" %in% names(args_update))) {
 		args_update$selected <- character(0)
 	}
@@ -129,7 +145,7 @@ serverFilterInput <- function(
 				.frequency_id = "shinyfilters_server_input_arg"
 			)
 		} else {
-			input <- session$input
+			input <- input_session$input
 		}
 		input <- ._prepare_input(input, x = x, call = error_call)
 		args_apply_filters <- c(
@@ -151,20 +167,19 @@ serverFilterInput <- function(
 			}
 			args <- list(col, id)
 			names(args) <- c("x", arg_name_input_id(col))
-			args <- c(args, args_update)
-			if (
-				S7_inherits(x, class_shinyfilters) && !is.null(x@overrides[[id]]$args)
-			) {
-				args[[INPUT_ARGS]] <- ._input_args(
-					x@overrides[[id]]$args,
-					x,
-					id,
-					current_env()
-				)
-			}
-			do.call(updateFilterInput, args)
+			do.call(updateFilterInput, c(args, args_update))
 		}
-		mapply(update_input, x_filt, get_input_ids(x_filt))
+		if (is_config) {
+			is_empty <- vapply(input[get_input_ids(x_filt)], is.null, logical(1))
+			._config_update_inputs(
+				._config_filtered(x, x_filt),
+				names(x_filt)[is_empty],
+				args_update,
+				error_call
+			)
+		} else {
+			mapply(update_input, x_filt, get_input_ids(x_filt))
+		}
 		out_input$input_values <- input
 	})
 	return(out_input)

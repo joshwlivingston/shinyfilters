@@ -32,6 +32,8 @@
 
 ### Run the server
 
+* `shinyfilters_server()` is the new name of `serverFilterInput()`, and also returns the filtered data, as `filtered`. Its `input` argument is deprecated: omit it, or pass `session` (#105).
+* `shinyfilters_server()` updates the inputs of a configuration as `updateFilterInput()` does, and reads and updates the inputs of its namespace wherever it is called (#105).
 * `updateFilterInput()` updates the inputs of a configuration, each with the function and arguments that match the input its column uses (#105).
 
 ## Other new features

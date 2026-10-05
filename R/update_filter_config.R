@@ -23,6 +23,15 @@ method(updateFilterInput, class_shinyfilters) <- function(x, ...) {
 	)
 }
 
+# The configuration with its data filtered, which the server updates from
+._config_filtered <- function(config, data) {
+	the$allowed <- TRUE
+	on.exit({
+		the$allowed <- FALSE
+	})
+	set_props(config, data = data)
+}
+
 # The arguments every column's update gets: the configuration's defaults and
 # the session. A namespaced id is complete, so it goes through the root
 # session.
