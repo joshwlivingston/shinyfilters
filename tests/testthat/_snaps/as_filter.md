@@ -15,7 +15,6 @@
         *  a_very_very_long_name  <dbl>  sliderInput
                                            value = range(.x, na.rm = TRUE)
       
-      
       * Filter set by `with_filters()`
       ~ Filter replaced by `with_filters()`
     Code
@@ -42,7 +41,6 @@
         factors                <fct>  selectizeInput
         x                      <int>  sliderInput
         a_very_very_long_name  <dbl>  sliderInput
-      
 
 # print() marks a row by its input, not its as_filter() arguments
 
@@ -58,7 +56,6 @@
         x                      <int>  sliderInput
                                         value = range(.x, na.rm = TRUE)
         a_very_very_long_name  <dbl>  sliderInput
-      
     Code
       print(as_filter(value = range(.x)))
     Output
@@ -81,7 +78,6 @@
         *  x                      <int>  <custom>
                                            .update_fn = <custom>
            a_very_very_long_name  <dbl>  sliderInput
-      
       
       * Filter set by `with_filters()`
     Code

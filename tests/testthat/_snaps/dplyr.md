@@ -11,7 +11,6 @@
            x                      <int>  sliderInput
            a_very_very_long_name  <dbl>  sliderInput
       
-      
       * Filter set by `mutate()`
     Code
       print(dplyr::mutate(cfg, letters = my_select))
@@ -23,7 +22,6 @@
            factors                <fct>  selectizeInput
            x                      <int>  sliderInput
            a_very_very_long_name  <dbl>  sliderInput
-      
       
       * Filter set by `mutate()`
 
@@ -41,7 +39,6 @@
            a_very_very_long_name  <dbl>  sliderInput
         +  y                      <dbl>  sliderInput
       
-      
       + Filter added by `mutate()`
       ~ Filter replaced by `mutate()`
     Code
@@ -56,7 +53,6 @@
            a_very_very_long_name  <dbl>  sliderInput
         +  y                      <dbl>  sliderInput
       
-      
       * Filter set by `mutate()`
       + Filter added by `mutate()`
       ~ Filter replaced by `mutate()`
@@ -68,7 +64,6 @@
       Filters
         ~  x        <dbl>  sliderInput
            letters  <chr>  selectizeInput
-      
       
       ~ Filter replaced by `mutate()`
     Code
@@ -83,7 +78,6 @@
            a_very_very_long_name  <dbl>  sliderInput
         +  y                      <dbl>  sliderInput
         +  z                      <dbl>  sliderInput
-      
       
       + Filter added by `mutate()` or `with_filters()`
       ~ Filter replaced by `with_filters()`
@@ -101,7 +95,6 @@
         *  x                      <int>  sliderInput
            a_very_very_long_name  <dbl>  sliderInput
       
-      
       * Filter set by `mutate()`
     Code
       print(with_filters(cfg, letters = "radio"))
@@ -114,7 +107,6 @@
         *  x                      <int>  sliderInput
            a_very_very_long_name  <dbl>  sliderInput
       
-      
       * Filter set by `mutate()` or `with_filters()`
     Code
       print(with_filters(cfg, x = "radio"))
@@ -126,7 +118,6 @@
            factors                <fct>  selectizeInput
         *  x                      <int>  radioButtons
            a_very_very_long_name  <dbl>  sliderInput
-      
       
       * Filter set by `with_filters()`
 
@@ -236,7 +227,6 @@
         factors                <fct>  selectizeInput
         x                      <int>  sliderInput
         a_very_very_long_name  <dbl>  sliderInput
-      
 
 # transmute() errors
 

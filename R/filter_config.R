@@ -472,8 +472,8 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	lines <- Map(c, sub("\\s+$", "", lines), arg_lines)
 	cat_line(unlist(lines, use.names = FALSE))
 
-	cat_line()
 	if (length(defaults) > 0) {
+		cat_line()
 		values <- vapply(defaults, ._format_arg, character(1))
 		cat_line(col_grey("Default Overrides"))
 		cat_line(paste0(

@@ -19,7 +19,6 @@
         factors                <fct>  selectizeInput
         x                      <int>  sliderInput
         a_very_very_long_name  <dbl>  sliderInput
-      
 
 # `radio = TRUE` turns off the `selectize` default
 
@@ -43,7 +42,6 @@
            a_very_very_long_name  <dbl>  sliderInput
         +  y                      <dbl>  sliderInput
       
-      
       + Filter added by `with_filters()`
     Code
       print(cfg["y"])
@@ -53,7 +51,6 @@
       Filters
         +  y  <dbl>  sliderInput
       
-      
       + Filter added by `with_filters()`
     Code
       print(cfg["x"])
@@ -62,7 +59,6 @@
       
       Filters
         x  <int>  sliderInput
-      
 
 # print() marks columns replaced by with_filters()
 
@@ -77,7 +73,6 @@
         ~  x                      <dbl>  sliderInput
            a_very_very_long_name  <dbl>  sliderInput
       
-      
       ~ Filter replaced by `with_filters()`
     Code
       print(cfg["x"])
@@ -87,7 +82,6 @@
       Filters
         ~  x  <dbl>  sliderInput
       
-      
       ~ Filter replaced by `with_filters()`
     Code
       print(cfg["letters"])
@@ -96,7 +90,6 @@
       
       Filters
         letters  <chr>  selectizeInput
-      
 
 # print() shows one marker per row
 
@@ -137,7 +130,6 @@
            delayed                    <lgl>   selectizeInput
            awpirgbeqaprkjgbaepirg...  <chr>   selectizeInput
         +  on_time                    <lgl>   selectizeInput
-      
       
       * Filter set by `with_filters()`
       + Filter added by `with_filters()`
@@ -378,7 +370,6 @@
         factors                <fct>  selectizeInput
         x                      <int>  sliderInput
         a_very_very_long_name  <dbl>  sliderInput
-      
     Code
       with_ns(cfg, NA_character_)
     Output
@@ -389,7 +380,6 @@
         factors                <fct>  selectizeInput
         x                      <int>  sliderInput
         a_very_very_long_name  <dbl>  sliderInput
-      
 
 # with_defaults() errors
 
@@ -423,7 +413,6 @@
         factors                <fct>  selectizeInput
         x                      <int>  sliderInput
         a_very_very_long_name  <dbl>  sliderInput
-      
     Code
       print(with_ns(cfg, NULL))
     Output
@@ -434,7 +423,6 @@
         factors                <fct>  selectizeInput
         x                      <int>  sliderInput
         a_very_very_long_name  <dbl>  sliderInput
-      
 
 # print() shows each column's input
 
@@ -448,7 +436,6 @@
         factors                <fct>  selectizeInput
         x                      <int>  sliderInput
         a_very_very_long_name  <dbl>  sliderInput
-      
     Code
       print(cfg)
     Output
@@ -459,7 +446,6 @@
            factors                <fct>  selectizeInput
         *  x                      <int>  radioButtons
            a_very_very_long_name  <dbl>  sliderInput
-      
       
       * Filter set by `with_filters()`
     Code
@@ -473,7 +459,6 @@
            x                      <int>  sliderInput
            a_very_very_long_name  <dbl>  sliderInput
       
-      
       * Filter set by `with_filters()`
     Code
       print(with_filters(shinyfilters(df_config), letters = shiny::radioButtons))
@@ -485,7 +470,6 @@
            factors                <fct>  selectizeInput
            x                      <int>  sliderInput
            a_very_very_long_name  <dbl>  sliderInput
-      
       
       * Filter set by `with_filters()`
     Code
@@ -508,7 +492,6 @@
       
       Filters
         x  <chr>  selectizeInput
-      
 
 # print() shows the defaults that differ from shinyfilters()'s
 
@@ -587,7 +570,6 @@
       Filters
         dte  <date>  dateRangeInput
         dtm  <dttm>  dateRangeInput
-      
 
 # print() resolves custom methods
 
@@ -599,7 +581,6 @@
       Filters
         radio   <chr>  radioButtons
         custom  <chr>  <custom>
-      
 
 # print() names the input of a method that changes it
 
@@ -610,7 +591,6 @@
       
       Filters
         tagged  <chr>  radioButtons
-      
 
 # `$` and `[[` error on unknown columns
 
@@ -679,7 +659,6 @@
       Filters
            letters  <chr>  selectizeInput
         *  x        <int>  radioButtons
-      
       
       * Filter set by `with_filters()`
 

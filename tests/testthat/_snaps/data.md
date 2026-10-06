@@ -13,5 +13,4 @@
         dep_delay  <dbl>   sliderInput
         distance   <dbl>   sliderInput
         delayed    <lgl>   selectizeInput
-      
 
