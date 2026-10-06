@@ -195,9 +195,32 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	}
 }
 
-## Methods: $, [[, [, names(), dim(), .DollarNames() ####
+## Methods: $, [[, [, names(), dim(), .DollarNames(), str() ####
 `$.shinyfilters::shinyfilters` <- function(x, name) {
+	._check_not_inspected(parent.frame())
 	._config_column(x, name, call = call("$", substitute(x), as.name(name)))
+}
+
+# A UI function such as `bslib::accordion()` has htmltools inspect its
+# contents before the page is rendered, so before `as.tags()` creates the
+# inputs. htmltools reads a child's attributes with `$`, and calls `str()` on
+# a descendant it doesn't recognize, then errors. `env` is the method's caller.
+._check_not_inspected <- function(env) {
+	if (!identical(topenv(env), asNamespace("htmltools"))) {
+		return(invisible())
+	}
+	cli_abort(
+		c(
+			"{.cls shinyfilters} objects cannot be used in some shiny functions.",
+			i = "Use {.code [[}, {.code $}, {.fn filterInput}, or {.code dplyr::pull()} to render the filters directly."
+		),
+		call = NULL
+	)
+}
+
+`str.shinyfilters::shinyfilters` <- function(object, ...) {
+	._check_not_inspected(parent.frame())
+	NextMethod()
 }
 
 `[[.shinyfilters::shinyfilters` <- function(x, i, ...) {

@@ -19,6 +19,7 @@
 		cls,
 		`as.tags.shinyfilters::shinyfilters`
 	)
+	._s3_register("utils::str", cls, `str.shinyfilters::shinyfilters`)
 	._s3_register(
 		"base::as.data.frame",
 		cls,
