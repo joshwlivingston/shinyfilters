@@ -15,18 +15,11 @@
       <shinyfilters> * 4 filters
       
       Filters
-        #  letters                <chr>  selectizeInput
-        #  factors                <fct>  selectizeInput
-        #  x                      <int>  sliderInput
-        #  a_very_very_long_name  <dbl>  sliderInput
+        letters                <chr>  selectizeInput
+        factors                <fct>  selectizeInput
+        x                      <int>  sliderInput
+        a_very_very_long_name  <dbl>  sliderInput
       
-      Default Overrides
-        range     = TRUE
-        selectize = TRUE
-        multiple  = TRUE
-        slider    = TRUE
-      
-      # Filter set by default argument
 
 # `radio = TRUE` turns off the `selectize` default
 
@@ -44,19 +37,13 @@
       <shinyfilters> * 5 filters
       
       Filters
-        #  letters                <chr>  selectizeInput
-        #  factors                <fct>  selectizeInput
-        #  x                      <int>  sliderInput
-        #  a_very_very_long_name  <dbl>  sliderInput
+           letters                <chr>  selectizeInput
+           factors                <fct>  selectizeInput
+           x                      <int>  sliderInput
+           a_very_very_long_name  <dbl>  sliderInput
         +  y                      <dbl>  sliderInput
       
-      Default Overrides
-        range     = TRUE
-        selectize = TRUE
-        multiple  = TRUE
-        slider    = TRUE
       
-      # Filter set by default argument
       + Filter added by `with_filters()`
     Code
       print(cfg["y"])
@@ -66,11 +53,6 @@
       Filters
         +  y  <dbl>  sliderInput
       
-      Default Overrides
-        range     = TRUE
-        selectize = TRUE
-        multiple  = TRUE
-        slider    = TRUE
       
       + Filter added by `with_filters()`
     Code
@@ -79,15 +61,8 @@
       <shinyfilters> * 1 filter
       
       Filters
-        #  x  <int>  sliderInput
+        x  <int>  sliderInput
       
-      Default Overrides
-        range     = TRUE
-        selectize = TRUE
-        multiple  = TRUE
-        slider    = TRUE
-      
-      # Filter set by default argument
 
 # print() marks columns replaced by with_filters()
 
@@ -97,18 +72,12 @@
       <shinyfilters> * 4 filters
       
       Filters
-        #  letters                <chr>  selectizeInput
-        #  factors                <fct>  selectizeInput
+           letters                <chr>  selectizeInput
+           factors                <fct>  selectizeInput
         ~  x                      <dbl>  sliderInput
-        #  a_very_very_long_name  <dbl>  sliderInput
+           a_very_very_long_name  <dbl>  sliderInput
       
-      Default Overrides
-        range     = TRUE
-        selectize = TRUE
-        multiple  = TRUE
-        slider    = TRUE
       
-      # Filter set by default argument
       ~ Filter replaced by `with_filters()`
     Code
       print(cfg["x"])
@@ -118,11 +87,6 @@
       Filters
         ~  x  <dbl>  sliderInput
       
-      Default Overrides
-        range     = TRUE
-        selectize = TRUE
-        multiple  = TRUE
-        slider    = TRUE
       
       ~ Filter replaced by `with_filters()`
     Code
@@ -131,15 +95,8 @@
       <shinyfilters> * 1 filter
       
       Filters
-        #  letters  <chr>  selectizeInput
+        letters  <chr>  selectizeInput
       
-      Default Overrides
-        range     = TRUE
-        selectize = TRUE
-        multiple  = TRUE
-        slider    = TRUE
-      
-      # Filter set by default argument
 
 # print() shows one marker per row
 
@@ -149,18 +106,15 @@
       <shinyfilters> * 6 filters
       
       Filters
-        #  letters                <chr>  selectizeInput
-        #  factors                <fct>  selectizeInput
+        #  letters                <chr>  selectInput
+        #  factors                <fct>  selectInput
         ~  x                      <dbl>  radioButtons
         ~  a_very_very_long_name  <dbl>  numericInput
         +  y                      <dbl>  sliderInput
-        +  z                      <chr>  selectizeInput
+        +  z                      <chr>  selectInput
       
       Default Overrides
-        range     = TRUE
-        selectize = TRUE
-        multiple  = TRUE
-        slider    = TRUE
+        selectize = FALSE
       
       # Filter set by default argument
       + Filter added by `with_filters()`
@@ -174,23 +128,17 @@
       <shinyfilters> * 8 filters * namespace "sidebar-mod"
       
       Filters
-        #  date                       <date>  dateRangeInput
+           date                       <date>  dateRangeInput
         *  origin                     <fct>   radioButtons
-        #  dest                       <chr>   selectizeInput
-        #  dep_delay                  <dbl>   sliderInput
+           dest                       <chr>   selectizeInput
+           dep_delay                  <dbl>   sliderInput
                                                 value = urgfjkbhqaewpqaedoufikljshygbqaeoli...
         *  distance                   <dbl>   sliderInput
-        #  delayed                    <lgl>   selectizeInput
-        #  awpirgbeqaprkjgbaepirg...  <chr>   selectizeInput
+           delayed                    <lgl>   selectizeInput
+           awpirgbeqaprkjgbaepirg...  <chr>   selectizeInput
         +  on_time                    <lgl>   selectizeInput
       
-      Default Overrides
-        range     = TRUE
-        selectize = TRUE
-        multiple  = TRUE
-        slider    = TRUE
       
-      # Filter set by default argument
       * Filter set by `with_filters()`
       + Filter added by `with_filters()`
 
@@ -426,36 +374,22 @@
       <shinyfilters> * 4 filters * namespace "m-n"
       
       Filters
-        #  letters                <chr>  selectizeInput
-        #  factors                <fct>  selectizeInput
-        #  x                      <int>  sliderInput
-        #  a_very_very_long_name  <dbl>  sliderInput
+        letters                <chr>  selectizeInput
+        factors                <fct>  selectizeInput
+        x                      <int>  sliderInput
+        a_very_very_long_name  <dbl>  sliderInput
       
-      Default Overrides
-        range     = TRUE
-        selectize = TRUE
-        multiple  = TRUE
-        slider    = TRUE
-      
-      # Filter set by default argument
     Code
       with_ns(cfg, NA_character_)
     Output
       <shinyfilters> * 4 filters * namespace "NA"
       
       Filters
-        #  letters                <chr>  selectizeInput
-        #  factors                <fct>  selectizeInput
-        #  x                      <int>  sliderInput
-        #  a_very_very_long_name  <dbl>  sliderInput
+        letters                <chr>  selectizeInput
+        factors                <fct>  selectizeInput
+        x                      <int>  sliderInput
+        a_very_very_long_name  <dbl>  sliderInput
       
-      Default Overrides
-        range     = TRUE
-        selectize = TRUE
-        multiple  = TRUE
-        slider    = TRUE
-      
-      # Filter set by default argument
 
 # with_defaults() errors
 
@@ -485,36 +419,22 @@
       <shinyfilters> * 4 filters * namespace "other"
       
       Filters
-        #  letters                <chr>  selectizeInput
-        #  factors                <fct>  selectizeInput
-        #  x                      <int>  sliderInput
-        #  a_very_very_long_name  <dbl>  sliderInput
+        letters                <chr>  selectizeInput
+        factors                <fct>  selectizeInput
+        x                      <int>  sliderInput
+        a_very_very_long_name  <dbl>  sliderInput
       
-      Default Overrides
-        range     = TRUE
-        selectize = TRUE
-        multiple  = TRUE
-        slider    = TRUE
-      
-      # Filter set by default argument
     Code
       print(with_ns(cfg, NULL))
     Output
       <shinyfilters> * 4 filters
       
       Filters
-        #  letters                <chr>  selectizeInput
-        #  factors                <fct>  selectizeInput
-        #  x                      <int>  sliderInput
-        #  a_very_very_long_name  <dbl>  sliderInput
+        letters                <chr>  selectizeInput
+        factors                <fct>  selectizeInput
+        x                      <int>  sliderInput
+        a_very_very_long_name  <dbl>  sliderInput
       
-      Default Overrides
-        range     = TRUE
-        selectize = TRUE
-        multiple  = TRUE
-        slider    = TRUE
-      
-      # Filter set by default argument
 
 # print() shows each column's input
 
@@ -524,18 +444,11 @@
       <shinyfilters> * 4 filters
       
       Filters
-        #  letters                <chr>  selectizeInput
-        #  factors                <fct>  selectizeInput
-        #  x                      <int>  sliderInput
-        #  a_very_very_long_name  <dbl>  sliderInput
+        letters                <chr>  selectizeInput
+        factors                <fct>  selectizeInput
+        x                      <int>  sliderInput
+        a_very_very_long_name  <dbl>  sliderInput
       
-      Default Overrides
-        range     = TRUE
-        selectize = TRUE
-        multiple  = TRUE
-        slider    = TRUE
-      
-      # Filter set by default argument
     Code
       print(cfg)
     Output
@@ -543,17 +456,11 @@
       
       Filters
         *  letters                <chr>  my_select
-        #  factors                <fct>  selectizeInput
+           factors                <fct>  selectizeInput
         *  x                      <int>  radioButtons
-        #  a_very_very_long_name  <dbl>  sliderInput
+           a_very_very_long_name  <dbl>  sliderInput
       
-      Default Overrides
-        range     = TRUE
-        selectize = TRUE
-        multiple  = TRUE
-        slider    = TRUE
       
-      # Filter set by default argument
       * Filter set by `with_filters()`
     Code
       print(with_filters(shinyfilters(df_config), factors = "slider"))
@@ -561,18 +468,12 @@
       <shinyfilters> * 4 filters
       
       Filters
-        #  letters                <chr>  selectizeInput
+           letters                <chr>  selectizeInput
         *  factors                <fct>  x "slider" isn't available for <factor> columns.
-        #  x                      <int>  sliderInput
-        #  a_very_very_long_name  <dbl>  sliderInput
+           x                      <int>  sliderInput
+           a_very_very_long_name  <dbl>  sliderInput
       
-      Default Overrides
-        range     = TRUE
-        selectize = TRUE
-        multiple  = TRUE
-        slider    = TRUE
       
-      # Filter set by default argument
       * Filter set by `with_filters()`
     Code
       print(with_filters(shinyfilters(df_config), letters = shiny::radioButtons))
@@ -581,17 +482,11 @@
       
       Filters
         *  letters                <chr>  radioButtons
-        #  factors                <fct>  selectizeInput
-        #  x                      <int>  sliderInput
-        #  a_very_very_long_name  <dbl>  sliderInput
+           factors                <fct>  selectizeInput
+           x                      <int>  sliderInput
+           a_very_very_long_name  <dbl>  sliderInput
       
-      Default Overrides
-        range     = TRUE
-        selectize = TRUE
-        multiple  = TRUE
-        slider    = TRUE
       
-      # Filter set by default argument
       * Filter set by `with_filters()`
     Code
       print(shinyfilters(df_config, args_unique = "bad"))
@@ -599,32 +494,86 @@
       <shinyfilters> * 4 filters
       
       Filters
-           letters                <chr>  x `args_unique` must be a list, not a string.
-           factors                <fct>  x `args_unique` must be a list, not a string.
-        #  x                      <int>  sliderInput
-        #  a_very_very_long_name  <dbl>  sliderInput
+        letters                <chr>  x `args_unique` must be a list, not a string.
+        factors                <fct>  x `args_unique` must be a list, not a string.
+        x                      <int>  sliderInput
+        a_very_very_long_name  <dbl>  sliderInput
       
       Default Overrides
-        range       = TRUE
-        selectize   = TRUE
-        multiple    = TRUE
-        slider      = TRUE
         args_unique = "bad"
-      
-      # Filter set by default argument
     Code
       print(shinyfilters(data.frame(stringsAsFactors = FALSE, x = "a")))
     Output
       <shinyfilters> * 1 filter
       
       Filters
-        #  x  <chr>  selectizeInput
+        x  <chr>  selectizeInput
+      
+
+# print() shows the defaults that differ from shinyfilters()'s
+
+    Code
+      print(shinyfilters(df_config, slider = FALSE, width = "200px"))
+    Output
+      <shinyfilters> * 4 filters
+      
+      Filters
+           letters                <chr>  selectizeInput
+           factors                <fct>  selectizeInput
+        #  x                      <int>  numericInput
+        #  a_very_very_long_name  <dbl>  numericInput
       
       Default Overrides
-        range     = TRUE
-        selectize = TRUE
-        multiple  = TRUE
-        slider    = TRUE
+        slider = FALSE
+        width  = "200px"
+      
+      # Filter set by default argument
+    Code
+      print(shinyfilters(df_config, radio = TRUE))
+    Output
+      <shinyfilters> * 4 filters
+      
+      Filters
+        #  letters                <chr>  radioButtons
+        #  factors                <fct>  radioButtons
+           x                      <int>  sliderInput
+           a_very_very_long_name  <dbl>  sliderInput
+      
+      Default Overrides
+        radio     = TRUE
+        selectize = FALSE
+      
+      # Filter set by default argument
+    Code
+      print(shinyfilters(df_config, selectize = FALSE, multiple = FALSE))
+    Output
+      <shinyfilters> * 4 filters
+      
+      Filters
+        #  letters                <chr>  selectInput
+        #  factors                <fct>  selectInput
+           x                      <int>  sliderInput
+           a_very_very_long_name  <dbl>  sliderInput
+      
+      Default Overrides
+        selectize = FALSE
+        multiple  = FALSE
+      
+      # Filter set by default argument
+    Code
+      print(with_defaults(shinyfilters(df_config), range = NULL, textbox = TRUE))
+    Output
+      <shinyfilters> * 4 filters
+      
+      Filters
+        #  letters                <chr>  textInput
+           factors                <fct>  selectizeInput
+           x                      <int>  sliderInput
+           a_very_very_long_name  <dbl>  sliderInput
+      
+      Default Overrides
+        range   = FALSE
+        textbox = TRUE
       
       # Filter set by default argument
 
@@ -636,16 +585,9 @@
       <shinyfilters> * 2 filters
       
       Filters
-        #  dte  <date>  dateRangeInput
-        #  dtm  <dttm>  dateRangeInput
+        dte  <date>  dateRangeInput
+        dtm  <dttm>  dateRangeInput
       
-      Default Overrides
-        range     = TRUE
-        selectize = TRUE
-        multiple  = TRUE
-        slider    = TRUE
-      
-      # Filter set by default argument
 
 # print() resolves custom methods
 
@@ -658,11 +600,6 @@
         radio   <chr>  radioButtons
         custom  <chr>  <custom>
       
-      Default Overrides
-        range     = TRUE
-        selectize = TRUE
-        multiple  = TRUE
-        slider    = TRUE
 
 # print() names the input of a method that changes it
 
@@ -674,11 +611,6 @@
       Filters
         tagged  <chr>  radioButtons
       
-      Default Overrides
-        range     = TRUE
-        selectize = TRUE
-        multiple  = TRUE
-        slider    = TRUE
 
 # `$` and `[[` error on unknown columns
 
@@ -745,16 +677,10 @@
       <shinyfilters> * 2 filters
       
       Filters
-        #  letters  <chr>  selectizeInput
+           letters  <chr>  selectizeInput
         *  x        <int>  radioButtons
       
-      Default Overrides
-        range     = TRUE
-        selectize = TRUE
-        multiple  = TRUE
-        slider    = TRUE
       
-      # Filter set by default argument
       * Filter set by `with_filters()`
 
 # `[` errors on unknown columns

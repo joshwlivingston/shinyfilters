@@ -409,7 +409,7 @@ test_that("print() keeps a recomputed added column marked as added", {
 
 test_that("print() markers are one column wide in UTF-8 output", {
 	withr::local_options(cli.unicode = TRUE, cli.num_colors = 1)
-	cfg <- shinyfilters(df_config, selectize = TRUE)
+	cfg <- shinyfilters(df_config, slider = FALSE)
 	cfg <- with_filters(cfg, y = x * 2, x = x / 2)
 	cfg <- with_filters(cfg, letters = "radio")
 	out <- capture.output(print(cfg))
@@ -427,7 +427,7 @@ test_that("print() lines up rows with and without a marker", {
 })
 
 test_that("print() shows one marker per row", {
-	cfg <- shinyfilters(df_config, slider = TRUE, selectize = TRUE)
+	cfg <- shinyfilters(df_config, selectize = FALSE)
 	cfg <- with_filters(cfg, y = x * 2, x = x / 2, z = letters)
 	cfg <- with_filters(cfg, a_very_very_long_name = a_very_very_long_name + 1)
 	cfg <- with_filters(cfg, x = "radio", a_very_very_long_name = numericInput)
@@ -700,6 +700,15 @@ test_that("print() shows each column's input", {
 		print(with_filters(shinyfilters(df_config), letters = shiny::radioButtons))
 		print(shinyfilters(df_config, args_unique = "bad"))
 		print(shinyfilters(data.frame(stringsAsFactors = FALSE, x = "a")))
+	})
+})
+
+test_that("print() shows the defaults that differ from shinyfilters()'s", {
+	expect_snapshot(variant = snapshot_variant(), {
+		print(shinyfilters(df_config, slider = FALSE, width = "200px"))
+		print(shinyfilters(df_config, radio = TRUE))
+		print(shinyfilters(df_config, selectize = FALSE, multiple = FALSE))
+		print(with_defaults(shinyfilters(df_config), range = NULL, textbox = TRUE))
 	})
 })
 

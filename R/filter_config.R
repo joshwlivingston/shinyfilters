@@ -110,8 +110,9 @@ shinyfilters <- function(
 	)
 }
 
-# Drops input flags set to `FALSE`, their default. `selectize` stays: it is an
-# argument of `selectInput()` too, where `FALSE` isn't the default.
+# Drops input flags set to `FALSE`, `filterInput()`'s default. `selectize`
+# stays: it is an argument of `selectInput()` too, where `FALSE` isn't the
+# default.
 ._remove_default_flags <- function(args) {
 	is_flag <- names(args) %in% setdiff(INPUT_FLAGS, "selectize")
 	is_off <- vapply(args, isFALSE, logical(1))
@@ -358,6 +359,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 
 	cat_line()
 	cat_line(col_grey("Filters"))
+	defaults <- ._default_overrides(x)
 	inputs <- ._dry_run_inputs(x)
 	# With the space: a function's name can start with the ASCII cross, `x`.
 	is_error <- startsWith(inputs, paste0(symbol$cross, " "))
@@ -396,7 +398,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 		!added &
 		!replaced &
 		!is_error &
-		._set_by_default(x, inputs)
+		._set_by_default(x, inputs, defaults)
 	marked <- overridden | defaulted | added | replaced
 	# Unmarked rows keep the marker column's width, so the columns line up. A
 	# print with no marked row has no marker column.
@@ -471,8 +473,8 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	cat_line(unlist(lines, use.names = FALSE))
 
 	cat_line()
-	if (length(x@args) > 0) {
-		values <- vapply(x@args, ._format_arg, character(1))
+	if (length(defaults) > 0) {
+		values <- vapply(defaults, ._format_arg, character(1))
 		cat_line(col_grey("Default Overrides"))
 		cat_line(paste0(
 			"  ",
@@ -513,13 +515,37 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	invisible(x)
 }
 
-# Columns whose input differs from the one they get without the default
-# overrides
-._set_by_default <- function(config, inputs) {
-	if (length(config@args) == 0) {
+# Columns whose input differs from the one `shinyfilters()`'s own defaults
+# give them. `defaults` are the configuration's default overrides.
+._set_by_default <- function(config, inputs, defaults) {
+	if (length(defaults) == 0) {
 		return(rep(FALSE, length(inputs)))
 	}
-	inputs != ._dry_run_inputs(config, args = list(ns = config@ns))
+	args <- c(
+		._remove_default_flags(._signature_defaults()),
+		list(ns = config@ns)
+	)
+	inputs != ._dry_run_inputs(config, args = args)
+}
+
+# The default arguments that differ from `shinyfilters()`'s own: the arguments
+# it names, as they are in effect, then any other. One that isn't stored is
+# `FALSE`, as `filterInput()` has it.
+._default_overrides <- function(config) {
+	args <- config@args
+	signature <- ._signature_defaults()
+	current <- lapply(names(signature), function(name) {
+		if (name %in% names(args)) args[[name]] else FALSE
+	})
+	names(current) <- names(signature)
+	differs <- !mapply(identical, current, signature)
+	c(current[differs], args[!(names(args) %in% names(signature))])
+}
+
+# The defaults of the arguments `shinyfilters()` passes to `filterInput()`
+._signature_defaults <- function() {
+	args <- formals(shinyfilters)
+	as.list(args[!(names(args) %in% c(".data", "...", "ns"))])
 }
 
 ._pad <- function(x) {

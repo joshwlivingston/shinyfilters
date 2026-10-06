@@ -15,11 +15,6 @@
         *  a_very_very_long_name  <dbl>  sliderInput
                                            value = range(.x, na.rm = TRUE)
       
-      Default Overrides
-        range     = TRUE
-        selectize = TRUE
-        multiple  = TRUE
-        slider    = TRUE
       
       * Filter set by `with_filters()`
       ~ Filter replaced by `with_filters()`
@@ -42,19 +37,12 @@
       <shinyfilters> * 4 filters
       
       Filters
-        #  letters                <chr>  selectizeInput
-                                           label = "A label that runs past thirt...
-        #  factors                <fct>  selectizeInput
-        #  x                      <int>  sliderInput
-        #  a_very_very_long_name  <dbl>  sliderInput
+        letters                <chr>  selectizeInput
+                                        label = "A label that runs past thirt...
+        factors                <fct>  selectizeInput
+        x                      <int>  sliderInput
+        a_very_very_long_name  <dbl>  sliderInput
       
-      Default Overrides
-        range     = TRUE
-        selectize = TRUE
-        multiple  = TRUE
-        slider    = TRUE
-      
-      # Filter set by default argument
 
 # print() marks a row by its input, not its as_filter() arguments
 
@@ -64,20 +52,13 @@
       <shinyfilters> * 4 filters
       
       Filters
-        #  letters                <chr>  selectizeInput
-                                           label = "Letters"
-        #  factors                <fct>  selectizeInput
-        #  x                      <int>  sliderInput
-                                           value = range(.x, na.rm = TRUE)
-        #  a_very_very_long_name  <dbl>  sliderInput
+        letters                <chr>  selectizeInput
+                                        label = "Letters"
+        factors                <fct>  selectizeInput
+        x                      <int>  sliderInput
+                                        value = range(.x, na.rm = TRUE)
+        a_very_very_long_name  <dbl>  sliderInput
       
-      Default Overrides
-        range     = TRUE
-        selectize = TRUE
-        multiple  = TRUE
-        slider    = TRUE
-      
-      # Filter set by default argument
     Code
       print(as_filter(value = range(.x)))
     Output
@@ -99,15 +80,9 @@
                                            .update_fn = update_checkbox
         *  x                      <int>  <custom>
                                            .update_fn = <custom>
-        #  a_very_very_long_name  <dbl>  sliderInput
+           a_very_very_long_name  <dbl>  sliderInput
       
-      Default Overrides
-        range     = TRUE
-        selectize = TRUE
-        multiple  = TRUE
-        slider    = TRUE
       
-      # Filter set by default argument
       * Filter set by `with_filters()`
     Code
       print(as_filter(shiny::checkboxGroupInput, .update_fn = update_checkbox))
