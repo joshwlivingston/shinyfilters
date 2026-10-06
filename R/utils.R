@@ -53,6 +53,22 @@ s7_check_is_valid_list_dispatch <- function(x, function_name) {
 		)
 }
 
+# Marks the function that calls it as private: that function errors unless
+# package code called it, so `shinyfilters:::fn()` fails in user code. A private
+# function must be called directly: passed to `lapply()`, its caller is base R.
+._private <- function() {
+	if (identical(topenv(parent.frame(2)), topenv(environment()))) {
+		return(invisible())
+	}
+	cli_abort(
+		c(
+			"This function is internal to {.pkg shinyfilters}.",
+			i = "Change a {.cls shinyfilters} object with {.fn with_filters}, {.fn with_defaults}, or {.fn with_ns}."
+		),
+		call = parent.frame()
+	)
+}
+
 set_names <- function(object = nm, nm) {
 	names(object) <- nm
 	return(object)

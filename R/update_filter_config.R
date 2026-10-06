@@ -25,6 +25,7 @@ method(updateFilterInput, class_shinyfilters) <- function(x, ...) {
 
 # The configuration with its data filtered, which the server updates from
 ._config_filtered <- function(config, data) {
+	._private()
 	._modify(config, data = data)
 }
 

@@ -275,6 +275,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 # Shared by `[` and dplyr's `select()`. Each passes the user's selection and
 # its own call and label, so errors name the code the user wrote.
 ._select_columns <- function(x, selection, label, call) {
+	._private()
 	cols <- try_fetch(
 		names(eval_select(
 			selection,
@@ -863,6 +864,7 @@ method(.with_filters, class_shinyfilters) <- function(
 }
 
 ._override_cols <- function(config, cols, input, call, fn) {
+	._private()
 	selected <- names(eval_select(
 		cols,
 		config@data,
@@ -884,6 +886,7 @@ method(.with_filters, class_shinyfilters) <- function(
 # A function, a single string, or an `as_filter()` object chooses the column's
 # input; any other value is the column's data, computed from the other columns.
 ._set_column <- function(config, name, quo, call, fn) {
+	._private()
 	label <- as_label(quo)
 	data <- config@data
 	value <- try_fetch(
@@ -949,6 +952,7 @@ method(.with_filters, class_shinyfilters) <- function(
 }
 
 ._set_overrides <- function(config, overrides) {
+	._private()
 	overrides_all <- config@overrides
 	for (name in names(overrides)) {
 		overrides_all[[name]] <- ._merge_override(config, name, overrides[[name]])

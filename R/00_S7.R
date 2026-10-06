@@ -174,6 +174,7 @@ class_shinyfilters <- new_class(
 		added = character(),
 		replaced = character()
 	) {
+		._private()
 		# Not `._seal(new_object(...))`: `new_object()` finds the class through
 		# the function that called it.
 		object <- new_object(
@@ -219,6 +220,7 @@ class_shinyfilters <- new_class(
 	added = config@added,
 	replaced = config@replaced
 ) {
+	._private()
 	class_shinyfilters(
 		data = data,
 		args = args,

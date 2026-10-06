@@ -884,6 +884,52 @@
       Error:
       ! @data is read-only
 
+# functions that change a shinyfilters object are internal
+
+    Code
+      call_as_user(S7::S7_class(cfg), data = df_config)
+    Condition
+      Error in `fn()`:
+      ! This function is internal to shinyfilters.
+      i Change a <shinyfilters> object with `with_filters()`, `with_defaults()`, or `with_ns()`.
+    Code
+      call_as_user(._modify, cfg, data = df_config)
+    Condition
+      Error in `fn()`:
+      ! This function is internal to shinyfilters.
+      i Change a <shinyfilters> object with `with_filters()`, `with_defaults()`, or `with_ns()`.
+    Code
+      call_as_user(._config_filtered, cfg, df_config)
+    Condition
+      Error in `fn()`:
+      ! This function is internal to shinyfilters.
+      i Change a <shinyfilters> object with `with_filters()`, `with_defaults()`, or `with_ns()`.
+    Code
+      call_as_user(._set_overrides, cfg, list(x = list(input = identity)))
+    Condition
+      Error in `fn()`:
+      ! This function is internal to shinyfilters.
+      i Change a <shinyfilters> object with `with_filters()`, `with_defaults()`, or `with_ns()`.
+    Code
+      call_as_user(._set_column, cfg, "y", rlang::quo(x * 2), NULL, "f")
+    Condition
+      Error in `fn()`:
+      ! This function is internal to shinyfilters.
+      i Change a <shinyfilters> object with `with_filters()`, `with_defaults()`, or `with_ns()`.
+    Code
+      call_as_user(._override_cols, cfg, rlang::quo(x), rlang::quo("radio"), NULL,
+      "f")
+    Condition
+      Error in `fn()`:
+      ! This function is internal to shinyfilters.
+      i Change a <shinyfilters> object with `with_filters()`, `with_defaults()`, or `with_ns()`.
+    Code
+      call_as_user(._select_columns, cfg, rlang::quo(x), "x", NULL)
+    Condition
+      Error in `fn()`:
+      ! This function is internal to shinyfilters.
+      i Change a <shinyfilters> object with `with_filters()`, `with_defaults()`, or `with_ns()`.
+
 # a shinyfilters object changed through its attributes is invalid
 
     Code

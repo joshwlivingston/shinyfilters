@@ -874,6 +874,26 @@ test_that("a changed shinyfilters object is still read-only", {
 	})
 })
 
+test_that("functions that change a shinyfilters object are internal", {
+	cfg <- shinyfilters(df_config)
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+		call_as_user(S7::S7_class(cfg), data = df_config)
+		call_as_user(._modify, cfg, data = df_config)
+		call_as_user(._config_filtered, cfg, df_config)
+		call_as_user(._set_overrides, cfg, list(x = list(input = identity)))
+		call_as_user(._set_column, cfg, "y", rlang::quo(x * 2), NULL, "f")
+		call_as_user(
+			._override_cols,
+			cfg,
+			rlang::quo(x),
+			rlang::quo("radio"),
+			NULL,
+			"f"
+		)
+		call_as_user(._select_columns, cfg, rlang::quo(x), "x", NULL)
+	})
+})
+
 test_that("a shinyfilters object changed through its attributes is invalid", {
 	unnamed <- shinyfilters(df_config)
 	attr(unnamed, "args") <- list(TRUE)
