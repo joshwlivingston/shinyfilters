@@ -667,6 +667,17 @@ test_that("print() shows each column's input", {
 	})
 })
 
+test_that("print() doesn't show an input named like the error marker as an error", {
+	local_reproducible_output(crayon = TRUE)
+	x_select <- function(inputId, label, choices) NULL
+	cfg <- with_filter(shinyfilters(df_config), letters = x_select)
+	expect_no_match(
+		capture.output(print(cfg)),
+		cli::col_red("x_select"),
+		fixed = TRUE
+	)
+})
+
 test_that("print() shows a datetime column's type", {
 	df <- data.frame(
 		dte = as.Date("2024-01-01") + 0:1,

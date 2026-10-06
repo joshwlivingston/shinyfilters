@@ -285,7 +285,8 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	cat_line()
 	cat_line(col_grey("Filters"))
 	inputs <- ._dry_run_inputs(x)
-	is_error <- startsWith(inputs, symbol$cross)
+	# With the space: a function's name can start with the ASCII cross, `x`.
+	is_error <- startsWith(inputs, paste0(symbol$cross, " "))
 	width <- max(0L, ansi_nchar(inputs[!is_error], type = "width"))
 	styled_inputs <- ifelse(
 		is_error,
