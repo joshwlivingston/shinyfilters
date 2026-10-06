@@ -774,37 +774,22 @@
       ! `character(0)` doesn't select any columns.
     Code
       cfg[, "x"]
-    Output
-      <shinyfilters> * 4 filters
-      
-      Filters
-        #  letters                <chr>  selectizeInput
-        #  factors                <fct>  selectizeInput
-        #  x                      <int>  sliderInput
-        #  a_very_very_long_name  <dbl>  sliderInput
-      
-      Default Overrides
-        range     = TRUE
-        selectize = TRUE
-        multiple  = TRUE
-        slider    = TRUE
-      
-      # Filter set by default argument
+    Condition
+      Error in `cfg[, "x"]`:
+      ! Can't subset a <shinyfilters> object by rows and columns.
+      i Select columns with `x[cols]`.
     Code
       cfg[1, 2]
-    Output
-      <shinyfilters> * 1 filter
-      
-      Filters
-        #  letters  <chr>  selectizeInput
-      
-      Default Overrides
-        range     = TRUE
-        selectize = TRUE
-        multiple  = TRUE
-        slider    = TRUE
-      
-      # Filter set by default argument
+    Condition
+      Error in `cfg[1, 2]`:
+      ! Can't subset a <shinyfilters> object by rows and columns.
+      i Select columns with `x[cols]`.
+    Code
+      cfg[[1, 2]]
+    Condition
+      Error in `cfg[[1, 2]]`:
+      ! Can't subset a <shinyfilters> object by rows and columns.
+      i Select columns with `x[cols]`.
     Code
       cfg[factros]
     Condition

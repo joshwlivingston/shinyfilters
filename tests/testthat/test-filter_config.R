@@ -794,6 +794,7 @@ test_that("`[` errors on unknown columns", {
 		cfg[character(0)]
 		cfg[, "x"]
 		cfg[1, 2]
+		cfg[[1, 2]]
 		cfg[factros]
 		cfg[t]
 	})

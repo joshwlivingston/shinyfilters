@@ -197,12 +197,14 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 }
 
 `[[.shinyfilters::shinyfilters` <- function(x, i, ...) {
+	call <- sys.call()
+	call[[1]] <- as.name("[[")
+	._check_columns_only(nargs(), call)
 	if (missing(i)) {
 		return(x)
 	}
-	call <- sys.call()
-	call[[1]] <- as.name("[[")
-	res <- ._select_impl(x, new_quosure(substitute(i), parent.frame()), call, ...)
+	selection <- new_quosure(substitute(i), parent.frame())
+	res <- ._select_columns(x, selection, as_label(selection), call)
 	inputs <- filterInput(res)
 	# One column gives its input, as `$` does.
 	if (length(inputs) == 1) {
@@ -220,16 +222,19 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 }
 
 `[.shinyfilters::shinyfilters` <- function(x, i, ...) {
+	call <- sys.call()
+	call[[1]] <- as.name("[")
+	._check_columns_only(nargs(), call)
 	if (missing(i)) {
 		return(x)
 	}
-	call <- sys.call()
-	call[[1]] <- as.name("[")
-	._select_impl(x, new_quosure(substitute(i), parent.frame()), call, ...)
+	selection <- new_quosure(substitute(i), parent.frame())
+	._select_columns(x, selection, as_label(selection), call)
 }
 
-._select_impl <- function(x, selection, call, ...) {
-	if (...length() > 2) {
+# `n_args` counts the object: more than one index asks for rows and columns.
+._check_columns_only <- function(n_args, call) {
+	if (n_args > 2) {
 		cli_abort(
 			c(
 				"Can't subset a {.cls shinyfilters} object by rows and columns.",
@@ -238,7 +243,6 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 			call = call
 		)
 	}
-	._select_columns(x, selection, as_label(selection), call)
 }
 
 `dim.shinyfilters::shinyfilters` <- function(x) {
