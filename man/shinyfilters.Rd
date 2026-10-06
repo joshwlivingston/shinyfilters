@@ -54,16 +54,16 @@ A \code{shinyfilters} object:
 \itemize{
 \item \code{names(filters)} lists its columns.
 \item \code{filters$col} and \code{filters[["col"]]} return the input \code{\link[=filterInput]{filterInput()}}
-creates for one column, including any \code{\link[=with_filter]{with_filter()}} overrides.
+creates for one column, including any \code{\link[=with_filters]{with_filters()}} overrides.
 \item \code{filters[cols]} returns a \code{shinyfilters} object with only the selected
 columns, keeping their overrides. \code{cols} uses
-<\code{\link[tidyselect:language]{tidy-select}}>, like \code{\link[=with_filter]{with_filter()}}; use
+<\code{\link[tidyselect:language]{tidy-select}}>, like \code{\link[=with_filters]{with_filters()}}; use
 \code{all_of()} to select with a variable.
 }
 }
 \description{
 \code{shinyfilters()} stores a data frame with the arguments used to create its
-filters. Pass the result to \code{\link[=with_filter]{with_filter()}} to choose the input for
+filters. Pass the result to \code{\link[=with_filters]{with_filters()}} to choose the input for
 individual columns, then place it in a shiny UI to create the inputs.
 }
 \details{
@@ -86,5 +86,5 @@ filters$origin
 \dontshow{\}) # examplesIf}
 }
 \seealso{
-\code{\link[=with_filter]{with_filter()}}, \code{\link[=with_ns]{with_ns()}}
+\code{\link[=with_filters]{with_filters()}}, \code{\link[=with_ns]{with_ns()}}
 }

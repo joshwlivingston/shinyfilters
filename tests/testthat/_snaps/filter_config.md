@@ -21,7 +21,7 @@
         a_very_very_long_name  <dbl>  numericInput
       
 
-# print() marks columns added by with_filter()
+# print() marks columns added by with_filters()
 
     Code
       print(cfg)
@@ -36,7 +36,7 @@
         +  y                      <dbl>  numericInput
       
       
-      + Filter added by `with_filter()`
+      + Filter added by `with_filters()`
     Code
       print(cfg["y"])
     Output
@@ -46,7 +46,7 @@
         +  y  <dbl>  numericInput
       
       
-      + Filter added by `with_filter()`
+      + Filter added by `with_filters()`
     Code
       print(cfg["x"])
     Output
@@ -56,7 +56,7 @@
         x  <int>  numericInput
       
 
-# print() marks columns replaced by with_filter()
+# print() marks columns replaced by with_filters()
 
     Code
       print(cfg)
@@ -70,7 +70,7 @@
            a_very_very_long_name  <dbl>  numericInput
       
       
-      ~ Filter replaced by `with_filter()`
+      ~ Filter replaced by `with_filters()`
     Code
       print(cfg["x"])
     Output
@@ -80,7 +80,7 @@
         ~  x  <dbl>  numericInput
       
       
-      ~ Filter replaced by `with_filter()`
+      ~ Filter replaced by `with_filters()`
     Code
       print(cfg["letters"])
     Output
@@ -110,8 +110,8 @@
         selectize = TRUE
       
       # Filter set by default argument
-      + Filter added by `with_filter()`
-      ~ Filter replaced by `with_filter()`
+      + Filter added by `with_filters()`
+      ~ Filter replaced by `with_filters()`
 
 # print() handles long names
 
@@ -136,8 +136,8 @@
         selectize = TRUE
       
       # Filter set by default argument
-      * Filter set by `with_filter()`
-      + Filter added by `with_filter()`
+      * Filter set by `with_filters()`
+      + Filter added by `with_filters()`
 
 # errors from a function override name the column
 
@@ -156,7 +156,7 @@
       Caused by error:
       ! Not today.
 
-# shinyfilters() and with_filter() errors
+# shinyfilters() and with_filters() errors
 
     Code
       shinyfilters(1:3)
@@ -174,136 +174,136 @@
       Error in `shinyfilters()`:
       ! All elements of `...` must be named.
     Code
-      with_filter(df_config, x = "radio")
+      with_filters(df_config, x = "radio")
     Condition
-      Error in `with_filter()`:
+      Error in `with_filters()`:
       ! `.filters` must be created by `shinyfilters()`, not a data frame.
     Code
-      with_filter(cfg)
+      with_filters(cfg)
     Condition
-      Error in `with_filter()`:
-      ! `with_filter()` takes two unnamed arguments, or named arguments, `cols ~ input` formulas, and `across_filters()` calls.
-      i Select columns: `with_filter(filters, c(a, b), "radio")`.
-      i Name columns: `with_filter(filters, a = "radio", b = "slider")`.
-      i Mix the two: `with_filter(filters, c(a, b) ~ "radio", x = "slider")`.
+      Error in `with_filters()`:
+      ! `with_filters()` takes two unnamed arguments, or named arguments, `cols ~ input` formulas, and `across_filters()` calls.
+      i Select columns: `with_filters(filters, c(a, b), "radio")`.
+      i Name columns: `with_filters(filters, a = "radio", b = "slider")`.
+      i Mix the two: `with_filters(filters, c(a, b) ~ "radio", x = "slider")`.
     Code
-      with_filter(cfg, x)
+      with_filters(cfg, x)
     Condition
-      Error in `with_filter()`:
-      ! `with_filter()` takes two unnamed arguments, or named arguments, `cols ~ input` formulas, and `across_filters()` calls.
-      i Select columns: `with_filter(filters, c(a, b), "radio")`.
-      i Name columns: `with_filter(filters, a = "radio", b = "slider")`.
-      i Mix the two: `with_filter(filters, c(a, b) ~ "radio", x = "slider")`.
+      Error in `with_filters()`:
+      ! `with_filters()` takes two unnamed arguments, or named arguments, `cols ~ input` formulas, and `across_filters()` calls.
+      i Select columns: `with_filters(filters, c(a, b), "radio")`.
+      i Name columns: `with_filters(filters, a = "radio", b = "slider")`.
+      i Mix the two: `with_filters(filters, c(a, b) ~ "radio", x = "slider")`.
     Code
-      with_filter(cfg, x, "radio", "slider")
+      with_filters(cfg, x, "radio", "slider")
     Condition
-      Error in `with_filter()`:
-      ! `with_filter()` takes two unnamed arguments, or named arguments, `cols ~ input` formulas, and `across_filters()` calls.
-      i Select columns: `with_filter(filters, c(a, b), "radio")`.
-      i Name columns: `with_filter(filters, a = "radio", b = "slider")`.
-      i Mix the two: `with_filter(filters, c(a, b) ~ "radio", x = "slider")`.
+      Error in `with_filters()`:
+      ! `with_filters()` takes two unnamed arguments, or named arguments, `cols ~ input` formulas, and `across_filters()` calls.
+      i Select columns: `with_filters(filters, c(a, b), "radio")`.
+      i Name columns: `with_filters(filters, a = "radio", b = "slider")`.
+      i Mix the two: `with_filters(filters, c(a, b) ~ "radio", x = "slider")`.
     Code
-      with_filter(cfg, x = "radio", "letters")
+      with_filters(cfg, x = "radio", "letters")
     Condition
-      Error in `with_filter()`:
-      ! `with_filter()` takes two unnamed arguments, or named arguments, `cols ~ input` formulas, and `across_filters()` calls.
-      i Select columns: `with_filter(filters, c(a, b), "radio")`.
-      i Name columns: `with_filter(filters, a = "radio", b = "slider")`.
-      i Mix the two: `with_filter(filters, c(a, b) ~ "radio", x = "slider")`.
+      Error in `with_filters()`:
+      ! `with_filters()` takes two unnamed arguments, or named arguments, `cols ~ input` formulas, and `across_filters()` calls.
+      i Select columns: `with_filters(filters, c(a, b), "radio")`.
+      i Name columns: `with_filters(filters, a = "radio", b = "slider")`.
+      i Mix the two: `with_filters(filters, c(a, b) ~ "radio", x = "slider")`.
     Code
-      with_filter(cfg, nope = "radio")
+      with_filters(cfg, nope = "radio")
     Condition
-      Error in `with_filter()`:
+      Error in `with_filters()`:
       ! Can't find column nope.
       x `"radio"` chooses the input for an existing column.
-      i To add a column, compute it from the others: `with_filter(filters, nope = <expression>)`.
+      i To add a column, compute it from the others: `with_filters(filters, nope = <expression>)`.
     Code
-      with_filter(cfg, nope, "radio")
+      with_filters(cfg, nope, "radio")
     Condition
-      Error in `with_filter()`:
+      Error in `with_filters()`:
       ! Can't select columns that don't exist.
       x Column `nope` doesn't exist.
     Code
-      with_filter(cfg, where(is.logical), "radio")
+      with_filters(cfg, where(is.logical), "radio")
     Condition
-      Error in `with_filter()`:
+      Error in `with_filters()`:
       ! `where(is.logical)` doesn't select any columns.
     Code
-      with_filter(cfg, x = "radioo")
+      with_filters(cfg, x = "radioo")
     Condition
-      Error in `with_filter()`:
+      Error in `with_filters()`:
       ! An input must be one of "area", "date", "numeric", "radio", "range", "select", "selectize", "slider", or "textbox", or a function.
       x Got "radioo".
     Code
-      with_filter(cfg, nope ~ "radio")
+      with_filters(cfg, nope ~ "radio")
     Condition
-      Error in `with_filter()`:
+      Error in `with_filters()`:
       ! Can't select columns that don't exist.
       x Column `nope` doesn't exist.
     Code
-      with_filter(cfg, where(is.logical) ~ "radio")
+      with_filters(cfg, where(is.logical) ~ "radio")
     Condition
-      Error in `with_filter()`:
+      Error in `with_filters()`:
       ! `where(is.logical)` doesn't select any columns.
     Code
-      with_filter(cfg, x ~ "radioo")
+      with_filters(cfg, x ~ "radioo")
     Condition
-      Error in `with_filter()`:
+      Error in `with_filters()`:
       ! An input must be one of "area", "date", "numeric", "radio", "range", "select", "selectize", "slider", or "textbox", or a function.
       x Got "radioo".
     Code
-      with_filter(cfg, ~"radio")
+      with_filters(cfg, ~"radio")
     Condition
-      Error in `with_filter()`:
-      ! `with_filter()` takes two unnamed arguments, or named arguments, `cols ~ input` formulas, and `across_filters()` calls.
-      i Select columns: `with_filter(filters, c(a, b), "radio")`.
-      i Name columns: `with_filter(filters, a = "radio", b = "slider")`.
-      i Mix the two: `with_filter(filters, c(a, b) ~ "radio", x = "slider")`.
+      Error in `with_filters()`:
+      ! `with_filters()` takes two unnamed arguments, or named arguments, `cols ~ input` formulas, and `across_filters()` calls.
+      i Select columns: `with_filters(filters, c(a, b), "radio")`.
+      i Name columns: `with_filters(filters, a = "radio", b = "slider")`.
+      i Mix the two: `with_filters(filters, c(a, b) ~ "radio", x = "slider")`.
     Code
-      with_filter(cfg, x, c("radio", "slider"))
+      with_filters(cfg, x, c("radio", "slider"))
     Condition
-      Error in `with_filter()`:
+      Error in `with_filters()`:
       ! An input must be one of "area", "date", "numeric", "radio", "range", "select", "selectize", "slider", or "textbox", or a function.
       x Got "radio" and "slider".
     Code
-      with_filter(cfg, x, radio)
+      with_filters(cfg, x, radio)
     Condition
-      Error in `with_filter()`:
+      Error in `with_filters()`:
       ! Can't evaluate the input `radio`.
       i Keywords are strings, e.g. `"radio"`.
       Caused by error:
       ! object 'radio' not found
     Code
-      with_filter(cfg, x, range)
+      with_filters(cfg, x, range)
     Condition
-      Error in `with_filter()`:
+      Error in `with_filters()`:
       ! Can't use the function `range()` as an input.
       i Keywords are strings: `"range"`.
     Code
-      with_filter(cfg, x = numeric)
+      with_filters(cfg, x = numeric)
     Condition
-      Error in `with_filter()`:
+      Error in `with_filters()`:
       ! Can't use the function `numeric()` as an input.
       i Keywords are strings: `"numeric"`.
     Code
-      with_filter(cfg, y = nope * 2)
+      with_filters(cfg, y = nope * 2)
     Condition
-      Error in `with_filter()`:
+      Error in `with_filters()`:
       ! Can't evaluate `y = nope * 2`.
       Caused by error:
       ! object 'nope' not found
     Code
-      with_filter(cfg, y = 1:2)
+      with_filters(cfg, y = 1:2)
     Condition
-      Error in `with_filter()`:
+      Error in `with_filters()`:
       ! Column y must have 1 or 3 values, not 2.
     Code
-      with_filter(cfg, y = NULL)
+      with_filters(cfg, y = NULL)
     Condition
-      Error in `with_filter()`:
+      Error in `with_filters()`:
       ! Column y must be a vector, not NULL.
     Code
-      filterInput(with_filter(cfg, factors = "slider"))
+      filterInput(with_filters(cfg, factors = "slider"))
     Condition
       Error in `filterInput()`:
       ! Can't create an input for column factors.
@@ -311,7 +311,7 @@
       ! "slider" isn't available for <factor> columns.
       i Use "radio", "select", or "selectize" instead.
     Code
-      filterInput(with_filter(cfg, a_very_very_long_name = "range"))
+      filterInput(with_filters(cfg, a_very_very_long_name = "range"))
     Condition
       Error in `filterInput()`:
       ! Can't create an input for column a_very_very_long_name.
@@ -319,7 +319,7 @@
       ! "range" isn't available for <numeric> columns.
       i Use "numeric", "radio", "select", "selectize", or "slider" instead.
     Code
-      filterInput(with_filter(cfg, x = shiny::dateInput))
+      filterInput(with_filters(cfg, x = shiny::dateInput))
     Condition
       Error in `filterInput()`:
       ! Can't create an input for column x.
@@ -327,7 +327,7 @@
       ! "date" isn't available for <integer> columns.
       i Use "numeric", "radio", "select", "selectize", or "slider" instead.
     Code
-      filterInput(with_filter(shinyfilters(data.frame(a = as.Date("2024-01-01"))), a = shiny::numericInput))
+      filterInput(with_filters(shinyfilters(data.frame(a = as.Date("2024-01-01"))), a = shiny::numericInput))
     Condition
       Error in `filterInput()`:
       ! Can't create an input for column a.
@@ -335,7 +335,7 @@
       ! "numeric" isn't available for <Date> columns.
       i Use "date", "radio", "range", "select", or "selectize" instead.
     Code
-      filterInput(with_filter(shinyfilters(data.frame(stringsAsFactors = FALSE, a = NA_integer_)),
+      filterInput(with_filters(shinyfilters(data.frame(stringsAsFactors = FALSE, a = NA_integer_)),
       a = "radio"))
     Condition
       Error in `filterInput()`:
@@ -460,9 +460,9 @@
         slider = TRUE
       
       # Filter set by default argument
-      * Filter set by `with_filter()`
+      * Filter set by `with_filters()`
     Code
-      print(with_filter(shinyfilters(df_config), factors = "slider"))
+      print(with_filters(shinyfilters(df_config), factors = "slider"))
     Output
       <shinyfilters> * 4 filters
       
@@ -473,9 +473,9 @@
            a_very_very_long_name  <dbl>  numericInput
       
       
-      * Filter set by `with_filter()`
+      * Filter set by `with_filters()`
     Code
-      print(with_filter(shinyfilters(df_config), letters = shiny::radioButtons))
+      print(with_filters(shinyfilters(df_config), letters = shiny::radioButtons))
     Output
       <shinyfilters> * 4 filters
       
@@ -486,7 +486,7 @@
            a_very_very_long_name  <dbl>  numericInput
       
       
-      * Filter set by `with_filter()`
+      * Filter set by `with_filters()`
     Code
       print(shinyfilters(df_config, args_unique = "bad"))
     Output
@@ -586,7 +586,7 @@
       Default Overrides
         slider = TRUE
       
-      * Filter set by `with_filter()`
+      * Filter set by `with_filters()`
 
 # `[` errors on unknown columns
 
@@ -666,19 +666,19 @@
     Condition
       Error:
       ! @overrides is only allowed to be modified internally.
-      i See `?with_filter` for the user-facing function.
+      i See `?with_filters` for the user-facing function.
     Code
       cfg@added <- character()
     Condition
       Error:
       ! @added is only allowed to be modified internally.
-      i See `?with_filter` for the user-facing function.
+      i See `?with_filters` for the user-facing function.
     Code
       cfg@replaced <- character()
     Condition
       Error:
       ! @replaced is only allowed to be modified internally.
-      i See `?with_filter` for the user-facing function.
+      i See `?with_filters` for the user-facing function.
 
 # a shinyfilters object changed through its attributes is invalid
 

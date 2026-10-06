@@ -1,5 +1,5 @@
 test_that("as_filter() arguments replace the ones shinyfilters passes", {
-	cfg <- with_filter(
+	cfg <- with_filters(
 		shinyfilters(df_config),
 		x = as_filter("slider", value = range(.x), label = "X", step = 2)
 	)
@@ -16,21 +16,21 @@ test_that("as_filter() arguments replace the ones shinyfilters passes", {
 	)
 })
 
-test_that("as_filter() takes any input with_filter() does", {
+test_that("as_filter() takes any input with_filters() does", {
 	cfg <- shinyfilters(df_config)
 	my_numeric <- function(inputId, label, value, min, max, step = NA) {
 		shiny::numericInput(inputId, label, value, min, max, step)
 	}
 	expect_identical(
-		with_filter(cfg, x = as_filter("slider")),
-		with_filter(cfg, x = "slider")
+		with_filters(cfg, x = as_filter("slider")),
+		with_filters(cfg, x = "slider")
 	)
 	expect_identical(
-		with_filter(cfg, x = as_filter(shiny::sliderInput)),
-		with_filter(cfg, x = "slider")
+		with_filters(cfg, x = as_filter(shiny::sliderInput)),
+		with_filters(cfg, x = "slider")
 	)
 	expect_identical(
-		with_filter(cfg, x = as_filter(my_numeric, step = 2))$x,
+		with_filters(cfg, x = as_filter(my_numeric, step = 2))$x,
 		shiny::numericInput("x", "x", 10L, 2L, 10L, 2)
 	)
 })
@@ -38,7 +38,7 @@ test_that("as_filter() takes any input with_filter() does", {
 test_that("as_filter() without an input keeps the column's input", {
 	cfg <- shinyfilters(df_config, slider = TRUE)
 	expect_identical(
-		with_filter(cfg, x = as_filter(value = range(.x), step = 2))$x,
+		with_filters(cfg, x = as_filter(value = range(.x), step = 2))$x,
 		shiny::sliderInput(
 			"x",
 			"x",
@@ -49,36 +49,36 @@ test_that("as_filter() without an input keeps the column's input", {
 		)
 	)
 	expect_identical(
-		with_filter(cfg, letters = as_filter(label = "Letters"))$letters,
+		with_filters(cfg, letters = as_filter(label = "Letters"))$letters,
 		filterInput(df_config$letters, inputId = "letters", label = "Letters")
 	)
 	expect_identical(
-		with_filter(
-			with_filter(cfg, letters = "radio"),
+		with_filters(
+			with_filters(cfg, letters = "radio"),
 			letters = as_filter(inline = TRUE)
 		),
-		with_filter(cfg, letters = as_filter("radio", inline = TRUE))
+		with_filters(cfg, letters = as_filter("radio", inline = TRUE))
 	)
 })
 
-test_that("as_filter() without an input works in every with_filter() form", {
+test_that("as_filter() without an input works in every with_filters() form", {
 	cfg <- shinyfilters(df_config, slider = TRUE)
 	range_value <- as_filter(value = range(.x))
-	expected <- filterInput(with_filter(
+	expected <- filterInput(with_filters(
 		cfg,
 		x = as_filter(value = range(.x)),
 		a_very_very_long_name = as_filter(value = range(.x))
 	))
 	expect_identical(
-		filterInput(with_filter(cfg, where(is.numeric), range_value)),
+		filterInput(with_filters(cfg, where(is.numeric), range_value)),
 		expected
 	)
 	expect_identical(
-		filterInput(with_filter(cfg, where(is.numeric) ~ range_value)),
+		filterInput(with_filters(cfg, where(is.numeric) ~ range_value)),
 		expected
 	)
 	expect_identical(
-		filterInput(with_filter(
+		filterInput(with_filters(
 			cfg,
 			across_filters(where(is.numeric), ~ as_filter(value = range(.x)))
 		)),
@@ -86,27 +86,27 @@ test_that("as_filter() without an input works in every with_filter() form", {
 	)
 })
 
-test_that("as_filter() works in every with_filter() form", {
+test_that("as_filter() works in every with_filters() form", {
 	cfg <- shinyfilters(df_config)
 	range_slider <- as_filter("slider", value = range(.x))
-	expected <- filterInput(with_filter(
+	expected <- filterInput(with_filters(
 		cfg,
 		x = as_filter("slider", value = range(.x)),
 		a_very_very_long_name = as_filter("slider", value = range(.x))
 	))
 	expect_identical(
-		filterInput(with_filter(cfg, where(is.numeric), range_slider)),
+		filterInput(with_filters(cfg, where(is.numeric), range_slider)),
 		expected
 	)
 	expect_identical(
-		filterInput(with_filter(
+		filterInput(with_filters(
 			cfg,
 			across_filters(where(is.numeric), range_slider)
 		)),
 		expected
 	)
 	expect_identical(
-		filterInput(with_filter(
+		filterInput(with_filters(
 			cfg,
 			across_filters(
 				where(is.numeric),
@@ -116,7 +116,7 @@ test_that("as_filter() works in every with_filter() form", {
 		expected
 	)
 	expect_identical(
-		filterInput(with_filter(
+		filterInput(with_filters(
 			cfg,
 			across_filters(
 				where(is.numeric),
@@ -129,24 +129,24 @@ test_that("as_filter() works in every with_filter() form", {
 
 test_that("a new input keeps the as_filter() arguments it names", {
 	cfg <- shinyfilters(df_config)
-	numeric <- with_filter(cfg, x = as_filter(shiny::numericInput, step = 2))
+	numeric <- with_filters(cfg, x = as_filter(shiny::numericInput, step = 2))
 	expect_identical(
-		with_filter(numeric, where(is.numeric) ~ "slider")$x,
+		with_filters(numeric, where(is.numeric) ~ "slider")$x,
 		shiny::sliderInput("x", "x", min = 2L, max = 10L, value = 10L, step = 2)
 	)
 
-	radio <- with_filter(
+	radio <- with_filters(
 		cfg,
 		letters = as_filter("radio", inline = TRUE, label = "Letters")
 	)
 	expect_identical(
-		with_filter(radio, letters = "selectize")$letters,
+		with_filters(radio, letters = "selectize")$letters,
 		shiny::selectizeInput("letters", "Letters", choices = c("a", "b", "c"))
 	)
 
-	args_first <- with_filter(cfg, x = as_filter(value = range(.x)))
+	args_first <- with_filters(cfg, x = as_filter(value = range(.x)))
 	expect_identical(
-		with_filter(args_first, where(is.numeric) ~ "slider")$x,
+		with_filters(args_first, where(is.numeric) ~ "slider")$x,
 		shiny::sliderInput("x", "x", min = 2L, max = 10L, value = c(2L, 10L))
 	)
 })
@@ -155,12 +155,12 @@ test_that("a new input that takes `...` keeps every as_filter() argument", {
 	my_slider <- function(inputId, label, ...) {
 		shiny::sliderInput(inputId, label, ...)
 	}
-	cfg <- with_filter(
+	cfg <- with_filters(
 		shinyfilters(df_config),
 		x = as_filter("slider", step = 2, ticks = FALSE)
 	)
 	expect_identical(
-		with_filter(cfg, x = my_slider)$x,
+		with_filters(cfg, x = my_slider)$x,
 		shiny::sliderInput(
 			"x",
 			"x",
@@ -175,21 +175,21 @@ test_that("a new input that takes `...` keeps every as_filter() argument", {
 
 test_that("an input a column doesn't support keeps every as_filter() argument", {
 	cfg <- shinyfilters(df_config)
-	set <- with_filter(cfg, factors = as_filter(inline = TRUE))
+	set <- with_filters(cfg, factors = as_filter(inline = TRUE))
 	expect_identical(
-		with_filter(with_filter(set, factors = "slider"), factors = "radio"),
-		with_filter(cfg, factors = as_filter("radio", inline = TRUE))
+		with_filters(with_filters(set, factors = "slider"), factors = "radio"),
+		with_filters(cfg, factors = as_filter("radio", inline = TRUE))
 	)
 })
 
 test_that("as_filter() arguments add to the ones set earlier", {
 	cfg <- shinyfilters(df_config)
 	expect_identical(
-		with_filter(
-			with_filter(cfg, x = as_filter("slider", step = 2, width = "50%")),
+		with_filters(
+			with_filters(cfg, x = as_filter("slider", step = 2, width = "50%")),
 			x = as_filter("slider", width = "100%", ticks = FALSE)
 		),
-		with_filter(
+		with_filters(
 			cfg,
 			x = as_filter("slider", step = 2, width = "100%", ticks = FALSE)
 		)
@@ -198,7 +198,7 @@ test_that("as_filter() arguments add to the ones set earlier", {
 
 test_that("`.update_fn` stays with the input it updates", {
 	cfg <- shinyfilters(df_config)
-	set <- with_filter(
+	set <- with_filters(
 		cfg,
 		letters = as_filter(
 			shiny::checkboxGroupInput,
@@ -206,8 +206,8 @@ test_that("`.update_fn` stays with the input it updates", {
 		)
 	)
 	expect_identical(
-		with_filter(set, letters = as_filter(inline = TRUE)),
-		with_filter(
+		with_filters(set, letters = as_filter(inline = TRUE)),
+		with_filters(
 			cfg,
 			letters = as_filter(
 				shiny::checkboxGroupInput,
@@ -217,36 +217,36 @@ test_that("`.update_fn` stays with the input it updates", {
 		)
 	)
 	expect_identical(
-		with_filter(
-			with_filter(cfg, letters = shiny::checkboxGroupInput),
+		with_filters(
+			with_filters(cfg, letters = shiny::checkboxGroupInput),
 			letters = as_filter(.update_fn = shiny::updateCheckboxGroupInput)
 		),
 		set
 	)
 	expect_identical(
-		with_filter(set, letters = shiny::checkboxGroupInput),
+		with_filters(set, letters = shiny::checkboxGroupInput),
 		set
 	)
 	expect_identical(
-		with_filter(set, letters = "radio"),
-		with_filter(cfg, letters = "radio")
+		with_filters(set, letters = "radio"),
+		with_filters(cfg, letters = "radio")
 	)
 })
 
 test_that("an argument that uses `.x` is computed when the input is created", {
-	cfg <- with_filter(
+	cfg <- with_filters(
 		shinyfilters(df_config),
 		x = as_filter("slider", value = range(.x))
 	)
 	expect_identical(
-		with_filter(cfg, x = x * 2L)$x,
+		with_filters(cfg, x = x * 2L)$x,
 		shiny::sliderInput("x", "x", min = 4L, max = 20L, value = c(4L, 20L))
 	)
 })
 
 test_that("`.x` keeps the column's missing values", {
 	df <- data.frame(stringsAsFactors = FALSE, a = c(NA, 3L, 1L))
-	cfg <- with_filter(
+	cfg <- with_filters(
 		shinyfilters(df),
 		a = as_filter(
 			"slider",
@@ -275,15 +275,15 @@ test_that("a call in an argument that uses `.x` gets `na.rm = TRUE`", {
 		diff(range(x, na.rm = isTRUE(dots$na.rm)))
 	}
 	expect_identical(
-		with_filter(cfg, a = as_filter("slider", value = mean(.x)))$a,
+		with_filters(cfg, a = as_filter("slider", value = mean(.x)))$a,
 		shiny::sliderInput("a", "a", min = 1L, max = 3L, value = 2)
 	)
 	expect_identical(
-		with_filter(cfg, a = as_filter("slider", step = spread(.x)))$a,
+		with_filters(cfg, a = as_filter("slider", step = spread(.x)))$a,
 		shiny::sliderInput("a", "a", min = 1L, max = 3L, value = 3L, step = 2L)
 	)
 	expect_identical(
-		with_filter(
+		with_filters(
 			cfg,
 			a = as_filter("slider", label = paste(max(.x, na.rm = FALSE)))
 		)$a,
@@ -296,11 +296,11 @@ test_that("a namespaced call in an argument that uses `.x` gets `na.rm = TRUE`",
 	cfg <- shinyfilters(df)
 	expected <- shiny::sliderInput("a", "a", min = 1L, max = 3L, value = 2)
 	expect_identical(
-		with_filter(cfg, a = as_filter("slider", value = base::mean(.x)))$a,
+		with_filters(cfg, a = as_filter("slider", value = base::mean(.x)))$a,
 		expected
 	)
 	expect_identical(
-		with_filter(
+		with_filters(
 			cfg,
 			a = as_filter("slider", value = stats::quantile(.x, 0.5, names = FALSE))
 		)$a,
@@ -317,13 +317,13 @@ test_that("an argument that uses `.x` can use `[`, parentheses, and `if`", {
 		)
 	)
 	expect_identical(
-		with_filter(shinyfilters(df_config), x = slider)$x,
+		with_filters(shinyfilters(df_config), x = slider)$x,
 		shiny::sliderInput("x", "x", min = 2L, max = 10L, value = 6L, step = 2L)
 	)
 })
 
 test_that("an argument that uses `.x` can use other columns", {
-	cfg <- with_filter(
+	cfg <- with_filters(
 		shinyfilters(df_config),
 		x,
 		as_filter("slider", max = max(.x) + max(a_very_very_long_name))
@@ -338,7 +338,7 @@ test_that("other arguments are evaluated when as_filter() is called", {
 	cfg <- shinyfilters(df_config)
 	labels <- c(x = "First", a_very_very_long_name = "Second")
 	for (col in names(labels)) {
-		cfg <- with_filter(
+		cfg <- with_filters(
 			cfg,
 			all_of(col),
 			as_filter("slider", label = labels[[col]])
@@ -350,8 +350,8 @@ test_that("other arguments are evaluated when as_filter() is called", {
 	)
 })
 
-test_that("other arguments can use columns inside with_filter(col = ...)", {
-	cfg <- with_filter(
+test_that("other arguments can use columns inside with_filters(col = ...)", {
+	cfg <- with_filters(
 		shinyfilters(df_config),
 		x = as_filter("slider", max = max(a_very_very_long_name) * 10),
 		a_very_very_long_name = a_very_very_long_name * 2
@@ -363,7 +363,7 @@ test_that("other arguments can use columns inside with_filter(col = ...)", {
 })
 
 test_that("as_filter() arguments reach inputs that take `...`", {
-	cfg <- with_filter(
+	cfg <- with_filters(
 		shinyfilters(df_config),
 		letters = as_filter("selectize", multiple = TRUE, selected = NULL)
 	)
@@ -380,7 +380,7 @@ test_that("as_filter() arguments reach inputs that take `...`", {
 })
 
 test_that("`ns`, `[`, and `[[` apply to as_filter() inputs", {
-	cfg <- with_filter(
+	cfg <- with_filters(
 		shinyfilters(df_config, ns = shiny::NS("m")),
 		x = as_filter("slider", value = range(.x))
 	)
@@ -393,7 +393,7 @@ test_that("`ns`, `[`, and `[[` apply to as_filter() inputs", {
 })
 
 test_that("print() shows as_filter() arguments", {
-	cfg <- with_filter(
+	cfg <- with_filters(
 		shinyfilters(df_config),
 		across_filters(where(is.numeric), as_filter("slider", value = range(.x))),
 		letters = as_filter("radio", inline = TRUE, label = "Letters"),
@@ -408,7 +408,7 @@ test_that("print() shows as_filter() arguments", {
 })
 
 test_that("print() shortens a long as_filter() argument", {
-	cfg <- with_filter(
+	cfg <- with_filters(
 		shinyfilters(df_config),
 		letters = as_filter(label = "A label that runs past thirty characters")
 	)
@@ -416,7 +416,7 @@ test_that("print() shortens a long as_filter() argument", {
 })
 
 test_that("print() marks a row by its input, not its as_filter() arguments", {
-	cfg <- with_filter(
+	cfg <- with_filters(
 		shinyfilters(df_config, slider = TRUE),
 		x = as_filter(value = range(.x)),
 		letters = as_filter(label = "Letters")
@@ -430,7 +430,7 @@ test_that("print() marks a row by its input, not its as_filter() arguments", {
 test_that("print() shows `.update_fn`", {
 	checkbox <- shiny::checkboxGroupInput
 	update_checkbox <- shiny::updateCheckboxGroupInput
-	cfg <- with_filter(
+	cfg <- with_filters(
 		shinyfilters(df_config),
 		letters = as_filter(
 			shiny::checkboxGroupInput,
@@ -451,7 +451,7 @@ test_that("print() shows `.update_fn`", {
 })
 
 test_that("an argument that uses `.x` can use shiny::req()", {
-	cfg <- with_filter(
+	cfg <- with_filters(
 		shinyfilters(df_config),
 		x = as_filter("slider", value = shiny::req(FALSE, .x))
 	)
@@ -468,14 +468,14 @@ test_that("as_filter() errors", {
 		as_filter()
 		as_filter("slider", .update_fn = "updateSliderInput")
 
-		with_filter(cfg, nope = as_filter("slider"))
-		with_filter(cfg, nope = as_filter(step = 2))
-		with_filter(cfg, x, as_filter("sldier"))
-		with_filter(cfg, x, as_filter("slider", max = max(a_very_very_long_name)))
+		with_filters(cfg, nope = as_filter("slider"))
+		with_filters(cfg, nope = as_filter(step = 2))
+		with_filters(cfg, x, as_filter("sldier"))
+		with_filters(cfg, x, as_filter("slider", max = max(a_very_very_long_name)))
 
-		filterInput(with_filter(cfg, x = as_filter("slider", value = nope(.x))))
-		filterInput(with_filter(cfg, x = as_filter("slider", valeu = 1)))
-		filterInput(with_filter(cfg, letters = as_filter("slider", value = 1)))
-		filterInput(with_filter(cfg, letters = as_filter(valeu = 1)))
+		filterInput(with_filters(cfg, x = as_filter("slider", value = nope(.x))))
+		filterInput(with_filters(cfg, x = as_filter("slider", valeu = 1)))
+		filterInput(with_filters(cfg, letters = as_filter("slider", value = 1)))
+		filterInput(with_filters(cfg, letters = as_filter(valeu = 1)))
 	})
 })

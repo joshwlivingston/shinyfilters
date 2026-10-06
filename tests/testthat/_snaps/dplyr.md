@@ -1,4 +1,4 @@
-# mutate() labels a custom input the way with_filter() does
+# mutate() labels a custom input the way with_filters() does
 
     Code
       print(dplyr::mutate(cfg, across(letters, my_select)))
@@ -72,7 +72,7 @@
       
       ~ Filter replaced by `mutate()`
     Code
-      print(with_filter(cfg, z = y + 1, x = x / 2))
+      print(with_filters(cfg, z = y + 1, x = x / 2))
     Output
       <shinyfilters> * 6 filters
       
@@ -85,8 +85,8 @@
         +  z                      <dbl>  numericInput
       
       
-      + Filter added by `mutate()` or `with_filter()`
-      ~ Filter replaced by `with_filter()`
+      + Filter added by `mutate()` or `with_filters()`
+      ~ Filter replaced by `with_filters()`
 
 # print() names the functions that chose inputs
 
@@ -104,7 +104,7 @@
       
       * Filter set by `mutate()`
     Code
-      print(with_filter(cfg, letters = "radio"))
+      print(with_filters(cfg, letters = "radio"))
     Output
       <shinyfilters> * 4 filters
       
@@ -115,9 +115,9 @@
            a_very_very_long_name  <dbl>  numericInput
       
       
-      * Filter set by `mutate()` or `with_filter()`
+      * Filter set by `mutate()` or `with_filters()`
     Code
-      print(with_filter(cfg, x = "radio"))
+      print(with_filters(cfg, x = "radio"))
     Output
       <shinyfilters> * 4 filters
       
@@ -128,7 +128,7 @@
            a_very_very_long_name  <dbl>  numericInput
       
       
-      * Filter set by `with_filter()`
+      * Filter set by `with_filters()`
 
 # mutate() errors
 

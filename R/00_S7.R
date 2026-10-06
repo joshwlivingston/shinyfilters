@@ -21,7 +21,7 @@ class_POSIXt <- new_S3_class("POSIXt")
 
 # Input keywords ####
 #
-# Keywords accepted by `with_filter()`. `args` are the `filterInput()` flags the
+# Keywords accepted by `with_filters()`. `args` are the `filterInput()` flags the
 # keyword sets; `fn` names the matching shiny input.
 INPUT_KEYWORDS <- list(
 	area = list(args = list(textbox = TRUE, area = TRUE), fn = "textAreaInput"),
@@ -117,7 +117,7 @@ class_shinyfilters <- new_class(
 				if (!the$allowed) {
 					cli_abort(c(
 						"@overrides is only allowed to be modified internally.",
-						"i" = "See {.topic with_filter} for the user-facing function."
+						"i" = "See {.topic with_filters} for the user-facing function."
 					))
 				}
 				self@overrides <- value
@@ -130,7 +130,7 @@ class_shinyfilters <- new_class(
 				if (!the$allowed) {
 					cli_abort(c(
 						"@added is only allowed to be modified internally.",
-						"i" = "See {.topic with_filter} for the user-facing function."
+						"i" = "See {.topic with_filters} for the user-facing function."
 					))
 				}
 				self@added <- value
@@ -143,7 +143,7 @@ class_shinyfilters <- new_class(
 				if (!the$allowed) {
 					cli_abort(c(
 						"@replaced is only allowed to be modified internally.",
-						"i" = "See {.topic with_filter} for the user-facing function."
+						"i" = "See {.topic with_filters} for the user-facing function."
 					))
 				}
 				self@replaced <- value

@@ -13,7 +13,7 @@ across_filters(.cols = everything(), .fns = NULL, ..., .names = NULL)
 
 \item{.fns}{The input for the selected columns: a keyword, a \pkg{shiny}
 input function, or an \code{\link[=as_filter]{as_filter()}} object, as described in
-\code{\link[=with_filter]{with_filter()}}. A one-sided formula naming an input, such as
+\code{\link[=with_filters]{with_filters()}}. A one-sided formula naming an input, such as
 \code{~ "slider"}, also works.}
 
 \item{...}{Not supported.}
@@ -22,13 +22,13 @@ input function, or an \code{\link[=as_filter]{as_filter()}} object, as described
 selected columns; it doesn't rename them.}
 }
 \value{
-Nothing. Calling \code{across_filters()} outside \code{\link[=with_filter]{with_filter()}} or
+Nothing. Calling \code{across_filters()} outside \code{\link[=with_filters]{with_filters()}} or
 \code{\link[dplyr:mutate]{dplyr::mutate()}} is an error.
 }
 \description{
 \code{across_filters()} selects columns with
 <\code{\link[tidyselect:language]{tidy-select}}> and names one input for all of
-them. Use it inside \code{\link[=with_filter]{with_filter()}}, where it can be mixed with named
+them. Use it inside \code{\link[=with_filters]{with_filters()}}, where it can be mixed with named
 columns, or inside \code{\link[dplyr:mutate]{dplyr::mutate()}}. It is never called on its own: both
 verbs capture the call.
 }
@@ -38,15 +38,15 @@ accepted in its place.
 }
 \examples{
 filters <- shinyfilters(nyc_flights)
-with_filter(filters, across_filters(where(is.numeric), "slider"))
+with_filters(filters, across_filters(where(is.numeric), "slider"))
 
 # Mix with named columns. Later arguments win.
-with_filter(
+with_filters(
   filters,
   across_filters(everything(), "selectize"),
   origin = "radio"
 )
 }
 \seealso{
-\code{\link[=with_filter]{with_filter()}}
+\code{\link[=with_filters]{with_filters()}}
 }

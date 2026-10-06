@@ -25,7 +25,7 @@ reference:
 - title: Configure filters
 - contents:
   - shinyfilters
-  - with_filter
+  - with_filters
   - across_filters
   - as_filter
   - with_ns

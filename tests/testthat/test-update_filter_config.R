@@ -15,14 +15,14 @@ test_that("updateFilterInput() updates the input a configuration creates", {
 		)
 	)
 	expect_identical(
-		update_messages(updateFilterInput(with_filter(cfg, x = "slider")["x"])),
+		update_messages(updateFilterInput(with_filters(cfg, x = "slider")["x"])),
 		update_messages(
 			shiny::updateSliderInput(inputId = "x", min = 2L, max = 10L)
 		)
 	)
 	expect_identical(
 		update_messages(
-			updateFilterInput(with_filter(cfg, letters = "radio")["letters"])
+			updateFilterInput(with_filters(cfg, letters = "radio")["letters"])
 		),
 		update_messages(shiny::updateRadioButtons(
 			inputId = "letters",
@@ -32,7 +32,7 @@ test_that("updateFilterInput() updates the input a configuration creates", {
 })
 
 test_that("updateFilterInput() updates every column of a configuration", {
-	cfg <- with_filter(shinyfilters(df_config), x = "slider")
+	cfg <- with_filters(shinyfilters(df_config), x = "slider")
 	expect_identical(
 		update_messages(updateFilterInput(cfg)),
 		update_messages({
@@ -51,11 +51,11 @@ test_that("updateFilterInput() updates every column of a configuration", {
 	)
 })
 
-test_that("an input chosen with with_filter() wins over a default", {
+test_that("an input chosen with with_filters() wins over a default", {
 	cfg <- shinyfilters(df_config, selectize = TRUE, slider = TRUE)
 	expect_identical(
 		update_messages(
-			updateFilterInput(with_filter(cfg, letters = "radio")["letters"])
+			updateFilterInput(with_filters(cfg, letters = "radio")["letters"])
 		),
 		update_messages(shiny::updateRadioButtons(
 			inputId = "letters",
@@ -64,7 +64,7 @@ test_that("an input chosen with with_filter() wins over a default", {
 	)
 	expect_identical(
 		update_messages(
-			updateFilterInput(with_filter(cfg, x = shiny::numericInput)["x"])
+			updateFilterInput(with_filters(cfg, x = shiny::numericInput)["x"])
 		),
 		update_messages(
 			shiny::updateNumericInput(inputId = "x", min = 2L, max = 10L)
@@ -75,21 +75,21 @@ test_that("an input chosen with with_filter() wins over a default", {
 test_that("numeric + radio / select / selectize -> choices are updated", {
 	cfg <- shinyfilters(df_config)
 	expect_identical(
-		update_messages(updateFilterInput(with_filter(cfg, x = "radio")["x"])),
+		update_messages(updateFilterInput(with_filters(cfg, x = "radio")["x"])),
 		update_messages(shiny::updateRadioButtons(
 			inputId = "x",
 			choices = c(2L, 9L, 10L)
 		))
 	)
 	expect_identical(
-		update_messages(updateFilterInput(with_filter(cfg, x = "select")["x"])),
+		update_messages(updateFilterInput(with_filters(cfg, x = "select")["x"])),
 		update_messages(shiny::updateSelectInput(
 			inputId = "x",
 			choices = c(2L, 9L, 10L)
 		))
 	)
 	expect_identical(
-		update_messages(updateFilterInput(with_filter(cfg, x = "selectize")["x"])),
+		update_messages(updateFilterInput(with_filters(cfg, x = "selectize")["x"])),
 		update_messages(shiny::updateSelectizeInput(
 			inputId = "x",
 			choices = c(2L, 9L, 10L)
@@ -104,7 +104,7 @@ test_that("radio on a column that isn't discrete -> choices are updated", {
 		tz = "UTC"
 	)
 	df$dur <- as.difftime(c(3, 1, 1), units = "mins")
-	cfg <- with_filter(shinyfilters(df), everything(), "radio")
+	cfg <- with_filters(shinyfilters(df), everything(), "radio")
 	dates <- as.Date("2024-01-01") + 0:1
 	expect_identical(
 		update_messages(updateFilterInput(cfg)),
@@ -120,7 +120,7 @@ test_that("updateFilterInput() passes the as_filter() arguments an update takes"
 	cfg <- shinyfilters(df_config)
 	slider <- as_filter("slider", value = range(.x), step = 2, width = "50%")
 	expect_identical(
-		update_messages(updateFilterInput(with_filter(cfg, x = slider)["x"])),
+		update_messages(updateFilterInput(with_filters(cfg, x = slider)["x"])),
 		update_messages(
 			shiny::updateSliderInput(inputId = "x", min = 2L, max = 10L, step = 2)
 		)
@@ -128,7 +128,7 @@ test_that("updateFilterInput() passes the as_filter() arguments an update takes"
 	radio <- as_filter("radio", label = "Letters", inline = TRUE)
 	expect_identical(
 		update_messages(
-			updateFilterInput(with_filter(cfg, letters = radio)["letters"])
+			updateFilterInput(with_filters(cfg, letters = radio)["letters"])
 		),
 		update_messages(shiny::updateRadioButtons(
 			inputId = "letters",
@@ -139,7 +139,7 @@ test_that("updateFilterInput() passes the as_filter() arguments an update takes"
 	)
 	expect_identical(
 		update_messages(updateFilterInput(
-			with_filter(
+			with_filters(
 				shinyfilters(df_config, slider = TRUE),
 				x = as_filter(step = 2)
 			)["x"]
@@ -170,7 +170,7 @@ test_that("updateFilterInput() leaves out a default that sets a value", {
 })
 
 test_that("as_filter() arguments are computed from the data being updated", {
-	cfg <- with_filter(
+	cfg <- with_filters(
 		shinyfilters(df_config),
 		letters = as_filter(choices = toupper(sort(unique(.x))))
 	)
@@ -184,7 +184,7 @@ test_that("as_filter() arguments are computed from the data being updated", {
 })
 
 test_that("updateFilterInput() calls `.update_fn`", {
-	cfg <- with_filter(
+	cfg <- with_filters(
 		shinyfilters(df_config),
 		letters = as_filter(
 			shiny::checkboxGroupInput,
@@ -204,7 +204,7 @@ test_that("updateFilterInput() calls `.update_fn`", {
 
 test_that("updateFilterInput() calls a shinyWidgets update function", {
 	skip_if_not_installed("shinyWidgets")
-	cfg <- with_filter(
+	cfg <- with_filters(
 		shinyfilters(df_config),
 		letters = as_filter(
 			shinyWidgets::pickerInput,
@@ -224,7 +224,7 @@ test_that("updateFilterInput() updates the inputs of a namespace", {
 	cfg <- with_ns(shinyfilters(df_config), "m")
 	# Radio buttons carry the session's namespace in their options, so the
 	# messages differ if the module's session sends them.
-	cfg <- with_filter(cfg, letters = "radio")["letters"]
+	cfg <- with_filters(cfg, letters = "radio")["letters"]
 	expected <- update_messages(shiny::updateRadioButtons(
 		inputId = "m-letters",
 		choices = c("a", "b", "c")
@@ -257,7 +257,7 @@ test_that("updateFilterInput() follows the range and textbox keywords", {
 		day = as.Date("2024-01-01") + 0:2,
 		name = c("a", "b", "c")
 	)
-	cfg <- with_filter(shinyfilters(df), day = "range", name = "textbox")
+	cfg <- with_filters(shinyfilters(df), day = "range", name = "textbox")
 	expect_identical(
 		update_messages(updateFilterInput(cfg)),
 		update_messages({
@@ -279,7 +279,7 @@ test_that("updateFilterInput() follows the date, numeric, and select keywords", 
 		n = c(1.5, 2.5, 3.5)
 	)
 	cfg <- shinyfilters(df, range = TRUE, textbox = TRUE, slider = TRUE)
-	cfg <- with_filter(cfg, day = "date", name = "select", n = "numeric")
+	cfg <- with_filters(cfg, day = "date", name = "select", n = "numeric")
 	expect_identical(
 		update_messages(updateFilterInput(cfg)),
 		update_messages({
@@ -297,15 +297,15 @@ test_that("updateFilterInput() follows the date, numeric, and select keywords", 
 test_that("updateFilterInput() errors for an input it can't update", {
 	cfg <- shinyfilters(df_config)
 	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
-		updateFilterInput(with_filter(cfg, letters = shiny::checkboxGroupInput))
+		updateFilterInput(with_filters(cfg, letters = shiny::checkboxGroupInput))
 		updateFilterInput(
-			with_filter(cfg, c(letters, factors), shiny::checkboxGroupInput)
+			with_filters(cfg, c(letters, factors), shiny::checkboxGroupInput)
 		)
 		update_messages(
-			updateFilterInput(with_filter(cfg, factors = "slider")["factors"])
+			updateFilterInput(with_filters(cfg, factors = "slider")["factors"])
 		)
 
-		update_messages(updateFilterInput(with_filter(
+		update_messages(updateFilterInput(with_filters(
 			cfg,
 			letters = as_filter(
 				shiny::checkboxGroupInput,

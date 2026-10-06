@@ -74,7 +74,7 @@ Remaining arguments passed to \code{...} are passed to
 When \code{x} is a configuration made by \code{\link[=shinyfilters]{shinyfilters()}}, each column's input
 is updated with the function and arguments that match the input
 \code{\link[=filterInput]{filterInput()}} creates for it: the configuration's defaults, the input
-\code{\link[=with_filter]{with_filter()}} chose, and its \code{\link[=as_filter]{as_filter()}} arguments, computed from the
+\code{\link[=with_filters]{with_filters()}} chose, and its \code{\link[=as_filter]{as_filter()}} arguments, computed from the
 configuration's data. The arguments that set an input's value (\code{value},
 \code{selected}, \code{start}, and \code{end}) are left out, and the configuration's
 namespace is applied to the ids.

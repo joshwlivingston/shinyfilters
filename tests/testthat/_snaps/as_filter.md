@@ -16,8 +16,8 @@
                                            value = range(.x, na.rm = TRUE)
       
       
-      * Filter set by `with_filter()`
-      ~ Filter replaced by `with_filter()`
+      * Filter set by `with_filters()`
+      ~ Filter replaced by `with_filters()`
     Code
       print(as_filter(shiny::sliderInput, value = range(.x), step = 2))
     Output
@@ -87,7 +87,7 @@
            a_very_very_long_name  <dbl>  numericInput
       
       
-      * Filter set by `with_filter()`
+      * Filter set by `with_filters()`
     Code
       print(as_filter(shiny::checkboxGroupInput, .update_fn = update_checkbox))
     Output
@@ -134,50 +134,50 @@
       Error in `as_filter()`:
       ! `.update_fn` must be a function or `NULL`, not a string.
     Code
-      with_filter(cfg, nope = as_filter("slider"))
+      with_filters(cfg, nope = as_filter("slider"))
     Condition
-      Error in `with_filter()`:
+      Error in `with_filters()`:
       ! Can't find column nope.
       x `as_filter("slider")` chooses the input for an existing column.
-      i To add a column, compute it from the others: `with_filter(filters, nope = <expression>)`.
+      i To add a column, compute it from the others: `with_filters(filters, nope = <expression>)`.
     Code
-      with_filter(cfg, nope = as_filter(step = 2))
+      with_filters(cfg, nope = as_filter(step = 2))
     Condition
-      Error in `with_filter()`:
+      Error in `with_filters()`:
       ! Can't find column nope.
       x `as_filter(step = 2)` sets arguments for an existing column's input.
-      i To add a column, compute it from the others: `with_filter(filters, nope = <expression>)`.
+      i To add a column, compute it from the others: `with_filters(filters, nope = <expression>)`.
     Code
-      with_filter(cfg, x, as_filter("sldier"))
+      with_filters(cfg, x, as_filter("sldier"))
     Condition
-      Error in `with_filter()`:
+      Error in `with_filters()`:
       ! Can't evaluate the input `as_filter("sldier")`.
       Caused by error in `as_filter()`:
       ! An input must be one of "area", "date", "numeric", "radio", "range", "select", "selectize", "slider", or "textbox", or a function.
       x Got "sldier".
     Code
-      with_filter(cfg, x, as_filter("slider", max = max(a_very_very_long_name)))
+      with_filters(cfg, x, as_filter("slider", max = max(a_very_very_long_name)))
     Condition
-      Error in `with_filter()`:
+      Error in `with_filters()`:
       ! Can't evaluate the input `as_filter("slider", max = max(a_very_very_long_name))`.
       Caused by error:
       ! object 'a_very_very_long_name' not found
     Code
-      filterInput(with_filter(cfg, x = as_filter("slider", value = nope(.x))))
+      filterInput(with_filters(cfg, x = as_filter("slider", value = nope(.x))))
     Condition
       Error in `filterInput()`:
       ! Can't evaluate `value = nope(.x)` for column x.
       Caused by error in `nope()`:
       ! could not find function "nope"
     Code
-      filterInput(with_filter(cfg, x = as_filter("slider", valeu = 1)))
+      filterInput(with_filters(cfg, x = as_filter("slider", valeu = 1)))
     Condition
       Error in `filterInput()`:
       ! Can't create an input for column x.
       Caused by error:
       ! unused argument (valeu = 1)
     Code
-      filterInput(with_filter(cfg, letters = as_filter("slider", value = 1)))
+      filterInput(with_filters(cfg, letters = as_filter("slider", value = 1)))
     Condition
       Error in `filterInput()`:
       ! Can't create an input for column letters.
@@ -185,7 +185,7 @@
       ! "slider" isn't available for <character> columns.
       i Use "area", "radio", "select", "selectize", or "textbox" instead.
     Code
-      filterInput(with_filter(cfg, letters = as_filter(valeu = 1)))
+      filterInput(with_filters(cfg, letters = as_filter(valeu = 1)))
     Condition
       Error in `filterInput()`:
       ! Can't create an input for column letters.

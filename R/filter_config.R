@@ -6,7 +6,7 @@
 #' Configure the Filters for a Data Frame
 #'
 #' `shinyfilters()` stores a data frame with the arguments used to create its
-#' filters. Pass the result to [with_filter()] to choose the input for
+#' filters. Pass the result to [with_filters()] to choose the input for
 #' individual columns, then place it in a shiny UI to create the inputs.
 #'
 #' The inputs are created when the page is rendered. Call [filterInput()] on
@@ -40,13 +40,13 @@
 #'
 #'   * `names(filters)` lists its columns.
 #'   * `filters$col` and `filters[["col"]]` return the input [filterInput()]
-#'     creates for one column, including any [with_filter()] overrides.
+#'     creates for one column, including any [with_filters()] overrides.
 #'   * `filters[cols]` returns a `shinyfilters` object with only the selected
 #'     columns, keeping their overrides. `cols` uses
-#'     <[`tidy-select`][tidyselect::language]>, like [with_filter()]; use
+#'     <[`tidy-select`][tidyselect::language]>, like [with_filters()]; use
 #'     `all_of()` to select with a variable.
 #'
-#' @seealso [with_filter()], [with_ns()]
+#' @seealso [with_filters()], [with_ns()]
 #'
 #' @examplesIf interactive()
 #' filters <- shinyfilters(nyc_flights)
@@ -623,10 +623,10 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	)
 }
 
-# Function: with_filter() ####
+# Function: with_filters() ####
 #' Choose the Input for Columns
 #'
-#' `with_filter()` sets the input that [filterInput()] creates for one or more
+#' `with_filters()` sets the input that [filterInput()] creates for one or more
 #' columns of a configuration made by [shinyfilters()], and adds or replaces
 #' columns computed from the others. When a column's input is chosen more than
 #' once, the last one wins; its [as_filter()] arguments stay with the column.
@@ -635,19 +635,19 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 #' @param ... Either two unnamed arguments, or any number of named arguments,
 #'   formulas, and [across_filters()] calls:
 #'
-#'   * `with_filter(.filters, cols, input)`: `cols` selects columns with
+#'   * `with_filters(.filters, cols, input)`: `cols` selects columns with
 #'     <[`tidy-select`][tidyselect::language]>, such as `cyl`,
 #'     `c(mpg, disp)`, or `where(is.numeric)`.
-#'   * `with_filter(.filters, col = input, ...)`: each name is a column.
-#'   * `with_filter(.filters, col = expression, ...)`: adds or replaces a
+#'   * `with_filters(.filters, col = input, ...)`: each name is a column.
+#'   * `with_filters(.filters, col = expression, ...)`: adds or replaces a
 #'     column, computed from the other columns. A replaced column keeps its
 #'     input. A function, a single string, or an [as_filter()] object is
 #'     always read as an input; any other value is the column's data. A column
 #'     takes precedence over a variable of the same name.
-#'   * `with_filter(.filters, cols ~ input, ...)`: a two-sided formula selects
+#'   * `with_filters(.filters, cols ~ input, ...)`: a two-sided formula selects
 #'     columns on its left, like `cols` above, and names one input for all of
 #'     them on its right. It can be mixed with named columns.
-#'   * `with_filter(.filters, across_filters(cols, input), ...)`:
+#'   * `with_filters(.filters, across_filters(cols, input), ...)`:
 #'     [across_filters()] does the same as a formula.
 #'
 #'   Each input is either a keyword or the \pkg{shiny} input function it
@@ -675,28 +675,28 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 #'
 #' @examples
 #' filters <- shinyfilters(nyc_flights)
-#' filters <- with_filter(filters, origin = "radio", carrier = "selectize")
+#' filters <- with_filters(filters, origin = "radio", carrier = "selectize")
 #' filters
 #'
 #' # Choose one input for several columns with tidyselect
-#' filters <- with_filter(filters, where(is.numeric), "slider")
+#' filters <- with_filters(filters, where(is.numeric), "slider")
 #' filterInput(filters)
 #'
 #' # Or select columns and name others in one call
-#' with_filter(
+#' with_filters(
 #'   filters,
 #'   where(is.character) ~ "selectize",
 #'   origin = "radio"
 #' )
 #'
 #' # Add a column computed from the others
-#' with_filter(filters, delay_sq = dep_delay^2)
+#' with_filters(filters, delay_sq = dep_delay^2)
 #'
 #' # Give one column the input it has by default
 #' filters <- shinyfilters(nyc_flights, slider = TRUE)
-#' with_filter(filters, distance = "numeric")
+#' with_filters(filters, distance = "numeric")
 #' @export
-with_filter <- function(.filters, ...) {
+with_filters <- function(.filters, ...) {
 	if (!S7_inherits(.filters, class_shinyfilters)) {
 		cli_abort(
 			"{.arg .filters} must be created by {.fn shinyfilters}, not {.obj_type_friendly {(.filters)}}."
@@ -705,24 +705,20 @@ with_filter <- function(.filters, ...) {
 	if (...length() == 0) {
 		._abort_with_filter_form(list(), call = current_env())
 	}
-	.with_filter(.filters, ..., .call = current_env())
+	.with_filters(.filters, ..., .call = current_env())
 }
 
-#' @rdname with_filter
-#' @export
-with_filters <- with_filter
-
-.with_filter <- new_generic(".with_filter", ".filters")
+.with_filters <- new_generic(".with_filters", ".filters")
 
 # `.across` names the calls that select columns and name one input for all of
-# them. `with_filter()` takes `across_filters()`; `mutate()` also takes
+# them. `with_filters()` takes `across_filters()`; `mutate()` also takes
 # `across()`, which is unambiguous there.
-method(.with_filter, class_shinyfilters) <- function(
+method(.with_filters, class_shinyfilters) <- function(
 	.filters,
 	...,
 	.call = caller_env(),
 	.across = SHINYFILTERS_ACROSS,
-	.fn = "with_filter"
+	.fn = "with_filters"
 ) {
 	config <- .filters
 	quos <- enquos(...)
@@ -800,14 +796,14 @@ method(.with_filter, class_shinyfilters) <- function(
 	)
 }
 
-# Reached only from `with_filter()`: `mutate()` checks its own argument shapes
+# Reached only from `with_filters()`: `mutate()` checks its own argument shapes
 # before forwarding, so its wording never has to appear here.
 ._abort_with_filter_form <- function(quos, call) {
 	msg <- c(
-		"{.fn with_filter} takes two unnamed arguments, or named arguments, {.code cols ~ input} formulas, and {.fn across_filters} calls.",
-		i = "Select columns: {.code with_filter(filters, c(a, b), \"radio\")}.",
-		i = "Name columns: {.code with_filter(filters, a = \"radio\", b = \"slider\")}.",
-		i = "Mix the two: {.code with_filter(filters, c(a, b) ~ \"radio\", x = \"slider\")}."
+		"{.fn with_filters} takes two unnamed arguments, or named arguments, {.code cols ~ input} formulas, and {.fn across_filters} calls.",
+		i = "Select columns: {.code with_filters(filters, c(a, b), \"radio\")}.",
+		i = "Name columns: {.code with_filters(filters, a = \"radio\", b = \"slider\")}.",
+		i = "Mix the two: {.code with_filters(filters, c(a, b) ~ \"radio\", x = \"slider\")}."
 	)
 	used_across <- vapply(
 		quos,
@@ -1113,7 +1109,7 @@ with_ns <- function(.filters, ns) {
 #'
 #' @returns The updated configuration.
 #'
-#' @seealso [shinyfilters()], [with_filter()], [with_ns()]
+#' @seealso [shinyfilters()], [with_filters()], [with_ns()]
 #'
 #' @examples
 #' filters <- shinyfilters(nyc_flights, slider = TRUE, width = "200px")

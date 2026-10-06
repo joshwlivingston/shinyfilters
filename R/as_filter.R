@@ -8,7 +8,7 @@
 #' Set the Arguments of an Input
 #'
 #' `as_filter()` sets arguments for a column's input, and can choose the input
-#' with them. Use it wherever [with_filter()], [across_filters()], or
+#' with them. Use it wherever [with_filters()], [across_filters()], or
 #' [dplyr::mutate()] take an input, to change the arguments shinyfilters passes
 #' for a column, such as a slider's `value`, or to add others, such as `step`
 #' or `width`.
@@ -20,7 +20,7 @@
 #' instead: a new input drops it.
 #'
 #' @param input The input: a keyword or a \pkg{shiny} input function, as
-#'   described in [with_filter()]. Leave it out to keep each column's input.
+#'   described in [with_filters()]. Leave it out to keep each column's input.
 #' @param ... Named arguments for the input. They replace the ones shinyfilters
 #'   passes for the column, such as `label`, `choices`, `min`, `max`, and
 #'   `value`. `inputId` can't be set: an input's id is always its column's
@@ -31,7 +31,7 @@
 #'   such as `range(.x)`, gets `na.rm = TRUE` unless it sets `na.rm` itself.
 #'
 #'   Other arguments are evaluated right away. Written inside
-#'   `with_filter(.filters, col = as_filter(...))`, they can use the columns
+#'   `with_filters(.filters, col = as_filter(...))`, they can use the columns
 #'   too, as they are at that point.
 #' @param .update_fn The function that updates the input, such as
 #'   `shinyWidgets::updatePickerInput` for `shinyWidgets::pickerInput`.
@@ -42,35 +42,35 @@
 #'   `session`, `inputId`, and any argument set here that it names.
 #'
 #' @returns A `shinyfilters_filter` object, to use as an input in
-#'   [with_filter()].
+#'   [with_filters()].
 #'
-#' @seealso [with_filter()], [across_filters()]
+#' @seealso [with_filters()], [across_filters()]
 #'
 #' @examples
 #' filters <- shinyfilters(nyc_flights)
 #'
 #' # A range slider: `.x` is the column the input is created for
-#' filters <- with_filter(
+#' filters <- with_filters(
 #'   filters,
 #'   dep_delay = as_filter(shiny::sliderInput, value = range(.x, na.rm = TRUE))
 #' )
 #' filters$dep_delay
 #'
 #' # Without an input, the column keeps the one it has
-#' with_filter(filters, dep_delay = as_filter(step = 5))
+#' with_filters(filters, dep_delay = as_filter(step = 5))
 #'
 #' # Reuse an input for several columns
 #' range_slider <- as_filter("slider", value = range(.x, na.rm = TRUE))
-#' with_filter(filters, across_filters(where(is.numeric), range_slider))
+#' with_filters(filters, across_filters(where(is.numeric), range_slider))
 #'
 #' # Pass arguments shinyfilters doesn't compute
-#' with_filter(
+#' with_filters(
 #'   filters,
 #'   origin = as_filter("radio", label = "Airport", inline = TRUE)
 #' )
 #'
 #' # Name the function that updates an input shinyfilters doesn't know
-#' with_filter(
+#' with_filters(
 #'   filters,
 #'   origin = as_filter(
 #'     shiny::checkboxGroupInput,
@@ -101,7 +101,7 @@ as_filter <- function(input = NULL, ..., .update_fn = NULL) {
 	}
 	# Only an argument that uses `.x` waits for its column. The rest are
 	# evaluated now, where `as_filter()` is called: they keep the values their
-	# variables have at the call, and see the columns inside `with_filter()`.
+	# variables have at the call, and see the columns inside `with_filters()`.
 	args <- lapply(args, function(arg) {
 		if (".x" %in% all.vars(quo_get_expr(arg))) {
 			quo_inject_narm(arg)
@@ -195,7 +195,7 @@ print.shinyfilters_filter <- function(x, ...) {
 INPUT_ARGS <- ".shinyfilters_args"
 
 # Returns the arguments of an `as_filter()` override for one column. The data
-# mask holds the configuration's columns, like `with_filter()`'s, plus `.x`.
+# mask holds the configuration's columns, like `with_filters()`'s, plus `.x`.
 ._input_args <- function(args, config, name, call) {
 	.data <- config@data
 	.data$.x <- .data[[name]]

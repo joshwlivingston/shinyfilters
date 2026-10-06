@@ -95,7 +95,7 @@ test_that("serverFilterInput() passes on a `selected` it is given", {
 })
 
 test_that("shinyfilters_server() updates a configuration's empty inputs", {
-	cfg <- with_filter(
+	cfg <- with_filters(
 		shinyfilters(df_config),
 		letters = as_filter(
 			"radio",
@@ -141,7 +141,7 @@ test_that("shinyfilters_server() reads and updates the inputs of a namespace", {
 	cfg <- with_ns(shinyfilters(df_config), "m")
 	# Radio buttons carry the session's namespace in their options, so the
 	# messages differ if the module's session sends them.
-	cfg <- with_filter(cfg, letters = "radio")
+	cfg <- with_filters(cfg, letters = "radio")
 	expected <- update_messages({
 		shiny::updateRadioButtons(
 			inputId = "m-letters",
@@ -179,7 +179,7 @@ test_that("shinyfilters_server() reads and updates the inputs of a namespace", {
 })
 
 test_that("shinyfilters_server() errors when called, for an input it can't update", {
-	cfg <- with_filter(
+	cfg <- with_filters(
 		shinyfilters(df_config),
 		letters = shiny::checkboxGroupInput
 	)

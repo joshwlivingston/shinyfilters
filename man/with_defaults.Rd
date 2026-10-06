@@ -38,5 +38,5 @@ with_defaults(filters, slider = NULL)
 with_defaults(filters, range = FALSE)
 }
 \seealso{
-\code{\link[=shinyfilters]{shinyfilters()}}, \code{\link[=with_filter]{with_filter()}}, \code{\link[=with_ns]{with_ns()}}
+\code{\link[=shinyfilters]{shinyfilters()}}, \code{\link[=with_filters]{with_filters()}}, \code{\link[=with_ns]{with_ns()}}
 }

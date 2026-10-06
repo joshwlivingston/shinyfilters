@@ -8,7 +8,7 @@
 #'
 #' `across_filters()` selects columns with
 #' <[`tidy-select`][tidyselect::language]> and names one input for all of
-#' them. Use it inside [with_filter()], where it can be mixed with named
+#' them. Use it inside [with_filters()], where it can be mixed with named
 #' columns, or inside [dplyr::mutate()]. It is never called on its own: both
 #' verbs capture the call.
 #'
@@ -20,23 +20,23 @@
 #'   `c(origin, carrier)`, or `where(is.numeric)`. Defaults to every column.
 #' @param .fns The input for the selected columns: a keyword, a \pkg{shiny}
 #'   input function, or an [as_filter()] object, as described in
-#'   [with_filter()]. A one-sided formula naming an input, such as
+#'   [with_filters()]. A one-sided formula naming an input, such as
 #'   `~ "slider"`, also works.
 #' @param ... Not supported.
 #' @param .names Not supported. `across_filters()` chooses an input for the
 #'   selected columns; it doesn't rename them.
 #'
-#' @returns Nothing. Calling `across_filters()` outside [with_filter()] or
+#' @returns Nothing. Calling `across_filters()` outside [with_filters()] or
 #'   [dplyr::mutate()] is an error.
 #'
-#' @seealso [with_filter()]
+#' @seealso [with_filters()]
 #'
 #' @examples
 #' filters <- shinyfilters(nyc_flights)
-#' with_filter(filters, across_filters(where(is.numeric), "slider"))
+#' with_filters(filters, across_filters(where(is.numeric), "slider"))
 #'
 #' # Mix with named columns. Later arguments win.
-#' with_filter(
+#' with_filters(
 #'   filters,
 #'   across_filters(everything(), "selectize"),
 #'   origin = "radio"
@@ -49,7 +49,7 @@ across_filters <- function(
 	.names = NULL
 ) {
 	cli_abort(c(
-		"{.fn across_filters} must be used inside {.fn with_filter} or {.fn mutate}.",
+		"{.fn across_filters} must be used inside {.fn with_filters} or {.fn mutate}.",
 		i = "It selects columns and names one input for all of them."
 	))
 }

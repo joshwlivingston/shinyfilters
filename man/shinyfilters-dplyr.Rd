@@ -24,7 +24,7 @@ input.
 does, and can be mixed with the other forms.
 
 Each input is a keyword, a shiny input function, or an \code{\link[=as_filter]{as_filter()}}
-object, as described in \code{\link[=with_filter]{with_filter()}}. Any of these is always read as
+object, as described in \code{\link[=with_filters]{with_filters()}}. Any of these is always read as
 an input; any other value is the column's data.
 
 For \code{select()}, the columns to keep, using
@@ -35,7 +35,7 @@ The updated configuration.
 }
 \description{
 \code{\link[dplyr:mutate]{dplyr::mutate()}} sets the input \code{\link[=filterInput]{filterInput()}} creates for a column of a
-configuration made by \code{\link[=shinyfilters]{shinyfilters()}}, like \code{\link[=with_filter]{with_filter()}} does, and
+configuration made by \code{\link[=shinyfilters]{shinyfilters()}}, like \code{\link[=with_filters]{with_filters()}} does, and
 adds or replaces columns computed from the others.
 \code{\link[dplyr:select]{dplyr::select()}} keeps only the selected columns, and \code{\link[dplyr:pull]{dplyr::pull()}}
 returns one column's input.
@@ -60,5 +60,5 @@ select(filters, origin, carrier)
 \dontshow{\}) # examplesIf}
 }
 \seealso{
-\code{\link[=with_filter]{with_filter()}}, \code{\link[=across_filters]{across_filters()}}
+\code{\link[=with_filters]{with_filters()}}, \code{\link[=across_filters]{across_filters()}}
 }

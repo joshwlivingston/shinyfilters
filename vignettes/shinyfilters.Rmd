@@ -55,7 +55,7 @@ filters
 ## Choose inputs by keyword
 
 Use `with_filters()` to set the input for individual columns. The 
-quickest way is by using a keyword like `"slider"`. See `?with_filter` for the 
+quickest way is by using a keyword like `"slider"`. See `?with_filters` for the 
 full list of keywords.
 
 To choose the columns, you have three options:
@@ -66,14 +66,14 @@ To choose the columns, you have three options:
 
 ```{r, eval = getRversion() >= "4.1", include = getRversion() >= "4.1"}
 filters <- filters |>
-	with_filter(where(is.numeric), "slider")
+	with_filters(where(is.numeric), "slider")
 
 filters
 ```
 
 ```{r, eval = !getRversion() >= "4.1", include = !getRversion() >= "4.1"}
 filters <- filters %>%
-	with_filter(where(is.numeric), "slider")
+	with_filters(where(is.numeric), "slider")
 
 filters
 ```
@@ -113,14 +113,14 @@ gives the same input as `"radio"`:
 
 ```{r, eval = getRversion() >= "4.1", include = getRversion() >= "4.1"}
 filters <- filters |>
-	with_filter(origin = radioButtons)
+	with_filters(origin = radioButtons)
 
 filters
 ```
 
 ```{r, eval = !getRversion() >= "4.1", include = !getRversion() >= "4.1"}
 filters <- filters %>%
-	with_filter(origin = radioButtons)
+	with_filters(origin = radioButtons)
 
 filters
 ```
@@ -154,7 +154,7 @@ which update function to use.
 
 ```{r, eval = getRversion() >= "4.1" && requireNamespace("shinyWidgets", quietly = TRUE), include = getRversion() >= "4.1" && requireNamespace("shinyWidgets", quietly = TRUE)}
 filters <- filters |>
-	with_filter(c(carrier, dest), as_filter(
+	with_filters(c(carrier, dest), as_filter(
 		shinyWidgets::pickerInput,
 		.update_fn = shinyWidgets::updatePickerInput
 	))
@@ -164,7 +164,7 @@ filters
 
 ```{r, eval = !getRversion() >= "4.1" && requireNamespace("shinyWidgets", quietly = TRUE), include = !getRversion() >= "4.1" && requireNamespace("shinyWidgets", quietly = TRUE)}
 filters <- filters %>%
-	with_filter(c(carrier, dest), as_filter(
+	with_filters(c(carrier, dest), as_filter(
 		shinyWidgets::pickerInput,
 		.update_fn = shinyWidgets::updatePickerInput
 	))
@@ -199,7 +199,7 @@ filters
 ## Set an input's arguments {.tabset}
 
 Sometimes you want to modify the arguments that are sent to the input. Use
-`as_filter()` for this, inside `with_filter()`.
+`as_filter()` for this, inside `with_filters()`.
 
 * Use `.x` to refer to the column being passed to the input.
 * `na.rm = TRUE` will be added to the call, if possible.
@@ -208,7 +208,7 @@ Sometimes you want to modify the arguments that are sent to the input. Use
 
 ```{r, eval = getRversion() >= "4.1", include = getRversion() >= "4.1"}
 filters <- filters |>
-	with_filter(
+	with_filters(
 		dep_delay = as_filter(sliderInput, value = range(.x))
 	)
 
@@ -217,7 +217,7 @@ filters
 
 ```{r, eval = !getRversion() >= "4.1", include = !getRversion() >= "4.1"}
 filters <- filters %>%
-	with_filter(
+	with_filters(
 		dep_delay = as_filter(sliderInput, value = range(.x))
 	)
 
@@ -263,21 +263,21 @@ filters
 
 ## Add and replace columns {.tabset}
 
-Compute columns on your data using `shiynfilters::with_filter()` or 
+Compute columns on your data using `shiynfilters::with_filters()` or 
 `dplyr::mutate()`. Any new or replaced column receives a default filter input.
 
 ### shinyfilters {#columns-shinyfilters}
 
 ```{r, eval = getRversion() >= "4.1", include = getRversion() >= "4.1"}
 filters <- filters |>
-	with_filter(dep_delay = -dep_delay, on_time = !delayed)
+	with_filters(dep_delay = -dep_delay, on_time = !delayed)
 
 filters
 ```
 
 ```{r, eval = !getRversion() >= "4.1", include = !getRversion() >= "4.1"}
 filters <- filters %>%
-	with_filter(dep_delay = -dep_delay, on_time = !delayed)
+	with_filters(dep_delay = -dep_delay, on_time = !delayed)
 
 filters
 ```

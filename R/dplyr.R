@@ -5,7 +5,7 @@
 #' Choose Inputs with dplyr Verbs
 #'
 #' [dplyr::mutate()] sets the input [filterInput()] creates for a column of a
-#' configuration made by [shinyfilters()], like [with_filter()] does, and
+#' configuration made by [shinyfilters()], like [with_filters()] does, and
 #' adds or replaces columns computed from the others.
 #' [dplyr::select()] keeps only the selected columns, and [dplyr::pull()]
 #' returns one column's input.
@@ -28,7 +28,7 @@
 #'   does, and can be mixed with the other forms.
 #'
 #'   Each input is a keyword, a shiny input function, or an [as_filter()]
-#'   object, as described in [with_filter()]. Any of these is always read as
+#'   object, as described in [with_filters()]. Any of these is always read as
 #'   an input; any other value is the column's data.
 #'
 #'   For `select()`, the columns to keep, using
@@ -36,7 +36,7 @@
 #'
 #' @returns The updated configuration.
 #'
-#' @seealso [with_filter()], [across_filters()]
+#' @seealso [with_filters()], [across_filters()]
 #'
 #' @name shinyfilters-dplyr
 #' @examplesIf rlang::is_installed("dplyr")
@@ -144,7 +144,7 @@ MUTATE_ACROSS_NAMES <- c(SHINYFILTERS_ACROSS, DPLYR_ACROSS)
 	# One argument at a time, so each sees the columns the earlier ones computed.
 	for (i in seq_along(quos)) {
 		if (is_across[[i]] || is_formula[[i]]) {
-			.data <- inject(.with_filter(
+			.data <- inject(.with_filters(
 				.data,
 				!!!quos[i],
 				.call = .call,

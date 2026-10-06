@@ -8,7 +8,7 @@ as_filter(input = NULL, ..., .update_fn = NULL)
 }
 \arguments{
 \item{input}{The input: a keyword or a \pkg{shiny} input function, as
-described in \code{\link[=with_filter]{with_filter()}}. Leave it out to keep each column's input.}
+described in \code{\link[=with_filters]{with_filters()}}. Leave it out to keep each column's input.}
 
 \item{...}{Named arguments for the input. They replace the ones shinyfilters
 passes for the column, such as \code{label}, \code{choices}, \code{min}, \code{max}, and
@@ -20,7 +20,7 @@ evaluated when the input is created, and a call in it that takes \code{na.rm},
 such as \code{range(.x)}, gets \code{na.rm = TRUE} unless it sets \code{na.rm} itself.
 
 Other arguments are evaluated right away. Written inside
-\code{with_filter(.filters, col = as_filter(...))}, they can use the columns
+\code{with_filters(.filters, col = as_filter(...))}, they can use the columns
 too, as they are at that point.}
 
 \item{.update_fn}{The function that updates the input, such as
@@ -33,11 +33,11 @@ like \code{\link[=call_update_filter_input]{call_update_filter_input()}}: it rec
 }
 \value{
 A \code{shinyfilters_filter} object, to use as an input in
-\code{\link[=with_filter]{with_filter()}}.
+\code{\link[=with_filters]{with_filters()}}.
 }
 \description{
 \code{as_filter()} sets arguments for a column's input, and can choose the input
-with them. Use it wherever \code{\link[=with_filter]{with_filter()}}, \code{\link[=across_filters]{across_filters()}}, or
+with them. Use it wherever \code{\link[=with_filters]{with_filters()}}, \code{\link[=across_filters]{across_filters()}}, or
 \code{\link[dplyr:mutate]{dplyr::mutate()}} take an input, to change the arguments shinyfilters passes
 for a column, such as a slider's \code{value}, or to add others, such as \code{step}
 or \code{width}.
@@ -53,27 +53,27 @@ instead: a new input drops it.
 filters <- shinyfilters(nyc_flights)
 
 # A range slider: `.x` is the column the input is created for
-filters <- with_filter(
+filters <- with_filters(
   filters,
   dep_delay = as_filter(shiny::sliderInput, value = range(.x, na.rm = TRUE))
 )
 filters$dep_delay
 
 # Without an input, the column keeps the one it has
-with_filter(filters, dep_delay = as_filter(step = 5))
+with_filters(filters, dep_delay = as_filter(step = 5))
 
 # Reuse an input for several columns
 range_slider <- as_filter("slider", value = range(.x, na.rm = TRUE))
-with_filter(filters, across_filters(where(is.numeric), range_slider))
+with_filters(filters, across_filters(where(is.numeric), range_slider))
 
 # Pass arguments shinyfilters doesn't compute
-with_filter(
+with_filters(
   filters,
   origin = as_filter("radio", label = "Airport", inline = TRUE)
 )
 
 # Name the function that updates an input shinyfilters doesn't know
-with_filter(
+with_filters(
   filters,
   origin = as_filter(
     shiny::checkboxGroupInput,
@@ -82,5 +82,5 @@ with_filter(
 )
 }
 \seealso{
-\code{\link[=with_filter]{with_filter()}}, \code{\link[=across_filters]{across_filters()}}
+\code{\link[=with_filters]{with_filters()}}, \code{\link[=across_filters]{across_filters()}}
 }

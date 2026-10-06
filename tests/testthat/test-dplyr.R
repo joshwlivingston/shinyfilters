@@ -4,7 +4,7 @@ test_that("mutate() sets inputs by column name", {
 	expect_identical(dplyr::mutate(cfg), cfg)
 	expect_identical(
 		filterInput(dplyr::mutate(cfg, x = "radio", letters = "selectize")),
-		filterInput(with_filter(cfg, x = "radio", letters = "selectize"))
+		filterInput(with_filters(cfg, x = "radio", letters = "selectize"))
 	)
 })
 
@@ -13,14 +13,14 @@ test_that("mutate() sets inputs for the columns across() selects", {
 	cfg <- shinyfilters(df_config)
 	expect_identical(
 		filterInput(dplyr::mutate(cfg, across(where(is.numeric), "slider"))),
-		filterInput(with_filter(cfg, where(is.numeric), "slider"))
+		filterInput(with_filters(cfg, where(is.numeric), "slider"))
 	)
 })
 
 test_that("across() matches its arguments like dplyr::across()", {
 	skip_if_not_installed("dplyr")
 	cfg <- shinyfilters(df_config)
-	numeric_sliders <- filterInput(with_filter(cfg, where(is.numeric), "slider"))
+	numeric_sliders <- filterInput(with_filters(cfg, where(is.numeric), "slider"))
 
 	expect_identical(
 		filterInput(dplyr::mutate(
@@ -35,15 +35,15 @@ test_that("across() matches its arguments like dplyr::across()", {
 	)
 	expect_identical(
 		filterInput(dplyr::mutate(cfg, across(.fns = "selectize"))),
-		filterInput(with_filter(cfg, everything(), "selectize"))
+		filterInput(with_filters(cfg, everything(), "selectize"))
 	)
 	expect_identical(
 		filterInput(dplyr::mutate(cfg, dplyr::across(x, "radio"))),
-		filterInput(with_filter(cfg, x, "radio"))
+		filterInput(with_filters(cfg, x, "radio"))
 	)
 	expect_identical(
 		filterInput(dplyr::mutate(cfg, across(x, ~"radio"))),
-		filterInput(with_filter(cfg, x, "radio"))
+		filterInput(with_filters(cfg, x, "radio"))
 	)
 })
 
@@ -55,7 +55,7 @@ test_that("mutate() accepts across_filters() too", {
 			cfg,
 			across_filters(where(is.numeric), "slider")
 		)),
-		filterInput(with_filter(cfg, where(is.numeric), "slider"))
+		filterInput(with_filters(cfg, where(is.numeric), "slider"))
 	)
 })
 
@@ -65,22 +65,22 @@ test_that("mutate() and across() accept as_filter()", {
 	range_slider <- as_filter("slider", value = range(.x))
 	expect_identical(
 		filterInput(dplyr::mutate(cfg, x = as_filter("slider", value = range(.x)))),
-		filterInput(with_filter(cfg, x = range_slider))
+		filterInput(with_filters(cfg, x = range_slider))
 	)
 	expect_identical(
 		filterInput(dplyr::mutate(cfg, across(where(is.numeric), range_slider))),
-		filterInput(with_filter(cfg, where(is.numeric), range_slider))
+		filterInput(with_filters(cfg, where(is.numeric), range_slider))
 	)
 
 	sliders <- shinyfilters(df_config, slider = TRUE)
 	range_value <- as_filter(value = range(.x))
 	expect_identical(
 		filterInput(dplyr::mutate(sliders, x = as_filter(value = range(.x)))),
-		filterInput(with_filter(sliders, x = range_value))
+		filterInput(with_filters(sliders, x = range_value))
 	)
 	expect_identical(
 		filterInput(dplyr::mutate(sliders, across(where(is.numeric), range_value))),
-		filterInput(with_filter(sliders, where(is.numeric), range_value))
+		filterInput(with_filters(sliders, where(is.numeric), range_value))
 	)
 })
 
@@ -89,7 +89,7 @@ test_that("mutate() and transmute() take `cols ~ input` formulas", {
 	cfg <- shinyfilters(df_config)
 	expect_identical(
 		filterInput(dplyr::mutate(cfg, where(is.numeric) ~ "slider")),
-		filterInput(with_filter(cfg, where(is.numeric), "slider"))
+		filterInput(with_filters(cfg, where(is.numeric), "slider"))
 	)
 	expect_identical(
 		names(dplyr::transmute(cfg, where(is.numeric) ~ "slider")),
@@ -102,7 +102,7 @@ test_that("mutate() applies its arguments in order", {
 	cfg <- shinyfilters(df_config)
 	expect_identical(
 		filterInput(dplyr::mutate(cfg, x = "radio", across(x, "selectize"))),
-		filterInput(with_filter(cfg, x = "selectize"))
+		filterInput(with_filters(cfg, x = "selectize"))
 	)
 })
 
@@ -119,7 +119,10 @@ test_that("mutate() adds and replaces columns", {
 	expect_identical(as.data.frame(replaced)$x, df_config$x / 2)
 	expect_identical(
 		filterInput(replaced),
-		filterInput(with_filter(shinyfilters(as.data.frame(replaced)), x = "radio"))
+		filterInput(with_filters(
+			shinyfilters(as.data.frame(replaced)),
+			x = "radio"
+		))
 	)
 })
 
@@ -128,7 +131,7 @@ test_that("mutate() chooses the input for a column it added", {
 	cfg <- shinyfilters(df_config)
 	expect_identical(
 		filterInput(dplyr::mutate(cfg, y = x * 2, y = "slider")),
-		filterInput(with_filter(
+		filterInput(with_filters(
 			shinyfilters(transform(df_config, y = x * 2)),
 			y = "slider"
 		))
@@ -158,7 +161,7 @@ test_that("mutate() changes the namespace with with_ns()", {
 	)
 })
 
-test_that("mutate() labels a custom input the way with_filter() does", {
+test_that("mutate() labels a custom input the way with_filters() does", {
 	skip_if_not_installed("dplyr")
 	my_select <- function(inputId, label, choices) {
 		shiny::selectInput(inputId, label, choices)
@@ -177,7 +180,7 @@ test_that("print() marks columns added by mutate()", {
 		print(cfg)
 		print(dplyr::mutate(cfg, y = "slider", letters = "radio"))
 		print(dplyr::select(cfg, x, letters))
-		print(with_filter(cfg, z = y + 1, x = x / 2))
+		print(with_filters(cfg, z = y + 1, x = x / 2))
 	})
 })
 
@@ -186,8 +189,8 @@ test_that("print() names the functions that chose inputs", {
 	cfg <- dplyr::mutate(shinyfilters(df_config), x = "slider")
 	expect_snapshot(variant = snapshot_variant(), {
 		print(cfg)
-		print(with_filter(cfg, letters = "radio"))
-		print(with_filter(cfg, x = "radio"))
+		print(with_filters(cfg, letters = "radio"))
+		print(with_filters(cfg, x = "radio"))
 	})
 })
 
@@ -249,7 +252,7 @@ test_that("transmute() keeps the columns across() selects", {
 	expect_identical(
 		filterInput(dplyr::transmute(cfg, across(where(is.numeric), "slider"))),
 		filterInput(dplyr::select(
-			with_filter(cfg, where(is.numeric), "slider"),
+			with_filters(cfg, where(is.numeric), "slider"),
 			where(is.numeric)
 		))
 	)
@@ -270,7 +273,7 @@ test_that("transmute() changes the namespace with with_ns()", {
 	ns <- shiny::NS("m")
 	expect_identical(
 		filterInput(dplyr::transmute(cfg, with_ns(ns), x = "radio")),
-		filterInput(with_ns(with_filter(cfg, x = "radio"), ns)["x"])
+		filterInput(with_ns(with_filters(cfg, x = "radio"), ns)["x"])
 	)
 })
 
@@ -336,7 +339,7 @@ test_that("a config rendered in a session of a bookmarked app doesn't error", {
 })
 
 test_that("as.data.frame() returns the data", {
-	cfg <- with_filter(shinyfilters(df_config), x = "radio")
+	cfg <- with_filters(shinyfilters(df_config), x = "radio")
 	expect_identical(as.data.frame(cfg), df_config)
 })
 

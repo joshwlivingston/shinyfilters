@@ -208,7 +208,7 @@ There are three possible ways to run code, listed in rough order of desirability
 - Every user-facing function should be exported and have roxygen2 documentation.
 - Internal functions should not have roxygen documentation.
 - Wrap roxygen2 comments to 80 characters.
-- Write examples the way users write code. Use named arguments where a positional call reads oddly: `with_filter(filters, origin = "radio")`, not `with_filter(filters, origin, "radio")`. Prefer the package's `nyc_flights` data over built-in datasets such as `mtcars` or `iris`. Check a dataset's source before relying on it: `nycflights13::flights` isn't base R. (`with_filter()` and `nyc_flights` arrive with #107.)
+- Write examples the way users write code. Use named arguments where a positional call reads oddly: `with_filters(filters, origin = "radio")`, not `with_filters(filters, origin, "radio")`. Prefer the package's `nyc_flights` data over built-in datasets such as `mtcars` or `iris`. Check a dataset's source before relying on it: `nycflights13::flights` isn't base R. (`with_filters()` and `nyc_flights` arrive with #107.)
 - Whenever you add a new (non-internal) documentation topic, also add the topic to `_pkgdown.yml`.
 - Always re-document the package after changing a roxygen2 comment.
 - Use `pkgdown::check_pkgdown()` to check that all topics are included in the reference index.
