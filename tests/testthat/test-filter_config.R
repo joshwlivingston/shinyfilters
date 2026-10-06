@@ -790,6 +790,16 @@ test_that("a config placed in a UI that htmltools inspects errors", {
 	expect_no_error(htmltools::tagQuery(htmltools::div(cfg[["x"]]))$find(".a"))
 })
 
+test_that("a config placed in bslib::accordion() errors", {
+	skip_if_not_installed("bslib")
+	cfg <- shinyfilters(df_config)
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+		bslib::accordion(cfg["x"])
+		suppressMessages(bslib::accordion(bslib::accordion_panel("A", cfg["x"])))
+	})
+	expect_no_error(bslib::accordion(bslib::accordion_panel("A", cfg[["x"]])))
+})
+
 test_that("str() shows a config's structure", {
 	cfg <- shinyfilters(df_config)
 	expect_output(str(cfg), "<shinyfilters::shinyfilters>", fixed = TRUE)
