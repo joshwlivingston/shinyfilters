@@ -4,15 +4,50 @@
 \alias{shinyfilters}
 \title{Configure the Filters for a Data Frame}
 \usage{
-shinyfilters(data, ..., ns = NULL)
+shinyfilters(
+  .data,
+  area = FALSE,
+  radio = FALSE,
+  range = TRUE,
+  selectize = TRUE,
+  multiple = TRUE,
+  slider = TRUE,
+  textbox = FALSE,
+  ns = NULL,
+  ...
+)
 }
 \arguments{
-\item{data}{A data frame.}
+\item{.data}{A \code{data.frame}.}
 
-\item{...}{Named arguments passed to \code{\link[=filterInput]{filterInput()}} for every column, such
-as \code{slider = TRUE} or \code{selectize = TRUE}.}
+\item{area}{\emph{(character)}. Logical. Controls whether to use  \link{textAreaInput}
+(\code{TRUE}) or \link{textInput} (\code{FALSE}). Only applies when \code{textbox} is
+\code{TRUE}.}
 
-\item{ns}{An optional namespace created by \code{\link[shiny:NS]{shiny::NS()}}.}
+\item{radio}{\emph{(character, factor, list, logical)}. Logical. Controls whether
+to use \link{radioButtons} (\code{TRUE}) or a dropdown input (\code{FALSE}). For
+character vectors, \code{radio} only applies if \code{textbox} is \code{FALSE}.}
+
+\item{range}{\emph{(Date, POSIXt)}. Logical. Controls whether to use
+\link{dateRangeInput} (\code{TRUE}) or \link{dateInput} (\code{FALSE}).}
+
+\item{selectize}{\emph{(character, factor, list, logical)}. Logical. Controls
+whether to use \link{selectizeInput} (\code{TRUE}) or \link{selectInput} (\code{FALSE}). For
+character vectors, \code{selectize} only applies if \code{textbox} is \code{FALSE}.}
+
+\item{multiple}{Passed to \link{selectInput} or \link{selectizeInput}.}
+
+\item{slider}{\emph{(numeric)}. Logical. Controls whether to use \link{sliderInput}
+(\code{TRUE}) or \link{numericInput} (\code{FALSE}).}
+
+\item{textbox}{\emph{(character)}. Logical. Controls whether to use a text input
+(\code{TRUE}) or a dropdown input (\code{FALSE}).}
+
+\item{ns}{An optional namespace created by \code{\link[shiny:NS]{NS()}} or an object to be coerced
+to a namespace. Useful when using \code{shinyfilters()} inside a \pkg{shiny}
+module.}
+
+\item{...}{Arguments passed to the selected input.}
 }
 \value{
 A \code{shinyfilters} object:

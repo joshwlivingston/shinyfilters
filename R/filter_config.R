@@ -14,10 +14,27 @@
 #' inside their UI function to restore bookmarked values; placing the result
 #' in their UI directly is an error.
 #'
-#' @param data A data frame.
-#' @param ... Named arguments passed to [filterInput()] for every column, such
-#'   as `slider = TRUE` or `selectize = TRUE`.
-#' @param ns An optional namespace created by [shiny::NS()].
+#' @param .data A `data.frame`.
+#' @param area *(character)*. Logical. Controls whether to use  [textAreaInput]
+#'   (`TRUE`) or [textInput] (`FALSE`). Only applies when `textbox` is
+#'   `TRUE`.
+#' @param radio *(character, factor, list, logical)*. Logical. Controls whether
+#'   to use [radioButtons] (`TRUE`) or a dropdown input (`FALSE`). For
+#'   character vectors, `radio` only applies if `textbox` is `FALSE`.
+#' @param range *(Date, POSIXt)*. Logical. Controls whether to use
+#'   [dateRangeInput] (`TRUE`) or [dateInput] (`FALSE`).
+#' @param selectize *(character, factor, list, logical)*. Logical. Controls
+#'   whether to use [selectizeInput] (`TRUE`) or [selectInput] (`FALSE`). For
+#'   character vectors, `selectize` only applies if `textbox` is `FALSE`.
+#' @param multiple Passed to [selectInput] or [selectizeInput].
+#' @param slider *(numeric)*. Logical. Controls whether to use [sliderInput]
+#'   (`TRUE`) or [numericInput] (`FALSE`).
+#' @param textbox *(character)*. Logical. Controls whether to use a text input
+#'   (`TRUE`) or a dropdown input (`FALSE`).
+#' @param ns An optional namespace created by [NS()] or an object to be coerced
+#'   to a namespace. Useful when using `shinyfilters()` inside a \pkg{shiny}
+#'   module.
+#' @param ... Arguments passed to the selected input.
 #'
 #' @returns A `shinyfilters` object:
 #'
@@ -42,32 +59,54 @@
 #' # The input for one column
 #' filters$origin
 #' @export
-shinyfilters <- function(data, ..., ns = NULL) {
-	if (!is.data.frame(data)) {
+shinyfilters <- function(
+	.data,
+	area = FALSE,
+	radio = FALSE,
+	range = TRUE,
+	selectize = TRUE,
+	multiple = TRUE,
+	slider = TRUE,
+	textbox = FALSE,
+	ns = NULL,
+	...
+) {
+	if (!is.data.frame(.data)) {
 		cli_abort(
-			"{.arg data} must be a data frame, not {.obj_type_friendly {data}}."
+			"{.arg data} must be a {.cls data.frame}, not {.obj_type_friendly {.data}}."
 		)
 	}
-	if (nrow(data) == 0) {
-		cli_abort("{.arg data} must have at least one row.")
+	if (nrow(.data) == 0) {
+		cli_abort("{.arg .data} must have at least one row.")
 	}
 	if (!is.null(ns)) {
 		._check_valid_shiny_ns(ns)
-	}
-	args <- list(...)
-	if (length(args) > 0) {
-		check_named_list_or_null(args, arg = "...")
 	}
 	the$allowed <- TRUE
 	on.exit({
 		the$allowed <- FALSE
 	})
-	class_shinyfilters(data = data, args = ._drop_flags_off(args), ns = ns)
+	class_shinyfilters(
+		data = .data,
+		args = ._remove_default_flags(c(
+			list(
+				area = area,
+				radio = radio,
+				range = range,
+				selectize = selectize,
+				multiple = multiple,
+				slider = slider,
+				textbox = textbox
+			),
+			list(...)
+		)),
+		ns = ns
+	)
 }
 
 # Drops input flags set to `FALSE`, their default. `selectize` stays: it is an
 # argument of `selectInput()` too, where `FALSE` isn't the default.
-._drop_flags_off <- function(args) {
+._remove_default_flags <- function(args) {
 	is_flag <- names(args) %in% setdiff(INPUT_FLAGS, "selectize")
 	is_off <- vapply(args, isFALSE, logical(1))
 	args[!(is_flag & is_off)]
@@ -501,8 +540,8 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 # One result per column: the input `._call_input()` was asked to call, or the
 # error that kept `filterInput()` from getting that far.
 ._dry_run <- function(
-config,
-cols = names(config@data),
+	config,
+	cols = names(config@data),
 	args = ._config_args(config)
 ) {
 	the$dry_run <- TRUE
@@ -512,7 +551,7 @@ cols = names(config@data),
 	})
 
 	data <- config@data
-		i <- match(cols, names(data))
+	i <- match(cols, names(data))
 	mapply(
 		function(name, id, label) {
 			the$dry_run_fn <- NULL
