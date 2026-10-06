@@ -26,7 +26,8 @@ shinyfilters(
 
 \item{radio}{\emph{(character, factor, list, logical)}. Logical. Controls whether
 to use \link{radioButtons} (\code{TRUE}) or a dropdown input (\code{FALSE}). For
-character vectors, \code{radio} only applies if \code{textbox} is \code{FALSE}.}
+character vectors, \code{radio} only applies if \code{textbox} is \code{FALSE}. \code{TRUE}
+turns off the \code{selectize} default; setting both to \code{TRUE} is an error.}
 
 \item{range}{\emph{(Date, POSIXt)}. Logical. Controls whether to use
 \link{dateRangeInput} (\code{TRUE}) or \link{dateInput} (\code{FALSE}).}

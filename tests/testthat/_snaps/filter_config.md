@@ -28,6 +28,14 @@
       
       # Filter set by default argument
 
+# `radio = TRUE` turns off the `selectize` default
+
+    Code
+      filterInput(shinyfilters(df_config, radio = TRUE, selectize = TRUE))
+    Condition
+      Error:
+      ! `radio` and `selectize` can't both be `TRUE`.
+
 # print() marks columns added by with_filters()
 
     Code

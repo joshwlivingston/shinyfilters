@@ -132,8 +132,19 @@ test_that("global `radio = TRUE` doesn't apply to numeric columns", {
 	res <- filterInput(shinyfilters(df_config, radio = TRUE))
 	expect_identical(
 		res[[3]],
-		filterInput(df_config$x, inputId = "x", label = "x")
+		filterInput(df_config$x, inputId = "x", label = "x", slider = TRUE)
 	)
+})
+
+test_that("`radio = TRUE` turns off the `selectize` default", {
+	res <- filterInput(shinyfilters(df_config, radio = TRUE))
+	expect_identical(
+		res[[1]],
+		shiny::radioButtons("letters", "letters", choices = c("a", "b", "c"))
+	)
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+		filterInput(shinyfilters(df_config, radio = TRUE, selectize = TRUE))
+	})
 })
 
 test_that("factor + radio keeps level order", {

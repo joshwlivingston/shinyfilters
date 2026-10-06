@@ -20,7 +20,8 @@
 #'   `TRUE`.
 #' @param radio *(character, factor, list, logical)*. Logical. Controls whether
 #'   to use [radioButtons] (`TRUE`) or a dropdown input (`FALSE`). For
-#'   character vectors, `radio` only applies if `textbox` is `FALSE`.
+#'   character vectors, `radio` only applies if `textbox` is `FALSE`. `TRUE`
+#'   turns off the `selectize` default; setting both to `TRUE` is an error.
 #' @param range *(Date, POSIXt)*. Logical. Controls whether to use
 #'   [dateRangeInput] (`TRUE`) or [dateInput] (`FALSE`).
 #' @param selectize *(character, factor, list, logical)*. Logical. Controls
@@ -82,24 +83,27 @@ shinyfilters <- function(
 	if (!is.null(ns)) {
 		._check_valid_shiny_ns(._resolve_ns(ns))
 	}
+	flags <- list(
+		area = area,
+		radio = radio,
+		range = range,
+		selectize = selectize,
+		multiple = multiple,
+		slider = slider,
+		textbox = textbox
+	)
+	# `radio = TRUE` asks for radio buttons, so the `selectize` default gives
+	# way. Passing both is still an error.
+	if (isTRUE(radio) && missing(selectize)) {
+		flags$selectize <- NULL
+	}
 	the$allowed <- TRUE
 	on.exit({
 		the$allowed <- FALSE
 	})
 	class_shinyfilters(
 		data = .data,
-		args = ._remove_default_flags(c(
-			list(
-				area = area,
-				radio = radio,
-				range = range,
-				selectize = selectize,
-				multiple = multiple,
-				slider = slider,
-				textbox = textbox
-			),
-			list(...)
-		)),
+		args = ._remove_default_flags(c(flags, list(...))),
 		ns = ns
 	)
 }
