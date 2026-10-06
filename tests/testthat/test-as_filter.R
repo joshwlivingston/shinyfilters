@@ -428,16 +428,24 @@ test_that("print() marks a row by its input, not its as_filter() arguments", {
 })
 
 test_that("print() shows `.update_fn`", {
+	checkbox <- shiny::checkboxGroupInput
+	update_checkbox <- shiny::updateCheckboxGroupInput
 	cfg <- with_filter(
 		shinyfilters(df_config),
 		letters = as_filter(
 			shiny::checkboxGroupInput,
 			inline = TRUE,
 			.update_fn = shiny::updateCheckboxGroupInput
+		),
+		factors = as_filter(checkbox, .update_fn = update_checkbox),
+		x = as_filter(
+			function(inputId, label, ...) shiny::tags$div(),
+			.update_fn = function(session, inputId, ...) NULL
 		)
 	)
 	expect_snapshot(variant = snapshot_variant(), {
 		print(cfg)
+		print(as_filter(shiny::checkboxGroupInput, .update_fn = update_checkbox))
 		print(as_filter(.update_fn = shiny::updateCheckboxGroupInput))
 	})
 })

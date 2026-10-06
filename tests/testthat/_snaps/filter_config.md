@@ -451,7 +451,7 @@
       <shinyfilters> * 4 filters * namespace "m"
       
       Filters
-        *  letters                <chr>  <custom>
+        *  letters                <chr>  my_select
            factors                <fct>  selectInput
         *  x                      <int>  radioButtons
         #  a_very_very_long_name  <dbl>  sliderInput

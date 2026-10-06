@@ -80,6 +80,7 @@
 #' @export
 as_filter <- function(input = NULL, ..., .update_fn = NULL) {
 	args <- enquos(...)
+	input_quo <- enquo(input)
 	update <- enquo(.update_fn)
 	if (length(args) > 0) {
 		check_named_list_or_null(args, arg = "...")
@@ -114,12 +115,25 @@ as_filter <- function(input = NULL, ..., .update_fn = NULL) {
 		},
 		args = args
 	)
-	# Stored only when set, so `as_filter("slider")` equals `"slider"`. The
-	# label is the argument as it was written, for `print()`.
+	# Stored only when set, so `as_filter("slider")` equals `"slider"`. A label
+	# is the name a function was written with, for `print()`.
+	if (is.function(out$input)) {
+		out$label <- ._fn_label(input_quo)
+	}
 	if (!is.null(.update_fn)) {
-		out$update <- list(fn = .update_fn, label = as_label(update))
+		out$update <- list(fn = .update_fn, label = ._fn_label(update))
 	}
 	structure(out, class = "shinyfilters_filter")
+}
+
+# The name a function was written with: `fn` or `pkg::fn`. Anything else, such
+# as an inline function, is `<custom>`.
+._fn_label <- function(quo) {
+	expr <- quo_get_expr(quo)
+	if (is_symbol(expr) || is_call(expr, "::")) {
+		return(as_label(expr))
+	}
+	"<custom>"
 }
 
 ._is_filter <- function(x) {
@@ -138,7 +152,7 @@ print.shinyfilters_filter <- function(x, ...) {
 		if (is.null(input)) {
 			col_grey("the column's input")
 		} else {
-			col_cyan(._input_name(input))
+			col_cyan(._input_name(input, x$label))
 		}
 	))
 	args <- ._format_override_args(x)
@@ -166,7 +180,7 @@ print.shinyfilters_filter <- function(x, ...) {
 }
 
 # The lines `print()` shows under a filter: its `as_filter()` arguments, then
-# its update function as it was written.
+# the name of its update function.
 ._format_override_args <- function(override) {
 	args <- ._format_input_args(override$args)
 	if (!is.null(override$update)) {

@@ -77,15 +77,22 @@
       <shinyfilters> * 4 filters
       
       Filters
-        *  letters                <chr>  <custom>
+        *  letters                <chr>  shiny::checkboxGroupInput
                                            inline     = TRUE
                                            .update_fn = shiny::updateCheckboxGroupInput
-           factors                <fct>  selectInput
-           x                      <int>  numericInput
+        *  factors                <fct>  checkbox
+                                           .update_fn = update_checkbox
+        *  x                      <int>  <custom>
+                                           .update_fn = <custom>
            a_very_very_long_name  <dbl>  numericInput
       
       
       * Filter set by `with_filter()`
+    Code
+      print(as_filter(shiny::checkboxGroupInput, .update_fn = update_checkbox))
+    Output
+      <shinyfilters_filter> * shiny::checkboxGroupInput
+        .update_fn = update_checkbox
     Code
       print(as_filter(.update_fn = shiny::updateCheckboxGroupInput))
     Output

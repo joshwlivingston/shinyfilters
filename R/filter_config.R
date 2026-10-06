@@ -456,7 +456,13 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 }
 
 ._dry_run_inputs <- function(config) {
-	vapply(._dry_run(config), ._dry_run_label, character(1))
+	res <- ._dry_run(config)
+	nms <- names(config@data)
+	vapply(
+		seq_along(res),
+		function(i) ._dry_run_label(res[[i]], config@overrides[[nms[[i]]]]$label),
+		character(1)
+	)
 }
 
 # One result per column: the input `._call_input()` was asked to call, or the
@@ -495,7 +501,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	)
 }
 
-._dry_run_label <- function(res) {
+._dry_run_label <- function(res, label = NULL) {
 	if (inherits(res, "error")) {
 		while (inherits(res$parent, "error")) {
 			res <- res$parent
@@ -506,18 +512,19 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	if (!inherits(res, "shinyfilters_dry_run")) {
 		return("<custom>")
 	}
-	._input_name(res$fn)
+	._input_name(res$fn, label)
 }
 
-# The name of a shiny input function, or `<custom>` for any other function
-._input_name <- function(fn) {
+# The name of a shiny input function. Any other function has its `label`, the
+# name it was written with, or `<custom>` without one.
+._input_name <- function(fn, label = NULL) {
 	inputs <- ._shiny_inputs()
 	for (name in names(inputs)) {
 		if (identical(fn, inputs[[name]])) {
 			return(name)
 		}
 	}
-	"<custom>"
+	if (is.null(label)) "<custom>" else label
 }
 
 ._is_shiny_input <- function(fn) {
@@ -797,7 +804,7 @@ method(.with_filter, class_shinyfilters) <- function(
 				call = call
 			)
 		}
-		override <- ._override(value, call = call, fn = fn)
+		override <- ._override(value, quo, call = call, fn = fn)
 		return(._set_overrides(config, set_names(list(override), name)))
 	}
 
@@ -851,11 +858,13 @@ method(.with_filter, class_shinyfilters) <- function(
 	old <- config@overrides[[name]]
 	input <- override$input
 	fn <- override$fn
+	label <- override$label
 	args <- old$args
 	update <- override$update
 	if (is.null(input) && !is.null(old)) {
 		input <- old$input
 		fn <- old$fn
+		label <- old$label
 	} else if (length(args) > 0) {
 		named <- ._override_arg_names(config, name, override)
 		if (!is.null(named)) {
@@ -870,6 +879,7 @@ method(.with_filter, class_shinyfilters) <- function(
 	if (length(args) == 0) {
 		out$args <- NULL
 	}
+	out$label <- label
 	out$update <- update
 	out
 }
@@ -914,7 +924,7 @@ method(.with_filter, class_shinyfilters) <- function(
 		}
 	)
 	._check_keyword_symbol(quo, input, call = call)
-	._override(input, call = call, fn = fn)
+	._override(input, quo, call = call, fn = fn)
 }
 
 # An unquoted keyword that names a function, such as `range`, is a mistake:
@@ -936,17 +946,23 @@ method(.with_filter, class_shinyfilters) <- function(
 	}
 }
 
-# An `as_filter()` object has already resolved its input. Its arguments and
-# update function are stored only when it has some, so `as_filter("slider")`
-# equals `"slider"`.
-._override <- function(input, call, fn) {
+# An `as_filter()` object has already resolved its input, and labeled it. Its
+# arguments and update function are stored only when it has some, so
+# `as_filter("slider")` equals `"slider"`. `quo` is the input as it was
+# written, which labels a function.
+._override <- function(input, quo, call, fn) {
 	if (!._is_filter(input)) {
-		return(list(input = resolve_filter_override(input, call = call), fn = fn))
+		out <- list(input = resolve_filter_override(input, call = call), fn = fn)
+		if (is.function(out$input)) {
+			out$label <- ._fn_label(quo)
+		}
+		return(out)
 	}
 	out <- list(input = input$input, args = input$args, fn = fn)
 	if (length(input$args) == 0) {
 		out$args <- NULL
 	}
+	out$label <- input$label
 	out$update <- input$update
 	out
 }
