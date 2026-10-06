@@ -305,16 +305,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 # Creates the input for one column, selected by name or position
 ._config_column <- function(config, col, call) {
 	nms <- names(config@data)
-	if (length(col) != 1) {
-		cli_abort(
-			"Select a single column, not {length(col)} value{?s}.",
-			call = call
-		)
-	}
-	if (is.numeric(col) && col %in% seq_along(nms)) {
-		col <- nms[[col]]
-	}
-	if (!is.character(col) || !(col %in% nms)) {
+	if (!(col %in% nms)) {
 		cli_abort("Can't find column {.field {col}}.", call = call)
 	}
 	i <- match(col, nms)

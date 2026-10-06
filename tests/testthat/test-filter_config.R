@@ -914,3 +914,8 @@ test_that("the `ns` property defaults to NULL", {
 		shinyfilters(data.frame(stringsAsFactors = FALSE, a = 1:3))@ns
 	)
 })
+
+test_that("double bracket with no arguments suppliued returns the object", {
+	cfg <- shinyfilters(df_config)
+	expect_identical(cfg[[]], cfg)
+})
