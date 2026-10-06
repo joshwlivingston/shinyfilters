@@ -42,6 +42,8 @@
 #'   * `names(filters)` lists its columns.
 #'   * `filters$col` and `filters[["col"]]` return the input [filterInput()]
 #'     creates for one column, including any [with_filters()] overrides.
+#'     `filters[[cols]]` returns the inputs of several columns, selected like
+#'     `filters[cols]`.
 #'   * `filters[cols]` returns a `shinyfilters` object with only the selected
 #'     columns, keeping their overrides. `cols` uses
 #'     <[`tidy-select`][tidyselect::language]>, like [with_filters()]; use
@@ -201,7 +203,12 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	call <- sys.call()
 	call[[1]] <- as.name("[[")
 	res <- ._select_impl(x, new_quosure(substitute(i), parent.frame()), call, ...)
-	filterInput(res)
+	inputs <- filterInput(res)
+	# One column gives its input, as `$` does.
+	if (length(inputs) == 1) {
+		return(inputs[[1]])
+	}
+	inputs
 }
 
 `.DollarNames.shinyfilters::shinyfilters` <- function(x, pattern = "") {

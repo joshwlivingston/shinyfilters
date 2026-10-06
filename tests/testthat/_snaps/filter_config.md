@@ -723,26 +723,6 @@
       Error in `cfg[[c("x", "nope")]]`:
       ! Can't select columns that don't exist.
       x Column `nope` doesn't exist.
-    Code
-      cfg[[1:2]]
-    Output
-      <div class="form-group shiny-input-container">
-        <label class="control-label" id="letters-label" for="letters">letters</label>
-        <div>
-          <select class="shiny-input-select form-control" id="letters" multiple="multiple"><option value="a">a</option>
-      <option value="b">b</option>
-      <option value="c">c</option></select>
-          <script type="application/json" data-for="letters">{"plugins":["selectize-plugin-a11y"]}</script>
-        </div>
-      </div>
-      <div class="form-group shiny-input-container">
-        <label class="control-label" id="factors-label" for="factors">factors</label>
-        <div>
-          <select class="shiny-input-select form-control" id="factors" multiple="multiple"><option value="lo">lo</option>
-      <option value="hi">hi</option></select>
-          <script type="application/json" data-for="factors">{"plugins":["selectize-plugin-a11y"]}</script>
-        </div>
-      </div>
 
 # `[` returns a config with the selected columns
 

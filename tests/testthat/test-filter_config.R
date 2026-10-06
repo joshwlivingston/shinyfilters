@@ -740,6 +740,10 @@ test_that("`$`, `[[`, and names() access columns", {
 	expect_identical(cfg$x, res[[3]])
 	expect_identical(cfg[["letters"]], res[[1]])
 	expect_identical(cfg[[4]], res[[4]])
+	expect_identical(
+		cfg[[c("letters", "x")]],
+		filterInput(cfg[c("letters", "x")])
+	)
 	expect_identical(names(cfg), names(df_config))
 	expect_identical(utils::.DollarNames(cfg, "^a_"), "a_very_very_long_name")
 })
@@ -751,7 +755,6 @@ test_that("`$` and `[[` error on unknown columns", {
 		cfg[["nope"]]
 		cfg[[9]]
 		cfg[[c("x", "nope")]]
-		cfg[[1:2]]
 	})
 })
 

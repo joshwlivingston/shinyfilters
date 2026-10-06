@@ -56,6 +56,8 @@ A \code{shinyfilters} object:
 \item \code{names(filters)} lists its columns.
 \item \code{filters$col} and \code{filters[["col"]]} return the input \code{\link[=filterInput]{filterInput()}}
 creates for one column, including any \code{\link[=with_filters]{with_filters()}} overrides.
+\code{filters[[cols]]} returns the inputs of several columns, selected like
+\code{filters[cols]}.
 \item \code{filters[cols]} returns a \code{shinyfilters} object with only the selected
 columns, keeping their overrides. \code{cols} uses
 <\code{\link[tidyselect:language]{tidy-select}}>, like \code{\link[=with_filters]{with_filters()}}; use
