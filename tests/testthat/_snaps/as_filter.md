@@ -15,6 +15,11 @@
         *  a_very_very_long_name  <dbl>  sliderInput
                                            value = range(.x, na.rm = TRUE)
       
+      Default Overrides
+        range     = TRUE
+        selectize = TRUE
+        multiple  = TRUE
+        slider    = TRUE
       
       * Filter set by `with_filters()`
       ~ Filter replaced by `with_filters()`
@@ -37,12 +42,19 @@
       <shinyfilters> * 4 filters
       
       Filters
-        letters                <chr>  selectInput
-                                        label = "A label that runs past thirt...
-        factors                <fct>  selectInput
-        x                      <int>  numericInput
-        a_very_very_long_name  <dbl>  numericInput
+        #  letters                <chr>  selectizeInput
+                                           label = "A label that runs past thirt...
+        #  factors                <fct>  selectizeInput
+        #  x                      <int>  sliderInput
+        #  a_very_very_long_name  <dbl>  sliderInput
       
+      Default Overrides
+        range     = TRUE
+        selectize = TRUE
+        multiple  = TRUE
+        slider    = TRUE
+      
+      # Filter set by default argument
 
 # print() marks a row by its input, not its as_filter() arguments
 
@@ -52,15 +64,18 @@
       <shinyfilters> * 4 filters
       
       Filters
-           letters                <chr>  selectInput
+        #  letters                <chr>  selectizeInput
                                            label = "Letters"
-           factors                <fct>  selectInput
+        #  factors                <fct>  selectizeInput
         #  x                      <int>  sliderInput
                                            value = range(.x, na.rm = TRUE)
         #  a_very_very_long_name  <dbl>  sliderInput
       
       Default Overrides
-        slider = TRUE
+        range     = TRUE
+        selectize = TRUE
+        multiple  = TRUE
+        slider    = TRUE
       
       # Filter set by default argument
     Code
@@ -77,16 +92,22 @@
       <shinyfilters> * 4 filters
       
       Filters
-        *  letters                <chr>  shiny::checkboxGroupInput
+        *  letters                <chr>  checkboxGroupInput {shiny}
                                            inline     = TRUE
-                                           .update_fn = shiny::updateCheckboxGroupInput
+                                           .update_fn = updateCheckboxGroupInput {shiny}
         *  factors                <fct>  checkbox
                                            .update_fn = update_checkbox
         *  x                      <int>  <custom>
                                            .update_fn = <custom>
-           a_very_very_long_name  <dbl>  numericInput
+        #  a_very_very_long_name  <dbl>  sliderInput
       
+      Default Overrides
+        range     = TRUE
+        selectize = TRUE
+        multiple  = TRUE
+        slider    = TRUE
       
+      # Filter set by default argument
       * Filter set by `with_filters()`
     Code
       print(as_filter(shiny::checkboxGroupInput, .update_fn = update_checkbox))
@@ -189,6 +210,6 @@
     Condition
       Error in `filterInput()`:
       ! Can't create an input for column letters.
-      Caused by error:
+      Caused by error in `selectInput()`:
       ! unused argument (valeu = 1)
 

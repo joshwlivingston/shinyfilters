@@ -4,7 +4,7 @@
       shinyfilters(data.frame(stringsAsFactors = FALSE, a = letters), ns = function(x)
         x)
     Condition
-      Error in `shinyfilters()`:
+      Error in `._resolve_ns()`:
       ! `ns` must not be a custom function.
 
 # a shiny input is matched as it is now, not as it was when built
@@ -15,11 +15,18 @@
       <shinyfilters> * 4 filters
       
       Filters
-        letters                <chr>  selectInput
-        factors                <fct>  selectInput
-        x                      <int>  numericInput
-        a_very_very_long_name  <dbl>  numericInput
+        #  letters                <chr>  selectizeInput
+        #  factors                <fct>  selectizeInput
+        #  x                      <int>  sliderInput
+        #  a_very_very_long_name  <dbl>  sliderInput
       
+      Default Overrides
+        range     = TRUE
+        selectize = TRUE
+        multiple  = TRUE
+        slider    = TRUE
+      
+      # Filter set by default argument
 
 # print() marks columns added by with_filters()
 
@@ -29,13 +36,19 @@
       <shinyfilters> * 5 filters
       
       Filters
-           letters                <chr>  selectInput
-           factors                <fct>  selectInput
-           x                      <int>  numericInput
-           a_very_very_long_name  <dbl>  numericInput
-        +  y                      <dbl>  numericInput
+        #  letters                <chr>  selectizeInput
+        #  factors                <fct>  selectizeInput
+        #  x                      <int>  sliderInput
+        #  a_very_very_long_name  <dbl>  sliderInput
+        +  y                      <dbl>  sliderInput
       
+      Default Overrides
+        range     = TRUE
+        selectize = TRUE
+        multiple  = TRUE
+        slider    = TRUE
       
+      # Filter set by default argument
       + Filter added by `with_filters()`
     Code
       print(cfg["y"])
@@ -43,8 +56,13 @@
       <shinyfilters> * 1 filter
       
       Filters
-        +  y  <dbl>  numericInput
+        +  y  <dbl>  sliderInput
       
+      Default Overrides
+        range     = TRUE
+        selectize = TRUE
+        multiple  = TRUE
+        slider    = TRUE
       
       + Filter added by `with_filters()`
     Code
@@ -53,8 +71,15 @@
       <shinyfilters> * 1 filter
       
       Filters
-        x  <int>  numericInput
+        #  x  <int>  sliderInput
       
+      Default Overrides
+        range     = TRUE
+        selectize = TRUE
+        multiple  = TRUE
+        slider    = TRUE
+      
+      # Filter set by default argument
 
 # print() marks columns replaced by with_filters()
 
@@ -64,12 +89,18 @@
       <shinyfilters> * 4 filters
       
       Filters
-           letters                <chr>  selectInput
-           factors                <fct>  selectInput
-        ~  x                      <dbl>  numericInput
-           a_very_very_long_name  <dbl>  numericInput
+        #  letters                <chr>  selectizeInput
+        #  factors                <fct>  selectizeInput
+        ~  x                      <dbl>  sliderInput
+        #  a_very_very_long_name  <dbl>  sliderInput
       
+      Default Overrides
+        range     = TRUE
+        selectize = TRUE
+        multiple  = TRUE
+        slider    = TRUE
       
+      # Filter set by default argument
       ~ Filter replaced by `with_filters()`
     Code
       print(cfg["x"])
@@ -77,8 +108,13 @@
       <shinyfilters> * 1 filter
       
       Filters
-        ~  x  <dbl>  numericInput
+        ~  x  <dbl>  sliderInput
       
+      Default Overrides
+        range     = TRUE
+        selectize = TRUE
+        multiple  = TRUE
+        slider    = TRUE
       
       ~ Filter replaced by `with_filters()`
     Code
@@ -87,8 +123,15 @@
       <shinyfilters> * 1 filter
       
       Filters
-        letters  <chr>  selectInput
+        #  letters  <chr>  selectizeInput
       
+      Default Overrides
+        range     = TRUE
+        selectize = TRUE
+        multiple  = TRUE
+        slider    = TRUE
+      
+      # Filter set by default argument
 
 # print() shows one marker per row
 
@@ -106,8 +149,10 @@
         +  z                      <chr>  selectizeInput
       
       Default Overrides
-        slider    = TRUE
+        range     = TRUE
         selectize = TRUE
+        multiple  = TRUE
+        slider    = TRUE
       
       # Filter set by default argument
       + Filter added by `with_filters()`
@@ -124,7 +169,7 @@
         #  date                       <date>  dateRangeInput
         *  origin                     <fct>   radioButtons
         #  dest                       <chr>   selectizeInput
-           dep_delay                  <dbl>   numericInput
+        #  dep_delay                  <dbl>   sliderInput
                                                 value = urgfjkbhqaewpqaedoufikljshygbqaeoli...
         *  distance                   <dbl>   sliderInput
         #  delayed                    <lgl>   selectizeInput
@@ -134,6 +179,8 @@
       Default Overrides
         range     = TRUE
         selectize = TRUE
+        multiple  = TRUE
+        slider    = TRUE
       
       # Filter set by default argument
       * Filter set by `with_filters()`
@@ -161,18 +208,35 @@
     Code
       shinyfilters(1:3)
     Condition
-      Error in `shinyfilters()`:
-      ! `data` must be a data frame, not an integer vector.
+      Error:
+      ! ! Invalid cli literal: `{.data}` starts with a dot.
+      i Interpreted literals must not start with a dot in cli >= 3.4.0.
+      i `{}` expressions starting with a dot are now only used for cli styles.
+      i To avoid this error, put a space character after the starting `{` or use parentheses: `{(.data)}`.
     Code
       shinyfilters(df_config[0, ])
     Condition
       Error in `shinyfilters()`:
-      ! `data` must have at least one row.
+      ! `.data` must have at least one row.
     Code
       shinyfilters(df_config, TRUE)
-    Condition
-      Error in `shinyfilters()`:
-      ! All elements of `...` must be named.
+    Output
+      <shinyfilters> * 4 filters
+      
+      Filters
+        #  letters                <chr>  selectizeInput
+        #  factors                <fct>  selectizeInput
+        #  x                      <int>  sliderInput
+        #  a_very_very_long_name  <dbl>  sliderInput
+      
+      Default Overrides
+        area      = TRUE
+        range     = TRUE
+        selectize = TRUE
+        multiple  = TRUE
+        slider    = TRUE
+      
+      # Filter set by default argument
     Code
       with_filters(df_config, x = "radio")
     Condition
@@ -327,7 +391,8 @@
       ! "date" isn't available for <integer> columns.
       i Use "numeric", "radio", "select", "selectize", or "slider" instead.
     Code
-      filterInput(with_filters(shinyfilters(data.frame(a = as.Date("2024-01-01"))), a = shiny::numericInput))
+      filterInput(with_filters(shinyfilters(data.frame(a = as.Date("2024-01-01"))),
+      a = shiny::numericInput))
     Condition
       Error in `filterInput()`:
       ! Can't create an input for column a.
@@ -370,22 +435,36 @@
       <shinyfilters> * 4 filters * namespace "m-n"
       
       Filters
-        letters                <chr>  selectInput
-        factors                <fct>  selectInput
-        x                      <int>  numericInput
-        a_very_very_long_name  <dbl>  numericInput
+        #  letters                <chr>  selectizeInput
+        #  factors                <fct>  selectizeInput
+        #  x                      <int>  sliderInput
+        #  a_very_very_long_name  <dbl>  sliderInput
       
+      Default Overrides
+        range     = TRUE
+        selectize = TRUE
+        multiple  = TRUE
+        slider    = TRUE
+      
+      # Filter set by default argument
     Code
       with_ns(cfg, NA_character_)
     Output
       <shinyfilters> * 4 filters * namespace "NA"
       
       Filters
-        letters                <chr>  selectInput
-        factors                <fct>  selectInput
-        x                      <int>  numericInput
-        a_very_very_long_name  <dbl>  numericInput
+        #  letters                <chr>  selectizeInput
+        #  factors                <fct>  selectizeInput
+        #  x                      <int>  sliderInput
+        #  a_very_very_long_name  <dbl>  sliderInput
       
+      Default Overrides
+        range     = TRUE
+        selectize = TRUE
+        multiple  = TRUE
+        slider    = TRUE
+      
+      # Filter set by default argument
 
 # with_defaults() errors
 
@@ -415,22 +494,36 @@
       <shinyfilters> * 4 filters * namespace "other"
       
       Filters
-        letters                <chr>  selectInput
-        factors                <fct>  selectInput
-        x                      <int>  numericInput
-        a_very_very_long_name  <dbl>  numericInput
+        #  letters                <chr>  selectizeInput
+        #  factors                <fct>  selectizeInput
+        #  x                      <int>  sliderInput
+        #  a_very_very_long_name  <dbl>  sliderInput
       
+      Default Overrides
+        range     = TRUE
+        selectize = TRUE
+        multiple  = TRUE
+        slider    = TRUE
+      
+      # Filter set by default argument
     Code
       print(with_ns(cfg, NULL))
     Output
       <shinyfilters> * 4 filters
       
       Filters
-        letters                <chr>  selectInput
-        factors                <fct>  selectInput
-        x                      <int>  numericInput
-        a_very_very_long_name  <dbl>  numericInput
+        #  letters                <chr>  selectizeInput
+        #  factors                <fct>  selectizeInput
+        #  x                      <int>  sliderInput
+        #  a_very_very_long_name  <dbl>  sliderInput
       
+      Default Overrides
+        range     = TRUE
+        selectize = TRUE
+        multiple  = TRUE
+        slider    = TRUE
+      
+      # Filter set by default argument
 
 # print() shows each column's input
 
@@ -440,11 +533,18 @@
       <shinyfilters> * 4 filters
       
       Filters
-        letters                <chr>  selectInput
-        factors                <fct>  selectInput
-        x                      <int>  numericInput
-        a_very_very_long_name  <dbl>  numericInput
+        #  letters                <chr>  selectizeInput
+        #  factors                <fct>  selectizeInput
+        #  x                      <int>  sliderInput
+        #  a_very_very_long_name  <dbl>  sliderInput
       
+      Default Overrides
+        range     = TRUE
+        selectize = TRUE
+        multiple  = TRUE
+        slider    = TRUE
+      
+      # Filter set by default argument
     Code
       print(cfg)
     Output
@@ -452,12 +552,15 @@
       
       Filters
         *  letters                <chr>  my_select
-           factors                <fct>  selectInput
+        #  factors                <fct>  selectizeInput
         *  x                      <int>  radioButtons
         #  a_very_very_long_name  <dbl>  sliderInput
       
       Default Overrides
-        slider = TRUE
+        range     = TRUE
+        selectize = TRUE
+        multiple  = TRUE
+        slider    = TRUE
       
       # Filter set by default argument
       * Filter set by `with_filters()`
@@ -467,12 +570,18 @@
       <shinyfilters> * 4 filters
       
       Filters
-           letters                <chr>  selectInput
+        #  letters                <chr>  selectizeInput
         *  factors                <fct>  x "slider" isn't available for <factor> columns.
-           x                      <int>  numericInput
-           a_very_very_long_name  <dbl>  numericInput
+        #  x                      <int>  sliderInput
+        #  a_very_very_long_name  <dbl>  sliderInput
       
+      Default Overrides
+        range     = TRUE
+        selectize = TRUE
+        multiple  = TRUE
+        slider    = TRUE
       
+      # Filter set by default argument
       * Filter set by `with_filters()`
     Code
       print(with_filters(shinyfilters(df_config), letters = shiny::radioButtons))
@@ -481,11 +590,17 @@
       
       Filters
         *  letters                <chr>  radioButtons
-           factors                <fct>  selectInput
-           x                      <int>  numericInput
-           a_very_very_long_name  <dbl>  numericInput
+        #  factors                <fct>  selectizeInput
+        #  x                      <int>  sliderInput
+        #  a_very_very_long_name  <dbl>  sliderInput
       
+      Default Overrides
+        range     = TRUE
+        selectize = TRUE
+        multiple  = TRUE
+        slider    = TRUE
       
+      # Filter set by default argument
       * Filter set by `with_filters()`
     Code
       print(shinyfilters(df_config, args_unique = "bad"))
@@ -493,21 +608,34 @@
       <shinyfilters> * 4 filters
       
       Filters
-        letters                <chr>  x `args_unique` must be a list, not a string.
-        factors                <fct>  x `args_unique` must be a list, not a string.
-        x                      <int>  numericInput
-        a_very_very_long_name  <dbl>  numericInput
+           letters                <chr>  x `args_unique` must be a list, not a string.
+           factors                <fct>  x `args_unique` must be a list, not a string.
+        #  x                      <int>  sliderInput
+        #  a_very_very_long_name  <dbl>  sliderInput
       
       Default Overrides
+        range       = TRUE
+        selectize   = TRUE
+        multiple    = TRUE
+        slider      = TRUE
         args_unique = "bad"
+      
+      # Filter set by default argument
     Code
       print(shinyfilters(data.frame(stringsAsFactors = FALSE, x = "a")))
     Output
       <shinyfilters> * 1 filter
       
       Filters
-        x  <chr>  selectInput
+        #  x  <chr>  selectizeInput
       
+      Default Overrides
+        range     = TRUE
+        selectize = TRUE
+        multiple  = TRUE
+        slider    = TRUE
+      
+      # Filter set by default argument
 
 # print() shows a datetime column's type
 
@@ -517,9 +645,16 @@
       <shinyfilters> * 2 filters
       
       Filters
-        dte  <date>  dateInput
-        dtm  <dttm>  dateInput
+        #  dte  <date>  dateRangeInput
+        #  dtm  <dttm>  dateRangeInput
       
+      Default Overrides
+        range     = TRUE
+        selectize = TRUE
+        multiple  = TRUE
+        slider    = TRUE
+      
+      # Filter set by default argument
 
 # print() resolves custom methods
 
@@ -532,6 +667,11 @@
         radio   <chr>  radioButtons
         custom  <chr>  <custom>
       
+      Default Overrides
+        range     = TRUE
+        selectize = TRUE
+        multiple  = TRUE
+        slider    = TRUE
 
 # print() names the input of a method that changes it
 
@@ -543,6 +683,11 @@
       Filters
         tagged  <chr>  radioButtons
       
+      Default Overrides
+        range     = TRUE
+        selectize = TRUE
+        multiple  = TRUE
+        slider    = TRUE
 
 # `$` and `[[` error on unknown columns
 
@@ -555,22 +700,41 @@
       cfg[["nope"]]
     Condition
       Error in `cfg[["nope"]]`:
-      ! Can't find column nope.
+      ! Can't select columns that don't exist.
+      x Column `nope` doesn't exist.
     Code
       cfg[[9]]
     Condition
       Error in `cfg[[9]]`:
-      ! Can't find column 9.
+      ! Can't select columns past the end.
+      i Location 9 doesn't exist.
+      i There are only 4 columns.
     Code
       cfg[[c("x", "nope")]]
     Condition
       Error in `cfg[[c("x", "nope")]]`:
-      ! Select a single column, not 2 values.
+      ! Can't select columns that don't exist.
+      x Column `nope` doesn't exist.
     Code
       cfg[[1:2]]
-    Condition
-      Error in `cfg[[1:2]]`:
-      ! Select a single column, not 2 values.
+    Output
+      <div class="form-group shiny-input-container">
+        <label class="control-label" id="letters-label" for="letters">letters</label>
+        <div>
+          <select class="shiny-input-select form-control" id="letters" multiple="multiple"><option value="a">a</option>
+      <option value="b">b</option>
+      <option value="c">c</option></select>
+          <script type="application/json" data-for="letters">{"plugins":["selectize-plugin-a11y"]}</script>
+        </div>
+      </div>
+      <div class="form-group shiny-input-container">
+        <label class="control-label" id="factors-label" for="factors">factors</label>
+        <div>
+          <select class="shiny-input-select form-control" id="factors" multiple="multiple"><option value="lo">lo</option>
+      <option value="hi">hi</option></select>
+          <script type="application/json" data-for="factors">{"plugins":["selectize-plugin-a11y"]}</script>
+        </div>
+      </div>
 
 # `[` returns a config with the selected columns
 
@@ -580,12 +744,16 @@
       <shinyfilters> * 2 filters
       
       Filters
-           letters  <chr>  selectInput
+        #  letters  <chr>  selectizeInput
         *  x        <int>  radioButtons
       
       Default Overrides
-        slider = TRUE
+        range     = TRUE
+        selectize = TRUE
+        multiple  = TRUE
+        slider    = TRUE
       
+      # Filter set by default argument
       * Filter set by `with_filters()`
 
 # `[` errors on unknown columns
@@ -621,16 +789,37 @@
       ! `character(0)` doesn't select any columns.
     Code
       cfg[, "x"]
-    Condition
-      Error in `cfg[, "x"]`:
-      ! Can't subset a <shinyfilters> object by rows and columns.
-      i Select columns with `x[cols]`.
+    Output
+      <shinyfilters> * 4 filters
+      
+      Filters
+        #  letters                <chr>  selectizeInput
+        #  factors                <fct>  selectizeInput
+        #  x                      <int>  sliderInput
+        #  a_very_very_long_name  <dbl>  sliderInput
+      
+      Default Overrides
+        range     = TRUE
+        selectize = TRUE
+        multiple  = TRUE
+        slider    = TRUE
+      
+      # Filter set by default argument
     Code
       cfg[1, 2]
-    Condition
-      Error in `cfg[1, 2]`:
-      ! Can't subset a <shinyfilters> object by rows and columns.
-      i Select columns with `x[cols]`.
+    Output
+      <shinyfilters> * 1 filter
+      
+      Filters
+        #  letters  <chr>  selectizeInput
+      
+      Default Overrides
+        range     = TRUE
+        selectize = TRUE
+        multiple  = TRUE
+        slider    = TRUE
+      
+      # Filter set by default argument
     Code
       cfg[factros]
     Condition
