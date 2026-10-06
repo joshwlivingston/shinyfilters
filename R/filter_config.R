@@ -263,7 +263,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	if (!is.null(x@ns)) {
 		ns <- ._resolve_ns(x@ns)
 		header <- paste(
-			col_br_white(header),
+			header,
 			col_grey(symbol$bullet),
 			col_grey("namespace"),
 			paste0(
@@ -291,7 +291,21 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	styled_inputs <- ifelse(
 		is_error,
 		col_red(inputs),
-		col_cyan(ansi_align(inputs, width))
+		vapply(
+			inputs,
+			function(input) {
+				if (grepl(".+::.+", input)) {
+					pkg_func <- strsplit(input, "::")[[1]]
+					paste(
+						col_cyan(pkg_func[[2]]),
+						col_grey(sprintf("{%s}", pkg_func[[1]]))
+					)
+				} else {
+					col_cyan(ansi_align(input, width))
+				}
+			},
+			character(1L)
+		)
 	)
 	dot <- if (is_utf8_output()) "\u25cf" else "*"
 	dot_input <- col_blue(dot)
@@ -354,7 +368,29 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 				max(36, console_width() - nchar(indent))
 			)),
 			col_grey(" = "),
-			ansi_strtrim(col_blue(args), max(36, console_width() - nchar(indent)))
+			ansi_strtrim(
+				vapply(
+					seq_along(args),
+					function(i) {
+						color <- if (names(args)[[i]] == ".update_fn") {
+							col_cyan
+						} else {
+							col_blue
+						}
+						if (grepl(".+::.+", args[[i]])) {
+							pkg_func <- strsplit(args[[i]], "::")[[1]]
+							paste(
+								col_cyan(pkg_func[[2]]),
+								col_grey(sprintf("{%s}", pkg_func[[1]]))
+							)
+						} else {
+							color(args[[i]])
+						}
+					},
+					character(1L)
+				),
+				max(36, console_width() - nchar(indent))
+			)
 		)
 	})
 	lines <- Map(c, sub("\\s+$", "", lines), arg_lines)
