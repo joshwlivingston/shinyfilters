@@ -362,8 +362,8 @@
       htmltools::renderTags(shiny::sidebarPanel(cfg))
     Condition
       Error:
-      ! Can't place a <shinyfilters> object in the UI of an app that uses bookmarking.
-      i Call `filterInput(filters)` inside the UI function instead, so the inputs restore their bookmarked values.
+      ! Can't use <shinyfilters> objects in apps with bookmarking enabled.
+      i Use `[[`, `$`, `filterInput()`, or `dplyr::pull()` to render the filters.
 
 # select() errors name the user's call
 
