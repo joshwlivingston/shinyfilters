@@ -856,6 +856,21 @@ test_that("a shinyfilters object's properties are read-only", {
 		cfg@overrides <- list()
 		cfg@added <- character()
 		cfg@replaced <- character()
+		S7::set_props(cfg, ns = shiny::NS("m"))
+	})
+})
+
+test_that("a changed shinyfilters object is still read-only", {
+	cfg <- shinyfilters(df_config)
+	namespaced <- with_ns(cfg, "m")
+	defaulted <- with_defaults(cfg, slider = FALSE)
+	overridden <- with_filters(cfg, x = "radio")
+	selected <- cfg["x"]
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+		namespaced@ns <- NULL
+		defaulted@args <- list()
+		overridden@overrides <- list()
+		selected@data <- df_config
 	})
 })
 

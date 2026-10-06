@@ -49,8 +49,6 @@
 
 the <- new.env(parent = emptyenv())
 
-the$allowed <- FALSE
-
 # While `the$dry_run` is TRUE, the input callers return the input function
 # instead of calling it, so print() can show which input each column uses.
 the$dry_run <- FALSE

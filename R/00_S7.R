@@ -73,6 +73,21 @@ class_NULL <- new_S3_class("NULL", constructor = function(.data) NULL)
 
 # shinyfilters ####
 
+## Sealing ####
+#
+# A shinyfilters object is sealed once it is built: its setters refuse a sealed
+# object, so a change builds a new one with `._modify()`. The seal is on the
+# object, not in the package, so an object made before the package is reloaded
+# behaves like any other.
+._is_sealed <- function(x) {
+	isTRUE(attr(x, "sealed", exact = TRUE))
+}
+
+._seal <- function(x) {
+	attr(x, "sealed") <- TRUE
+	x
+}
+
 ## Class ####
 class_shinyfilters <- new_class(
 	"shinyfilters",
@@ -81,7 +96,7 @@ class_shinyfilters <- new_class(
 		data = new_property(
 			class = class_data.frame,
 			setter = function(self, value) {
-				if (!the$allowed) {
+				if (._is_sealed(self)) {
 					cli_abort("@data is read-only")
 				}
 				self@data <- value
@@ -94,7 +109,7 @@ class_shinyfilters <- new_class(
 		args = new_property(
 			class = class_list,
 			setter = function(self, value) {
-				if (!the$allowed) {
+				if (._is_sealed(self)) {
 					cli_abort("Use {.topic with_defaults} to set @args")
 				}
 				self@args <- value
@@ -104,7 +119,7 @@ class_shinyfilters <- new_class(
 		ns = new_property(
 			class = class_any,
 			setter = function(self, value) {
-				if (!the$allowed) {
+				if (._is_sealed(self)) {
 					cli_abort("Use {.topic with_ns} to set @ns")
 				}
 				self@ns <- value
@@ -114,7 +129,7 @@ class_shinyfilters <- new_class(
 		overrides = new_property(
 			class = class_list,
 			setter = function(self, value) {
-				if (!the$allowed) {
+				if (._is_sealed(self)) {
 					cli_abort(c(
 						"@overrides is only allowed to be modified internally.",
 						"i" = "See {.topic with_filters} for the user-facing function."
@@ -127,7 +142,7 @@ class_shinyfilters <- new_class(
 		added = new_property(
 			class = class_character,
 			setter = function(self, value) {
-				if (!the$allowed) {
+				if (._is_sealed(self)) {
 					cli_abort(c(
 						"@added is only allowed to be modified internally.",
 						"i" = "See {.topic with_filters} for the user-facing function."
@@ -140,7 +155,7 @@ class_shinyfilters <- new_class(
 		replaced = new_property(
 			class = class_character,
 			setter = function(self, value) {
-				if (!the$allowed) {
+				if (._is_sealed(self)) {
 					cli_abort(c(
 						"@replaced is only allowed to be modified internally.",
 						"i" = "See {.topic with_filters} for the user-facing function."
@@ -151,6 +166,27 @@ class_shinyfilters <- new_class(
 			}
 		)
 	),
+	constructor = function(
+		data,
+		args = list(),
+		ns = NULL,
+		overrides = list(),
+		added = character(),
+		replaced = character()
+	) {
+		# Not `._seal(new_object(...))`: `new_object()` finds the class through
+		# the function that called it.
+		object <- new_object(
+			S7_object(),
+			data = data,
+			args = args,
+			ns = ns,
+			overrides = overrides,
+			added = added,
+			replaced = replaced
+		)
+		._seal(object)
+	},
 	validator = function(self) {
 		# properties are validated in the class validation to support S7 < 0.2.0
 
@@ -170,3 +206,25 @@ class_shinyfilters <- new_class(
 		}
 	}
 )
+
+## Modify ####
+# A copy of `config` with some of its properties replaced. `ns = NULL` removes
+# the namespace.
+._modify <- function(
+	config,
+	data = config@data,
+	args = config@args,
+	ns = config@ns,
+	overrides = config@overrides,
+	added = config@added,
+	replaced = config@replaced
+) {
+	class_shinyfilters(
+		data = data,
+		args = args,
+		ns = ns,
+		overrides = overrides,
+		added = added,
+		replaced = replaced
+	)
+}

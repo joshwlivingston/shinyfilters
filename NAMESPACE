@@ -64,8 +64,8 @@ importFrom(S7,
   new_S3_class,
   new_class,
   new_generic,
-  new_property,
-  set_props
+  new_object,
+  new_property
 )
 importFrom(cli,
   ansi_align,

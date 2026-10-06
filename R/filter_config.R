@@ -103,10 +103,6 @@ shinyfilters <- function(
 	if (isTRUE(radio) && missing(selectize)) {
 		flags$selectize <- NULL
 	}
-	the$allowed <- TRUE
-	on.exit({
-		the$allowed <- FALSE
-	})
 	class_shinyfilters(
 		data = .data,
 		args = ._remove_default_flags(c(flags, args)),
@@ -296,11 +292,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	}
 	added <- x@added[intersect(names(x@added), cols)]
 	replaced <- x@replaced[intersect(names(x@replaced), cols)]
-	the$allowed <- TRUE
-	on.exit({
-		the$allowed <- FALSE
-	})
-	set_props(
+	._modify(
 		x,
 		data = x@data[cols],
 		overrides = x@overrides[intersect(names(x@overrides), cols)],
@@ -953,11 +945,7 @@ method(.with_filters, class_shinyfilters) <- function(
 		replaced[[name]] <- fn
 	}
 	data[[name]] <- value
-	the$allowed <- TRUE
-	on.exit({
-		the$allowed <- FALSE
-	})
-	set_props(config, data = data, added = added, replaced = replaced)
+	._modify(config, data = data, added = added, replaced = replaced)
 }
 
 ._set_overrides <- function(config, overrides) {
@@ -965,11 +953,7 @@ method(.with_filters, class_shinyfilters) <- function(
 	for (name in names(overrides)) {
 		overrides_all[[name]] <- ._merge_override(config, name, overrides[[name]])
 	}
-	the$allowed <- TRUE
-	on.exit({
-		the$allowed <- FALSE
-	})
-	set_props(config, overrides = overrides_all)
+	._modify(config, overrides = overrides_all)
 }
 
 # `as_filter()` arguments stay with their column: a new input keeps the ones it
@@ -1013,11 +997,7 @@ method(.with_filters, class_shinyfilters) <- function(
 ._override_arg_names <- function(config, name, override) {
 	overrides <- config@overrides
 	overrides[[name]] <- override[c("input", "fn")]
-	the$allowed <- TRUE
-	on.exit({
-		the$allowed <- FALSE
-	})
-	res <- ._dry_run(set_props(config, overrides = overrides), name)[[1]]
+	res <- ._dry_run(._modify(config, overrides = overrides), name)[[1]]
 	if (!inherits(res, "shinyfilters_dry_run")) {
 		return(NULL)
 	}
@@ -1137,11 +1117,7 @@ with_ns <- function(.filters, ns) {
 	if (is.function(ns)) {
 		._check_valid_shiny_ns(ns)
 	}
-	the$allowed <- TRUE
-	on.exit({
-		the$allowed <- FALSE
-	})
-	set_props(.filters, ns = ns)
+	._modify(.filters, ns = ns)
 }
 
 # Function: with_defaults() ####
@@ -1199,11 +1175,7 @@ with_defaults <- function(.filters, ...) {
 		defaults[[name]] <- args[[name]]
 	}
 	defaults <- ._remove_default_flags(defaults)
-	the$allowed <- TRUE
-	on.exit({
-		the$allowed <- FALSE
-	})
-	set_props(.filters, args = if (length(defaults) > 0) defaults else list())
+	._modify(.filters, args = if (length(defaults) > 0) defaults else list())
 }
 
 # Generic: resolve_filter_override() ####
