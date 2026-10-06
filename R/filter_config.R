@@ -1150,7 +1150,7 @@ with_ns <- function(.filters, ns) {
 #'
 #' @param .filters A configuration created by [shinyfilters()].
 #' @param ... Named arguments passed to [filterInput()] for every column, such
-#'   as `radio = TRUE` or `width = "200px"`. An argument set to `NULL`, or an
+#'   as `textbox = TRUE` or `width = "200px"`. An argument set to `NULL`, or an
 #'   input flag such as `slider` set to `FALSE`, [filterInput()]'s default, is
 #'   removed. `selectize = FALSE` is kept: [shiny::selectInput()] takes it
 #'   too. Arguments not named here keep their current values.

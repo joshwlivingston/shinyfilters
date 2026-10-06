@@ -10,7 +10,7 @@ with_defaults(.filters, ...)
 \item{.filters}{A configuration created by \code{\link[=shinyfilters]{shinyfilters()}}.}
 
 \item{...}{Named arguments passed to \code{\link[=filterInput]{filterInput()}} for every column, such
-as \code{radio = TRUE} or \code{width = "200px"}. An argument set to \code{NULL}, or an
+as \code{textbox = TRUE} or \code{width = "200px"}. An argument set to \code{NULL}, or an
 input flag such as \code{slider} set to \code{FALSE}, \code{\link[=filterInput]{filterInput()}}'s default, is
 removed. \code{selectize = FALSE} is kept: \code{\link[shiny:selectInput]{shiny::selectInput()}} takes it
 too. Arguments not named here keep their current values.}
