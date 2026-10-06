@@ -633,12 +633,12 @@ test_that("with_ns() errors", {
 test_that("with_defaults() adds, replaces, and removes defaults", {
 	cfg <- with_filters(shinyfilters(df_config, slider = TRUE), x = "radio")
 	expect_identical(
-		with_defaults(shinyfilters(df_config), slider = TRUE),
-		shinyfilters(df_config, slider = TRUE)
+		with_defaults(shinyfilters(df_config, slider = FALSE), slider = TRUE),
+		shinyfilters(df_config)
 	)
 	expect_identical(
-		filterInput(with_defaults(cfg, selectize = TRUE)),
-		filterInput(cfg, selectize = TRUE)
+		filterInput(with_defaults(cfg, selectize = FALSE)),
+		filterInput(cfg, selectize = FALSE)
 	)
 	expect_identical(
 		filterInput(with_defaults(cfg, slider = FALSE)),

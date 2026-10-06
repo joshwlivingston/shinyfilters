@@ -15,7 +15,9 @@ test_that("updateFilterInput() updates the input a configuration creates", {
 		)
 	)
 	expect_identical(
-		update_messages(updateFilterInput(with_filters(cfg, x = "slider")["x"])),
+		update_messages(updateFilterInput(
+			with_filters(shinyfilters(df_config, slider = FALSE), x = "slider")["x"]
+		)),
 		update_messages(
 			shiny::updateSliderInput(inputId = "x", min = 2L, max = 10L)
 		)
