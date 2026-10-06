@@ -76,7 +76,7 @@ shinyfilters <- function(
 ) {
 	if (!is.data.frame(.data)) {
 		cli_abort(
-			"{.arg data} must be a {.cls data.frame}, not {.obj_type_friendly {.data}}."
+			"{.arg .data} must be a {.cls data.frame}, not {.obj_type_friendly {(.data)}}."
 		)
 	}
 	if (nrow(.data) == 0) {

@@ -216,11 +216,8 @@
     Code
       shinyfilters(1:3)
     Condition
-      Error:
-      ! ! Invalid cli literal: `{.data}` starts with a dot.
-      i Interpreted literals must not start with a dot in cli >= 3.4.0.
-      i `{}` expressions starting with a dot are now only used for cli styles.
-      i To avoid this error, put a space character after the starting `{` or use parentheses: `{(.data)}`.
+      Error in `shinyfilters()`:
+      ! `.data` must be a <data.frame>, not an integer vector.
     Code
       shinyfilters(df_config[0, ])
     Condition
