@@ -12,7 +12,7 @@ knitr::opts_chunk$set(
 	collapse = TRUE,
 	comment = "#>"
 )
-library(shinyfilters)
+# library(shinyfilters)
 ```
 
 ```{r, eval = !getRversion() >= "4.1", include = !getRversion() >= "4.1"}
@@ -24,279 +24,296 @@ shinyfilters creates shiny inputs for filtering data. This article uses
 
 ## Filters from a data frame
 
-`shinyfilters()` turns a data frame into a set of filters. Printing it shows the
-input each column gets, based on its type:
+`shinyfilters()` turns a data frame into a set of filters.
 
 ```{r}
-shinyfilters(nyc_flights)
+filters <- shinyfilters(nyc_flights)
 ```
 
-## Set defaults for every column
-
-Arguments to `shinyfilters()` apply to applicable columns. `range = TRUE` uses 
-a date range for date columns, `selectize = TRUE` uses selectize inputs instead
-of select inputs, and `multiple = TRUE` is an argument passed to
-`selectizeInput`.
-
-```{r, eval = getRversion() >= "4.1", include = getRversion() >= "4.1"}
-filters <- nyc_flights |>
-	shinyfilters(range = TRUE, selectize = TRUE, multiple = TRUE)
-
+Printing it shows the input each column gets:
+```{r}
 filters
+```
+
+## Customizing filters
+
+You can customize these settings on a `shinyfilters` object:
+
+* A filter's input function
+* The values used to create and update the input function
+* Add a namespace
+
+### Change a filter's input function
+
+* Set an argument of `shinyfilters()`:
+```{r}
+shinyfilters(nyc_flights, range = TRUE)
+```
+
+* Use `with_defaults()`:
+```{r, eval = getRversion() >= "4.1", include = getRversion() >= "4.1"}
+filters |> with_defaults(range = TRUE)
 ```
 
 ```{r, eval = !getRversion() >= "4.1", include = !getRversion() >= "4.1"}
-filters <- nyc_flights %>%
-	shinyfilters(range = TRUE, selectize = TRUE, multiple = TRUE)
-
-filters
+filters %>% with_defaults(range = TRUE)
 ```
 
-## Choose inputs by keyword
-
-Use `with_filters()` to set the input for individual columns. The 
-quickest way is by using a keyword like `"slider"`. See `?with_filters` for the 
-full list of keywords.
-
-To choose the columns, you have three options:
-
-1. Name the columns (`distance = "slider"`)
-2. Identify them with tidyselect (`where(is.numeric)`), 
-3. Use `across_filters()`
-
+* Use `with_filters()`:
 ```{r, eval = getRversion() >= "4.1", include = getRversion() >= "4.1"}
-filters <- filters |>
-	with_filters(where(is.numeric), "slider")
-
-filters
+filters |> with_filters(date = "range")
 ```
 
 ```{r, eval = !getRversion() >= "4.1", include = !getRversion() >= "4.1"}
-filters <- filters %>%
-	with_filters(where(is.numeric), "slider")
-
-filters
+filters %>% with_filters(date = "range")
 ```
 
-### dplyr
-
-Some `dplyr` verbs are also supported:
-
-* `dplyr::across()`
-* `dplyr::mutate()`
-* `dplyr::pull()`
-* `dplyr::select()`
-* `dplyr::transmute()`
-
-`r if (!requireNamespace("dplyr", quietly = TRUE)) "Install dplyr to see this example."`
-
-```{r, eval = requireNamespace("dplyr", quietly = TRUE), include = requireNamespace("dplyr", quietly = TRUE), message = FALSE}
+* Use `dplyr::mutate()`:
+```{r, eval = getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = getRversion() >= "4.1", message = FALSE}
 library(dplyr)
+
+filters |> mutate(date = "range")
 ```
 
-```{r, eval = getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE)}
+```{r, eval = !getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = !getRversion() >= "4.1", message = FALSE}
+library(dplyr)
+
+filters %>% mutate(date = "range")
+```
+<br>
+
+See `vignette("shinyfilters-catalog")` for the full list of input functions
+available in `shinyfilters`.
+
+### Change a filter's arguments
+
+* Use `with_args()`:
+```{r, eval = FALSE, include = getRversion() >= "4.1"}
 filters |>
-	mutate(across(where(is.numeric), "slider"))
+	with_args(dep_delay ~ value := range(.x))
 ```
 
-```{r, eval = !getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = !getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE)}
+```{r, eval = FALSE, include = !getRversion() >= "4.1"}
 filters %>%
-	mutate(across(where(is.numeric), "slider"))
+	with_args(dep_delay ~ value := range(.x))
 ```
 
-## Choose inputs by shiny function {.tabset}
-
-A shiny input function works in place of its keyword: `radioButtons`
-gives the same input as `"radio"`:
-
-### shinyfilters {#shiny-shinyfilters}
-
+* Use `as_filter()` without an input function argument:
 ```{r, eval = getRversion() >= "4.1", include = getRversion() >= "4.1"}
-filters <- filters |>
-	with_filters(origin = radioButtons)
-
-filters
+filters |>
+	with_filters(dep_delay = as_filter(value = range(.x)))
 ```
 
 ```{r, eval = !getRversion() >= "4.1", include = !getRversion() >= "4.1"}
-filters <- filters %>%
-	with_filters(origin = radioButtons)
-
-filters
-```
-
-### dplyr {#shiny-dplyr}
-
-`r if (!requireNamespace("dplyr", quietly = TRUE)) "Install dplyr to see this example."`
-
-```{r, eval = getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE)}
-filters |>
-	mutate(origin = radioButtons)
-```
-
-```{r, eval = !getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = !getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE)}
 filters %>%
-	mutate(origin = radioButtons)
+	with_filters(dep_delay = as_filter(value = range(.x)))
 ```
 
-## Choose inputs by custom function {.tabset}
-
-Any other input function works too, such as `shinyWidgets::pickerInput`. It
-receives the arguments shinyfilters computes for the column's type, here the
-`choices` of a character column, so it must accept them.
-
-When you supply a custom function, use `as_filter()` so that shinyfilters knows
-which update function to use.
-
-### shinyfilters {#custom-shinyfilters}
-
-`r if (!requireNamespace("shinyWidgets", quietly = TRUE)) "Install shinyWidgets to see this example."`
-
-```{r, eval = getRversion() >= "4.1" && requireNamespace("shinyWidgets", quietly = TRUE), include = getRversion() >= "4.1" && requireNamespace("shinyWidgets", quietly = TRUE)}
-filters <- filters |>
-	with_filters(c(carrier, dest), as_filter(
-		shinyWidgets::pickerInput,
-		.update_fn = shinyWidgets::updatePickerInput
-	))
-
-filters
+* Use `dplyr::mutate()`:
+```{r, eval = getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = getRversion() >= "4.1"}
+filters |>
+	mutate(dep_delay = as_filter(value = range(.x)))
 ```
 
-```{r, eval = !getRversion() >= "4.1" && requireNamespace("shinyWidgets", quietly = TRUE), include = !getRversion() >= "4.1" && requireNamespace("shinyWidgets", quietly = TRUE)}
-filters <- filters %>%
-	with_filters(c(carrier, dest), as_filter(
-		shinyWidgets::pickerInput,
-		.update_fn = shinyWidgets::updatePickerInput
-	))
-
-filters
+```{r, eval = !getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = !getRversion() >= "4.1"}
+filters %>%
+	mutate(dep_delay = as_filter(value = range(.x)))
 ```
+<br>
 
-### dplyr {#custom-dplyr}
+### Change multiple filters together
 
-`r if (!requireNamespace("dplyr", quietly = TRUE) || !requireNamespace("shinyWidgets", quietly = TRUE)) "Install dplyr and shinyWidgets to see this example."`
-
-```{r, eval = getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE) && requireNamespace("shinyWidgets", quietly = TRUE), include = getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE) && requireNamespace("shinyWidgets", quietly = TRUE)}
-filters <- filters |>
-	mutate(across(c(carrier, dest), as_filter(
-		shinyWidgets::pickerInput,
-		.update_fn = shinyWidgets::updatePickerInput
-	)))
-
-filters
-```
-
-```{r, eval = !getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE) && requireNamespace("shinyWidgets", quietly = TRUE), include = !getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE) && requireNamespace("shinyWidgets", quietly = TRUE)}
-filters <- filters %>%
-	mutate(across(c(carrier, dest), as_filter(
-		shinyWidgets::pickerInput,
-		.update_fn = shinyWidgets::updatePickerInput
-	)))
-
-filters
-```
-
-## Set an input's arguments {.tabset}
-
-Sometimes you want to modify the arguments that are sent to the input. Use
-`as_filter()` for this, inside `with_filters()`.
-
-* Use `.x` to refer to the column being passed to the input.
-* `na.rm = TRUE` will be added to the call, if possible.
-
-### shinyfilters {#args-shinyfilters}
-
+* Set multiple filters inside `with_filters()`:
 ```{r, eval = getRversion() >= "4.1", include = getRversion() >= "4.1"}
-filters <- filters |>
+filters |>
 	with_filters(
-		dep_delay = as_filter(sliderInput, value = range(.x))
+		dep_delay = as_filter(value = range(.x)),
+		distance  = 1.609344 * distance
 	)
-
-filters
 ```
 
 ```{r, eval = !getRversion() >= "4.1", include = !getRversion() >= "4.1"}
-filters <- filters %>%
+filters %>%
 	with_filters(
-		dep_delay = as_filter(sliderInput, value = range(.x))
+		dep_delay = as_filter(value = range(.x)),
+		distance  = 1.609344 * distance
 	)
-
-filters
 ```
 
-### dplyr {#args-dplyr}
+* Use `across_filters()` inside `with_filters()`:
+```{r, eval = getRversion() >= "4.1", include = getRversion() >= "4.1"}
+filters |>
+	with_filters(
+		across_filters(where(is.numeric), as_filter(value = range(.x)))
+	)
+```
 
-`r if (!requireNamespace("dplyr", quietly = TRUE)) "Install dplyr to see this example."`
+```{r, eval = !getRversion() >= "4.1", include = !getRversion() >= "4.1"}
+filters %>%
+	with_filters(
+		across_filters(where(is.numeric), as_filter(value = range(.x)))
+	)
+```
 
-```{r, eval = getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE)}
+* Set multiple filters inside `dplyr::mutate()`:
+```{r, eval = getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = getRversion() >= "4.1"}
 filters |>
 	mutate(
-		dep_delay = as_filter(sliderInput, value = range(.x))
+		dep_delay = as_filter(value = range(.x)),
+		distance  = 1.609344 * distance
 	)
 ```
 
-```{r, eval = !getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = !getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE)}
+```{r, eval = !getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = !getRversion() >= "4.1"}
 filters %>%
 	mutate(
-		dep_delay = as_filter(sliderInput, value = range(.x))
+		dep_delay = as_filter(value = range(.x)),
+		distance  = 1.609344 * distance
 	)
 ```
 
-## Add a namespace
-
-`with_ns()` prefixes every input id with a namespace, so the filters can be
-used in a shiny module:
-
-```{r, eval = getRversion() >= "4.1", include = getRversion() >= "4.1"}
-filters <- filters |>
-	with_ns("sidebar-mod")
-
-filters
-```
-
-```{r, eval = !getRversion() >= "4.1", include = !getRversion() >= "4.1"}
-filters <- filters %>%
-	with_ns("sidebar-mod")
-
-filters
-```
-
-## Add and replace columns {.tabset}
-
-Compute columns on your data using `shiynfilters::with_filters()` or 
-`dplyr::mutate()`. Any new or replaced column receives a default filter input.
-
-### shinyfilters {#columns-shinyfilters}
-
-```{r, eval = getRversion() >= "4.1", include = getRversion() >= "4.1"}
-filters <- filters |>
-	with_filters(dep_delay = -dep_delay, on_time = !delayed)
-
-filters
-```
-
-```{r, eval = !getRversion() >= "4.1", include = !getRversion() >= "4.1"}
-filters <- filters %>%
-	with_filters(dep_delay = -dep_delay, on_time = !delayed)
-
-filters
-```
-
-### dplyr {#columns-dplyr}
-
-`r if (!requireNamespace("dplyr", quietly = TRUE)) "Install dplyr to see this example."`
-
-```{r, eval = getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE)}
+* Use `dplyr::across()` inside `dplyr::mutate()`:
+```{r, eval = getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = getRversion() >= "4.1"}
 filters |>
-	mutate(dep_delay = -dep_delay, on_time = !delayed)
+	mutate(
+		across(where(is.numeric), as_filter(value = range(.x)))
+	)
 ```
 
-```{r, eval = !getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = !getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE)}
+```{r, eval = !getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = !getRversion() >= "4.1"}
 filters %>%
-	mutate(dep_delay = -dep_delay, on_time = !delayed)
+	mutate(
+		across(where(is.numeric), as_filter(value = range(.x)))
+	)
 ```
+
+* Use `dplyr::transmute()` to keep only the filters it names:
+```{r, eval = getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = getRversion() >= "4.1"}
+filters |>
+	transmute(
+		dep_delay = as_filter(value = range(.x)),
+		distance  = 1.609344 * distance
+	)
+```
+
+```{r, eval = !getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = !getRversion() >= "4.1"}
+filters %>%
+	transmute(
+		dep_delay = as_filter(value = range(.x)),
+		distance  = 1.609344 * distance
+	)
+```
+<br>
+
+### Use a namespace
+
+* Set the `ns` argument of `shinyfilters()`:
+```{r}
+shinyfilters(nyc_flights, ns = "sidebar-mod")
+```
+
+* Use `with_ns()`:
+```{r, eval = getRversion() >= "4.1", include = getRversion() >= "4.1"}
+filters |>
+	with_ns("sidebar-mod")
+```
+
+```{r, eval = !getRversion() >= "4.1", include = !getRversion() >= "4.1"}
+filters %>%
+	with_ns("sidebar-mod")
+```
+
+* Use `with_ns()` inside `dplyr::mutate()`:
+```{r, eval = getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = getRversion() >= "4.1"}
+filters |>
+	mutate(with_ns("sidebar-mod"))
+```
+
+```{r, eval = !getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = !getRversion() >= "4.1"}
+filters %>%
+	mutate(with_ns("sidebar-mod"))
+```
+<br>
+
+### Use a non-shiny input function
+
+* Use `as_filter()` inside `with_filters()`:
+```{r, eval = getRversion() >= "4.1" && requireNamespace("shinyWidgets", quietly = TRUE), include = getRversion() >= "4.1", message = FALSE}
+library(shinyWidgets)
+
+filters |>
+	with_filters(dest = as_filter(pickerInput, .update_fn = updatePickerInput))
+```
+
+```{r, eval = !getRversion() >= "4.1" && requireNamespace("shinyWidgets", quietly = TRUE), include = !getRversion() >= "4.1", message = FALSE}
+library(shinyWidgets)
+
+filters %>%
+	with_filters(dest = as_filter(pickerInput, .update_fn = updatePickerInput))
+```
+
+* Use `as_filter()` inside `dplyr::mutate()`:
+```{r, eval = getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE) && requireNamespace("shinyWidgets", quietly = TRUE), include = getRversion() >= "4.1"}
+filters |>
+	mutate(dest = as_filter(pickerInput, .update_fn = updatePickerInput))
+```
+
+```{r, eval = !getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE) && requireNamespace("shinyWidgets", quietly = TRUE), include = !getRversion() >= "4.1"}
+filters %>%
+	mutate(dest = as_filter(pickerInput, .update_fn = updatePickerInput))
+```
+<br>
+
+## Selecting filters
+
+After creating your filters, you can select multiple filters or a single filter,
+allowing you to place the filters anywhere in an application
+
+### Select multiple filters
+
+* Use `[`:
+```{r}
+filters[starts_with("d")]
+```
+
+* Use `dplyr::select()`:
+```{r, eval = getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = getRversion() >= "4.1"}
+filters |> select(starts_with("d"))
+```
+
+```{r, eval = !getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = !getRversion() >= "4.1"}
+filters %>% select(starts_with("d"))
+```
+<br>
+
+### Select one filter
+<br>
+
+* Use `$`:
+```{r}
+filters$dest
+```
+<br>
+
+* Use `[[`:
+```{r}
+filters[["dest"]]
+```
+<br>
+
+* Use `dplyr::pull()`:
+```{r, eval = getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = getRversion() >= "4.1"}
+filters |> pull(dest)
+```
+
+```{r, eval = !getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = !getRversion() >= "4.1"}
+filters %>% pull(dest)
+```
+<br>
 
 ## Use in a shiny app
+
+### UI
 
 You can place the filters directly inside a UI.
 
@@ -313,7 +330,43 @@ ui <- page_sidebar(
 )
 ```
 
-In the server, `shinyfilters_server()` to enable interdependency:
+#### Organizing
+
+To organize filters, you can select them individually or by group.
+
+```{r, eval = FALSE}
+library(bslib)
+library(DT)
+library(shiny)
+
+ui <- page_sidebar(
+	sidebar = sidebar(
+		accordion(
+			layout_columns(
+				class = "pe-3 pb-2 ps-3",
+				filters$date
+			),			
+			accordion_panel(
+				"Airports",
+				filters[[c(origin, dest)]]
+			),
+			accordion_panel(
+				"Time",
+				filters[[contains("delay")]]
+			),
+			accordion_panel(
+				"Other",
+				filters[[!c(date, origin, dest, contains("delay"))]]
+			)
+		)
+	),
+	DTOutput("data")
+)
+```
+
+### Server
+
+In the server, use `shinyfilters_server()` to enable interdependency:
 ```{r, eval = FALSE}
 server <- function(input, output, session) {
 	sidebar <- shinyfilters_server(filters)
@@ -321,7 +374,9 @@ server <- function(input, output, session) {
 }
 ```
 
-Then run the app:
+### Run the app
+
+Run the application as you normally would.
 ```{r, eval=FALSE}
 shinyApp(ui, server)
 ```
@@ -333,3 +388,8 @@ shinyApp(ui, server)
 Apps that use bookmarking need `filterInput(filters)` inside their UI function
 instead, so the inputs restore their bookmarked values. Placing `filters` in
 their UI directly is an error.
+
+### Custom objects
+
+If you're filtering a custom object, you may need to extend shinyfilters. See
+`vignette("extending-shinyfilters")` for details.

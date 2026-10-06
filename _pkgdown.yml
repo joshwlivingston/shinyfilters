@@ -11,12 +11,12 @@ navbar:
   components:
     catalog:
       text: Catalog
-      href: articles/filter-input-catalog.html
+      href: articles/shinyfilters-catalog.html
     articles:
       text: Articles
       menu:
-      - text: Customizing shinyfilters
-        href: articles/customizing-shinyfilters.html
+      - text: Extending shinyfilters
+        href: articles/extending-shinyfilters.html
 reference:
 - title: Basic usage
 - contents: 

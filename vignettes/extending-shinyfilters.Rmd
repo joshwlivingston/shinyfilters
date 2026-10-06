@@ -1,8 +1,8 @@
 ---
-title: "Customizing shinyfilters"
+title: "Extending shinyfilters"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Customizing shinyfilters}
+  %\VignetteIndexEntry{Extending shinyfilters}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

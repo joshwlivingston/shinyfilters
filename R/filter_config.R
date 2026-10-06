@@ -80,7 +80,7 @@ shinyfilters <- function(
 		cli_abort("{.arg .data} must have at least one row.")
 	}
 	if (!is.null(ns)) {
-		._check_valid_shiny_ns(ns)
+		._check_valid_shiny_ns(._resolve_ns(ns))
 	}
 	the$allowed <- TRUE
 	on.exit({
@@ -191,7 +191,13 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 }
 
 `[[.shinyfilters::shinyfilters` <- function(x, i, ...) {
-	._config_column(x, i, call = call("[[", substitute(x), substitute(i)))
+	if (missing(i)) {
+		return(x)
+	}
+	call <- sys.call()
+	call[[1]] <- as.name("[[")
+	res <- ._select_impl(x, new_quosure(substitute(i), parent.frame()), call, ...)
+	filterInput(res)
 }
 
 `.DollarNames.shinyfilters::shinyfilters` <- function(x, pattern = "") {
@@ -203,9 +209,16 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 }
 
 `[.shinyfilters::shinyfilters` <- function(x, i, ...) {
+	if (missing(i)) {
+		return(x)
+	}
 	call <- sys.call()
 	call[[1]] <- as.name("[")
-	if (nargs() > 2) {
+	._select_impl(x, new_quosure(substitute(i), parent.frame()), call, ...)
+}
+
+._select_impl <- function(x, selection, call, ...) {
+	if (...length() > 2) {
 		cli_abort(
 			c(
 				"Can't subset a {.cls shinyfilters} object by rows and columns.",
@@ -214,10 +227,6 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 			call = call
 		)
 	}
-	if (missing(i)) {
-		return(x)
-	}
-	selection <- new_quosure(substitute(i), parent.frame())
 	._select_columns(x, selection, as_label(selection), call)
 }
 

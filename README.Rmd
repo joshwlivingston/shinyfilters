@@ -25,7 +25,8 @@ knitr::opts_chunk$set(
 <!-- badges: end -->
 
 ## Overview 
-*shinyfilters* makes it easy to create Shiny inputs directly from data.frames.
+*shinyfilters* makes it easy to create interdependent filters directly from 
+data.frames.
 
 ## Installation
 
@@ -40,7 +41,7 @@ Or, you can install the development version:
 pak::pak("joshwlivingston/shinyfilters")
 ```
 
-## Usage
+## Quickstart
 
 Build interdependent filters in 3 steps:
 
@@ -48,7 +49,7 @@ Build interdependent filters in 3 steps:
 ```{r filters}
 library(shinyfilters)
 
-filters <- shinyfilters(nyc_flights, multiple = TRUE)
+filters <- shinyfilters(nyc_flights)
 filters
 ```
 
@@ -73,14 +74,13 @@ server <- function(input, output, session) {
 	sidebar <- shinyfilters_server(filters)
 	output$data <- renderDT(datatable(sidebar$filtered))
 }
+```
 
+Then run your app:
+```r
 shinyApp(ui, server)
 ```
-<br>
 
-## Customizing filters
+## Going further
 
-`{shinyfilters}` is fully customizable. See `vignette("shinyfilters")` for a
-full tour.
-
-<br>
+See `vignette("shinyfilters")` for the full tour.

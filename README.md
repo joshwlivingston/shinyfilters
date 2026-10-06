@@ -19,8 +19,8 @@ status](https://joshwlivingston.r-universe.dev/shinyfilters/badges/version)](htt
 
 ## Overview
 
-*shinyfilters* makes it easy to create Shiny inputs directly from
-data.frames.
+*shinyfilters* makes it easy to create interdependent filters directly
+from data.frames.
 
 ## Installation
 
@@ -37,7 +37,7 @@ Or, you can install the development version:
 pak::pak("joshwlivingston/shinyfilters")
 ```
 
-## Usage
+## Quickstart
 
 Build interdependent filters in 3 steps:
 
@@ -46,7 +46,7 @@ Build interdependent filters in 3 steps:
 ``` r
 library(shinyfilters)
 
-filters <- shinyfilters(nyc_flights, multiple = TRUE)
+filters <- shinyfilters(nyc_flights)
 filters
 #> <shinyfilters> • 7 filters
 #> 
@@ -91,15 +91,14 @@ server <- function(input, output, session) {
     sidebar <- shinyfilters_server(filters)
     output$data <- renderDT(datatable(sidebar$filtered))
 }
+```
 
+Then run your app:
+
+``` r
 shinyApp(ui, server)
 ```
 
-<br>
+## Going further
 
-## Customizing filters
-
-`{shinyfilters}` is fully customizable. See `vignette("shinyfilters")`
-for a full tour.
-
-<br>
+See `vignette("shinyfilters")` for the full tour.
