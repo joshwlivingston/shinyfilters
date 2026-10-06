@@ -780,6 +780,21 @@ test_that("`$` and `[[` error on unknown columns", {
 	})
 })
 
+test_that("a config placed in a UI that htmltools inspects errors", {
+	cfg <- shinyfilters(df_config)
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+		htmltools::tagGetAttribute(cfg["x"], "class")
+		suppressMessages(htmltools::tagQuery(htmltools::div(cfg["x"]))$find(".a"))
+	})
+	expect_no_error(htmltools::tagGetAttribute(cfg[["x"]], "class"))
+	expect_no_error(htmltools::tagQuery(htmltools::div(cfg[["x"]]))$find(".a"))
+})
+
+test_that("str() shows a config's structure", {
+	cfg <- shinyfilters(df_config)
+	expect_output(str(cfg), "<shinyfilters::shinyfilters>", fixed = TRUE)
+})
+
 test_that("`[` returns a config with the selected columns", {
 	cfg <- with_filters(shinyfilters(df_config, slider = TRUE), x = "radio")
 	sub <- cfg[c("x", "letters")]

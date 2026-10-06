@@ -707,6 +707,21 @@
       ! Can't select columns that don't exist.
       x Column `nope` doesn't exist.
 
+# a config placed in a UI that htmltools inspects errors
+
+    Code
+      htmltools::tagGetAttribute(cfg["x"], "class")
+    Condition
+      Error:
+      ! <shinyfilters> objects cannot be used in some shiny functions.
+      i Use `[[`, `$`, `filterInput()`, or `dplyr::pull()` to render the filters directly.
+    Code
+      suppressMessages(htmltools::tagQuery(htmltools::div(cfg["x"]))$find(".a"))
+    Condition
+      Error:
+      ! <shinyfilters> objects cannot be used in some shiny functions.
+      i Use `[[`, `$`, `filterInput()`, or `dplyr::pull()` to render the filters directly.
+
 # `[` returns a config with the selected columns
 
     Code

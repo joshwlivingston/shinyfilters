@@ -332,7 +332,9 @@ ui <- page_sidebar(
 
 #### Organizing
 
-To organize filters, you can select them individually or by group.
+To organize filters, you can select them individually or by group. Use `$` or
+`[[` inside `accordion()`: it inspects its contents, so it needs the inputs
+themselves, which `[` doesn't create.
 
 ```{r, eval = FALSE}
 library(bslib)
