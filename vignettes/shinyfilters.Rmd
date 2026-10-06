@@ -12,7 +12,7 @@ knitr::opts_chunk$set(
 	collapse = TRUE,
 	comment = "#>"
 )
-library(shinyfilters)
+# library(shinyfilters)
 ```
 
 ```{r, eval = !getRversion() >= "4.1", include = !getRversion() >= "4.1"}
@@ -332,9 +332,7 @@ ui <- page_sidebar(
 
 #### Organizing
 
-To organize filters, you can select them individually or by group. Use `$` or
-`[[` inside `accordion()`: it inspects its contents, so it needs the inputs
-themselves, which `[` doesn't create.
+To organize filters, you can select them individually or by group.
 
 ```{r, eval = FALSE}
 library(bslib)
@@ -343,11 +341,8 @@ library(shiny)
 
 ui <- page_sidebar(
 	sidebar = sidebar(
+		filters[date],
 		accordion(
-			layout_columns(
-				class = "pe-3 pb-2 ps-3",
-				filters$date
-			),			
 			accordion_panel(
 				"Airports",
 				filters[[c(origin, dest)]]
