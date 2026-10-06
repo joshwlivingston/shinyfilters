@@ -230,8 +230,8 @@ MUTATE_ACROSS_NAMES <- c(SHINYFILTERS_ACROSS, DPLYR_ACROSS)
 	if (bookmarking && is.null(getDefaultReactiveDomain())) {
 		cli_abort(
 			c(
-				"Can't use {.cls shinyfilters} objects in apps with bookmarking enabled.",
-				i = "Use {.code [[}, {.code $}, {.fn filterInput}, or {.code dplyr::pull()} to render the filters."
+				"{.cls shinyfilters} objects cannot be placed in the UI of apps with bookmarking enabled.",
+				i = "Use {.code [[}, {.code $}, {.fn filterInput}, or {.code dplyr::pull()} inside the UI function to render the filters directly, so they restore their bookmarked values."
 			),
 			call = NULL
 		)
