@@ -17,8 +17,14 @@ test_that("shinyfilters(): `ns` must be result of shiny::NS()", {
 
 test_that("shinyfilters() without overrides matches filterInput(<data.frame>)", {
 	expect_identical(
-		filterInput(shinyfilters(df_config, slider = TRUE)),
-		filterInput(df_config, slider = TRUE)
+		filterInput(shinyfilters(df_config)),
+		filterInput(
+			df_config,
+			range = TRUE,
+			selectize = TRUE,
+			multiple = TRUE,
+			slider = TRUE
+		)
 	)
 })
 
@@ -29,7 +35,7 @@ test_that("column and argument names don't partial-match the configuration", {
 		with_filters(cfg, c = "radio", con = "slider"),
 		with_filters(with_filters(cfg, "c", "radio"), "con", "slider")
 	)
-	expect_identical(with_defaults(cfg, c = 1)@args, list(c = 1))
+	expect_identical(with_defaults(cfg, c = 1)@args, c(cfg@args, list(c = 1)))
 })
 
 test_that("with_filters() call forms are equivalent", {
@@ -91,21 +97,14 @@ test_that("with_filters() takes `cols ~ input` formulas", {
 })
 
 test_that("with_filters() selects columns with tidyselect", {
-	expected <- filterInput(df_config, slider = TRUE)
+	cfg <- shinyfilters(df_config, slider = FALSE)
+	expected <- filterInput(shinyfilters(df_config))
 	expect_identical(
-		filterInput(with_filters(
-			shinyfilters(df_config),
-			where(is.numeric),
-			"slider"
-		)),
+		filterInput(with_filters(cfg, where(is.numeric), "slider")),
 		expected
 	)
 	expect_identical(
-		filterInput(with_filters(
-			shinyfilters(df_config),
-			c(x, a_very_very_long_name),
-			"slider"
-		)),
+		filterInput(with_filters(cfg, c(x, a_very_very_long_name), "slider")),
 		expected
 	)
 })
@@ -119,12 +118,17 @@ test_that("numeric + radio / select / selectize -> choices in numeric order", {
 	res <- filterInput(with_filters(shinyfilters(df_config), x = "select"))
 	expect_identical(
 		res[[3]],
-		shiny::selectInput("x", "x", choices = c(2L, 9L, 10L))
+		shiny::selectInput("x", "x", choices = c(2L, 9L, 10L), multiple = TRUE)
 	)
 	res <- filterInput(with_filters(shinyfilters(df_config), x = "selectize"))
 	expect_identical(
 		res[[3]],
-		shiny::selectizeInput("x", "x", choices = c(2L, 9L, 10L))
+		shiny::selectizeInput(
+			"x",
+			"x",
+			choices = c(2L, 9L, 10L),
+			multiple = TRUE
+		)
 	)
 })
 
@@ -183,7 +187,8 @@ test_that("keyword override replaces conflicting global flags", {
 			"letters",
 			"letters",
 			choices = c("a", "b", "c"),
-			selectize = FALSE
+			selectize = FALSE,
+			multiple = TRUE
 		)
 	)
 	expect_identical(
@@ -192,7 +197,8 @@ test_that("keyword override replaces conflicting global flags", {
 			"x",
 			"x",
 			choices = c(2L, 9L, 10L),
-			selectize = FALSE
+			selectize = FALSE,
+			multiple = TRUE
 		)
 	)
 	res <- filterInput(with_filters(
@@ -202,16 +208,32 @@ test_that("keyword override replaces conflicting global flags", {
 	))
 	expect_identical(
 		res[[1]],
-		shiny::selectizeInput("letters", "letters", choices = c("a", "b", "c"))
+		shiny::selectizeInput(
+			"letters",
+			"letters",
+			choices = c("a", "b", "c"),
+			multiple = TRUE
+		)
 	)
 	expect_identical(
 		res[[3]],
-		shiny::selectizeInput("x", "x", choices = c(2L, 9L, 10L))
+		shiny::selectizeInput(
+			"x",
+			"x",
+			choices = c(2L, 9L, 10L),
+			multiple = TRUE
+		)
 	)
 })
 
 test_that("`selectize = FALSE` is the same wherever it is set", {
-	expected <- filterInput(df_config, selectize = FALSE)
+	expected <- filterInput(
+		df_config,
+		range = TRUE,
+		selectize = FALSE,
+		multiple = TRUE,
+		slider = TRUE
+	)
 	cfg <- shinyfilters(df_config, selectize = FALSE)
 	expect_identical(filterInput(cfg), expected)
 	expect_identical(
@@ -256,7 +278,7 @@ test_that("date / numeric / select -> the input a column has by default", {
 		num = "numeric",
 		c(dte, dtm) ~ "date"
 	)
-	expect_identical(filterInput(keywords), filterInput(df))
+	expect_identical(filterInput(keywords), filterInput(df, multiple = TRUE))
 	expect_identical(
 		with_filters(
 			cfg,
@@ -432,12 +454,12 @@ test_that("print() handles long names", {
 
 test_that("filterInput(<shinyfilters>, ...) merges with global arguments", {
 	expect_identical(
-		filterInput(shinyfilters(df_config), slider = TRUE),
-		filterInput(df_config, slider = TRUE)
+		filterInput(shinyfilters(df_config, slider = FALSE), slider = TRUE),
+		filterInput(shinyfilters(df_config))
 	)
 	expect_identical(
 		filterInput(shinyfilters(df_config), ns = shiny::NS("m")),
-		filterInput(df_config, ns = shiny::NS("m"))
+		filterInput(shinyfilters(df_config, ns = shiny::NS("m")))
 	)
 })
 
@@ -624,7 +646,7 @@ test_that("with_defaults() adds, replaces, and removes defaults", {
 	)
 	expect_identical(
 		with_defaults(cfg, slider = NULL),
-		with_filters(shinyfilters(df_config), x = "radio")
+		with_filters(shinyfilters(df_config, slider = FALSE), x = "radio")
 	)
 	expect_identical(with_defaults(cfg), cfg)
 	expect_identical(
@@ -633,7 +655,7 @@ test_that("with_defaults() adds, replaces, and removes defaults", {
 	)
 	expect_identical(
 		shinyfilters(df_config, slider = FALSE, width = FALSE)@args,
-		list(width = FALSE)
+		list(range = TRUE, selectize = TRUE, multiple = TRUE, width = FALSE)
 	)
 	expect_identical(
 		shinyfilters(df_config, slider = FALSE, select = FALSE)@args,
@@ -829,6 +851,6 @@ test_that("a shinyfilters object changed through its attributes is invalid", {
 
 test_that("the `ns` property defaults to NULL", {
 	expect_null(
-		shinyfilters(data = data.frame(stringsAsFactors = FALSE, a = 1:3))@ns
+		shinyfilters(data.frame(stringsAsFactors = FALSE, a = 1:3))@ns
 	)
 })

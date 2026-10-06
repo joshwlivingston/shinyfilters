@@ -50,7 +50,13 @@ test_that("as_filter() without an input keeps the column's input", {
 	)
 	expect_identical(
 		with_filters(cfg, letters = as_filter(label = "Letters"))$letters,
-		filterInput(df_config$letters, inputId = "letters", label = "Letters")
+		filterInput(
+			df_config$letters,
+			inputId = "letters",
+			label = "Letters",
+			selectize = TRUE,
+			multiple = TRUE
+		)
 	)
 	expect_identical(
 		with_filters(
@@ -141,7 +147,12 @@ test_that("a new input keeps the as_filter() arguments it names", {
 	)
 	expect_identical(
 		with_filters(radio, letters = "selectize")$letters,
-		shiny::selectizeInput("letters", "Letters", choices = c("a", "b", "c"))
+		shiny::selectizeInput(
+			"letters",
+			"Letters",
+			choices = c("a", "b", "c"),
+			multiple = TRUE
+		)
 	)
 
 	args_first <- with_filters(cfg, x = as_filter(value = range(.x)))

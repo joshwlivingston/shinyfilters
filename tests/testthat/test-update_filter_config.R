@@ -1,15 +1,15 @@
 test_that("updateFilterInput() updates the input a configuration creates", {
 	cfg <- shinyfilters(df_config)
 	expect_identical(
-		update_messages(updateFilterInput(cfg["x"])),
+		update_messages(
+			updateFilterInput(shinyfilters(df_config, slider = FALSE)["x"])
+		),
 		update_messages(
 			shiny::updateNumericInput(inputId = "x", min = 2L, max = 10L)
 		)
 	)
 	expect_identical(
-		update_messages(
-			updateFilterInput(shinyfilters(df_config, slider = TRUE)["x"])
-		),
+		update_messages(updateFilterInput(cfg["x"])),
 		update_messages(
 			shiny::updateSliderInput(inputId = "x", min = 2L, max = 10L)
 		)
@@ -32,7 +32,7 @@ test_that("updateFilterInput() updates the input a configuration creates", {
 })
 
 test_that("updateFilterInput() updates every column of a configuration", {
-	cfg <- with_filters(shinyfilters(df_config), x = "slider")
+	cfg <- with_filters(shinyfilters(df_config, slider = FALSE), x = "slider")
 	expect_identical(
 		update_messages(updateFilterInput(cfg)),
 		update_messages({

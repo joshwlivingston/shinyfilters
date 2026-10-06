@@ -148,12 +148,12 @@ test_that("shinyfilters_server() reads and updates the inputs of a namespace", {
 			choices = c("a", "c"),
 			selected = character(0)
 		)
-		shiny::updateSelectInput(
+		shiny::updateSelectizeInput(
 			inputId = "m-factors",
 			choices = factor("lo", levels = c("lo", "hi")),
 			selected = character(0)
 		)
-		shiny::updateNumericInput(
+		shiny::updateSliderInput(
 			inputId = "m-a_very_very_long_name",
 			min = 2.5,
 			max = 3.5
