@@ -300,6 +300,14 @@ test_that("pull() returns one column's input", {
 	expect_identical(dplyr::pull(cfg), cfg[["a_very_very_long_name"]])
 })
 
+test_that("pull() returns the column asked for when one is named `var`", {
+	skip_if_not_installed("dplyr")
+	cfg <- shinyfilters(
+		data.frame(stringsAsFactors = FALSE, var = c("a", "b"), other = c(1, 2))
+	)
+	expect_identical(dplyr::pull(cfg, other), cfg$other)
+})
+
 test_that("pull() errors", {
 	skip_if_not_installed("dplyr")
 	cfg <- shinyfilters(df_config)

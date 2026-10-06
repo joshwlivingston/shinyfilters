@@ -88,7 +88,8 @@ NULL
 		)
 	}
 	var <- vars_pull(names(.data), !!enquo(var))
-	.data[[var]]
+	# `all_of()`: `[[` would read a bare `var` as the column of that name.
+	.data[[all_of(var)]]
 }
 
 # `across()` is accepted alongside `across_filters()` here, and only here:
