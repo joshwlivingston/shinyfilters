@@ -445,11 +445,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	if (length(config@args) == 0) {
 		return(rep(FALSE, length(inputs)))
 	}
-	the$allowed <- TRUE
-	on.exit({
-		the$allowed <- FALSE
-	})
-	inputs != ._dry_run_inputs(set_props(config, args = list()))
+	inputs != ._dry_run_inputs(config, args = list(ns = config@ns))
 }
 
 ._pad <- function(x) {
@@ -492,8 +488,8 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	structure(list(fn = .f), class = "shinyfilters_dry_run")
 }
 
-._dry_run_inputs <- function(config) {
-	res <- ._dry_run(config)
+._dry_run_inputs <- function(config, args = ._config_args(config)) {
+	res <- ._dry_run(config, args = args)
 	nms <- names(config@data)
 	vapply(
 		seq_along(res),
@@ -504,7 +500,11 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 
 # One result per column: the input `._call_input()` was asked to call, or the
 # error that kept `filterInput()` from getting that far.
-._dry_run <- function(config, cols = names(config@data)) {
+._dry_run <- function(
+config,
+cols = names(config@data),
+	args = ._config_args(config)
+) {
 	the$dry_run <- TRUE
 	on.exit({
 		assign("dry_run", FALSE, envir = the)
@@ -512,8 +512,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	})
 
 	data <- config@data
-	args <- ._config_args(config)
-	i <- match(cols, names(data))
+		i <- match(cols, names(data))
 	mapply(
 		function(name, id, label) {
 			the$dry_run_fn <- NULL
@@ -1113,7 +1112,7 @@ with_defaults <- function(.filters, ...) {
 	for (name in names(args)) {
 		defaults[[name]] <- args[[name]]
 	}
-	defaults <- ._drop_flags_off(defaults)
+	defaults <- ._remove_default_flags(defaults)
 	the$allowed <- TRUE
 	on.exit({
 		the$allowed <- FALSE
