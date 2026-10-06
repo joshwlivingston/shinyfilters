@@ -51,21 +51,13 @@ filters
 #> <shinyfilters> • 7 filters
 #> 
 #> Filters
-#>   ○  date       <date>  dateRangeInput
-#>   ○  carrier    <chr>   selectizeInput
-#>   ○  origin     <fct>   selectizeInput
-#>   ○  dest       <chr>   selectizeInput
-#>   ○  dep_delay  <dbl>   sliderInput
-#>   ○  distance   <dbl>   sliderInput
-#>   ○  delayed    <lgl>   selectizeInput
-#> 
-#> Default Overrides
-#>   range     = TRUE
-#>   selectize = TRUE
-#>   multiple  = TRUE
-#>   slider    = TRUE
-#> 
-#> ○ Filter set by default argument
+#>   date       <date>  dateRangeInput
+#>   carrier    <chr>   selectizeInput
+#>   origin     <fct>   selectizeInput
+#>   dest       <chr>   selectizeInput
+#>   dep_delay  <dbl>   sliderInput
+#>   distance   <dbl>   sliderInput
+#>   delayed    <lgl>   selectizeInput
 ```
 
 2.  Place the filters in your ui:
