@@ -1150,28 +1150,27 @@ with_ns <- function(.filters, ns) {
 #'
 #' @param .filters A configuration created by [shinyfilters()].
 #' @param ... Named arguments passed to [filterInput()] for every column, such
-#'   as `slider = TRUE` or `selectize = TRUE`. An argument set to `NULL`, or
-#'   an input flag such as `slider` set to `FALSE`, its default, is removed.
-#'   `selectize = FALSE` is kept: [shiny::selectInput()] takes it too.
-#'   Arguments not named here keep their current values.
+#'   as `radio = TRUE` or `width = "200px"`. An argument set to `NULL`, or an
+#'   input flag such as `slider` set to `FALSE`, [filterInput()]'s default, is
+#'   removed. `selectize = FALSE` is kept: [shiny::selectInput()] takes it
+#'   too. Arguments not named here keep their current values.
 #'
 #' @returns The updated configuration.
 #'
 #' @seealso [shinyfilters()], [with_filters()], [with_ns()]
 #'
 #' @examples
-#' filters <- shinyfilters(nyc_flights, slider = TRUE, width = "200px")
+#' filters <- shinyfilters(nyc_flights, width = "200px")
 #'
-#' # Add a default
-#' filters <- with_defaults(filters, range = TRUE)
+#' # Turn a default off
+#' filters <- with_defaults(filters, slider = FALSE)
 #' filters
 #'
 #' # Replace one
 #' with_defaults(filters, width = "100%")
 #'
-#' # Remove one, with `NULL` or its default value
-#' with_defaults(filters, slider = NULL)
-#' with_defaults(filters, range = FALSE)
+#' # Remove one
+#' with_defaults(filters, width = NULL)
 #' @export
 with_defaults <- function(.filters, ...) {
 	if (!S7_inherits(.filters, class_shinyfilters)) {

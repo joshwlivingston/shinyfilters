@@ -10,10 +10,10 @@ with_defaults(.filters, ...)
 \item{.filters}{A configuration created by \code{\link[=shinyfilters]{shinyfilters()}}.}
 
 \item{...}{Named arguments passed to \code{\link[=filterInput]{filterInput()}} for every column, such
-as \code{slider = TRUE} or \code{selectize = TRUE}. An argument set to \code{NULL}, or
-an input flag such as \code{slider} set to \code{FALSE}, its default, is removed.
-\code{selectize = FALSE} is kept: \code{\link[shiny:selectInput]{shiny::selectInput()}} takes it too.
-Arguments not named here keep their current values.}
+as \code{radio = TRUE} or \code{width = "200px"}. An argument set to \code{NULL}, or an
+input flag such as \code{slider} set to \code{FALSE}, \code{\link[=filterInput]{filterInput()}}'s default, is
+removed. \code{selectize = FALSE} is kept: \code{\link[shiny:selectInput]{shiny::selectInput()}} takes it
+too. Arguments not named here keep their current values.}
 }
 \value{
 The updated configuration.
@@ -24,18 +24,17 @@ configuration made by \code{\link[=shinyfilters]{shinyfilters()}} passes to \cod
 column.
 }
 \examples{
-filters <- shinyfilters(nyc_flights, slider = TRUE, width = "200px")
+filters <- shinyfilters(nyc_flights, width = "200px")
 
-# Add a default
-filters <- with_defaults(filters, range = TRUE)
+# Turn a default off
+filters <- with_defaults(filters, slider = FALSE)
 filters
 
 # Replace one
 with_defaults(filters, width = "100\%")
 
-# Remove one, with `NULL` or its default value
-with_defaults(filters, slider = NULL)
-with_defaults(filters, range = FALSE)
+# Remove one
+with_defaults(filters, width = NULL)
 }
 \seealso{
 \code{\link[=shinyfilters]{shinyfilters()}}, \code{\link[=with_filters]{with_filters()}}, \code{\link[=with_ns]{with_ns()}}
