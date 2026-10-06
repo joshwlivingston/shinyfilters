@@ -4,7 +4,7 @@
       shinyfilters(data.frame(stringsAsFactors = FALSE, a = letters), ns = function(x)
         x)
     Condition
-      Error in `._resolve_ns()`:
+      Error in `shinyfilters()`:
       ! `ns` must not be a custom function.
 
 # a shiny input is matched as it is now, not as it was when built

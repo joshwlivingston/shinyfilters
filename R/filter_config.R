@@ -83,7 +83,7 @@ shinyfilters <- function(
 		cli_abort("{.arg .data} must have at least one row.")
 	}
 	if (!is.null(ns)) {
-		._check_valid_shiny_ns(._resolve_ns(ns))
+		._resolve_ns(ns, call = current_env())
 	}
 	flags <- list(
 		area = area,
