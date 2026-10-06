@@ -225,23 +225,9 @@
       ! `.data` must have at least one row.
     Code
       shinyfilters(df_config, TRUE)
-    Output
-      <shinyfilters> * 4 filters
-      
-      Filters
-        #  letters                <chr>  selectizeInput
-        #  factors                <fct>  selectizeInput
-        #  x                      <int>  sliderInput
-        #  a_very_very_long_name  <dbl>  sliderInput
-      
-      Default Overrides
-        area      = TRUE
-        range     = TRUE
-        selectize = TRUE
-        multiple  = TRUE
-        slider    = TRUE
-      
-      # Filter set by default argument
+    Condition
+      Error in `shinyfilters()`:
+      ! All elements of `...` must be named.
     Code
       with_filters(df_config, x = "radio")
     Condition

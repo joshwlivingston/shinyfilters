@@ -15,6 +15,7 @@
 #' in their UI directly is an error.
 #'
 #' @param .data A `data.frame`.
+#' @param ... Named arguments passed to the selected input.
 #' @param area *(character)*. Logical. Controls whether to use  [textAreaInput]
 #'   (`TRUE`) or [textInput] (`FALSE`). Only applies when `textbox` is
 #'   `TRUE`.
@@ -35,7 +36,6 @@
 #' @param ns An optional namespace created by [NS()] or an object to be coerced
 #'   to a namespace. Useful when using `shinyfilters()` inside a \pkg{shiny}
 #'   module.
-#' @param ... Arguments passed to the selected input.
 #'
 #' @returns A `shinyfilters` object:
 #'
@@ -64,6 +64,7 @@
 #' @export
 shinyfilters <- function(
 	.data,
+	...,
 	area = FALSE,
 	radio = FALSE,
 	range = TRUE,
@@ -71,8 +72,7 @@ shinyfilters <- function(
 	multiple = TRUE,
 	slider = TRUE,
 	textbox = FALSE,
-	ns = NULL,
-	...
+	ns = NULL
 ) {
 	if (!is.data.frame(.data)) {
 		cli_abort(
@@ -84,6 +84,10 @@ shinyfilters <- function(
 	}
 	if (!is.null(ns)) {
 		._resolve_ns(ns, call = current_env())
+	}
+	args <- list(...)
+	if (length(args) > 0) {
+		check_named_list_or_null(args, arg = "...")
 	}
 	flags <- list(
 		area = area,
@@ -105,7 +109,7 @@ shinyfilters <- function(
 	})
 	class_shinyfilters(
 		data = .data,
-		args = ._remove_default_flags(c(flags, list(...))),
+		args = ._remove_default_flags(c(flags, args)),
 		ns = ns
 	)
 }

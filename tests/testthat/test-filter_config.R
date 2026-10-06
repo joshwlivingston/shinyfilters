@@ -659,7 +659,7 @@ test_that("with_defaults() adds, replaces, and removes defaults", {
 	)
 	expect_identical(
 		shinyfilters(df_config, slider = FALSE, select = FALSE)@args,
-		list(select = FALSE)
+		list(range = TRUE, selectize = TRUE, multiple = TRUE, select = FALSE)
 	)
 	expect_identical(
 		with_defaults(

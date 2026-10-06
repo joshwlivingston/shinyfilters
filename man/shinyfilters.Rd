@@ -6,6 +6,7 @@
 \usage{
 shinyfilters(
   .data,
+  ...,
   area = FALSE,
   radio = FALSE,
   range = TRUE,
@@ -13,12 +14,13 @@ shinyfilters(
   multiple = TRUE,
   slider = TRUE,
   textbox = FALSE,
-  ns = NULL,
-  ...
+  ns = NULL
 )
 }
 \arguments{
 \item{.data}{A \code{data.frame}.}
+
+\item{...}{Named arguments passed to the selected input.}
 
 \item{area}{\emph{(character)}. Logical. Controls whether to use  \link{textAreaInput}
 (\code{TRUE}) or \link{textInput} (\code{FALSE}). Only applies when \code{textbox} is
@@ -47,8 +49,6 @@ character vectors, \code{selectize} only applies if \code{textbox} is \code{FALS
 \item{ns}{An optional namespace created by \code{\link[shiny:NS]{NS()}} or an object to be coerced
 to a namespace. Useful when using \code{shinyfilters()} inside a \pkg{shiny}
 module.}
-
-\item{...}{Arguments passed to the selected input.}
 }
 \value{
 A \code{shinyfilters} object:
