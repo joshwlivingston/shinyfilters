@@ -151,12 +151,9 @@ NULL
 #' @importFrom cli ansi_strip
 #' @importFrom cli ansi_strtrim
 #' @importFrom cli cat_line
-#' @importFrom cli cat_rule
 #' @importFrom cli cli_abort
-#' @importFrom cli cli_bullets
 #' @importFrom cli cli_warn
 #' @importFrom cli col_blue
-#' @importFrom cli col_br_white
 #' @importFrom cli col_cyan
 #' @importFrom cli col_green
 #' @importFrom cli col_grey
@@ -169,7 +166,6 @@ NULL
 #' @importFrom cli qty
 #' @importFrom cli symbol
 #' @importFrom htmltools tagList
-#' @importFrom lifecycle deprecate_warn
 #' @importFrom lifecycle deprecated
 #' @importFrom lifecycle is_present
 #' @importFrom methods formalArgs
@@ -178,7 +174,6 @@ NULL
 #' @importFrom rlang !!!
 #' @importFrom rlang as_label
 #' @importFrom rlang call_args
-#' @importFrom rlang call_args_names
 #' @importFrom rlang call_match
 #' @importFrom rlang call_modify
 #' @importFrom rlang call_name
@@ -212,7 +207,6 @@ NULL
 #' @importFrom S7 class_Date
 #' @importFrom S7 class_factor
 #' @importFrom S7 class_function
-#' @importFrom S7 class_integer
 #' @importFrom S7 class_list
 #' @importFrom S7 class_logical
 #' @importFrom S7 class_numeric
@@ -228,14 +222,10 @@ NULL
 #' @importFrom S7 S7_dispatch
 #' @importFrom S7 S7_inherits
 #' @importFrom S7 S7_object
-#' @importFrom shiny dateInput
-#' @importFrom shiny dateRangeInput
 #' @importFrom shiny getDefaultReactiveDomain
 #' @importFrom shiny getShinyOption
 #' @importFrom shiny NS
-#' @importFrom shiny numericInput
 #' @importFrom shiny observe
-#' @importFrom shiny radioButtons
 #' @importFrom shiny reactiveValues
 #' @importFrom shiny selectInput
 #' @importFrom shiny selectizeInput
@@ -253,7 +243,6 @@ NULL
 #' @importFrom shiny updateTextInput
 #' @importFrom tidyselect eval_select
 #' @importFrom tidyselect vars_pull
-#' @importFrom utils .DollarNames
 #' @importFrom utils getS3method
 #' @importFrom utils methods
 #' @importFrom utils modifyList
