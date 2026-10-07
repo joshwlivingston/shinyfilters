@@ -1,6 +1,150 @@
 #' @keywords internal
 "_PACKAGE"
 
+#' 'shinyfilters' Objects
+#'
+#' A `shinyfilters` object holds a data.frame and all of the data's filters. To
+#' create one, call [shinyfilters()]. To modify one, use [with_filters()],
+#' [with_defaults()], or [with_ns()].
+#'
+#' # Usage
+#'
+#' The object behaves much like the data.frame that defines it.
+#' ```
+#' filters <- shinyfilters(nyc_flights)
+#' ```
+#'
+#' ## Names
+#'
+#' `names(filters)` provides the names of the data.frame.
+#'
+#' ## Shape
+#'
+#' `dim(filters)`, `nrow(filters)`, and `ncol(filters)` describe the dimensions.
+#'
+#' ## Data
+#'
+#' `as.data.frame(filters)` returns the data.
+#'
+#' ## Subsetting
+#'
+#' `filters$col` creates the input for one filter.
+#'
+#' `filters[[cols]]` creates the inputs for all filters in `cols`.
+#'
+#' `filters[cols]` subsets a `shinyfilters` object, returning only filters
+#'   matching `cols`.
+#'
+#' \pkg{shinyfilters} supports <[`tidy-select`][tidyselect::language]> in both
+#' `[` and `[[`
+#'
+#' ## dplyr
+#'
+#' Some `dplyr` verbs are also supported:
+#'
+#' | **dplyr**   | **shinyfilters**          |
+#' |-------------|---------------------------|
+#' | `mutate`    | `with_filters`            |
+#' | `select`    | `[`                       |
+#' | `transmute` | `with_filters` + `select` |
+#' | `pull`      | `[[`                      |
+#'
+#' ## In a \pkg{shiny} app
+#'
+#' A `shinyfilters` object can be placed directly inside a ui:
+#'
+#' ```
+#' library(bslib)
+#' ui <- page_sidebar(sidebar = filters)
+#' ```
+#' <br>
+#'
+#' To enable interdependent filters, call [shinyfilters_server] in the server:
+#' ```
+#' server <- function(...) {
+#'   shinyfilters_server(filters)
+#' }
+#' ```
+#' <br>
+#'
+#' ### Creating filters
+#'
+#' Sometimes, you will have to create the filters as you place them in the app.
+#' The following functions create filters:
+#'
+#' * `[[`
+#' * `$`
+#' * [filterInput]
+#' * [dplyr::pull]
+#'
+#' ```
+#' ui <- function(request) {
+#'   page_sidebar(sidebar = filters[[everything()]])
+#' }
+#' ```
+#' <br>
+#'
+#' Currently, it is known that you must create the filters when:
+#'
+#' 1. Bookmarking is enabled
+#' 2. When placing a filter inside [bslib::accordion].
+#'
+#' In these instances, shinyfilters will intercept and throw an informative
+#' error.
+#' ```
+#' accordion(shinyfilters(nyc_flights))
+#' #> Error:
+#' #> ! <shinyfilters> objects cannot be used in some shiny functions.
+#' #> ℹ Use `[[`, `$`, `filterInput()`, or `dplyr::pull()` to render the filters
+#' #>   directly.
+#' ```
+#' <br>
+#'
+#' # Printing
+#'
+#' Printing shows the input each column receives:
+#'
+#' ```
+#' shinyfilters(nyc_flights)
+#' #> <shinyfilters> • 7 filters
+#' #>
+#' #> Filters
+#' #>   date       <date>  dateRangeInput
+#' #>   carrier    <chr>   selectizeInput
+#' #>   origin     <fct>   selectizeInput
+#' #>   dest       <chr>   selectizeInput
+#' #>   dep_delay  <dbl>   sliderInput
+#' #>   distance   <dbl>   sliderInput
+#' #>   delayed    <lgl>   selectizeInput
+#' ```
+#' <br>
+#'
+#' Any modifications will be displayed:
+#'
+#' ```
+#' shinyfilters(nyc_flights, range = FALSE) |>
+#'   with_filters(date = "date") |>
+#'   with_ns("sidebar-mod")
+#' #> <shinyfilters> • 7 filters • namespace "sidebar-mod"
+#' #>
+#' #> Filters
+#' #>   ●  date       <date>  dateInput
+#' #>      carrier    <chr>   selectizeInput
+#' #>      origin     <fct>   selectizeInput
+#' #>      dest       <chr>   selectizeInput
+#' #>      dep_delay  <dbl>   sliderInput
+#' #>      distance   <dbl>   sliderInput
+#' #>      delayed    <lgl>   selectizeInput
+#' #>
+#' #> Default Overrides
+#' #>   range = FALSE
+#' #>
+#' #> ● Filter set by `with_filters()`
+#' ```
+#'
+#' @name shinyfilters-class
+NULL
+
 ## usethis namespace: start
 #' @importFrom cli ansi_align
 #' @importFrom cli ansi_nchar
