@@ -53,7 +53,7 @@
 	...,
 	.names = NULL
 ) {
-	NULL
+	NULL # nocov
 }
 
 # The columns and the second argument of a captured `across()` call, as they
