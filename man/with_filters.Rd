@@ -10,7 +10,7 @@ with_filters(.filters, ...)
 \item{.filters}{A configuration created by \code{\link[=shinyfilters]{shinyfilters()}}.}
 
 \item{...}{Either two unnamed arguments, or any number of named arguments,
-formulas, and \code{\link[=across_filters]{across_filters()}} calls:
+formulas, and \code{across()} calls:
 \itemize{
 \item \code{with_filters(.filters, cols, input)}: \code{cols} selects columns with
 <\code{\link[tidyselect:language]{tidy-select}}>, such as \code{cyl},
@@ -24,8 +24,12 @@ takes precedence over a variable of the same name.
 \item \code{with_filters(.filters, cols ~ input, ...)}: a two-sided formula selects
 columns on its left, like \code{cols} above, and names one input for all of
 them on its right. It can be mixed with named columns.
-\item \code{with_filters(.filters, across_filters(cols, input), ...)}:
-\code{\link[=across_filters]{across_filters()}} does the same as a formula.
+\item \code{with_filters(.filters, across(cols, input), ...)}: \code{across()} does the
+same as a formula, with the first two arguments of \code{\link[dplyr:across]{dplyr::across()}}.
+\code{cols} defaults to every column, and \code{input} can be a one-sided
+formula, such as \code{~ "slider"}. Its other arguments aren't supported.
+The call is read as written and never run, so \pkg{dplyr} isn't
+needed.
 }
 
 Each input is either a keyword or the \pkg{shiny} input function it
@@ -72,6 +76,13 @@ with_filters(
   origin = "radio"
 )
 
+# across() selects columns too. Later arguments win.
+with_filters(
+  filters,
+  across(everything(), "selectize"),
+  origin = "radio"
+)
+
 # Add a column computed from the others
 with_filters(filters, delay_sq = dep_delay^2)
 
@@ -80,5 +91,5 @@ filters <- shinyfilters(nyc_flights, slider = TRUE)
 with_filters(filters, distance = "numeric")
 }
 \seealso{
-\code{\link[=shinyfilters]{shinyfilters()}}, \code{\link[=across_filters]{across_filters()}}, \code{\link[=as_filter]{as_filter()}}
+\code{\link[=shinyfilters]{shinyfilters()}}, \code{\link[=as_filter]{as_filter()}}
 }

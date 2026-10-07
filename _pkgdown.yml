@@ -27,7 +27,6 @@ reference:
   - shinyfilters
   - shinyfilters-class
   - with_filters
-  - across_filters
   - as_filter
   - with_ns
   - with_defaults

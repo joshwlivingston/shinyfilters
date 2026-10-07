@@ -47,18 +47,6 @@ test_that("across() matches its arguments like dplyr::across()", {
 	)
 })
 
-test_that("mutate() accepts across_filters() too", {
-	skip_if_not_installed("dplyr")
-	cfg <- shinyfilters(df_config)
-	expect_identical(
-		filterInput(dplyr::mutate(
-			cfg,
-			across_filters(where(is.numeric), "slider")
-		)),
-		filterInput(with_filters(cfg, where(is.numeric), "slider"))
-	)
-})
-
 test_that("mutate() and across() accept as_filter()", {
 	skip_if_not_installed("dplyr")
 	cfg <- shinyfilters(df_config)
@@ -260,7 +248,7 @@ test_that("transmute() keeps the columns across() selects", {
 		names(dplyr::transmute(
 			cfg,
 			letters = "radio",
-			across_filters(c(x, letters), "selectize"),
+			across(c(x, letters), "selectize"),
 			y = x * 2
 		)),
 		c("letters", "x", "y")

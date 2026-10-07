@@ -37,10 +37,9 @@ A \code{shinyfilters_filter} object, to use as an input in
 }
 \description{
 \code{as_filter()} sets arguments for a column's input, and can choose the input
-with them. Use it wherever \code{\link[=with_filters]{with_filters()}}, \code{\link[=across_filters]{across_filters()}}, or
-\code{\link[dplyr:mutate]{dplyr::mutate()}} take an input, to change the arguments shinyfilters passes
-for a column, such as a slider's \code{value}, or to add others, such as \code{step}
-or \code{width}.
+with them. Use it wherever \code{\link[=with_filters]{with_filters()}} or \code{\link[dplyr:mutate]{dplyr::mutate()}} take an
+input, to change the arguments shinyfilters passes for a column, such as a
+slider's \code{value}, or to add others, such as \code{step} or \code{width}.
 }
 \details{
 Arguments stay with their column. Setting the column again adds to them,
@@ -64,7 +63,7 @@ with_filters(filters, dep_delay = as_filter(step = 5))
 
 # Reuse an input for several columns
 range_slider <- as_filter("slider", value = range(.x, na.rm = TRUE))
-with_filters(filters, across_filters(where(is.numeric), range_slider))
+with_filters(filters, across(where(is.numeric), range_slider))
 
 # Pass arguments shinyfilters doesn't compute
 with_filters(
@@ -82,5 +81,5 @@ with_filters(
 )
 }
 \seealso{
-\code{\link[=with_filters]{with_filters()}}, \code{\link[=across_filters]{across_filters()}}
+\code{\link[=with_filters]{with_filters()}}
 }

@@ -12,17 +12,15 @@
 #'
 #' @param .data A configuration created by [shinyfilters()].
 #' @param ... For `mutate()`, named arguments, `cols ~ input` formulas, calls
-#'   to [across_filters()], or a call to [with_ns()]:
+#'   to [dplyr::across()], or a call to [with_ns()]:
 #'
 #'   * `mutate(filters, col = input)`: each name is a column.
 #'   * `mutate(filters, col = expression)`: adds or replaces a column, like
 #'     [dplyr::mutate()] does for a data frame. A replaced column keeps its
 #'     input.
-#'   * `mutate(filters, across_filters(cols, input))` or
+#'   * `mutate(filters, across(cols, input))` or
 #'     `mutate(filters, cols ~ input)`: `cols` selects columns with
 #'     <[`tidy-select`][tidyselect::language]>.
-#'
-#'   [dplyr::across()] is accepted in place of [across_filters()] here.
 #'
 #'   `mutate(filters, with_ns(ns))` changes the namespace, like [with_ns()]
 #'   does, and can be mixed with the other forms.
@@ -36,7 +34,7 @@
 #'
 #' @returns The updated configuration.
 #'
-#' @seealso [with_filters()], [across_filters()]
+#' @seealso [with_filters()]
 #'
 #' @name shinyfilters-dplyr
 #' @examplesIf rlang::is_installed("dplyr")
@@ -92,12 +90,6 @@ NULL
 	.data[[all_of(var)]]
 }
 
-# `across()` is accepted alongside `across_filters()` here, and only here:
-# inside `mutate()`, dplyr is attached by definition, so no name is masked.
-SHINYFILTERS_ACROSS <- "across_filters"
-DPLYR_ACROSS <- "across"
-MUTATE_ACROSS_NAMES <- c(SHINYFILTERS_ACROSS, DPLYR_ACROSS)
-
 # `.keep_used` is `transmute()`: only the columns the arguments name or select
 # are kept, in the order they first appear.
 ._mutate_impl <- function(.data, ..., .fn, .call, .keep_used = FALSE) {
@@ -149,7 +141,6 @@ MUTATE_ACROSS_NAMES <- c(SHINYFILTERS_ACROSS, DPLYR_ACROSS)
 				.data,
 				!!!quos[i],
 				.call = .call,
-				.across = MUTATE_ACROSS_NAMES,
 				.fn = fn
 			))
 			cols <- if (is_formula[[i]]) {

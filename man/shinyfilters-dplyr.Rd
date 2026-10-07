@@ -7,18 +7,16 @@
 \item{.data}{A configuration created by \code{\link[=shinyfilters]{shinyfilters()}}.}
 
 \item{...}{For \code{mutate()}, named arguments, \code{cols ~ input} formulas, calls
-to \code{\link[=across_filters]{across_filters()}}, or a call to \code{\link[=with_ns]{with_ns()}}:
+to \code{\link[dplyr:across]{dplyr::across()}}, or a call to \code{\link[=with_ns]{with_ns()}}:
 \itemize{
 \item \code{mutate(filters, col = input)}: each name is a column.
 \item \code{mutate(filters, col = expression)}: adds or replaces a column, like
 \code{\link[dplyr:mutate]{dplyr::mutate()}} does for a data frame. A replaced column keeps its
 input.
-\item \code{mutate(filters, across_filters(cols, input))} or
+\item \code{mutate(filters, across(cols, input))} or
 \code{mutate(filters, cols ~ input)}: \code{cols} selects columns with
 <\code{\link[tidyselect:language]{tidy-select}}>.
 }
-
-\code{\link[dplyr:across]{dplyr::across()}} is accepted in place of \code{\link[=across_filters]{across_filters()}} here.
 
 \code{mutate(filters, with_ns(ns))} changes the namespace, like \code{\link[=with_ns]{with_ns()}}
 does, and can be mixed with the other forms.
@@ -60,5 +58,5 @@ select(filters, origin, carrier)
 \dontshow{\}) # examplesIf}
 }
 \seealso{
-\code{\link[=with_filters]{with_filters()}}, \code{\link[=across_filters]{across_filters()}}
+\code{\link[=with_filters]{with_filters()}}
 }

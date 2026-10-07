@@ -140,18 +140,18 @@ filters %>%
 	)
 ```
 
-* Use `across_filters()` inside `with_filters()`:
+* Use `across()` inside `with_filters()`:
 ```{r, eval = getRversion() >= "4.1", include = getRversion() >= "4.1"}
 filters |>
 	with_filters(
-		across_filters(where(is.numeric), as_filter(value = range(.x)))
+		across(where(is.numeric), as_filter(value = range(.x)))
 	)
 ```
 
 ```{r, eval = !getRversion() >= "4.1", include = !getRversion() >= "4.1"}
 filters %>%
 	with_filters(
-		across_filters(where(is.numeric), as_filter(value = range(.x)))
+		across(where(is.numeric), as_filter(value = range(.x)))
 	)
 ```
 

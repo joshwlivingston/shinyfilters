@@ -8,10 +8,9 @@
 #' Set the Arguments of an Input
 #'
 #' `as_filter()` sets arguments for a column's input, and can choose the input
-#' with them. Use it wherever [with_filters()], [across_filters()], or
-#' [dplyr::mutate()] take an input, to change the arguments shinyfilters passes
-#' for a column, such as a slider's `value`, or to add others, such as `step`
-#' or `width`.
+#' with them. Use it wherever [with_filters()] or [dplyr::mutate()] take an
+#' input, to change the arguments shinyfilters passes for a column, such as a
+#' slider's `value`, or to add others, such as `step` or `width`.
 #'
 #' Arguments stay with their column. Setting the column again adds to them,
 #' replacing those of the same name, and a new input keeps the ones it has an
@@ -44,7 +43,7 @@
 #' @returns A `shinyfilters_filter` object, to use as an input in
 #'   [with_filters()].
 #'
-#' @seealso [with_filters()], [across_filters()]
+#' @seealso [with_filters()]
 #'
 #' @examples
 #' filters <- shinyfilters(nyc_flights)
@@ -61,7 +60,7 @@
 #'
 #' # Reuse an input for several columns
 #' range_slider <- as_filter("slider", value = range(.x, na.rm = TRUE))
-#' with_filters(filters, across_filters(where(is.numeric), range_slider))
+#' with_filters(filters, across(where(is.numeric), range_slider))
 #'
 #' # Pass arguments shinyfilters doesn't compute
 #' with_filters(

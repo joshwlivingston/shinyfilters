@@ -86,7 +86,7 @@ test_that("as_filter() without an input works in every with_filters() form", {
 	expect_identical(
 		filterInput(with_filters(
 			cfg,
-			across_filters(where(is.numeric), ~ as_filter(value = range(.x)))
+			across(where(is.numeric), ~ as_filter(value = range(.x)))
 		)),
 		expected
 	)
@@ -107,14 +107,14 @@ test_that("as_filter() works in every with_filters() form", {
 	expect_identical(
 		filterInput(with_filters(
 			cfg,
-			across_filters(where(is.numeric), range_slider)
+			across(where(is.numeric), range_slider)
 		)),
 		expected
 	)
 	expect_identical(
 		filterInput(with_filters(
 			cfg,
-			across_filters(
+			across(
 				where(is.numeric),
 				as_filter("slider", value = range(.x))
 			)
@@ -124,7 +124,7 @@ test_that("as_filter() works in every with_filters() form", {
 	expect_identical(
 		filterInput(with_filters(
 			cfg,
-			across_filters(
+			across(
 				where(is.numeric),
 				~ as_filter("slider", value = range(.x))
 			)
@@ -406,7 +406,7 @@ test_that("`ns`, `[`, and `[[` apply to as_filter() inputs", {
 test_that("print() shows as_filter() arguments", {
 	cfg <- with_filters(
 		shinyfilters(df_config),
-		across_filters(where(is.numeric), as_filter("slider", value = range(.x))),
+		across(where(is.numeric), as_filter("slider", value = range(.x))),
 		letters = as_filter("radio", inline = TRUE, label = "Letters"),
 		factors = as_filter("selectize"),
 		x = x * 2L
