@@ -737,11 +737,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 #' with_filters(filters, distance = "numeric")
 #' @export
 with_filters <- function(.filters, ...) {
-	if (!S7_inherits(.filters, class_shinyfilters)) {
-		cli_abort(
-			"{.arg .filters} must be created by {.fn shinyfilters}, not {.obj_type_friendly {(.filters)}}."
-		)
-	}
+	check_shinyfilters(.filters)
 	if (...length() == 0) {
 		._abort_with_filter_form(list(), call = current_env())
 	}
@@ -1108,12 +1104,7 @@ with_ns <- function(.filters, ns) {
 			"{.arg ns} must be supplied. Use {.code NULL} to remove the namespace."
 		)
 	}
-	if (!S7_inherits(.filters, class_shinyfilters)) {
-		cli_abort(c(
-			"{.arg .filters} must be a {.cls shinyfilters} object, not {.obj_type_friendly {(.filters)}}.",
-			"i" = "Usage: {.code {caller_arg(.filters)} |> shinyfilters() |> with_ns({caller_arg(ns)})}"
-		))
-	}
+	check_shinyfilters(.filters)
 	if (is.function(ns)) {
 		._check_valid_shiny_ns(ns)
 	}
@@ -1152,12 +1143,7 @@ with_ns <- function(.filters, ns) {
 #' with_defaults(filters, width = NULL)
 #' @export
 with_defaults <- function(.filters, ...) {
-	if (!S7_inherits(.filters, class_shinyfilters)) {
-		cli_abort(c(
-			"{.arg .filters} must be a {.cls shinyfilters} object, not {.obj_type_friendly {(.filters)}}.",
-			"i" = "Usage: {.code {caller_arg(.filters)} |> shinyfilters() |> with_defaults(...)}"
-		))
-	}
+	check_shinyfilters(.filters)
 	args <- list(...)
 	if (length(args) > 0) {
 		check_named_list_or_null(args, arg = "...")

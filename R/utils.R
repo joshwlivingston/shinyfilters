@@ -24,6 +24,15 @@ check_named_list_or_null <- function(
 	}
 }
 
+check_shinyfilters <- function(x, arg = caller_arg(x), call = caller_env()) {
+	if (!S7_inherits(x, class_shinyfilters)) {
+		cli_abort(
+			"{.arg {arg}} must be created by {.fn shinyfilters}, not {.obj_type_friendly {x}}.",
+			call = call
+		)
+	}
+}
+
 s7_check_is_valid_list_dispatch <- function(x, function_name) {
 	cls <- S7_class(x)
 	if (!is.null(cls)) {

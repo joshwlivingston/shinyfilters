@@ -348,8 +348,7 @@
       with_ns(df_config, shiny::NS("m"))
     Condition
       Error in `with_ns()`:
-      ! `.filters` must be a <shinyfilters> object, not a data frame.
-      i Usage: `df_config |> shinyfilters() |> with_ns(shiny::NS("m"))`
+      ! `.filters` must be created by `shinyfilters()`, not a data frame.
     Code
       with_ns(cfg, function(x) x)
     Condition
@@ -387,8 +386,7 @@
       with_defaults(df_config, slider = TRUE)
     Condition
       Error in `with_defaults()`:
-      ! `.filters` must be a <shinyfilters> object, not a data frame.
-      i Usage: `df_config |> shinyfilters() |> with_defaults(...)`
+      ! `.filters` must be created by `shinyfilters()`, not a data frame.
     Code
       with_defaults(cfg, TRUE)
     Condition
