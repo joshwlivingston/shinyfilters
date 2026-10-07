@@ -20,6 +20,7 @@
       ! Can't find column value.
       x `value := 1` needs an existing column on its left.
       i To set an argument, select columns: `mutate(filters, cols ~ value := 1)`.
+      i To add a column, name it with `=`: `mutate(filters, value = <expression>)`.
 
 # mutate() and across() take an input with its arguments
 

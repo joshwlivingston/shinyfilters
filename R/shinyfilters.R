@@ -788,6 +788,15 @@ method(.with_filters, class_shinyfilters) <- function(
 	config <- .filters
 	# `:=` is read here, not by rlang: it sets an argument.
 	quos <- enquos(..., .unquote_names = FALSE)
+	if (._is_cols_input_pair(quos)) {
+		return(._override_cols(
+			config,
+			quos[[1]],
+			quos[[2]],
+			call = .call,
+			fn = .fn
+		))
+	}
 	quos <- ._name_walrus(quos, config, call = .call, fn = .fn)
 	nms <- names2(quos)
 	named <- nms != ""
@@ -797,16 +806,6 @@ method(.with_filters, class_shinyfilters) <- function(
 	if (any(is_across & named)) {
 		i <- which(is_across & named)[[1]]
 		._abort_across_named(nms[[i]], call = .call)
-	}
-
-	if (!any(is_across | is_formula) && length(quos) == 2 && !any(named)) {
-		return(._override_cols(
-			config,
-			quos[[1]],
-			quos[[2]],
-			call = .call,
-			fn = .fn
-		))
 	}
 
 	loose <- !named & !is_across & !is_formula
@@ -841,6 +840,19 @@ method(.with_filters, class_shinyfilters) <- function(
 	}
 
 	config
+}
+
+# `with_filters(filters, cols, input)`: two unnamed arguments, the first a plain
+# column selection. The second is the columns' input, however it is written.
+._is_cols_input_pair <- function(quos) {
+	if (length(quos) != 2 || any(names2(quos) != "")) {
+		return(FALSE)
+	}
+	cols <- quos[[1]]
+	!._is_across_call(cols) &&
+		!._is_cols_formula(cols) &&
+		!._is_arg_walrus(quo_get_expr(cols)) &&
+		!._is_across_call(quos[[2]])
 }
 
 # Reached only from `with_filters()`: `mutate()` checks its own argument shapes

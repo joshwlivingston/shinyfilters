@@ -424,6 +424,7 @@
       ! Can't find column value.
       x `value := 1` needs an existing column on its left.
       i To set an argument, select columns: `with_filters(filters, cols ~ value := 1)`.
+      i To add a column, name it with `=`: `with_filters(filters, value = <expression>)`.
     Code
       with_filters(cfg, nope = shiny::sliderInput(value := 1))
     Condition
@@ -529,6 +530,16 @@
       Error in `with_args()`:
       ! `with_args()` takes `cols ~ arg := value` formulas and `across()` calls.
       x `x ~ "slider" ~ value := 1` isn't one of these.
+      i To choose an input, use `with_filters()`.
+      i One argument: `with_args(filters, x ~ value := range(.x))`.
+      i Several: `with_args(filters, x ~ list(value := range(.x), step = 5))`.
+      i Several columns: `with_args(filters, across(c(x, y), value := range(.x)))`.
+    Code
+      with_args(cfg, across(x, "slider" ~ value := 1))
+    Condition
+      Error in `with_args()`:
+      ! `with_args()` takes `cols ~ arg := value` formulas and `across()` calls.
+      x `across(x, "slider" ~ value := 1)` isn't one of these.
       i To choose an input, use `with_filters()`.
       i One argument: `with_args(filters, x ~ value := range(.x))`.
       i Several: `with_args(filters, x ~ list(value := range(.x), step = 5))`.

@@ -556,6 +556,22 @@ test_that("with_filters() takes `input ~ arguments`", {
 		with_filters(cfg, x = shiny::sliderInput ~ value := range(.x))$x,
 		expected
 	)
+	expect_identical(
+		with_filters(cfg, x, "slider" ~ value := range(.x))$x,
+		expected
+	)
+})
+
+test_that("a named list() sets arguments only when `:=` marks it", {
+	cfg <- shinyfilters(df_config)
+	expect_identical(
+		filterInput(with_filters(cfg, x = list(step := 2, value = range(.x)))),
+		filterInput(with_args(cfg, x ~ list(step := 2, value = range(.x))))
+	)
+	expect_identical(
+		as.data.frame(with_filters(cfg, y = list(1, "a", TRUE)))$y,
+		list(1, "a", TRUE)
+	)
 })
 
 test_that("`.update_fn :=` names the function that updates an input", {
@@ -664,6 +680,7 @@ test_that("with_args() errors", {
 		with_args(cfg, x ~ "slider")
 		with_args(cfg, x ~ shiny::sliderInput(value := 1))
 		with_args(cfg, x ~ "slider" ~ value := 1)
+		with_args(cfg, across(x, "slider" ~ value := 1))
 		with_args(cfg, x ~ list())
 
 		with_args(cfg, x ~ list(step := 2, 5))

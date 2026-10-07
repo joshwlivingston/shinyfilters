@@ -127,6 +127,7 @@ with_args <- function(.filters, ...) {
 	}
 	is_input <- ._is_input_name(rhs) ||
 		is_formula(rhs, lhs = TRUE) ||
+		._is_formula_walrus(rhs) ||
 		._is_input_call(rhs)
 	cli_abort(
 		c(
@@ -294,7 +295,8 @@ with_args <- function(.filters, ...) {
 				c(
 					"Can't find column {.field {name}}.",
 					x = "{.code {label}} needs an existing column on its left.",
-					i = "To set an argument, select columns: {.code {fn}(filters, cols ~ {label})}."
+					i = "To set an argument, select columns: {.code {fn}(filters, cols ~ {label})}.",
+					i = "To add a column, name it with {.code =}: {.code {fn}(filters, {name} = <expression>)}."
 				),
 				call = call
 			)
