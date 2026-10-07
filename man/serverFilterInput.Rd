@@ -63,8 +63,9 @@ one. The inputs of a configuration made by \code{\link[=shinyfilters]{shinyfilte
 \code{\link[=updateFilterInput]{updateFilterInput()}} updates them, from the filtered data.
 
 An input set by a function other than the \pkg{shiny} inputs
-\code{\link[=filterInput]{filterInput()}} creates, such as \code{shiny::checkboxGroupInput} or
-\code{shinyWidgets::pickerInput}, needs the function that updates it, named with
+\code{\link[=filterInput]{filterInput()}} creates needs the function that updates it. A
+\pkg{shinyWidgets} input, such as \code{shinyWidgets::pickerInput}, comes with
+its own. Any other, such as \code{shiny::checkboxGroupInput}, needs it named with
 \code{.update_fn := fn} among the input's arguments, as described in
 \code{\link[=with_filters]{with_filters()}}. Without it, \code{shinyfilters_server()} errors.
 }

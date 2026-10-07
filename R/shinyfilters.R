@@ -723,8 +723,10 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 #'   never run; [with_args()] describes the arguments.
 #'
 #'   [shinyfilters_server()] needs the function that updates an input that
-#'   isn't one of \pkg{shiny}'s. Name it with `.update_fn := fn` among the
-#'   arguments, such as `col = pickerInput(.update_fn := updatePickerInput)`.
+#'   isn't one [filterInput()] creates. A \pkg{shinyWidgets} input comes with
+#'   its own, such as `updatePickerInput()` for `pickerInput()`. For any other,
+#'   name it with `.update_fn := fn` among the arguments, such as
+#'   `col = checkboxGroupInput(.update_fn := updateCheckboxGroupInput)`.
 #'
 #'   Arguments stay with the column: setting it again adds to them, replacing
 #'   those of the same name, and an input chosen later keeps the ones it has an
@@ -1007,7 +1009,8 @@ method(.with_filters, class_shinyfilters) <- function(
 # Arguments stay with their column: a new input keeps the ones it
 # names, and the override's own arguments are added to them. An override
 # without an input keeps the column's input. The function
-# that updates an input stays with that input, until another one is named.
+# that updates an input stays with that input, until another one is named. A
+# shinyWidgets input that has none named gets its own.
 ._merge_override <- function(config, name, override) {
 	old <- config@overrides[[name]]
 	input <- override$input
@@ -1027,6 +1030,9 @@ method(.with_filters, class_shinyfilters) <- function(
 	}
 	if (is.null(update) && identical(input, old$input)) {
 		update <- old$update
+	}
+	if (is.null(update) && is.function(input)) {
+		update <- ._shinywidgets_update(input)
 	}
 	args[names(override$args)] <- override$args
 	out <- list(input = input, args = args, fn = fn)

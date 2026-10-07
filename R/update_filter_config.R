@@ -90,8 +90,8 @@ VALUE_ARGS <- c("value", "selected", "start", "end")
 	)
 }
 
-# An input set by a function can be updated only when `.update_fn` named the
-# function that updates it. A shiny input `filterInput()` creates is never set
+# An input set by a function can be updated only when the function that
+# updates it is known: `.update_fn` named it, or it is a shinyWidgets input. A shiny input `filterInput()` creates is never set
 # by a function: it resolves to its keyword.
 ._check_update_fns <- function(config, cols, call) {
 	unknown <- vapply(
@@ -129,6 +129,55 @@ VALUE_ARGS <- c("value", "selected", "start", "end")
 		textAreaInput = updateTextAreaInput,
 		textInput = updateTextInput
 	)
+}
+
+# The function that updates a shinyWidgets input, with the name it prints
+# under, or `NULL` for any other function. It is found when the input is set,
+# while the function is the one in shinyWidgets' namespace: nothing is compared
+# later, when the configuration may have been saved and read back.
+._shinywidgets_update <- function(fn) {
+	if (!isNamespaceLoaded("shinyWidgets")) {
+		return(NULL)
+	}
+	ns <- asNamespace("shinyWidgets")
+	if (!identical(environment(fn), ns)) {
+		return(NULL)
+	}
+	exports <- getNamespaceExports(ns)
+	is_fn <- vapply(
+		exports,
+		function(name) identical(fn, get0(name, envir = ns, inherits = FALSE)),
+		logical(1)
+	)
+	if (!any(is_fn)) {
+		return(NULL)
+	}
+	update <- ._shinywidgets_update_name(exports[is_fn][[1]])
+	if (!(update %in% exports)) {
+		return(NULL)
+	}
+	list(
+		fn = get(update, envir = ns, inherits = FALSE),
+		label = paste0("shinyWidgets::", update)
+	)
+}
+
+# shinyWidgets names an update function after its input, `updatePickerInput()`
+# for `pickerInput()`, except for these.
+SHINYWIDGETS_UPDATES <- c(
+	airDatepickerInput = "updateAirDateInput",
+	airMonthpickerInput = "updateAirDateInput",
+	airYearpickerInput = "updateAirDateInput",
+	calendarProInput = "updateCalendarPro",
+	slimSelectInput = "updateSlimSelect",
+	virtualSelectInput = "updateVirtualSelect"
+)
+
+._shinywidgets_update_name <- function(input) {
+	if (input %in% names(SHINYWIDGETS_UPDATES)) {
+		return(SHINYWIDGETS_UPDATES[[input]])
+	}
+	paste0("update", toupper(substring(input, 1, 1)), substring(input, 2))
 }
 
 # Generic: update_filter_input_override() ####

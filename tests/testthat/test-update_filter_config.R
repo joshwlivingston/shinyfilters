@@ -204,20 +204,65 @@ test_that("updateFilterInput() calls `.update_fn`", {
 	)
 })
 
-test_that("updateFilterInput() calls a shinyWidgets update function", {
+test_that("a shinyWidgets input is updated by its own update function", {
 	skip_if_not_installed("shinyWidgets")
-	cfg <- with_filters(
-		shinyfilters(df_config),
-		letters = shinyWidgets::pickerInput(
-			.update_fn := shinyWidgets::updatePickerInput
+	cfg <- shinyfilters(df_config)
+	picker <- with_filters(cfg, letters = shinyWidgets::pickerInput)
+	expect_identical(
+		picker,
+		with_filters(
+			cfg,
+			letters = shinyWidgets::pickerInput(
+				.update_fn := shinyWidgets::updatePickerInput
+			)
 		)
 	)
 	expect_identical(
-		update_messages(updateFilterInput(cfg["letters"])),
+		update_messages(updateFilterInput(picker["letters"])),
 		update_messages(shinyWidgets::updatePickerInput(
 			inputId = "letters",
 			choices = c("a", "b", "c")
 		))
+	)
+	expect_snapshot(print(picker), variant = snapshot_variant())
+})
+
+test_that("a shinyWidgets update function with a name of its own is found", {
+	skip_if_not_installed("shinyWidgets")
+	cfg <- shinyfilters(df_config)
+	expect_identical(
+		with_filters(cfg, letters = shinyWidgets::virtualSelectInput),
+		with_filters(
+			cfg,
+			letters = shinyWidgets::virtualSelectInput(
+				.update_fn := shinyWidgets::updateVirtualSelect
+			)
+		)
+	)
+})
+
+test_that("`.update_fn` wins over a shinyWidgets input's own update function", {
+	skip_if_not_installed("shinyWidgets")
+	cfg <- shinyfilters(df_config)
+	named <- with_filters(
+		cfg,
+		letters = shinyWidgets::pickerInput(
+			.update_fn := shiny::updateSelectInput
+		)
+	)
+	expected <- update_messages(shiny::updateSelectInput(
+		inputId = "letters",
+		choices = c("a", "b", "c")
+	))
+	expect_identical(
+		update_messages(updateFilterInput(named["letters"])),
+		expected
+	)
+	# Setting the same input again keeps the function named for it.
+	again <- with_filters(named, letters = shinyWidgets::pickerInput)
+	expect_identical(
+		update_messages(updateFilterInput(again["letters"])),
+		expected
 	)
 })
 

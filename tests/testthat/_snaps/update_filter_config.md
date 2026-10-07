@@ -1,3 +1,19 @@
+# a shinyWidgets input is updated by its own update function
+
+    Code
+      print(picker)
+    Output
+      <shinyfilters> * 4 filters
+      
+      Filters
+        *  letters                <chr>  pickerInput {shinyWidgets}
+                                           .update_fn = updatePickerInput {shinyWidgets}
+           factors                <fct>  selectizeInput
+           x                      <int>  sliderInput
+           a_very_very_long_name  <dbl>  sliderInput
+      
+      * Filter set by `with_filters()`
+
 # updateFilterInput() errors for an input it can't update
 
     Code

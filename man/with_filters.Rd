@@ -61,8 +61,10 @@ function with \verb{:=} arguments, such as
 never run; \code{\link[=with_args]{with_args()}} describes the arguments.
 
 \code{\link[=shinyfilters_server]{shinyfilters_server()}} needs the function that updates an input that
-isn't one of \pkg{shiny}'s. Name it with \code{.update_fn := fn} among the
-arguments, such as \code{col = pickerInput(.update_fn := updatePickerInput)}.
+isn't one \code{\link[=filterInput]{filterInput()}} creates. A \pkg{shinyWidgets} input comes with
+its own, such as \code{updatePickerInput()} for \code{pickerInput()}. For any other,
+name it with \code{.update_fn := fn} among the arguments, such as
+\code{col = checkboxGroupInput(.update_fn := updateCheckboxGroupInput)}.
 
 Arguments stay with the column: setting it again adds to them, replacing
 those of the same name, and an input chosen later keeps the ones it has an

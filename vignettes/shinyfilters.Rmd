@@ -248,30 +248,49 @@ filters %>%
 
 ### Use a non-shiny input function
 
-* Name the function that updates the input in `with_filters()`:
+* Use a shinyWidgets input in `with_filters()`. It comes with the function that updates it:
 ```{r, eval = getRversion() >= "4.1" && requireNamespace("shinyWidgets", quietly = TRUE), include = getRversion() >= "4.1", message = FALSE}
 library(shinyWidgets)
 
 filters |>
-	with_filters(dest = pickerInput(.update_fn := updatePickerInput))
+	with_filters(dest = pickerInput)
 ```
 
 ```{r, eval = !getRversion() >= "4.1" && requireNamespace("shinyWidgets", quietly = TRUE), include = !getRversion() >= "4.1", message = FALSE}
 library(shinyWidgets)
 
 filters %>%
-	with_filters(dest = pickerInput(.update_fn := updatePickerInput))
+	with_filters(dest = pickerInput)
 ```
 
 * Or in `dplyr::mutate()`:
 ```{r, eval = getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE) && requireNamespace("shinyWidgets", quietly = TRUE), include = getRversion() >= "4.1"}
 filters |>
-	mutate(dest = pickerInput(.update_fn := updatePickerInput))
+	mutate(dest = pickerInput)
 ```
 
 ```{r, eval = !getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE) && requireNamespace("shinyWidgets", quietly = TRUE), include = !getRversion() >= "4.1"}
 filters %>%
-	mutate(dest = pickerInput(.update_fn := updatePickerInput))
+	mutate(dest = pickerInput)
+```
+
+* For an input from anywhere else, name the function that updates it with `.update_fn`:
+```{r, eval = getRversion() >= "4.1", include = getRversion() >= "4.1"}
+filters |>
+	with_filters(
+		origin = shiny::checkboxGroupInput(
+			.update_fn := shiny::updateCheckboxGroupInput
+		)
+	)
+```
+
+```{r, eval = !getRversion() >= "4.1", include = !getRversion() >= "4.1"}
+filters %>%
+	with_filters(
+		origin = shiny::checkboxGroupInput(
+			.update_fn := shiny::updateCheckboxGroupInput
+		)
+	)
 ```
 <br>
 

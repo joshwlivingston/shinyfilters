@@ -24,6 +24,7 @@
 * `with_args()` sets the arguments of columns' inputs with `cols ~ arg := value`, such as `dep_delay ~ value := range(.x)`, where `.x` is the column, and each column keeps its input (#105, #134).
 * `with_filters()` and `dplyr::mutate()` read `arg := value` too, alone as in `with_args()` or with the input it is for, as in `col = "slider" ~ arg := value` and `col = sliderInput(arg := value)` (#105, #134).
 * `.update_fn := fn`, among an input's arguments, names the function that updates an input shinyfilters doesn't know, such as `shiny::updateCheckboxGroupInput` for `shiny::checkboxGroupInput` (#105).
+* `with_filters()` gives a shinyWidgets input, such as `shinyWidgets::pickerInput`, its own update function, so it needs no `.update_fn` (#34).
 
 ### Update defaults
 
