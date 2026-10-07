@@ -566,6 +566,8 @@ test_that("shinyfilters() and with_filters() errors", {
 		with_filters(cfg, x ~ "radioo")
 		with_filters(cfg, ~"radio")
 		with_filters(cfg, x, c("radio", "slider"))
+		with_filters(cfg, x ~ 1)
+		with_filters(cfg, x, TRUE)
 		with_filters(cfg, x, radio)
 		with_filters(cfg, x, range)
 		with_filters(cfg, x = numeric)

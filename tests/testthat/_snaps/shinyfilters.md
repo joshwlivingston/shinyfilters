@@ -261,6 +261,16 @@
       ! An input must be one of "area", "date", "numeric", "radio", "range", "select", "selectize", "slider", or "textbox", or a function.
       x Got "radio" and "slider".
     Code
+      with_filters(cfg, x ~ 1)
+    Condition
+      Error in `with_filters()`:
+      ! An input must be a keyword or a function, not a number.
+    Code
+      with_filters(cfg, x, TRUE)
+    Condition
+      Error in `with_filters()`:
+      ! An input must be a keyword or a function, not `TRUE`.
+    Code
       with_filters(cfg, x, radio)
     Condition
       Error in `with_filters()`:
