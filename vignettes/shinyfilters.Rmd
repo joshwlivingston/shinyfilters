@@ -120,6 +120,16 @@ filters %>%
 	with_filters(dep_delay = "slider" ~ value := range(.x))
 ```
 
+```{r, eval = getRversion() >= "4.1", include = getRversion() >= "4.1"}
+filters |>
+	with_filters(dep_delay = sliderInput(value := range(.x)))
+```
+
+```{r, eval = !getRversion() >= "4.1", include = !getRversion() >= "4.1"}
+filters %>%
+	with_filters(dep_delay = sliderInput(value := range(.x)))
+```
+
 * Use `dplyr::mutate()`:
 ```{r, eval = getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = getRversion() >= "4.1"}
 filters |>
