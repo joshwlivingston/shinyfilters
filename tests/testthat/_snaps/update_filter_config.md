@@ -30,6 +30,13 @@
       ! Can't update the input for column letters.
       x Its input is set by a function with no known update function.
       i Name one among the input's arguments: `<input>(.update_fn := <function>)`.
+    Code
+      updateFilterInput(with_filters(cfg, letters = my_hacky_input))
+    Condition
+      Error in `updateFilterInput()`:
+      ! Can't update the input for column letters.
+      x Its input is set by a function with no known update function.
+      i Name one among the input's arguments: `<input>(.update_fn := <function>)`.
 
 # updateFilterInput() errors for an input it can't update
 

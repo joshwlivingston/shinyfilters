@@ -256,11 +256,14 @@ test_that("a function with no shinyWidgets update function isn't given one", {
 	skip_if_not_installed("shinyWidgets")
 	cfg <- shinyfilters(df_config)
 	my_input <- function(inputId, label, ...) NULL
+	my_hacky_input <- function(inputId, label, ...) NULL
+	environment(my_hacky_input) <- asNamespace("shinyWidgets")
 	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
 		updateFilterInput(
 			with_filters(cfg, letters = shinyWidgets::colorSelectorInput)
 		)
 		updateFilterInput(with_filters(cfg, letters = my_input))
+		updateFilterInput(with_filters(cfg, letters = my_hacky_input))
 	})
 })
 
