@@ -5,7 +5,7 @@
     Condition
       Error in `dplyr::mutate()`:
       ! Each argument to `mutate()` must be named, a `cols ~ input` formula, or use `across()` or `with_ns()`.
-      x `across()` is another function here, so it is left alone. To select columns, use `dplyr::across()` or a `cols ~ input` formula.
+      x `across()` is another function here. To select columns, use `dplyr::across()` or a formula.
       i Formula: `mutate(filters, where(is.numeric) ~ "slider")`.
       i Named: `mutate(filters, origin = "radio")`.
       i `across()`: `mutate(filters, across(where(is.numeric), "slider"))`.

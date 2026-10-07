@@ -47,6 +47,7 @@ export(updateSliderInput)
 export(updateTextAreaInput)
 export(updateTextInput)
 export(where)
+export(with_args)
 export(with_defaults)
 export(with_filters)
 export(with_ns)
@@ -115,6 +116,7 @@ importFrom(rlang,
   enquo,
   enquos,
   eval_tidy,
+  expr_deparse,
   f_lhs,
   f_rhs,
   inject,

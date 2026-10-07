@@ -852,6 +852,15 @@ method(.with_filters, class_shinyfilters) <- function(
 
 ._override_cols <- function(config, cols, input, call, fn) {
 	._private()
+	selected <- ._eval_cols(config, cols, call = call)
+	override <- ._new_override(input, call = call, fn = fn)
+	overrides <- rep(list(override), length(selected))
+	names(overrides) <- selected
+	._set_overrides(config, overrides)
+}
+
+# The columns a tidyselect expression selects: at least one
+._eval_cols <- function(config, cols, call) {
 	selected <- names(eval_select(
 		cols,
 		config@data,
@@ -864,10 +873,7 @@ method(.with_filters, class_shinyfilters) <- function(
 			call = call
 		)
 	}
-	override <- ._new_override(input, call = call, fn = fn)
-	overrides <- rep(list(override), length(selected))
-	names(overrides) <- selected
-	._set_overrides(config, overrides)
+	selected
 }
 
 # A function, a single string, or an `as_filter()` object chooses the column's

@@ -88,12 +88,12 @@ available in `shinyfilters`.
 ### Change a filter's arguments
 
 * Use `with_args()`:
-```{r, eval = FALSE, include = getRversion() >= "4.1"}
+```{r, eval = getRversion() >= "4.1", include = getRversion() >= "4.1"}
 filters |>
 	with_args(dep_delay ~ value := range(.x))
 ```
 
-```{r, eval = FALSE, include = !getRversion() >= "4.1"}
+```{r, eval = !getRversion() >= "4.1", include = !getRversion() >= "4.1"}
 filters %>%
 	with_args(dep_delay ~ value := range(.x))
 ```

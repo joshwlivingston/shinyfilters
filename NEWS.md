@@ -22,6 +22,7 @@
 * `dplyr::transmute()` is also supported, leaving only the columns called in `transmute()`.
 * `with_filters()` and `dplyr::mutate()` take `across(cols, input)` to choose one input for several columns; `across()` is read as written, so dplyr isn't needed (#105).
 * `as_filter()` sets the arguments of a column's input in `with_filters()`, such as a slider's `value`, with or without choosing the input, and can compute them from the column with `.x` (#134).
+* `with_args()` sets the arguments of columns' inputs with `cols ~ arg := value`, such as a slider's `value`, and each column keeps its input (#105).
 * `as_filter()`'s `.update_fn` names the function that updates an input shinyfilters doesn't know, such as `shinyWidgets::updatePickerInput` for `shinyWidgets::pickerInput` (#105).
 
 ### Update defaults

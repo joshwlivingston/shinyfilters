@@ -5,7 +5,7 @@
 #'
 #' A `shinyfilters` object holds a data.frame and all of the data's filters. To
 #' create one, call [shinyfilters()]. To modify one, use [with_filters()],
-#' [with_defaults()], or [with_ns()].
+#' [with_args()], [with_defaults()], or [with_ns()].
 #'
 #' # Usage
 #'
@@ -182,6 +182,7 @@ NULL
 #' @importFrom rlang enquo
 #' @importFrom rlang enquos
 #' @importFrom rlang eval_tidy
+#' @importFrom rlang expr_deparse
 #' @importFrom rlang f_lhs
 #' @importFrom rlang f_rhs
 #' @importFrom rlang inject

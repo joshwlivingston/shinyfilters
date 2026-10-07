@@ -72,7 +72,7 @@ s7_check_is_valid_list_dispatch <- function(x, function_name) {
 	cli_abort(
 		c(
 			"This function is internal to {.pkg shinyfilters}.",
-			i = "Change a {.cls shinyfilters} object with {.fn with_filters}, {.fn with_defaults}, or {.fn with_ns}."
+			i = "Change a {.cls shinyfilters} object with {.fn with_filters}, {.fn with_args}, {.fn with_defaults}, or {.fn with_ns}."
 		),
 		call = parent.frame()
 	)

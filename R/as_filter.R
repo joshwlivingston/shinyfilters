@@ -101,13 +101,7 @@ as_filter <- function(input = NULL, ..., .update_fn = NULL) {
 	# Only an argument that uses `.x` waits for its column. The rest are
 	# evaluated now, where `as_filter()` is called: they keep the values their
 	# variables have at the call, and see the columns inside `with_filters()`.
-	args <- lapply(args, function(arg) {
-		if (".x" %in% all.vars(quo_get_expr(arg))) {
-			quo_inject_narm(arg)
-		} else {
-			eval_tidy(arg)
-		}
-	})
+	args <- lapply(args, ._capture_arg)
 	out <- list(
 		input = if (!is.null(input)) {
 			resolve_filter_override(input, call = current_env())

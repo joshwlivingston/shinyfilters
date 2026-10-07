@@ -31,7 +31,7 @@
 		logical(1)
 	)
 	if (any(is_other)) {
-		"{.fn across} is another function here, so it is left alone. To select columns, use {.fn dplyr::across} or a {.code cols ~ input} formula."
+		"{.fn across} is another function here. To select columns, use {.fn dplyr::across} or a formula."
 	}
 }
 
@@ -52,7 +52,9 @@
 	NULL
 }
 
-._across_spec <- function(quo, call) {
+# The columns and the second argument of a captured `across()` call, as they
+# were written. `hint` says where the verb wants extra arguments to go.
+._across_args <- function(quo, call, hint = NULL) {
 	args <- call_args(call_match(
 		quo_get_expr(quo),
 		._across_signature,
@@ -65,7 +67,8 @@
 		cli_abort(
 			c(
 				"{.fn across} takes only {.arg .cols} and {.arg .fns} here.",
-				x = "Got {length(extra)} extra argument{?s}."
+				x = "Got {length(extra)} extra argument{?s}.",
+				i = hint
 			),
 			call = call
 		)
@@ -74,12 +77,17 @@
 		cli_abort(
 			c(
 				"{.fn across} doesn't support {.arg .names} here.",
-				i = "It chooses an input for the selected columns; it doesn't rename them."
+				i = "It selects columns; it doesn't rename them."
 			),
 			call = call
 		)
 	}
-	if (is.null(args[[".fns"]])) {
+	list(cols = args[[".cols"]], fns = args[[".fns"]])
+}
+
+._across_spec <- function(quo, call) {
+	args <- ._across_args(quo, call = call)
+	if (is.null(args$fns)) {
 		cli_abort(
 			c(
 				"{.fn across} needs an input as its second argument.",
@@ -92,8 +100,8 @@
 
 	env <- quo_get_env(quo)
 	list(
-		cols = new_quosure(args[[".cols"]], env),
-		input = new_quosure(._across_input(args[[".fns"]], call = call), env)
+		cols = new_quosure(args$cols, env),
+		input = new_quosure(._across_input(args$fns, call = call), env)
 	)
 }
 

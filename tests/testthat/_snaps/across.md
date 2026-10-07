@@ -5,7 +5,7 @@
     Condition
       Error in `with_filters()`:
       ! `with_filters()` takes two unnamed arguments, or named arguments, `cols ~ input` formulas, and `across()` calls.
-      x `across()` is another function here, so it is left alone. To select columns, use `dplyr::across()` or a `cols ~ input` formula.
+      x `across()` is another function here. To select columns, use `dplyr::across()` or a formula.
       i Select columns: `with_filters(filters, c(a, b), "radio")`.
       i Name columns: `with_filters(filters, a = "radio", b = "slider")`.
       i Mix the two: `with_filters(filters, c(a, b) ~ "radio", x = "slider")`.
@@ -31,7 +31,7 @@
     Condition
       Error in `with_filters()`:
       ! `across()` doesn't support `.names` here.
-      i It chooses an input for the selected columns; it doesn't rename them.
+      i It selects columns; it doesn't rename them.
     Code
       with_filters(cfg, across(x, "radio", foo = 1))
     Condition
@@ -67,7 +67,7 @@
     Condition
       Error in `with_filters()`:
       ! `with_filters()` takes two unnamed arguments, or named arguments, `cols ~ input` formulas, and `across()` calls.
-      x `across()` is another function here, so it is left alone. To select columns, use `dplyr::across()` or a `cols ~ input` formula.
+      x `across()` is another function here. To select columns, use `dplyr::across()` or a formula.
       i Select columns: `with_filters(filters, c(a, b), "radio")`.
       i Name columns: `with_filters(filters, a = "radio", b = "slider")`.
       i Mix the two: `with_filters(filters, c(a, b) ~ "radio", x = "slider")`.

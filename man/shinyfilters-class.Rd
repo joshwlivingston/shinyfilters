@@ -6,7 +6,7 @@
 \description{
 A \code{shinyfilters} object holds a data.frame and all of the data's filters. To
 create one, call \code{\link[=shinyfilters]{shinyfilters()}}. To modify one, use \code{\link[=with_filters]{with_filters()}},
-\code{\link[=with_defaults]{with_defaults()}}, or \code{\link[=with_ns]{with_ns()}}.
+\code{\link[=with_args]{with_args()}}, \code{\link[=with_defaults]{with_defaults()}}, or \code{\link[=with_ns]{with_ns()}}.
 }
 \section{Usage}{
 The object behaves much like the data.frame that defines it.
