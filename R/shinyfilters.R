@@ -1,4 +1,4 @@
-# R/filter_config.R
+# R/shinyfilters.R
 #
 # Configure which input filterInput() creates for each column of a data.frame
 
