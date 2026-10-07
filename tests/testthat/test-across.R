@@ -61,6 +61,24 @@ test_that("with_filters() mixes across() with named columns in order", {
 	)
 })
 
+test_that("with_filters() leaves another function named across() alone", {
+	cfg <- shinyfilters(df_config)
+	across <- function(x) x * 2L
+	expect_identical(
+		with_filters(cfg, y = across(x)),
+		with_filters(cfg, y = x * 2L)
+	)
+	from_enclosing_scope <- function() with_filters(cfg, y = across(x))
+	expect_identical(from_enclosing_scope(), with_filters(cfg, y = x * 2L))
+	expect_identical(
+		filterInput(with_filters(cfg, dplyr::across(x, "radio"))),
+		filterInput(with_filters(cfg, x, "radio"))
+	)
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+		with_filters(cfg, across(x, "radio"))
+	})
+})
+
 test_that("with_filters() errors with across()", {
 	cfg <- shinyfilters(df_config)
 	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
@@ -73,5 +91,7 @@ test_that("with_filters() errors with across()", {
 		with_filters(cfg, across(x, letters ~ "radio"))
 		with_filters(cfg, across(x, ~ mean(.x)))
 		with_filters(cfg, across(x, list(a = "radio")))
+
+		with_filters(cfg, base::across(x, "radio"))
 	})
 })

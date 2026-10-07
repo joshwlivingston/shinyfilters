@@ -108,11 +108,7 @@ NULL
 		)
 	}
 
-	is_across <- vapply(
-		quos,
-		function(quo) ._is_across_call(quo_get_expr(quo)),
-		logical(1)
-	)
+	is_across <- vapply(quos, ._is_across_call, logical(1))
 	is_ns <- vapply(
 		quos,
 		function(quo) is_call(quo_get_expr(quo), "with_ns"),
@@ -120,10 +116,12 @@ NULL
 	)
 	is_ns <- is_ns & nms == ""
 	is_formula <- nms == "" & vapply(quos, ._is_cols_formula, logical(1))
-	if (any(nms == "" & !is_across & !is_ns & !is_formula)) {
+	loose <- nms == "" & !is_across & !is_ns & !is_formula
+	if (any(loose)) {
 		cli_abort(
 			c(
 				"Each argument to {.fn {fn}} must be named, a {.code cols ~ input} formula, or use {.fn across} or {.fn with_ns}.",
+				x = ._other_across_hint(quos[loose]),
 				i = "Formula: {.code {fn}(filters, where(is.numeric) ~ \"slider\")}.",
 				i = "Named: {.code {fn}(filters, origin = \"radio\")}.",
 				i = "{.fn across}: {.code {fn}(filters, across(where(is.numeric), \"slider\"))}.",

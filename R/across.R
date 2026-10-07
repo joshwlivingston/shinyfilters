@@ -4,8 +4,40 @@
 # shinyfilters has no `across()` of its own: `with_filters()` and `mutate()`
 # capture the call and never evaluate it, so dplyr is not involved.
 
-._is_across_call <- function(expr) {
-	is_call(expr, "across")
+# A captured `across()` call: `dplyr::across()`, or `across()` where that name
+# is dplyr's function or no function at all. shinyfilters never intercepts
+# another `across()`, the user's own or an attached package's: that call is
+# ordinary code.
+._is_across_call <- function(quo) {
+	expr <- quo_get_expr(quo)
+	is_call(expr, "across", ns = "dplyr") ||
+		(is_call(expr, "across", ns = "") && !._is_other_across(quo))
+}
+
+# Whether `across`, where the user wrote it, is a function other than dplyr's
+._is_other_across <- function(quo) {
+	fn <- get0("across", envir = quo_get_env(quo), mode = "function")
+	!is.null(fn) && !._is_dplyr_across(fn)
+}
+
+# For the error an unnamed call to another `across()` gets: it isn't one of the
+# forms a verb takes, and the reason isn't obvious.
+._other_across_hint <- function(quos) {
+	is_other <- vapply(
+		quos,
+		function(quo) {
+			is_call(quo_get_expr(quo), "across") && !._is_across_call(quo)
+		},
+		logical(1)
+	)
+	if (any(is_other)) {
+		"{.fn across} is another function here, so it is left alone. To select columns, use {.fn dplyr::across} or a {.code cols ~ input} formula."
+	}
+}
+
+._is_dplyr_across <- function(fn) {
+	isNamespaceLoaded("dplyr") &&
+		identical(fn, get("across", envir = asNamespace("dplyr")))
 }
 
 # The arguments of `dplyr::across()`. `call_match()` uses them to name the

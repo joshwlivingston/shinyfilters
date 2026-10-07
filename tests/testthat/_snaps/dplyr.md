@@ -1,3 +1,16 @@
+# mutate() leaves another function named across() alone
+
+    Code
+      dplyr::mutate(cfg, across(x, "radio"))
+    Condition
+      Error in `dplyr::mutate()`:
+      ! Each argument to `mutate()` must be named, a `cols ~ input` formula, or use `across()` or `with_ns()`.
+      x `across()` is another function here, so it is left alone. To select columns, use `dplyr::across()` or a `cols ~ input` formula.
+      i Formula: `mutate(filters, where(is.numeric) ~ "slider")`.
+      i Named: `mutate(filters, origin = "radio")`.
+      i `across()`: `mutate(filters, across(where(is.numeric), "slider"))`.
+      i `with_ns()`: `mutate(filters, with_ns("id"))`.
+
 # mutate() labels a custom input the way with_filters() does
 
     Code

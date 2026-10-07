@@ -692,7 +692,9 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 #'     `cols` defaults to every column, and `input` can be a one-sided
 #'     formula, such as `~ "slider"`. Its other arguments aren't supported.
 #'     The call is read as written and never run, so \pkg{dplyr} isn't
-#'     needed.
+#'     needed. Another function named `across()`, your own or an attached
+#'     package's, is never read this way: it is called like any other
+#'     function. Write `dplyr::across()` to select columns then.
 #'
 #'   Each input is either a keyword or the \pkg{shiny} input function it
 #'   stands for, such as [shiny::radioButtons()] for `"radio"`. The keywords
@@ -750,7 +752,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 with_filters <- function(.filters, ...) {
 	check_shinyfilters(.filters)
 	if (...length() == 0) {
-		._abort_with_filter_form(call = current_env())
+		._abort_with_filter_form(list(), call = current_env())
 	}
 	.with_filters(.filters, ..., .call = current_env())
 }
@@ -767,11 +769,7 @@ method(.with_filters, class_shinyfilters) <- function(
 	quos <- enquos(...)
 	nms <- names2(quos)
 	named <- nms != ""
-	is_across <- vapply(
-		quos,
-		function(quo) ._is_across_call(quo_get_expr(quo)),
-		logical(1)
-	)
+	is_across <- vapply(quos, ._is_across_call, logical(1))
 	is_formula <- !named & vapply(quos, ._is_cols_formula, logical(1))
 
 	if (any(is_across & named)) {
@@ -791,7 +789,7 @@ method(.with_filters, class_shinyfilters) <- function(
 
 	loose <- !named & !is_across & !is_formula
 	if (any(loose)) {
-		._abort_with_filter_form(call = .call)
+		._abort_with_filter_form(quos[loose], call = .call)
 	}
 
 	# One argument at a time, so each sees the columns the earlier ones computed.
@@ -839,10 +837,11 @@ method(.with_filters, class_shinyfilters) <- function(
 
 # Reached only from `with_filters()`: `mutate()` checks its own argument shapes
 # before forwarding, so its wording never has to appear here.
-._abort_with_filter_form <- function(call) {
+._abort_with_filter_form <- function(quos, call) {
 	cli_abort(
 		c(
 			"{.fn with_filters} takes two unnamed arguments, or named arguments, {.code cols ~ input} formulas, and {.fn across} calls.",
+			x = ._other_across_hint(quos),
 			i = "Select columns: {.code with_filters(filters, c(a, b), \"radio\")}.",
 			i = "Name columns: {.code with_filters(filters, a = \"radio\", b = \"slider\")}.",
 			i = "Mix the two: {.code with_filters(filters, c(a, b) ~ \"radio\", x = \"slider\")}."

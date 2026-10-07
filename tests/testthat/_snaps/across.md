@@ -1,3 +1,15 @@
+# with_filters() leaves another function named across() alone
+
+    Code
+      with_filters(cfg, across(x, "radio"))
+    Condition
+      Error in `with_filters()`:
+      ! `with_filters()` takes two unnamed arguments, or named arguments, `cols ~ input` formulas, and `across()` calls.
+      x `across()` is another function here, so it is left alone. To select columns, use `dplyr::across()` or a `cols ~ input` formula.
+      i Select columns: `with_filters(filters, c(a, b), "radio")`.
+      i Name columns: `with_filters(filters, a = "radio", b = "slider")`.
+      i Mix the two: `with_filters(filters, c(a, b) ~ "radio", x = "slider")`.
+
 # with_filters() errors with across()
 
     Code
@@ -50,4 +62,13 @@
     Condition
       Error in `with_filters()`:
       ! An input must be a keyword or a function, not a list.
+    Code
+      with_filters(cfg, base::across(x, "radio"))
+    Condition
+      Error in `with_filters()`:
+      ! `with_filters()` takes two unnamed arguments, or named arguments, `cols ~ input` formulas, and `across()` calls.
+      x `across()` is another function here, so it is left alone. To select columns, use `dplyr::across()` or a `cols ~ input` formula.
+      i Select columns: `with_filters(filters, c(a, b), "radio")`.
+      i Name columns: `with_filters(filters, a = "radio", b = "slider")`.
+      i Mix the two: `with_filters(filters, c(a, b) ~ "radio", x = "slider")`.
 

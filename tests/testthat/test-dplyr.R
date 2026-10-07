@@ -17,6 +17,19 @@ test_that("mutate() sets inputs for the columns across() selects", {
 	)
 })
 
+test_that("mutate() leaves another function named across() alone", {
+	skip_if_not_installed("dplyr")
+	cfg <- shinyfilters(df_config)
+	across <- function(x) x * 2L
+	expect_identical(
+		dplyr::mutate(cfg, y = across(x)),
+		dplyr::mutate(cfg, y = x * 2L)
+	)
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+		dplyr::mutate(cfg, across(x, "radio"))
+	})
+})
+
 test_that("across() matches its arguments like dplyr::across()", {
 	skip_if_not_installed("dplyr")
 	cfg <- shinyfilters(df_config)

@@ -29,7 +29,9 @@ same as a formula, with the first two arguments of \code{\link[dplyr:across]{dpl
 \code{cols} defaults to every column, and \code{input} can be a one-sided
 formula, such as \code{~ "slider"}. Its other arguments aren't supported.
 The call is read as written and never run, so \pkg{dplyr} isn't
-needed.
+needed. Another function named \code{across()}, your own or an attached
+package's, is never read this way: it is called like any other
+function. Write \code{dplyr::across()} to select columns then.
 }
 
 Each input is either a keyword or the \pkg{shiny} input function it
