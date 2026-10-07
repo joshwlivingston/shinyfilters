@@ -14,7 +14,8 @@ formulas, and \code{across()} calls:
 \itemize{
 \item \code{with_filters(.filters, cols, input)}: \code{cols} selects columns with
 <\code{\link[tidyselect:language]{tidy-select}}>, such as \code{cyl},
-\code{c(mpg, disp)}, or \code{where(is.numeric)}.
+\code{c(mpg, disp)}, or \code{where(is.numeric)}. In place of \code{input},
+\code{arg := value} sets an argument of the inputs the columns have.
 \item \code{with_filters(.filters, col = input, ...)}: each name is a column.
 \item \code{with_filters(.filters, col = expression, ...)}: adds or replaces a
 column, computed from the other columns. A replaced column keeps its

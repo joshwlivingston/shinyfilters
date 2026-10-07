@@ -474,6 +474,10 @@ test_that("with_filters() sets arguments like with_args()", {
 		filterInput(with_args(cfg, x ~ value := range(.x)))
 	)
 	expect_identical(
+		filterInput(with_filters(cfg, x, value := range(.x))),
+		filterInput(with_args(cfg, x ~ value := range(.x)))
+	)
+	expect_identical(
 		filterInput(with_filters(
 			cfg,
 			where(is.numeric) ~ list(value := range(.x), step = 2)
@@ -518,6 +522,13 @@ test_that("with_filters() takes an input called with `:=` arguments", {
 		with_filters(
 			cfg,
 			across(x, shiny::sliderInput(value := range(.x), step = 2))
+		)$x,
+		expected
+	)
+	expect_identical(
+		with_filters(
+			cfg,
+			across(x, ~ shiny::sliderInput(value := range(.x), step = 2))
 		)$x,
 		expected
 	)

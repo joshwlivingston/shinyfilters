@@ -677,7 +677,8 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 #'
 #'   * `with_filters(.filters, cols, input)`: `cols` selects columns with
 #'     <[`tidy-select`][tidyselect::language]>, such as `cyl`,
-#'     `c(mpg, disp)`, or `where(is.numeric)`.
+#'     `c(mpg, disp)`, or `where(is.numeric)`. In place of `input`,
+#'     `arg := value` sets an argument of the inputs the columns have.
 #'   * `with_filters(.filters, col = input, ...)`: each name is a column.
 #'   * `with_filters(.filters, col = expression, ...)`: adds or replaces a
 #'     column, computed from the other columns. A replaced column keeps its

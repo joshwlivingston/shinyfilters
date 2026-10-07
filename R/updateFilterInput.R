@@ -58,9 +58,9 @@
 #'
 #' When `x` is a configuration made by [shinyfilters()], each column's input
 #' is updated with the function and arguments that match the input
-#' [filterInput()] creates for it: the configuration's defaults, the input
-#' [with_filters()] chose, and the arguments [with_args()] set, computed from the
-#' configuration's data. The arguments that set an input's value (`value`,
+#' [filterInput()] creates for it: the configuration's defaults, and the input
+#' and arguments [with_filters()] or [with_args()] set for it, computed from
+#' the configuration's data. The arguments that set an input's value (`value`,
 #' `selected`, `start`, and `end`) are left out, and the configuration's
 #' namespace is applied to the ids.
 #'
