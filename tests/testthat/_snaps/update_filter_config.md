@@ -14,7 +14,7 @@
       
       * Filter set by `with_filters()`
 
-# a shinyWidgets function with no update function isn't given one
+# a function with no shinyWidgets update function isn't given one
 
     Code
       updateFilterInput(with_filters(cfg, letters = shinyWidgets::colorSelectorInput))
@@ -24,7 +24,7 @@
       x Its input is set by a function with no known update function.
       i Name one among the input's arguments: `<input>(.update_fn := <function>)`.
     Code
-      updateFilterInput(with_filters(cfg, letters = unexported))
+      updateFilterInput(with_filters(cfg, letters = my_input))
     Condition
       Error in `updateFilterInput()`:
       ! Can't update the input for column letters.

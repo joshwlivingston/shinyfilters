@@ -153,9 +153,6 @@ VALUE_ARGS <- c("value", "selected", "start", "end")
 		return(NULL)
 	}
 	ns <- asNamespace("shinyWidgets")
-	if (!identical(environment(fn), ns)) {
-		return(NULL)
-	}
 	exports <- getNamespaceExports(ns)
 	is_fn <- vapply(
 		exports,

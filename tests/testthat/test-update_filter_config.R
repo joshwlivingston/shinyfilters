@@ -252,16 +252,15 @@ test_that("a shinyWidgets update function is given only the arguments it takes",
 	expect_identical(update_messages(updateFilterInput(named["x"])), expected)
 })
 
-test_that("a shinyWidgets function with no update function isn't given one", {
+test_that("a function with no shinyWidgets update function isn't given one", {
 	skip_if_not_installed("shinyWidgets")
 	cfg <- shinyfilters(df_config)
-	unexported <- function(inputId, label, ...) NULL
-	environment(unexported) <- asNamespace("shinyWidgets")
+	my_input <- function(inputId, label, ...) NULL
 	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
 		updateFilterInput(
 			with_filters(cfg, letters = shinyWidgets::colorSelectorInput)
 		)
-		updateFilterInput(with_filters(cfg, letters = unexported))
+		updateFilterInput(with_filters(cfg, letters = my_input))
 	})
 })
 
