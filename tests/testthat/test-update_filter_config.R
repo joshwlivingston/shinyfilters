@@ -209,15 +209,6 @@ test_that("a shinyWidgets input is updated by its own update function", {
 	cfg <- shinyfilters(df_config)
 	picker <- with_filters(cfg, letters = shinyWidgets::pickerInput)
 	expect_identical(
-		picker,
-		with_filters(
-			cfg,
-			letters = shinyWidgets::pickerInput(
-				.update_fn := shinyWidgets::updatePickerInput
-			)
-		)
-	)
-	expect_identical(
 		update_messages(updateFilterInput(picker["letters"])),
 		update_messages(shinyWidgets::updatePickerInput(
 			inputId = "letters",
@@ -229,15 +220,33 @@ test_that("a shinyWidgets input is updated by its own update function", {
 
 test_that("a shinyWidgets update function with a name of its own is found", {
 	skip_if_not_installed("shinyWidgets")
-	cfg <- shinyfilters(df_config)
+	cfg <- with_filters(
+		shinyfilters(df_config),
+		letters = shinyWidgets::virtualSelectInput
+	)
 	expect_identical(
-		with_filters(cfg, letters = shinyWidgets::virtualSelectInput),
-		with_filters(
-			cfg,
-			letters = shinyWidgets::virtualSelectInput(
-				.update_fn := shinyWidgets::updateVirtualSelect
-			)
-		)
+		update_messages(updateFilterInput(cfg["letters"])),
+		update_messages(shinyWidgets::updateVirtualSelect(
+			inputId = "letters",
+			choices = c("a", "b", "c")
+		))
+	)
+})
+
+test_that("a shinyWidgets update function is given only the arguments it takes", {
+	skip_if_not_installed("shinyWidgets")
+	# `updateNoUiSliderInput()` takes `range`, not the `min` and `max` a numeric
+	# column's update is given.
+	cfg <- with_filters(
+		shinyfilters(df_config),
+		x = shinyWidgets::noUiSliderInput(range := range(.x))
+	)
+	expect_identical(
+		update_messages(updateFilterInput(cfg["x"])),
+		update_messages(shinyWidgets::updateNoUiSliderInput(
+			inputId = "x",
+			range = c(2L, 10L)
+		))
 	)
 })
 

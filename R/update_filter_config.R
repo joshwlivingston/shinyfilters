@@ -69,7 +69,13 @@ VALUE_ARGS <- c("value", "selected", "start", "end")
 		if (!is.null(override$update)) {
 			do.call(
 				._call_update_filter_input,
-				c(col_args, list(.f = override$update$fn))
+				c(
+					col_args,
+					list(
+						.f = override$update$fn,
+						.drop_unused = isTRUE(override$update$drop_unused)
+					)
+				)
 			)
 		} else if (is.null(override$input)) {
 			do.call(updateFilterInput, col_args)
@@ -91,8 +97,9 @@ VALUE_ARGS <- c("value", "selected", "start", "end")
 }
 
 # An input set by a function can be updated only when the function that
-# updates it is known: `.update_fn` named it, or it is a shinyWidgets input. A shiny input `filterInput()` creates is never set
-# by a function: it resolves to its keyword.
+# updates it is known: `.update_fn` named it, or it is a shinyWidgets input. A
+# shiny input `filterInput()` creates is never set by a function: it resolves
+# to its keyword.
 ._check_update_fns <- function(config, cols, call) {
 	unknown <- vapply(
 		cols,
@@ -135,6 +142,11 @@ VALUE_ARGS <- c("value", "selected", "start", "end")
 # under, or `NULL` for any other function. It is found when the input is set,
 # while the function is the one in shinyWidgets' namespace: nothing is compared
 # later, when the configuration may have been saved and read back.
+#
+# Nobody chose this function for the column, and some name their arguments
+# differently, such as `updateNoUiSliderInput()`'s `range` for `min` and `max`.
+# So it is given only the arguments it takes, where one named with `.update_fn`
+# errors on an argument it doesn't.
 ._shinywidgets_update <- function(fn) {
 	if (!isNamespaceLoaded("shinyWidgets")) {
 		return(NULL)
@@ -158,7 +170,8 @@ VALUE_ARGS <- c("value", "selected", "start", "end")
 	}
 	list(
 		fn = get(update, envir = ns, inherits = FALSE),
-		label = paste0("shinyWidgets::", update)
+		label = paste0("shinyWidgets::", update),
+		drop_unused = TRUE
 	)
 }
 

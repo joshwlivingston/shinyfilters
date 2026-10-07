@@ -251,17 +251,27 @@ call_update_filter_input <- function(x, .f, ...) {
 	._call_update_filter_input(x, .f, ...)
 }
 
-._call_update_filter_input <- function(x, .f, ..., call = caller_env()) {
+._call_update_filter_input <- function(
+	x,
+	.f,
+	...,
+	.drop_unused = FALSE,
+	call = caller_env()
+) {
 	args_prepared <- ._prepare_update_input_args(x, ..., call = call)
-	._call_update_input(.f, args_prepared, ...)
+	._call_update_input(.f, args_prepared, ..., .drop_unused = .drop_unused)
 }
 
 # Calls `.f` with `args`, plus any `...` that `.f` accepts and `args` lacks.
 # A column's own arguments replace the others when `.f` has them: they were
 # written for the input, which takes arguments its update doesn't.
-._call_update_input <- function(.f, args, ...) {
+# `.drop_unused` leaves out the `args` that `.f` doesn't take.
+._call_update_input <- function(.f, args, ..., .drop_unused = FALSE) {
 	args_provided <- list(...)
 	function_args <- formalArgs(.f)
+	if (.drop_unused && !("..." %in% function_args)) {
+		args <- args[names(args) %in% function_args]
+	}
 	args <- c(
 		args,
 		args_provided[

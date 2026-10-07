@@ -31,7 +31,8 @@
 #' An input set by a function other than the \pkg{shiny} inputs
 #' [filterInput()] creates needs the function that updates it. A
 #' \pkg{shinyWidgets} input, such as `shinyWidgets::pickerInput`, comes with
-#' its own. Any other, such as `shiny::checkboxGroupInput`, needs it named with
+#' its own, which is given the arguments it takes. Any other, such as
+#' `shiny::checkboxGroupInput`, needs it named with
 #' `.update_fn := fn` among the input's arguments, as described in
 #' [with_filters()]. Without it, `shinyfilters_server()` errors.
 #'
