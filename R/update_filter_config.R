@@ -143,10 +143,11 @@ VALUE_ARGS <- c("value", "selected", "start", "end")
 # while the function is the one in shinyWidgets' namespace: nothing is compared
 # later, when the configuration may have been saved and read back.
 #
-# Nobody chose this function for the column, and some name their arguments
-# differently, such as `updateNoUiSliderInput()`'s `range` for `min` and `max`.
-# So it is given only the arguments it takes, where one named with `.update_fn`
-# errors on an argument it doesn't.
+# Some of these functions don't take what a column's update is given: a
+# numeric column sends `min` and `max`, which `updateNumericRangeInput()` has
+# no argument for. So a shinyWidgets input's own update function is given only
+# the arguments it takes, where any other function named with `.update_fn`
+# errors on one it doesn't.
 ._shinywidgets_update <- function(fn) {
 	if (!isNamespaceLoaded("shinyWidgets")) {
 		return(NULL)
@@ -173,6 +174,20 @@ VALUE_ARGS <- c("value", "selected", "start", "end")
 		label = paste0("shinyWidgets::", update),
 		drop_unused = TRUE
 	)
+}
+
+# The function that updates a column's input: the one named for it, or the one
+# its input comes with. A shinyWidgets input's own update function is treated
+# the same whether it was named or found, so a configuration that prints the
+# same behaves the same.
+._own_update <- function(update, own) {
+	if (is.null(update)) {
+		return(own)
+	}
+	if (!is.null(own) && identical(update$fn, own$fn)) {
+		update$drop_unused <- TRUE
+	}
+	update
 }
 
 # shinyWidgets names an update function after its input, `updatePickerInput()`

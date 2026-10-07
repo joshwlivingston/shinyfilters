@@ -1032,8 +1032,8 @@ method(.with_filters, class_shinyfilters) <- function(
 	if (is.null(update) && identical(input, old$input)) {
 		update <- old$update
 	}
-	if (is.null(update) && is.function(input)) {
-		update <- ._shinywidgets_update(input)
+	if (is.function(input)) {
+		update <- ._own_update(update, ._shinywidgets_update(input))
 	}
 	args[names(override$args)] <- override$args
 	out <- list(input = input, args = args, fn = fn)

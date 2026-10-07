@@ -235,19 +235,21 @@ test_that("a shinyWidgets update function with a name of its own is found", {
 
 test_that("a shinyWidgets update function is given only the arguments it takes", {
 	skip_if_not_installed("shinyWidgets")
-	# `updateNoUiSliderInput()` takes `range`, not the `min` and `max` a numeric
-	# column's update is given.
-	cfg <- with_filters(
-		shinyfilters(df_config),
-		x = shinyWidgets::noUiSliderInput(range := range(.x))
+	# `updateNumericRangeInput()` has no argument for the `min` and `max` a
+	# numeric column's update is given.
+	cfg <- shinyfilters(df_config)
+	expected <- update_messages(
+		shinyWidgets::updateNumericRangeInput(inputId = "x")
 	)
-	expect_identical(
-		update_messages(updateFilterInput(cfg["x"])),
-		update_messages(shinyWidgets::updateNoUiSliderInput(
-			inputId = "x",
-			range = c(2L, 10L)
-		))
+	found <- with_filters(cfg, x = shinyWidgets::numericRangeInput)
+	expect_identical(update_messages(updateFilterInput(found["x"])), expected)
+	named <- with_filters(
+		cfg,
+		x = shinyWidgets::numericRangeInput(
+			.update_fn := shinyWidgets::updateNumericRangeInput
+		)
 	)
+	expect_identical(update_messages(updateFilterInput(named["x"])), expected)
 })
 
 test_that("`.update_fn` wins over a shinyWidgets input's own update function", {
