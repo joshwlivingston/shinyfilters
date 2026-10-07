@@ -62,6 +62,14 @@ test_that("with_args() sets arguments for the columns across() selects", {
 	)
 })
 
+test_that("with_args() leaves another function named across() alone", {
+	cfg <- shinyfilters(df_config)
+	across <- function(x) x * 2L
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+		with_args(cfg, across(x, step := 2))
+	})
+})
+
 test_that("with_args() applies its arguments in order", {
 	cfg <- shinyfilters(df_config)
 	expect_identical(

@@ -1,3 +1,16 @@
+# with_args() leaves another function named across() alone
+
+    Code
+      with_args(cfg, across(x, step := 2))
+    Condition
+      Error in `with_args()`:
+      ! `with_args()` takes `cols ~ arg := value` formulas and `across()` calls.
+      x `across(x, step := 2)` isn't one of these.
+      x `across()` is another function here. To select columns, use `dplyr::across()` or a formula.
+      i One argument: `with_args(filters, x ~ value := range(.x))`.
+      i Several: `with_args(filters, x ~ list(value := range(.x), step = 5))`.
+      i Several columns: `with_args(filters, across(c(x, y), value := range(.x)))`.
+
 # print() shows with_args() arguments
 
     Code
