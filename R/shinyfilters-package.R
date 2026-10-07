@@ -174,7 +174,6 @@ NULL
 #' @importFrom rlang call_args
 #' @importFrom rlang call_match
 #' @importFrom rlang call_modify
-#' @importFrom rlang call_name
 #' @importFrom rlang call2
 #' @importFrom rlang caller_arg
 #' @importFrom rlang caller_env
