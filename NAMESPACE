@@ -97,10 +97,6 @@ importFrom(cli,
   symbol
 )
 importFrom(htmltools,tagList)
-importFrom(lifecycle,
-  deprecated,
-  is_present
-)
 importFrom(methods,
   formalArgs,
   functionBody
@@ -126,11 +122,14 @@ importFrom(rlang,
   inject,
   is_call,
   is_formula,
+  is_missing,
   is_quosure,
   is_string,
   is_symbol,
   is_vector,
   local_error_call,
+  maybe_missing,
+  missing_arg,
   names2,
   new_quosure,
   quo,

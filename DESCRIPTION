@@ -16,7 +16,6 @@ BugReports: https://github.com/joshwlivingston/shinyfilters/issues
 Imports:
     cli,
     htmltools,
-    lifecycle,
     methods,
     rlang,
     S7,

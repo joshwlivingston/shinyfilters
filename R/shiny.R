@@ -134,11 +134,8 @@ serverFilterInput <- function(
 		args_update$selected <- character(0)
 	}
 	observe({
-		if (is_present(input)) {
-			# Match lifecycle depcrecation warning
-			#
-			# lifecycle sees an environment belonging to shiny and directs user to
-			# submit a bug to shiny. so we use cli directly
+		if (!is_missing(maybe_missing(input))) {
+			# Adapted from lifecycle::deprecate_warn()
 			cli_warn(
 				c(
 					"The {.arg input} argument of {.fn shinyfilters_server} is deprecated as of shinyfilters 0.4.0.",

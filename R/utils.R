@@ -131,3 +131,7 @@ check_is_nonempty_string <- function(
 
 	invisible()
 }
+
+deprecated <- function() {
+	missing_arg()
+}

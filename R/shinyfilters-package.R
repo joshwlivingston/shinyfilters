@@ -166,8 +166,6 @@ NULL
 #' @importFrom cli qty
 #' @importFrom cli symbol
 #' @importFrom htmltools tagList
-#' @importFrom lifecycle deprecated
-#' @importFrom lifecycle is_present
 #' @importFrom methods formalArgs
 #' @importFrom methods functionBody
 #' @importFrom rlang !!
@@ -190,11 +188,14 @@ NULL
 #' @importFrom rlang inject
 #' @importFrom rlang is_call
 #' @importFrom rlang is_formula
+#' @importFrom rlang is_missing
 #' @importFrom rlang is_quosure
 #' @importFrom rlang is_string
 #' @importFrom rlang is_symbol
 #' @importFrom rlang is_vector
 #' @importFrom rlang local_error_call
+#' @importFrom rlang maybe_missing
+#' @importFrom rlang missing_arg
 #' @importFrom rlang names2
 #' @importFrom rlang new_quosure
 #' @importFrom rlang quo
