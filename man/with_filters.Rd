@@ -32,6 +32,11 @@ The call is read as written and never run, so \pkg{dplyr} isn't
 needed. Another function named \code{across()}, your own or an attached
 package's, is never read this way: it is called like any other
 function. Write \code{dplyr::across()} to select columns then.
+\item \code{with_filters(.filters, cols ~ arg := value, ...)}: sets an argument of
+the inputs the columns have, as \code{\link[=with_args]{with_args()}} does. \code{list()} holds
+several arguments, and \code{across(cols, arg := value)} works too.
+\item \code{with_filters(.filters, col := value, ...)}: the same as \code{col = value}
+when \code{col} is a column. \verb{:=} never adds a column.
 }
 
 Each input is either a keyword or the \pkg{shiny} input function it
@@ -45,8 +50,18 @@ uses its sorted unique values as choices, and a datetime its dates.
 
 Other functions are called like \code{\link[=call_filter_input]{call_filter_input()}}: they receive the
 arguments \code{\link[=args_filter_input]{args_filter_input()}} returns for the column's type, plus any
-other arguments they accept. \code{\link[=shinyfilters_server]{shinyfilters_server()}} needs the function
-that updates one: name it with \code{\link[=as_filter]{as_filter()}}'s \code{.update_fn}.
+other arguments they accept.
+
+An input takes its arguments with it, wherever an input goes. Write
+\code{input ~ arguments}, such as \code{col = "slider" ~ value := range(.x)} or
+\code{cols ~ "slider" ~ list(value := range(.x), step = 5)}, or call the
+function with \verb{:=} arguments, such as
+\code{col = sliderInput(value := range(.x))}. Either is read as written and
+never run; \code{\link[=with_args]{with_args()}} describes the arguments.
+
+\code{\link[=shinyfilters_server]{shinyfilters_server()}} needs the function that updates an input that
+isn't one of \pkg{shiny}'s. Name it with \code{.update_fn := fn} among the
+arguments, such as \code{col = pickerInput(.update_fn := updatePickerInput)}.
 
 Wrap an input in \code{\link[=as_filter]{as_filter()}} to set its arguments, or use \code{\link[=as_filter]{as_filter()}}
 without an input to set arguments for the input a column already has.
@@ -84,6 +99,9 @@ with_filters(
   across(everything(), "selectize"),
   origin = "radio"
 )
+
+# Give an input its arguments. `.x` is the column the input is for.
+with_filters(filters, dep_delay = "slider" ~ value := range(.x))
 
 # Add a column computed from the others
 with_filters(filters, delay_sq = dep_delay^2)

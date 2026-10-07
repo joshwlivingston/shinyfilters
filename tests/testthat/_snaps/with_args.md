@@ -27,6 +27,77 @@
                                         step  = 2
         a_very_very_long_name  <dbl>  sliderInput
 
+# `.update_fn :=` names the function that updates an input
+
+    Code
+      print(set)
+    Output
+      <shinyfilters> * 4 filters
+      
+      Filters
+        *  letters                <chr>  checkboxGroupInput {shiny}
+                                           .update_fn = updateCheckboxGroupInput {shiny}
+           factors                <fct>  selectizeInput
+           x                      <int>  sliderInput
+           a_very_very_long_name  <dbl>  sliderInput
+      
+      * Filter set by `with_filters()`
+
+# with_filters() errors with `:=`
+
+    Code
+      with_filters(cfg, value := 1)
+    Condition
+      Error in `with_filters()`:
+      ! Can't find column value.
+      x `value := 1` needs an existing column on its left.
+      i To set an argument, select columns: `with_filters(filters, cols ~ value := 1)`.
+    Code
+      with_filters(cfg, nope = shiny::sliderInput(value := 1))
+    Condition
+      Error in `with_filters()`:
+      ! Can't find column nope.
+      x `shiny::sliderInput(value := 1)` chooses the input for an existing column.
+      i To add a column, compute it from the others: `with_filters(filters, nope = <expression>)`.
+    Code
+      with_filters(cfg, nope = step := 2)
+    Condition
+      Error in `with_filters()`:
+      ! Can't find column nope.
+      x `step := 2` sets arguments for an existing column's input.
+      i To add a column, compute it from the others: `with_filters(filters, nope = <expression>)`.
+    Code
+      with_filters(cfg, x = shiny::sliderInput(value := 1, 5))
+    Condition
+      Error in `with_filters()`:
+      ! All arguments must be named.
+      x `5` isn't.
+    Code
+      with_filters(cfg, x ~ inputId := "y")
+    Condition
+      Error in `with_filters()`:
+      ! Can't set `inputId` in `with_filters()`.
+      i An input's id is always its column's name.
+    Code
+      with_filters(cfg, x = shiny::sliderInput(.update_fn := "updateSliderInput"))
+    Condition
+      Error in `with_filters()`:
+      ! `.update_fn` must be a function, not a string.
+    Code
+      with_filters(cfg, x ~ max := nope * 2)
+    Condition
+      Error in `with_filters()`:
+      ! Can't evaluate `max := nope * 2`.
+      Caused by error:
+      ! object 'nope' not found
+    Code
+      with_filters(cfg, x = "slider" ~ "radio")
+    Condition
+      Error in `with_filters()`:
+      ! Can't read `"slider" ~ "radio"`.
+      i An input is followed by its arguments: `input ~ arg := value`.
+      i Arguments are written `arg := value`, or `list(arg := value, ...)` for several.
+
 # with_args() errors
 
     Code
@@ -66,6 +137,26 @@
       Error in `with_args()`:
       ! `with_args()` takes `cols ~ arg := value` formulas and `across()` calls.
       x `x ~ "slider"` isn't one of these.
+      i To choose an input, use `with_filters()`.
+      i One argument: `with_args(filters, x ~ value := range(.x))`.
+      i Several: `with_args(filters, x ~ list(value := range(.x), step = 5))`.
+      i Several columns: `with_args(filters, across(c(x, y), value := range(.x)))`.
+    Code
+      with_args(cfg, x ~ shiny::sliderInput(value := 1))
+    Condition
+      Error in `with_args()`:
+      ! `with_args()` takes `cols ~ arg := value` formulas and `across()` calls.
+      x `x ~ shiny::sliderInput(value := 1)` isn't one of these.
+      i To choose an input, use `with_filters()`.
+      i One argument: `with_args(filters, x ~ value := range(.x))`.
+      i Several: `with_args(filters, x ~ list(value := range(.x), step = 5))`.
+      i Several columns: `with_args(filters, across(c(x, y), value := range(.x)))`.
+    Code
+      with_args(cfg, x ~ "slider" ~ value := 1)
+    Condition
+      Error in `with_args()`:
+      ! `with_args()` takes `cols ~ arg := value` formulas and `across()` calls.
+      x `x ~ "slider" ~ value := 1` isn't one of these.
       i To choose an input, use `with_filters()`.
       i One argument: `with_args(filters, x ~ value := range(.x))`.
       i Several: `with_args(filters, x ~ list(value := range(.x), step = 5))`.

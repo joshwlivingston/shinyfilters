@@ -25,7 +25,9 @@ that defines them is needed.
 
 Arguments replace the ones shinyfilters passes for the column, such as
 \code{label}, \code{choices}, \code{min}, \code{max}, and \code{value}. \code{inputId} can't be set: an
-input's id is always its column's name.
+input's id is always its column's name. \code{.update_fn := fn} names the
+function that updates the input instead, as described in
+\code{\link[=with_filters]{with_filters()}}.
 
 A value can use \code{.x}, the column the input is created for. It is
 evaluated when the input is created, and a call in it that takes \code{na.rm},

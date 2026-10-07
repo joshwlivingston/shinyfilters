@@ -29,6 +29,11 @@
 #'   object, as described in [with_filters()]. Any of these is always read as
 #'   an input; any other value is the column's data.
 #'
+#'   `arg := value` sets an input's arguments, as in [with_filters()]:
+#'   `mutate(filters, cols ~ arg := value)` or
+#'   `mutate(filters, col = sliderInput(arg := value))`. `col := value` is
+#'   `col = value` when `col` is a column.
+#'
 #'   For `select()`, the columns to keep, using
 #'   <[`tidy-select`][tidyselect::language]>.
 #'
@@ -94,7 +99,9 @@ NULL
 # are kept, in the order they first appear.
 ._mutate_impl <- function(.data, ..., .fn, .call, .keep_used = FALSE) {
 	fn <- .fn
-	quos <- enquos(...)
+	# `:=` is read here, not by rlang: it sets an argument.
+	quos <- enquos(..., .unquote_names = FALSE)
+	quos <- ._name_walrus(quos, .data, call = .call, fn = fn)
 	nms <- names2(quos)
 
 	reserved <- intersect(nms, c(".by", ".keep", ".before", ".after"))

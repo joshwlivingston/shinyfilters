@@ -11,6 +11,16 @@
       i `across()`: `mutate(filters, across(where(is.numeric), "slider"))`.
       i `with_ns()`: `mutate(filters, with_ns("id"))`.
 
+# mutate() reads `:=` arguments like with_filters()
+
+    Code
+      dplyr::mutate(cfg, value := 1)
+    Condition
+      Error in `dplyr::mutate()`:
+      ! Can't find column value.
+      x `value := 1` needs an existing column on its left.
+      i To set an argument, select columns: `mutate(filters, cols ~ value := 1)`.
+
 # mutate() labels a custom input the way with_filters() does
 
     Code

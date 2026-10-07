@@ -30,6 +30,30 @@ test_that("mutate() leaves another function named across() alone", {
 	})
 })
 
+test_that("mutate() reads `:=` arguments like with_filters()", {
+	skip_if_not_installed("dplyr")
+	cfg <- shinyfilters(df_config, slider = FALSE)
+	expect_identical(
+		filterInput(dplyr::mutate(
+			cfg,
+			x = shiny::sliderInput(value := range(.x)),
+			letters ~ label := "Letters"
+		)),
+		filterInput(with_filters(
+			cfg,
+			x = shiny::sliderInput(value := range(.x)),
+			letters ~ label := "Letters"
+		))
+	)
+	expect_identical(
+		dplyr::mutate(cfg, x := "radio"),
+		dplyr::mutate(cfg, x = "radio")
+	)
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+		dplyr::mutate(cfg, value := 1)
+	})
+})
+
 test_that("across() matches its arguments like dplyr::across()", {
 	skip_if_not_installed("dplyr")
 	cfg <- shinyfilters(df_config)

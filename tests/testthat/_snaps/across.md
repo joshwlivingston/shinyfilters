@@ -49,19 +49,15 @@
       with_filters(cfg, across(x, letters ~ "radio"))
     Condition
       Error in `with_filters()`:
-      ! Can't use `letters ~ "radio"` as an input.
-      i `across()` takes a keyword or a shiny input function, not a lambda.
+      ! Can't read `letters ~ "radio"`.
+      i An input is followed by its arguments: `input ~ arg := value`.
+      i Arguments are written `arg := value`, or `list(arg := value, ...)` for several.
     Code
       with_filters(cfg, across(x, ~ mean(.x)))
     Condition
       Error in `with_filters()`:
       ! Can't use `~mean(.x)` as an input.
       i `across()` takes a keyword or a shiny input function, not a lambda.
-    Code
-      with_filters(cfg, across(x, list(a = "radio")))
-    Condition
-      Error in `with_filters()`:
-      ! An input must be a keyword or a function, not a list.
     Code
       with_filters(cfg, base::across(x, "radio"))
     Condition

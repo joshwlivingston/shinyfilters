@@ -104,7 +104,6 @@ test_that("with_filters() errors with across()", {
 
 		with_filters(cfg, across(x, letters ~ "radio"))
 		with_filters(cfg, across(x, ~ mean(.x)))
-		with_filters(cfg, across(x, list(a = "radio")))
 
 		with_filters(cfg, base::across(x, "radio"))
 	})

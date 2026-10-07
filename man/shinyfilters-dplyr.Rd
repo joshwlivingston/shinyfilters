@@ -25,6 +25,11 @@ Each input is a keyword, a shiny input function, or an \code{\link[=as_filter]{a
 object, as described in \code{\link[=with_filters]{with_filters()}}. Any of these is always read as
 an input; any other value is the column's data.
 
+\code{arg := value} sets an input's arguments, as in \code{\link[=with_filters]{with_filters()}}:
+\code{mutate(filters, cols ~ arg := value)} or
+\code{mutate(filters, col = sliderInput(arg := value))}. \code{col := value} is
+\code{col = value} when \code{col} is a column.
+
 For \code{select()}, the columns to keep, using
 <\code{\link[tidyselect:language]{tidy-select}}>.}
 }

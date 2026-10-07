@@ -695,6 +695,11 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 #'     needed. Another function named `across()`, your own or an attached
 #'     package's, is never read this way: it is called like any other
 #'     function. Write `dplyr::across()` to select columns then.
+#'   * `with_filters(.filters, cols ~ arg := value, ...)`: sets an argument of
+#'     the inputs the columns have, as [with_args()] does. `list()` holds
+#'     several arguments, and `across(cols, arg := value)` works too.
+#'   * `with_filters(.filters, col := value, ...)`: the same as `col = value`
+#'     when `col` is a column. `:=` never adds a column.
 #'
 #'   Each input is either a keyword or the \pkg{shiny} input function it
 #'   stands for, such as [shiny::radioButtons()] for `"radio"`. The keywords
@@ -707,8 +712,18 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 #'
 #'   Other functions are called like [call_filter_input()]: they receive the
 #'   arguments [args_filter_input()] returns for the column's type, plus any
-#'   other arguments they accept. [shinyfilters_server()] needs the function
-#'   that updates one: name it with [as_filter()]'s `.update_fn`.
+#'   other arguments they accept.
+#'
+#'   An input takes its arguments with it, wherever an input goes. Write
+#'   `input ~ arguments`, such as `col = "slider" ~ value := range(.x)` or
+#'   `cols ~ "slider" ~ list(value := range(.x), step = 5)`, or call the
+#'   function with `:=` arguments, such as
+#'   `col = sliderInput(value := range(.x))`. Either is read as written and
+#'   never run; [with_args()] describes the arguments.
+#'
+#'   [shinyfilters_server()] needs the function that updates an input that
+#'   isn't one of \pkg{shiny}'s. Name it with `.update_fn := fn` among the
+#'   arguments, such as `col = pickerInput(.update_fn := updatePickerInput)`.
 #'
 #'   Wrap an input in [as_filter()] to set its arguments, or use [as_filter()]
 #'   without an input to set arguments for the input a column already has.
@@ -742,6 +757,9 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 #'   origin = "radio"
 #' )
 #'
+#' # Give an input its arguments. `.x` is the column the input is for.
+#' with_filters(filters, dep_delay = "slider" ~ value := range(.x))
+#'
 #' # Add a column computed from the others
 #' with_filters(filters, delay_sq = dep_delay^2)
 #'
@@ -766,7 +784,9 @@ method(.with_filters, class_shinyfilters) <- function(
 	.fn = "with_filters"
 ) {
 	config <- .filters
-	quos <- enquos(...)
+	# `:=` is read here, not by rlang: it sets an argument.
+	quos <- enquos(..., .unquote_names = FALSE)
+	quos <- ._name_walrus(quos, config, call = .call, fn = .fn)
 	nms <- names2(quos)
 	named <- nms != ""
 	is_across <- vapply(quos, ._is_across_call, logical(1))
@@ -821,20 +841,6 @@ method(.with_filters, class_shinyfilters) <- function(
 	config
 }
 
-# `cols ~ input`: the left side selects columns, the right side is their input.
-._is_cols_formula <- function(quo) {
-	is_formula(quo_get_expr(quo), lhs = TRUE)
-}
-
-._formula_spec <- function(quo) {
-	expr <- quo_get_expr(quo)
-	env <- quo_get_env(quo)
-	list(
-		cols = new_quosure(f_lhs(expr), env),
-		input = new_quosure(f_rhs(expr), env)
-	)
-}
-
 # Reached only from `with_filters()`: `mutate()` checks its own argument shapes
 # before forwarding, so its wording never has to appear here.
 ._abort_with_filter_form <- function(quos, call) {
@@ -853,10 +859,20 @@ method(.with_filters, class_shinyfilters) <- function(
 ._override_cols <- function(config, cols, input, call, fn) {
 	._private()
 	selected <- ._eval_cols(config, cols, call = call)
-	override <- ._new_override(input, call = call, fn = fn)
+	override <- ._value_override(config, input, call = call, fn = fn)
 	overrides <- rep(list(override), length(selected))
 	names(overrides) <- selected
 	._set_overrides(config, overrides)
+}
+
+# What the right side of a formula, or the second argument of `across()`, gives
+# its columns: a `:=` spec, read as written, or an input, evaluated.
+._value_override <- function(config, quo, call, fn) {
+	spec <- ._read_spec(quo_get_expr(quo), call = call)
+	if (is.null(spec)) {
+		return(._new_override(quo, call = call, fn = fn))
+	}
+	._spec_override(spec, quo_get_env(quo), config, call = call, fn = fn)
 }
 
 # The columns a tidyselect expression selects: at least one
@@ -876,12 +892,26 @@ method(.with_filters, class_shinyfilters) <- function(
 	selected
 }
 
-# A function, a single string, or an `as_filter()` object chooses the column's
-# input; any other value is the column's data, computed from the other columns.
+# A `:=` spec, a function, a single string, or an `as_filter()` object sets the
+# column's input or its arguments; any other value is the column's data,
+# computed from the other columns.
 ._set_column <- function(config, name, quo, call, fn) {
 	._private()
-	label <- as_label(quo)
+	label <- ._label(quo)
 	data <- config@data
+	spec <- ._read_spec(quo_get_expr(quo), call = call, list_is_args = FALSE)
+	if (!is.null(spec)) {
+		._check_column_exists(name, data, label, is.null(spec$input), call, fn)
+		override <- ._spec_override(
+			spec,
+			quo_get_env(quo),
+			config,
+			call = call,
+			fn = fn
+		)
+		return(._set_overrides(config, set_names(list(override), name)))
+	}
+
 	value <- try_fetch(
 		eval_tidy(quo, data = data),
 		error = function(cnd) {
@@ -900,20 +930,8 @@ method(.with_filters, class_shinyfilters) <- function(
 
 	if (is.function(value) || is_string(value) || ._is_filter(value)) {
 		._check_keyword_symbol(quo, value, call = call)
-		if (!(name %in% names(data))) {
-			cli_abort(
-				c(
-					"Can't find column {.field {name}}.",
-					x = if (._is_filter(value) && is.null(value$input)) {
-						"{.code {label}} sets arguments for an existing column's input."
-					} else {
-						"{.code {label}} chooses the input for an existing column."
-					},
-					i = "To add a column, compute it from the others: {.code {fn}(filters, {name} = <expression>)}."
-				),
-				call = call
-			)
-		}
+		sets_args <- ._is_filter(value) && is.null(value$input)
+		._check_column_exists(name, data, label, sets_args, call, fn)
 		override <- ._override(value, quo, call = call, fn = fn)
 		return(._set_overrides(config, set_names(list(override), name)))
 	}
@@ -942,6 +960,26 @@ method(.with_filters, class_shinyfilters) <- function(
 	}
 	data[[name]] <- value
 	._modify(config, data = data, added = added, replaced = replaced)
+}
+
+# An input or its arguments are for a column the configuration has. `label` is
+# the code that names them; `sets_args` says it sets arguments only.
+._check_column_exists <- function(name, data, label, sets_args, call, fn) {
+	if (name %in% names(data)) {
+		return(invisible())
+	}
+	cli_abort(
+		c(
+			"Can't find column {.field {name}}.",
+			x = if (sets_args) {
+				"{.code {label}} sets arguments for an existing column's input."
+			} else {
+				"{.code {label}} chooses the input for an existing column."
+			},
+			i = "To add a column, compute it from the others: {.code {fn}(filters, {name} = <expression>)}."
+		),
+		call = call
+	)
 }
 
 ._set_overrides <- function(config, overrides) {
@@ -1006,7 +1044,7 @@ method(.with_filters, class_shinyfilters) <- function(
 }
 
 ._new_override <- function(quo, call, fn) {
-	label <- as_label(quo)
+	label <- ._label(quo)
 	input <- try_fetch(
 		eval_tidy(quo),
 		error = function(cnd) {
