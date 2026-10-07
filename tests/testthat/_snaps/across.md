@@ -59,6 +59,12 @@
       ! Can't use `~mean(.x)` as an input.
       i `across()` takes a keyword or a shiny input function, not a lambda.
     Code
+      with_filters(cfg, across(x, ~ list(step := 2)))
+    Condition
+      Error in `with_filters()`:
+      ! Can't use `~ list(step := 2)` as an input.
+      i `across()` takes a keyword or a shiny input function, not a lambda.
+    Code
       with_filters(cfg, base::across(x, "radio"))
     Condition
       Error in `with_filters()`:

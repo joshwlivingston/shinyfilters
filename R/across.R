@@ -127,9 +127,10 @@
 	}
 	rhs <- f_rhs(input)
 	if (!._is_input_name(rhs) && !._is_input_call(rhs)) {
+		label <- ._label(input)
 		cli_abort(
 			c(
-				"Can't use {.code {as_label(input)}} as an input.",
+				"Can't use {.code {label}} as an input.",
 				i = "{.fn across} takes a keyword or a shiny input function, not a lambda."
 			),
 			call = call

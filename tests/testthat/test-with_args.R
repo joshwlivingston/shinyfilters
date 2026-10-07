@@ -678,6 +678,7 @@ test_that("with_filters() errors with `:=`", {
 		)
 		with_filters(cfg, x ~ max := nope * 2)
 		with_filters(cfg, x = "slider" ~ "radio")
+		with_filters(cfg, x, letters ~ "radio")
 	})
 })
 

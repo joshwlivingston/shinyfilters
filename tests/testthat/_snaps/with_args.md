@@ -470,6 +470,13 @@
       ! Can't read `"slider" ~ "radio"`.
       i An input is followed by its arguments: `input ~ arg := value`.
       i Arguments are written `arg := value`, or `list(arg := value, ...)` for several.
+    Code
+      with_filters(cfg, x, letters ~ "radio")
+    Condition
+      Error in `with_filters()`:
+      ! Can't read `letters ~ "radio"`.
+      i An input is followed by its arguments: `input ~ arg := value`.
+      i Arguments are written `arg := value`, or `list(arg := value, ...)` for several.
 
 # with_args() errors
 

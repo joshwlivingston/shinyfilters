@@ -225,9 +225,10 @@ with_args <- function(.filters, ...) {
 
 # A function called with `:=` arguments, such as `sliderInput(value := 1)`: an
 # input and its arguments. The function is named by a symbol or `pkg::fn`, so a
-# call such as `x[, y := 1]` stays the ordinary code it is.
+# call such as `x[, y := 1]` stays the ordinary code it is. `list()` holds
+# arguments; it isn't an input.
 ._is_input_call <- function(expr) {
-	if (!is.call(expr) || !._has_walrus(expr)) {
+	if (!is.call(expr) || is_call(expr, "list") || !._has_walrus(expr)) {
 		return(FALSE)
 	}
 	head <- expr[[1]]
