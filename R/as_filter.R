@@ -205,9 +205,7 @@ INPUT_ARGS <- ".shinyfilters_args"
 			return(value)
 		}
 		try_fetch(
-			{
-				eval_tidy(value, rlang::as_data_mask(.data))
-			},
+			eval_tidy(value, data = .data),
 			error = function(cnd) {
 				._resignal_silent(cnd)
 				cli_abort(
