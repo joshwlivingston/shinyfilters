@@ -130,12 +130,12 @@
       Filters
            letters                <chr>  selectizeInput
            factors                <fct>  selectizeInput
-        ~  x                      <dbl>  sliderInput
+        ^  x                      <dbl>  sliderInput
            a_very_very_long_name  <dbl>  sliderInput
         +  y                      <dbl>  sliderInput
       
       + Filter added by `mutate()`
-      ~ Filter replaced by `mutate()`
+      ^ Filter replaced by `mutate()`
     Code
       print(dplyr::mutate(cfg, y = "slider", letters = "radio"))
     Output
@@ -144,23 +144,23 @@
       Filters
         *  letters                <chr>  radioButtons
            factors                <fct>  selectizeInput
-        ~  x                      <dbl>  sliderInput
+        ^  x                      <dbl>  sliderInput
            a_very_very_long_name  <dbl>  sliderInput
         +  y                      <dbl>  sliderInput
       
       * Filter set by `mutate()`
       + Filter added by `mutate()`
-      ~ Filter replaced by `mutate()`
+      ^ Filter replaced by `mutate()`
     Code
       print(dplyr::select(cfg, x, letters))
     Output
       <shinyfilters> * 2 filters
       
       Filters
-        ~  x        <dbl>  sliderInput
+        ^  x        <dbl>  sliderInput
            letters  <chr>  selectizeInput
       
-      ~ Filter replaced by `mutate()`
+      ^ Filter replaced by `mutate()`
     Code
       print(with_filters(cfg, z = y + 1, x = x / 2))
     Output
@@ -169,13 +169,13 @@
       Filters
            letters                <chr>  selectizeInput
            factors                <fct>  selectizeInput
-        ~  x                      <dbl>  sliderInput
+        ^  x                      <dbl>  sliderInput
            a_very_very_long_name  <dbl>  sliderInput
         +  y                      <dbl>  sliderInput
         +  z                      <dbl>  sliderInput
       
       + Filter added by `mutate()` or `with_filters()`
-      ~ Filter replaced by `with_filters()`
+      ^ Filter replaced by `with_filters()`
 
 # print() names the functions that chose inputs
 

@@ -333,7 +333,7 @@
                                            inline = TRUE
                                            label  = "Letters"
         *  factors                <fct>  selectizeInput
-        ~  x                      <int>  sliderInput
+        ^  x                      <int>  sliderInput
                                            value = range(.x, na.rm = TRUE)
         *  a_very_very_long_name  <dbl>  sliderInput
                                            value = range(.x, na.rm = TRUE)
@@ -342,7 +342,7 @@
         slider = FALSE
       
       * Filter set by `with_filters()`
-      ~ Filter replaced by `with_filters()`
+      ^ Filter replaced by `with_filters()`
 
 # print() shortens a long argument
 

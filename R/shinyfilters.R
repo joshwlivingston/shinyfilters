@@ -366,7 +366,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	dot_input <- col_blue(dot)
 	# ASCII in every locale: wider glyphs break the marker column.
 	dot_added <- col_green("+")
-	dot_replaced <- col_yellow("~")
+	dot_replaced <- col_yellow("^")
 	circle <- if (is_utf8_output()) "\u25cb" else "#"
 	dot_default <- col_grey(circle)
 

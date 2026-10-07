@@ -70,19 +70,19 @@
       Filters
            letters                <chr>  selectizeInput
            factors                <fct>  selectizeInput
-        ~  x                      <dbl>  sliderInput
+        ^  x                      <dbl>  sliderInput
            a_very_very_long_name  <dbl>  sliderInput
       
-      ~ Filter replaced by `with_filters()`
+      ^ Filter replaced by `with_filters()`
     Code
       print(cfg["x"])
     Output
       <shinyfilters> * 1 filter
       
       Filters
-        ~  x  <dbl>  sliderInput
+        ^  x  <dbl>  sliderInput
       
-      ~ Filter replaced by `with_filters()`
+      ^ Filter replaced by `with_filters()`
     Code
       print(cfg["letters"])
     Output
@@ -101,8 +101,8 @@
       Filters
         #  letters                <chr>  selectInput
         #  factors                <fct>  selectInput
-        ~  x                      <dbl>  radioButtons
-        ~  a_very_very_long_name  <dbl>  numericInput
+        ^  x                      <dbl>  radioButtons
+        ^  a_very_very_long_name  <dbl>  numericInput
         +  y                      <dbl>  sliderInput
         +  z                      <chr>  selectInput
       
@@ -111,7 +111,7 @@
       
       # Filter set by default argument
       + Filter added by `with_filters()`
-      ~ Filter replaced by `with_filters()`
+      ^ Filter replaced by `with_filters()`
 
 # print() handles long names
 
