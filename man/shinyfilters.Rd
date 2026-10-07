@@ -51,41 +51,18 @@ to a namespace. Useful when using \code{shinyfilters()} inside a \pkg{shiny}
 module.}
 }
 \value{
-A \code{shinyfilters} object:
-\itemize{
-\item \code{names(filters)} lists its columns.
-\item \code{filters$col} and \code{filters[["col"]]} return the input \code{\link[=filterInput]{filterInput()}}
-creates for one column, including any \code{\link[=with_filters]{with_filters()}} overrides.
-\code{filters[[cols]]} returns the inputs of several columns, selected like
-\code{filters[cols]}.
-\item \code{filters[cols]} returns a \code{shinyfilters} object with only the selected
-columns, keeping their overrides. \code{cols} uses
-<\code{\link[tidyselect:language]{tidy-select}}>, like \code{\link[=with_filters]{with_filters()}}; use
-\code{all_of()} to select with a variable.
-}
+A \link[=shinyfilters-class]{shinyfilters} object.
 }
 \description{
-\code{shinyfilters()} stores a data frame with the arguments used to create its
-filters. Pass the result to \code{\link[=with_filters]{with_filters()}} to choose the input for
-individual columns, then place it in a shiny UI to create the inputs.
-}
-\details{
-The inputs are created when the page is rendered. Call \code{\link[=filterInput]{filterInput()}} on
-the result to create them right away. Apps that use bookmarking must do so
-inside their UI function to restore bookmarked values; placing the result
-in their UI directly is an error.
+\code{shinyfilters()} creates a set of interdependent filters for use in a
+\pkg{shiny} application.
 }
 \examples{
 \dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
-filters <- shinyfilters(nyc_flights)
-filters
+shinyfilters(nyc_flights)
 
 # Use sliders for every numeric column
-filters <- shinyfilters(nyc_flights, slider = TRUE)
-filterInput(filters)
-
-# The input for one column
-filters$origin
+shinyfilters(nyc_flights, slider = TRUE)
 \dontshow{\}) # examplesIf}
 }
 \seealso{

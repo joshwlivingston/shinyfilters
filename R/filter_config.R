@@ -5,14 +5,8 @@
 # Function: shinyfilters() ####
 #' Configure the Filters for a Data Frame
 #'
-#' `shinyfilters()` stores a data frame with the arguments used to create its
-#' filters. Pass the result to [with_filters()] to choose the input for
-#' individual columns, then place it in a shiny UI to create the inputs.
-#'
-#' The inputs are created when the page is rendered. Call [filterInput()] on
-#' the result to create them right away. Apps that use bookmarking must do so
-#' inside their UI function to restore bookmarked values; placing the result
-#' in their UI directly is an error.
+#' `shinyfilters()` creates a set of interdependent filters for use in a
+#' \pkg{shiny} application.
 #'
 #' @param .data A `data.frame`.
 #' @param ... Named arguments passed to the selected input.
@@ -37,30 +31,15 @@
 #'   to a namespace. Useful when using `shinyfilters()` inside a \pkg{shiny}
 #'   module.
 #'
-#' @returns A `shinyfilters` object:
-#'
-#'   * `names(filters)` lists its columns.
-#'   * `filters$col` and `filters[["col"]]` return the input [filterInput()]
-#'     creates for one column, including any [with_filters()] overrides.
-#'     `filters[[cols]]` returns the inputs of several columns, selected like
-#'     `filters[cols]`.
-#'   * `filters[cols]` returns a `shinyfilters` object with only the selected
-#'     columns, keeping their overrides. `cols` uses
-#'     <[`tidy-select`][tidyselect::language]>, like [with_filters()]; use
-#'     `all_of()` to select with a variable.
+#' @returns A [shinyfilters][shinyfilters-class] object.
 #'
 #' @seealso [with_filters()], [with_ns()]
 #'
 #' @examplesIf interactive()
-#' filters <- shinyfilters(nyc_flights)
-#' filters
+#' shinyfilters(nyc_flights)
 #'
 #' # Use sliders for every numeric column
-#' filters <- shinyfilters(nyc_flights, slider = TRUE)
-#' filterInput(filters)
-#'
-#' # The input for one column
-#' filters$origin
+#' shinyfilters(nyc_flights, slider = TRUE)
 #' @export
 shinyfilters <- function(
 	.data,
