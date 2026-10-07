@@ -35,9 +35,13 @@
 	}
 }
 
+# dplyr before 1.0.0 has no `across()`: then no function is dplyr's.
 ._is_dplyr_across <- function(fn) {
 	isNamespaceLoaded("dplyr") &&
-		identical(fn, get("across", envir = asNamespace("dplyr")))
+		identical(
+			fn,
+			get0("across", envir = asNamespace("dplyr"), inherits = FALSE)
+		)
 }
 
 # The arguments of `dplyr::across()`. `call_match()` uses them to name the

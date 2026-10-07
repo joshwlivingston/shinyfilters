@@ -62,7 +62,7 @@ test_that("with_filters() mixes across() with named columns in order", {
 })
 
 test_that("across() that resolves to dplyr's function selects columns", {
-	skip_if_not_installed("dplyr")
+	skip_if_not_installed("dplyr", "1.0.0")
 	cfg <- shinyfilters(df_config)
 	across <- dplyr::across
 	expect_identical(
