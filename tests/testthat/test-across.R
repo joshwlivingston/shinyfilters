@@ -61,6 +61,20 @@ test_that("with_filters() mixes across() with named columns in order", {
 	)
 })
 
+test_that("across() that resolves to dplyr's function selects columns", {
+	skip_if_not_installed("dplyr")
+	cfg <- shinyfilters(df_config)
+	across <- dplyr::across
+	expect_identical(
+		filterInput(with_filters(cfg, across(x, "radio"))),
+		filterInput(with_filters(cfg, x, "radio"))
+	)
+	expect_identical(
+		filterInput(dplyr::mutate(cfg, across(x, "radio"))),
+		filterInput(with_filters(cfg, x, "radio"))
+	)
+})
+
 test_that("with_filters() leaves another function named across() alone", {
 	cfg <- shinyfilters(df_config)
 	across <- function(x) x * 2L
