@@ -380,3 +380,39 @@ shiny::textAreaInput
 #' @importFrom shiny textInput
 #' @export
 shiny::textInput
+
+#' @importFrom shiny updateDateInput
+#' @export
+shiny::updateDateInput
+
+#' @importFrom shiny updateDateRangeInput
+#' @export
+shiny::updateDateRangeInput
+
+#' @importFrom shiny updateNumericInput
+#' @export
+shiny::updateNumericInput
+
+#' @importFrom shiny updateRadioButtons
+#' @export
+shiny::updateRadioButtons
+
+#' @importFrom shiny updateSelectInput
+#' @export
+shiny::updateSelectInput
+
+#' @importFrom shiny updateSelectizeInput
+#' @export
+shiny::updateSelectizeInput
+
+#' @importFrom shiny updateSliderInput
+#' @export
+shiny::updateSliderInput
+
+#' @importFrom shiny updateTextAreaInput
+#' @export
+shiny::updateTextAreaInput
+
+#' @importFrom shiny updateTextInput
+#' @export
+shiny::updateTextInput

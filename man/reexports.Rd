@@ -12,6 +12,15 @@
 \alias{sliderInput}
 \alias{textAreaInput}
 \alias{textInput}
+\alias{updateDateInput}
+\alias{updateDateRangeInput}
+\alias{updateNumericInput}
+\alias{updateRadioButtons}
+\alias{updateSelectInput}
+\alias{updateSelectizeInput}
+\alias{updateSliderInput}
+\alias{updateTextAreaInput}
+\alias{updateTextInput}
 \alias{all_of}
 \alias{any_of}
 \alias{contains}
@@ -30,7 +39,7 @@ These objects are imported from other packages. Follow the links
 below to see their documentation.
 
 \describe{
-  \item{shiny}{\code{\link[shiny:dateInput]{dateInput()}}, \code{\link[shiny:dateRangeInput]{dateRangeInput()}}, \code{\link[shiny:numericInput]{numericInput()}}, \code{\link[shiny:radioButtons]{radioButtons()}}, \code{\link[shiny:selectInput]{selectInput()}}, \code{\link[shiny:selectizeInput]{selectizeInput()}}, \code{\link[shiny:sliderInput]{sliderInput()}}, \code{\link[shiny:textAreaInput]{textAreaInput()}}, \code{\link[shiny:textInput]{textInput()}}}
+  \item{shiny}{\code{\link[shiny:dateInput]{dateInput()}}, \code{\link[shiny:dateRangeInput]{dateRangeInput()}}, \code{\link[shiny:numericInput]{numericInput()}}, \code{\link[shiny:radioButtons]{radioButtons()}}, \code{\link[shiny:selectInput]{selectInput()}}, \code{\link[shiny:selectizeInput]{selectizeInput()}}, \code{\link[shiny:sliderInput]{sliderInput()}}, \code{\link[shiny:textAreaInput]{textAreaInput()}}, \code{\link[shiny:textInput]{textInput()}}, \code{\link[shiny:updateDateInput]{updateDateInput()}}, \code{\link[shiny:updateDateRangeInput]{updateDateRangeInput()}}, \code{\link[shiny:updateNumericInput]{updateNumericInput()}}, \code{\link[shiny:updateRadioButtons]{updateRadioButtons()}}, \code{\link[shiny:updateSelectInput]{updateSelectInput()}}, \code{\link[shiny:updateSelectizeInput]{updateSelectizeInput()}}, \code{\link[shiny:updateSliderInput]{updateSliderInput()}}, \code{\link[shiny:updateTextAreaInput]{updateTextAreaInput()}}, \code{\link[shiny:updateTextInput]{updateTextInput()}}}
 
   \item{tidyselect}{\code{\link[tidyselect:all_of]{all_of()}}, \code{\link[tidyselect:any_of]{any_of()}}, \code{\link[tidyselect:contains]{contains()}}, \code{\link[tidyselect:ends_with]{ends_with()}}, \code{\link[tidyselect:everything]{everything()}}, \code{\link[tidyselect:last_col]{last_col()}}, \code{\link[tidyselect:matches]{matches()}}, \code{\link[tidyselect:num_range]{num_range()}}, \code{\link[tidyselect:one_of]{one_of()}}, \code{\link[tidyselect:starts_with]{starts_with()}}, \code{\link[tidyselect:where]{where()}}}
 }}

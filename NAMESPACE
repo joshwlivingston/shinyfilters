@@ -37,7 +37,16 @@ export(sliderInput)
 export(starts_with)
 export(textAreaInput)
 export(textInput)
+export(updateDateInput)
+export(updateDateRangeInput)
 export(updateFilterInput)
+export(updateNumericInput)
+export(updateRadioButtons)
+export(updateSelectInput)
+export(updateSelectizeInput)
+export(updateSliderInput)
+export(updateTextAreaInput)
+export(updateTextInput)
 export(where)
 export(with_defaults)
 export(with_filters)
@@ -55,7 +64,7 @@ importFrom(S7,
   class_data.frame,
   class_factor,
   class_function,
-    class_list,
+  class_list,
   class_logical,
   class_numeric,
   method,
@@ -72,10 +81,10 @@ importFrom(cli,
   ansi_strip,
   ansi_strtrim,
   cat_line,
-    cli_abort,
-    cli_warn,
+  cli_abort,
+  cli_warn,
   col_blue,
-    col_cyan,
+  col_cyan,
   col_green,
   col_grey,
   col_magenta,
@@ -89,7 +98,7 @@ importFrom(cli,
 )
 importFrom(htmltools,tagList)
 importFrom(lifecycle,
-    deprecated,
+  deprecated,
   is_present
 )
 importFrom(methods,
@@ -102,7 +111,7 @@ importFrom(rlang,
   as_label,
   call2,
   call_args,
-    call_match,
+  call_match,
   call_modify,
   call_name,
   caller_arg,
@@ -170,7 +179,7 @@ importFrom(tidyselect,
   where
 )
 importFrom(utils,
-    getS3method,
+  getS3method,
   methods,
   modifyList
 )
