@@ -84,28 +84,45 @@ test_that("across() matches its arguments like dplyr::across()", {
 	)
 })
 
-test_that("mutate() and across() accept as_filter()", {
+test_that("mutate() and across() take an input with its arguments", {
 	skip_if_not_installed("dplyr")
-	cfg <- shinyfilters(df_config)
-	range_slider <- as_filter("slider", value = range(.x))
+	cfg <- shinyfilters(df_config, slider = FALSE)
 	expect_identical(
-		filterInput(dplyr::mutate(cfg, x = as_filter("slider", value = range(.x)))),
-		filterInput(with_filters(cfg, x = range_slider))
+		filterInput(dplyr::mutate(cfg, x = "slider" ~ value := range(.x))),
+		filterInput(with_filters(cfg, x = "slider" ~ value := range(.x)))
 	)
 	expect_identical(
-		filterInput(dplyr::mutate(cfg, across(where(is.numeric), range_slider))),
-		filterInput(with_filters(cfg, where(is.numeric), range_slider))
+		filterInput(dplyr::mutate(
+			cfg,
+			across(where(is.numeric), "slider" ~ value := range(.x))
+		)),
+		filterInput(with_filters(
+			cfg,
+			where(is.numeric) ~ "slider" ~ value := range(.x)
+		))
 	)
 
+	expect_snapshot(variant = snapshot_variant(), {
+		dplyr::mutate(cfg, x ~ step := 2)
+		dplyr::mutate(cfg, x = "slider" ~ value := range(.x))
+		dplyr::mutate(cfg, x = shiny::sliderInput(value := range(.x), step = 2))
+		dplyr::mutate(
+			cfg,
+			across(where(is.numeric), "slider" ~ value := range(.x))
+		)
+	})
+
 	sliders <- shinyfilters(df_config, slider = TRUE)
-	range_value <- as_filter(value = range(.x))
 	expect_identical(
-		filterInput(dplyr::mutate(sliders, x = as_filter(value = range(.x)))),
-		filterInput(with_filters(sliders, x = range_value))
+		filterInput(dplyr::mutate(sliders, x ~ value := range(.x))),
+		filterInput(with_args(sliders, x ~ value := range(.x)))
 	)
 	expect_identical(
-		filterInput(dplyr::mutate(sliders, across(where(is.numeric), range_value))),
-		filterInput(with_filters(sliders, where(is.numeric), range_value))
+		filterInput(dplyr::mutate(
+			sliders,
+			across(where(is.numeric), value := range(.x))
+		)),
+		filterInput(with_args(sliders, where(is.numeric) ~ value := range(.x)))
 	)
 })
 

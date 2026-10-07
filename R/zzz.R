@@ -10,11 +10,6 @@
 	._s3_register("base::dim", cls, `dim.shinyfilters::shinyfilters`)
 	._s3_register("base::print", cls, `print.shinyfilters::shinyfilters`)
 	._s3_register(
-		"base::print",
-		"shinyfilters_filter",
-		print.shinyfilters_filter
-	)
-	._s3_register(
 		"htmltools::as.tags",
 		cls,
 		`as.tags.shinyfilters::shinyfilters`

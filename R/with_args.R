@@ -408,3 +408,65 @@ with_args <- function(.filters, ...) {
 	}
 	paste(expr_deparse(expr, width = 500L), collapse = " ")
 }
+
+# The name a function was written with: `fn` or `pkg::fn`. Anything else, such
+# as an inline function, is `<custom>`.
+._fn_label <- function(quo) {
+	expr <- quo_get_expr(quo)
+	if (is_symbol(expr) || is_call(expr, "::")) {
+		return(as_label(expr))
+	}
+	"<custom>"
+}
+
+# Arguments when an input is created ------------------------------------------
+
+# The name a column's arguments travel under in `...`, from `._config_input()`
+# to `._call_input()`. No formal or `$` lookup on the way partial-matches it.
+INPUT_ARGS <- ".shinyfilters_args"
+
+# Returns the arguments set for one column. The data mask holds the
+# configuration's columns, like `with_filters()`'s, plus `.x`.
+._input_args <- function(args, config, name, call) {
+	.data <- config@data
+	.data$.x <- .data[[name]]
+	lapply(set_names(nm = names(args)), function(arg) {
+		value <- args[[arg]]
+		if (!is_quosure(value)) {
+			return(value)
+		}
+		try_fetch(
+			eval_tidy(value, data = .data),
+			error = function(cnd) {
+				._resignal_silent(cnd)
+				cli_abort(
+					"Can't evaluate {.code {arg} = {as_label(value)}} for column {.field {name}}.",
+					parent = cnd,
+					call = call
+				)
+			}
+		)
+	})
+}
+
+# One string per argument, for `print()`: an argument that uses `.x` as it was
+# written, the others as their value. Nothing is evaluated.
+._format_input_args <- function(args) {
+	vapply(
+		args,
+		function(arg) {
+			if (is_quosure(arg)) as_label(arg) else ._format_arg(arg)
+		},
+		character(1)
+	)
+}
+
+# The lines `print()` shows under a filter: its arguments, then the name of its
+# update function.
+._format_override_args <- function(override) {
+	args <- ._format_input_args(override$args)
+	if (!is.null(override$update)) {
+		args[[".update_fn"]] <- override$update$label
+	}
+	args
+}

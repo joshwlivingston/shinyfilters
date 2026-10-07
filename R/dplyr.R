@@ -25,9 +25,9 @@
 #'   `mutate(filters, with_ns(ns))` changes the namespace, like [with_ns()]
 #'   does, and can be mixed with the other forms.
 #'
-#'   Each input is a keyword, a shiny input function, or an [as_filter()]
-#'   object, as described in [with_filters()]. Any of these is always read as
-#'   an input; any other value is the column's data.
+#'   Each input is a keyword or a shiny input function, as described in
+#'   [with_filters()]. Either is always read as an input; any other value is
+#'   the column's data.
 #'
 #'   `arg := value` sets an input's arguments, as in [with_filters()]:
 #'   `mutate(filters, cols ~ arg := value)` or

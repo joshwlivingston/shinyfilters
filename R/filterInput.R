@@ -259,7 +259,7 @@ call_filter_input <- function(x, .f, ...) {
 }
 
 # Calls `.f` with `args`, plus any `...` that `.f` accepts and `args` lacks.
-# `as_filter()` arguments replace the others, and are passed as given.
+# A column's own arguments replace the others, and are passed as given.
 ._call_input <- function(.f, args, ...) {
 	if (the$dry_run) {
 		return(._dry_run_result(.f))

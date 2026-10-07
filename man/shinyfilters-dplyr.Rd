@@ -21,9 +21,9 @@ input.
 \code{mutate(filters, with_ns(ns))} changes the namespace, like \code{\link[=with_ns]{with_ns()}}
 does, and can be mixed with the other forms.
 
-Each input is a keyword, a shiny input function, or an \code{\link[=as_filter]{as_filter()}}
-object, as described in \code{\link[=with_filters]{with_filters()}}. Any of these is always read as
-an input; any other value is the column's data.
+Each input is a keyword or a shiny input function, as described in
+\code{\link[=with_filters]{with_filters()}}. Either is always read as an input; any other value is
+the column's data.
 
 \code{arg := value} sets an input's arguments, as in \code{\link[=with_filters]{with_filters()}}:
 \code{mutate(filters, cols ~ arg := value)} or

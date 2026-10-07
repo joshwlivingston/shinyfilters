@@ -65,7 +65,8 @@ one. The inputs of a configuration made by \code{\link[=shinyfilters]{shinyfilte
 An input set by a function other than the \pkg{shiny} inputs
 \code{\link[=filterInput]{filterInput()}} creates, such as \code{shiny::checkboxGroupInput} or
 \code{shinyWidgets::pickerInput}, needs the function that updates it, named with
-\code{\link[=as_filter]{as_filter()}}'s \code{.update_fn}. Without it, \code{shinyfilters_server()} errors.
+\code{.update_fn := fn} among the input's arguments, as described in
+\code{\link[=with_filters]{with_filters()}}. Without it, \code{shinyfilters_server()} errors.
 }
 \examples{
 \dontshow{if (interactive() && requireNamespace("bslib") && requireNamespace("DT")) withAutoprint(\{ # examplesIf}

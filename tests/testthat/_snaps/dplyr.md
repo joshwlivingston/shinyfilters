@@ -21,6 +21,77 @@
       x `value := 1` needs an existing column on its left.
       i To set an argument, select columns: `mutate(filters, cols ~ value := 1)`.
 
+# mutate() and across() take an input with its arguments
+
+    Code
+      dplyr::mutate(cfg, x ~ step := 2)
+    Output
+      <shinyfilters> * 4 filters
+      
+      Filters
+           letters                <chr>  selectizeInput
+           factors                <fct>  selectizeInput
+        #  x                      <int>  numericInput
+                                           step = 2
+        #  a_very_very_long_name  <dbl>  numericInput
+      
+      Default Overrides
+        slider = FALSE
+      
+      # Filter set by default argument
+    Code
+      dplyr::mutate(cfg, x = "slider" ~ value := range(.x))
+    Output
+      <shinyfilters> * 4 filters
+      
+      Filters
+           letters                <chr>  selectizeInput
+           factors                <fct>  selectizeInput
+        *  x                      <int>  sliderInput
+                                           value = range(.x, na.rm = TRUE)
+        #  a_very_very_long_name  <dbl>  numericInput
+      
+      Default Overrides
+        slider = FALSE
+      
+      # Filter set by default argument
+      * Filter set by `mutate()`
+    Code
+      dplyr::mutate(cfg, x = shiny::sliderInput(value := range(.x), step = 2))
+    Output
+      <shinyfilters> * 4 filters
+      
+      Filters
+           letters                <chr>  selectizeInput
+           factors                <fct>  selectizeInput
+        *  x                      <int>  sliderInput
+                                           value = range(.x, na.rm = TRUE)
+                                           step  = 2
+        #  a_very_very_long_name  <dbl>  numericInput
+      
+      Default Overrides
+        slider = FALSE
+      
+      # Filter set by default argument
+      * Filter set by `mutate()`
+    Code
+      dplyr::mutate(cfg, across(where(is.numeric), "slider" ~ value := range(.x)))
+    Output
+      <shinyfilters> * 4 filters
+      
+      Filters
+           letters                <chr>  selectizeInput
+           factors                <fct>  selectizeInput
+        *  x                      <int>  sliderInput
+                                           value = range(.x, na.rm = TRUE)
+        *  a_very_very_long_name  <dbl>  sliderInput
+                                           value = range(.x, na.rm = TRUE)
+      
+      Default Overrides
+        slider = FALSE
+      
+      * Filter set by `mutate()`
+
 # mutate() labels a custom input the way with_filters() does
 
     Code

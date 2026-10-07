@@ -97,14 +97,10 @@ test_that("serverFilterInput() passes on a `selected` it is given", {
 test_that("shinyfilters_server() updates a configuration's empty inputs", {
 	cfg <- with_filters(
 		shinyfilters(df_config),
-		letters = as_filter(
-			"radio",
-			choices = toupper(sort(unique(.x))),
-			inline = TRUE
-		),
-		factors = as_filter(
-			shiny::checkboxGroupInput,
-			.update_fn = shiny::updateCheckboxGroupInput
+		letters = "radio" ~
+			list(choices := toupper(sort(unique(.x))), inline := TRUE),
+		factors = shiny::checkboxGroupInput(
+			.update_fn := shiny::updateCheckboxGroupInput
 		),
 		a_very_very_long_name = "slider"
 	)

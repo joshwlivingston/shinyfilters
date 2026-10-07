@@ -18,9 +18,10 @@ formulas, and \code{across()} calls:
 \item \code{with_filters(.filters, col = input, ...)}: each name is a column.
 \item \code{with_filters(.filters, col = expression, ...)}: adds or replaces a
 column, computed from the other columns. A replaced column keeps its
-input. A function, a single string, or an \code{\link[=as_filter]{as_filter()}} object is
-always read as an input; any other value is the column's data. A column
-takes precedence over a variable of the same name.
+input. A function or a single string is always read as an input, and
+code with \verb{:=} arguments as an input's arguments; any other value is the
+column's data. A column takes precedence over a variable of the same
+name.
 \item \code{with_filters(.filters, cols ~ input, ...)}: a two-sided formula selects
 columns on its left, like \code{cols} above, and names one input for all of
 them on its right. It can be mixed with named columns.
@@ -63,10 +64,11 @@ never run; \code{\link[=with_args]{with_args()}} describes the arguments.
 isn't one of \pkg{shiny}'s. Name it with \code{.update_fn := fn} among the
 arguments, such as \code{col = pickerInput(.update_fn := updatePickerInput)}.
 
-Wrap an input in \code{\link[=as_filter]{as_filter()}} to set its arguments, or use \code{\link[=as_filter]{as_filter()}}
-without an input to set arguments for the input a column already has.
-Arguments stay with the column: an input chosen later keeps the ones it
-has an argument for.}
+Arguments stay with the column: setting it again adds to them, replacing
+those of the same name, and an input chosen later keeps the ones it has an
+argument for. They are matched by name only, so set an argument again if
+its value doesn't suit the new input. \code{.update_fn} stays with the input
+instead: a new input drops it.}
 }
 \value{
 The updated configuration.
@@ -75,7 +77,7 @@ The updated configuration.
 \code{with_filters()} sets the input that \code{\link[=filterInput]{filterInput()}} creates for one or more
 columns of a configuration made by \code{\link[=shinyfilters]{shinyfilters()}}, and adds or replaces
 columns computed from the others. When a column's input is chosen more than
-once, the last one wins; its \code{\link[=as_filter]{as_filter()}} arguments stay with the column.
+once, the last one wins; the arguments set for the column stay with it.
 }
 \examples{
 filters <- shinyfilters(nyc_flights)
@@ -111,5 +113,5 @@ filters <- shinyfilters(nyc_flights, slider = TRUE)
 with_filters(filters, distance = "numeric")
 }
 \seealso{
-\code{\link[=shinyfilters]{shinyfilters()}}, \code{\link[=as_filter]{as_filter()}}
+\code{\link[=shinyfilters]{shinyfilters()}}, \code{\link[=with_args]{with_args()}}
 }

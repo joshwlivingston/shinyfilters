@@ -117,8 +117,7 @@
 }
 
 # `across(cols, ~ "slider")` reads naturally to a dplyr user, so unwrap a
-# one-sided formula that names an input, or wraps one in `as_filter()`, whose
-# arguments use the lambda pronoun `.x`. A purrr-style lambda means something
+# one-sided formula that names an input. A purrr-style lambda means something
 # else entirely here: `.fns` names an input, it doesn't transform values. A
 # two-sided formula is an input with its arguments, read later.
 ._across_input <- function(input, call) {
@@ -141,5 +140,5 @@
 ._is_input_name <- function(expr) {
 	is_string(expr) ||
 		is_symbol(expr) ||
-		is_call(expr, c("::", ":::", "as_filter"))
+		is_call(expr, c("::", ":::"))
 }

@@ -90,7 +90,7 @@ VALUE_ARGS <- c("value", "selected", "start", "end")
 	)
 }
 
-# An input set by a function can be updated only when `as_filter()` named the
+# An input set by a function can be updated only when `.update_fn` named the
 # function that updates it. A shiny input `filterInput()` creates is never set
 # by a function: it resolves to its keyword.
 ._check_update_fns <- function(config, cols, call) {
@@ -108,7 +108,7 @@ VALUE_ARGS <- c("value", "selected", "start", "end")
 			c(
 				"Can't update the input for column{?s} {.field {cols}}.",
 				x = "{qty(cols)}{?Its/Their} input{?s} {?is/are} set by {?a function/functions} with no known update function.",
-				i = "Name one with {.code as_filter(<input>, .update_fn = <function>)}."
+				i = "Name one among the input's arguments: {.code <input>(.update_fn := <function>)}."
 			),
 			call = call
 		)

@@ -31,7 +31,8 @@
 #' An input set by a function other than the \pkg{shiny} inputs
 #' [filterInput()] creates, such as `shiny::checkboxGroupInput` or
 #' `shinyWidgets::pickerInput`, needs the function that updates it, named with
-#' [as_filter()]'s `.update_fn`. Without it, `shinyfilters_server()` errors.
+#' `.update_fn := fn` among the input's arguments, as described in
+#' [with_filters()]. Without it, `shinyfilters_server()` errors.
 #'
 #' @returns A reactiveValues list with two elements: `filtered`, the filtered
 #'   data, and `input_values`, the current filter input values as a named

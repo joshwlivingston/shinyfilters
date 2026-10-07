@@ -28,7 +28,6 @@ reference:
   - shinyfilters-class
   - with_filters
   - with_args
-  - as_filter
   - with_ns
   - with_defaults
   - shinyfilters-dplyr

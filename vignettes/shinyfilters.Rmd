@@ -98,26 +98,37 @@ filters %>%
 	with_args(dep_delay ~ value := range(.x))
 ```
 
-* Use `as_filter()` without an input function argument:
+* Use `with_filters()`:
 ```{r, eval = getRversion() >= "4.1", include = getRversion() >= "4.1"}
 filters |>
-	with_filters(dep_delay = as_filter(value = range(.x)))
+	with_filters(dep_delay ~ value := range(.x))
 ```
 
 ```{r, eval = !getRversion() >= "4.1", include = !getRversion() >= "4.1"}
 filters %>%
-	with_filters(dep_delay = as_filter(value = range(.x)))
+	with_filters(dep_delay ~ value := range(.x))
+```
+
+* Choose the input and set its arguments together:
+```{r, eval = getRversion() >= "4.1", include = getRversion() >= "4.1"}
+filters |>
+	with_filters(dep_delay = "slider" ~ value := range(.x))
+```
+
+```{r, eval = !getRversion() >= "4.1", include = !getRversion() >= "4.1"}
+filters %>%
+	with_filters(dep_delay = "slider" ~ value := range(.x))
 ```
 
 * Use `dplyr::mutate()`:
 ```{r, eval = getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = getRversion() >= "4.1"}
 filters |>
-	mutate(dep_delay = as_filter(value = range(.x)))
+	mutate(dep_delay ~ value := range(.x))
 ```
 
 ```{r, eval = !getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = !getRversion() >= "4.1"}
 filters %>%
-	mutate(dep_delay = as_filter(value = range(.x)))
+	mutate(dep_delay ~ value := range(.x))
 ```
 <br>
 
@@ -127,7 +138,7 @@ filters %>%
 ```{r, eval = getRversion() >= "4.1", include = getRversion() >= "4.1"}
 filters |>
 	with_filters(
-		dep_delay = as_filter(value = range(.x)),
+		dep_delay ~ value := range(.x),
 		distance  = 1.609344 * distance
 	)
 ```
@@ -135,7 +146,7 @@ filters |>
 ```{r, eval = !getRversion() >= "4.1", include = !getRversion() >= "4.1"}
 filters %>%
 	with_filters(
-		dep_delay = as_filter(value = range(.x)),
+		dep_delay ~ value := range(.x),
 		distance  = 1.609344 * distance
 	)
 ```
@@ -144,14 +155,14 @@ filters %>%
 ```{r, eval = getRversion() >= "4.1", include = getRversion() >= "4.1"}
 filters |>
 	with_filters(
-		across(where(is.numeric), as_filter(value = range(.x)))
+		across(where(is.numeric), value := range(.x))
 	)
 ```
 
 ```{r, eval = !getRversion() >= "4.1", include = !getRversion() >= "4.1"}
 filters %>%
 	with_filters(
-		across(where(is.numeric), as_filter(value = range(.x)))
+		across(where(is.numeric), value := range(.x))
 	)
 ```
 
@@ -159,7 +170,7 @@ filters %>%
 ```{r, eval = getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = getRversion() >= "4.1"}
 filters |>
 	mutate(
-		dep_delay = as_filter(value = range(.x)),
+		dep_delay ~ value := range(.x),
 		distance  = 1.609344 * distance
 	)
 ```
@@ -167,7 +178,7 @@ filters |>
 ```{r, eval = !getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = !getRversion() >= "4.1"}
 filters %>%
 	mutate(
-		dep_delay = as_filter(value = range(.x)),
+		dep_delay ~ value := range(.x),
 		distance  = 1.609344 * distance
 	)
 ```
@@ -176,14 +187,14 @@ filters %>%
 ```{r, eval = getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = getRversion() >= "4.1"}
 filters |>
 	mutate(
-		across(where(is.numeric), as_filter(value = range(.x)))
+		across(where(is.numeric), value := range(.x))
 	)
 ```
 
 ```{r, eval = !getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = !getRversion() >= "4.1"}
 filters %>%
 	mutate(
-		across(where(is.numeric), as_filter(value = range(.x)))
+		across(where(is.numeric), value := range(.x))
 	)
 ```
 
@@ -191,7 +202,7 @@ filters %>%
 ```{r, eval = getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = getRversion() >= "4.1"}
 filters |>
 	transmute(
-		dep_delay = as_filter(value = range(.x)),
+		dep_delay ~ value := range(.x),
 		distance  = 1.609344 * distance
 	)
 ```
@@ -199,7 +210,7 @@ filters |>
 ```{r, eval = !getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = !getRversion() >= "4.1"}
 filters %>%
 	transmute(
-		dep_delay = as_filter(value = range(.x)),
+		dep_delay ~ value := range(.x),
 		distance  = 1.609344 * distance
 	)
 ```
@@ -237,30 +248,30 @@ filters %>%
 
 ### Use a non-shiny input function
 
-* Use `as_filter()` inside `with_filters()`:
+* Name the function that updates the input in `with_filters()`:
 ```{r, eval = getRversion() >= "4.1" && requireNamespace("shinyWidgets", quietly = TRUE), include = getRversion() >= "4.1", message = FALSE}
 library(shinyWidgets)
 
 filters |>
-	with_filters(dest = as_filter(pickerInput, .update_fn = updatePickerInput))
+	with_filters(dest = pickerInput(.update_fn := updatePickerInput))
 ```
 
 ```{r, eval = !getRversion() >= "4.1" && requireNamespace("shinyWidgets", quietly = TRUE), include = !getRversion() >= "4.1", message = FALSE}
 library(shinyWidgets)
 
 filters %>%
-	with_filters(dest = as_filter(pickerInput, .update_fn = updatePickerInput))
+	with_filters(dest = pickerInput(.update_fn := updatePickerInput))
 ```
 
-* Use `as_filter()` inside `dplyr::mutate()`:
+* Or in `dplyr::mutate()`:
 ```{r, eval = getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE) && requireNamespace("shinyWidgets", quietly = TRUE), include = getRversion() >= "4.1"}
 filters |>
-	mutate(dest = as_filter(pickerInput, .update_fn = updatePickerInput))
+	mutate(dest = pickerInput(.update_fn := updatePickerInput))
 ```
 
 ```{r, eval = !getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE) && requireNamespace("shinyWidgets", quietly = TRUE), include = !getRversion() >= "4.1"}
 filters %>%
-	mutate(dest = as_filter(pickerInput, .update_fn = updatePickerInput))
+	mutate(dest = pickerInput(.update_fn := updatePickerInput))
 ```
 <br>
 

@@ -6,14 +6,14 @@
       Error in `updateFilterInput()`:
       ! Can't update the input for column letters.
       x Its input is set by a function with no known update function.
-      i Name one with `as_filter(<input>, .update_fn = <function>)`.
+      i Name one among the input's arguments: `<input>(.update_fn := <function>)`.
     Code
       updateFilterInput(with_filters(cfg, c(letters, factors), shiny::checkboxGroupInput))
     Condition
       Error in `updateFilterInput()`:
       ! Can't update the input for columns letters and factors.
       x Their inputs are set by functions with no known update function.
-      i Name one with `as_filter(<input>, .update_fn = <function>)`.
+      i Name one among the input's arguments: `<input>(.update_fn := <function>)`.
     Code
       update_messages(updateFilterInput(with_filters(cfg, factors = "slider")[
         "factors"]))
@@ -24,8 +24,8 @@
       ! "slider" isn't available for <factor> columns.
       i Use "radio", "select", or "selectize" instead.
     Code
-      update_messages(updateFilterInput(with_filters(cfg, letters = as_filter(shiny::checkboxGroupInput,
-      .update_fn = shiny::updateNumericInput))))
+      update_messages(updateFilterInput(with_filters(cfg, letters = shiny::checkboxGroupInput(
+        .update_fn := shiny::updateNumericInput))))
     Condition
       Error in `updateFilterInput()`:
       ! Can't update the input for column letters.

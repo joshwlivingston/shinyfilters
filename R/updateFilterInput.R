@@ -59,7 +59,7 @@
 #' When `x` is a configuration made by [shinyfilters()], each column's input
 #' is updated with the function and arguments that match the input
 #' [filterInput()] creates for it: the configuration's defaults, the input
-#' [with_filters()] chose, and its [as_filter()] arguments, computed from the
+#' [with_filters()] chose, and the arguments [with_args()] set, computed from the
 #' configuration's data. The arguments that set an input's value (`value`,
 #' `selected`, `start`, and `end`) are left out, and the configuration's
 #' namespace is applied to the ids.
@@ -257,7 +257,7 @@ call_update_filter_input <- function(x, .f, ...) {
 }
 
 # Calls `.f` with `args`, plus any `...` that `.f` accepts and `args` lacks.
-# `as_filter()` arguments replace the others when `.f` has them: they were
+# A column's own arguments replace the others when `.f` has them: they were
 # written for the input, which takes arguments its update doesn't.
 ._call_update_input <- function(.f, args, ...) {
 	args_provided <- list(...)
