@@ -165,8 +165,9 @@ jobs:
           dev=$(sed -n 's/^Version: *//p' DESCRIPTION)
           [ -e "site/$dev" ] || redirect docs/dev "$SITE_URL/dev" "site/$dev"
           # The version menu lists the latest release, dev, then each earlier
-          # release. It replaces a placeholder in every page on each deploy, so
-          # cached sites also list releases published after they were built.
+          # release. The list replaces the menu's fallback item in every page
+          # on each deploy, so cached sites also list releases published after
+          # they were built.
           item='<li><a class="dropdown-item" href="%s">%s</a></li>'
           items=$(
             if [ -n "$LATEST" ]; then
@@ -179,13 +180,7 @@ jobs:
               fi
             done
           )
-          menu=$(printf '%s' \
-            '<li class="nav-item dropdown">' \
-            '<button class="nav-link dropdown-toggle" type="button" id="dropdown-versions" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Versions</button>' \
-            '<ul class="dropdown-menu" aria-labelledby="dropdown-versions">' \
-            "$items" \
-            '</ul></li>')
-          find site -name '*.html' -exec sed -i "s|<!-- version-menu -->|$menu|" {} +
+          find site -name '*.html' -exec sed -i "s|<li class=\"version-menu\"><a [^>]*>[^<]*</a></li>|$items|" {} +
         env:
           TAGS: ${{ steps.releases.outputs.tags }}
           LATEST: ${{ steps.releases.outputs.latest }}
