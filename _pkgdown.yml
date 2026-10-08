@@ -30,7 +30,6 @@ reference:
   - with_args
   - with_ns
   - with_defaults
-  - shinyfilters-dplyr
 - title: Usage with shiny
 - contents: 
   - serverFilterInput
