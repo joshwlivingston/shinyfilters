@@ -40,8 +40,10 @@ jobs:
 
       # build_site_github_pages() resolves source links before it applies
       # `override`, so each site's ref is set when its pkgdown object is created.
+      # pkgdown renders every top-level .md file, so AGENTS.md is removed first.
       - name: Build dev site
         run: |
+          unlink("AGENTS.md")
           pkg <- pkgdown::as_pkgdown(
             ".",
             override = list(repo = list(branch = Sys.getenv("SOURCE_REF")))
@@ -102,6 +104,7 @@ jobs:
             }
             src <- file.path(tempdir(), tag)
             system2("git", c("worktree", "add", src, tag))
+            unlink(file.path(src, "AGENTS.md"))
             pak::local_install_deps(src, upgrade = FALSE, dependencies = TRUE)
             pkg <- pkgdown::as_pkgdown(
               src,
