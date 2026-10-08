@@ -19,13 +19,8 @@ status](https://joshwlivingston.r-universe.dev/shinyfilters/badges/version)](htt
 
 ## Overview
 
-*shinyfilters* makes it easy to create Shiny inputs from vectors,
-data.frames, and more.
-
-- `filterInput()`: Create filter inputs from any object
-- `updateFilterInput()`: Update filter inputs
-- `serverFilterInput()`: Server logic to update filter inputs
-- `apply_filters()`: Apply filter inputs to objects
+*shinyfilters* makes it easy to create interdependent filters directly
+from data.frames.
 
 ## Installation
 
@@ -42,102 +37,60 @@ Or, you can install the development version:
 pak::pak("joshwlivingston/shinyfilters")
 ```
 
-## Usage
+## Quickstart
 
-### Vectors
+Build interdependent filters in 3 steps:
+
+1.  Create the filters from a data.frame:
 
 ``` r
 library(shinyfilters)
-library(shiny)
 
-ui <- fluidPage(
-    sidebarLayout(
-        sidebarPanel(
-            # Create a filterInput() inside a shiny app:
-            filterInput(
-                x = letters,
-                inputId = "letter",
-                label = "Pick a letter:"
-            )
-        ),
-        mainPanel(
-            textOutput("selected_letter")
-        )
-    )
-)
-server <- function(input, output, session) {
-    output$selected_letter <- renderText({
-        paste("You selected:", input$letter)
-    })
-}
-shinyApp(ui, server)
+filters <- shinyfilters(nyc_flights)
+filters
+#> <shinyfilters> • 7 filters
+#> 
+#> Filters
+#>   date       <date>  dateRangeInput
+#>   carrier    <chr>   selectizeInput
+#>   origin     <fct>   selectizeInput
+#>   dest       <chr>   selectizeInput
+#>   dep_delay  <dbl>   sliderInput
+#>   distance   <dbl>   sliderInput
+#>   delayed    <lgl>   selectizeInput
 ```
 
-<br>
-
-### Data.frames
+2.  Place the filters in your ui:
 
 ``` r
-library(shinyfilters)
-
+# pak::pak(c("bslib", "DT"))
+library(bslib)
 library(DT)
 library(shiny)
 
-df <- data.frame(
-    x = letters,
-    y = sample(c("red", "green", "blue"), 26, replace = TRUE),
-    z = round(runif(26, 0, 3.5), 2),
-    q = sample(Sys.Date() - 0:7, 26, replace = TRUE)
+ui <- page_sidebar(
+    sidebar = sidebar(
+        filters
+    ),
+    DTOutput("data")
 )
+```
 
-ui <- fluidPage(
-    sidebarLayout(
-        sidebarPanel(
-            # 1/3. Create a filterInput() for each column in a data.frame:
-            filterInput(
-                x = df,
-                range = TRUE,
-                selectize = TRUE,
-                slider = TRUE,
-                multiple = TRUE
-            )
-        ),
-        mainPanel(
-            DTOutput("df_full"),
-            verbatimTextOutput("input_values"),
-            DTOutput("df_filt")
-        )
-    )
-)
+3.  Place the filters in your server:
 
+``` r
 server <- function(input, output, session) {
-    output$df_full <- renderDT(datatable(df))
-    # 2/3. Create a server to manage the data.frame's filterInput()'s
-    res <- serverFilterInput(
-        x = df, 
-        input = input, 
-        range = TRUE
-    )
-    
-    # 3/3. Use the server's results
-    output$input_values <- renderPrint(res$input_values)
-    output$df_filt <- renderDT(datatable(
-        apply_filters(df, res$input_values)
-    ))
+    sidebar <- shinyfilters_server(filters)
+    output$data <- renderDT(datatable(sidebar$filtered))
 }
+```
 
+Then run your app:
+
+``` r
 shinyApp(ui, server)
 ```
 
-<br>
+## Going further
 
-## Extending shinyfilters
-
-You can extend `shinyfilters` by adding or overwriting methods to the
-following:
-
-- `filterInput()`, `updateFilterInput()`
-- `args_filter_input()`
-- `get_filter_logical()`
-
-See `vignette("customizing-shinyfilters")` for more.
+See `vignette("shinyfilters")` for the full tour.

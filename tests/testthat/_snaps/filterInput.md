@@ -66,14 +66,14 @@
       filterInput(x = choices_chr, inputId = "my_input", label = "Label", ns = function(
         x) x)
     Condition
-      Error:
-      ! `ns` must be the result of calling `shiny::NS()`.
+      Error in `filterInput()`:
+      ! `ns` must not be a custom function.
 
 # ns requires inputId argument
 
     Code
       filterInput(x = choices_chr, label = "Label", ns = ns)
     Condition
-      Error:
+      Error in `filterInput()`:
       ! `inputId` is required when `ns` is provided.
 

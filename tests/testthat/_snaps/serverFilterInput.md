@@ -1,3 +1,33 @@
+# serverFilterInput() still takes `input`, with a warning
+
+    Code
+      session$flushReact()
+    Condition
+      Warning:
+      The `input` argument of `shinyfilters_server()` is deprecated as of shinyfilters 0.4.0.
+      i Please omit, or provide the `session` argument instead.
+      This warning is displayed once per session.
+
+---
+
+    Code
+      session$flushReact()
+    Condition
+      Warning:
+      The `input` argument of `shinyfilters_server()` is deprecated as of shinyfilters 0.4.0.
+      i Please omit, or provide the `session` argument instead.
+      This warning is displayed once per session.
+
+# shinyfilters_server() errors when called, for an input it can't update
+
+    Code
+      shinyfilters_server(cfg)
+    Condition
+      Error in `shinyfilters_server()`:
+      ! Can't update the input for column letters.
+      x Its input is set by a function with no known update function.
+      i Name one among the input's arguments: `<input>(.update_fn := <function>)`.
+
 # serverFilterInput() with reactive() throws error when missing required columns
 
     Code

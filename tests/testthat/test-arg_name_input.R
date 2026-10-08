@@ -7,6 +7,7 @@ test_that("arg_name_input_id() returns 'inputId' for all types", {
 	expect_identical(arg_name_input_id(factor("a")), "inputId")
 	expect_identical(arg_name_input_id(TRUE), "inputId")
 	expect_identical(arg_name_input_id(list(a = 1)), "inputId")
+	expect_identical(arg_name_input_id(as.difftime(1, units = "mins")), "inputId")
 })
 
 # arg_name_input_label() ####
@@ -18,6 +19,10 @@ test_that("arg_name_input_label() returns 'label' for all types", {
 	expect_identical(arg_name_input_label(factor("a")), "label")
 	expect_identical(arg_name_input_label(TRUE), "label")
 	expect_identical(arg_name_input_label(list(a = 1)), "label")
+	expect_identical(
+		arg_name_input_label(as.difftime(1, units = "mins")),
+		"label"
+	)
 })
 
 # arg_name_input_value() ####
@@ -80,14 +85,18 @@ test_that("arg_name_input_value() returns 'selected' for list", {
 
 ## data.frame ####
 test_that("arg_name_input_value() returns list with 'selected' for character columns", {
-	df <- data.frame(col1 = c("a", "b"), col2 = c("x", "y"))
+	df <- data.frame(
+		stringsAsFactors = FALSE,
+		col1 = c("a", "b"),
+		col2 = c("x", "y")
+	)
 	result <- arg_name_input_value(df)
 	expected <- list(col1 = "selected", col2 = "selected")
 	expect_identical(result, expected)
 })
 
 test_that("arg_name_input_value() returns list with 'value' for numeric columns", {
-	df <- data.frame(col1 = 1:3, col2 = 4:6)
+	df <- data.frame(stringsAsFactors = FALSE, col1 = 1:3, col2 = 4:6)
 	result <- arg_name_input_value(df)
 	expected <- list(col1 = "value", col2 = "value")
 	expect_identical(result, expected)
@@ -95,6 +104,7 @@ test_that("arg_name_input_value() returns list with 'value' for numeric columns"
 
 test_that("arg_name_input_value() returns list with mixed types for data.frame", {
 	df <- data.frame(
+		stringsAsFactors = FALSE,
 		chr_col = c("a", "b"),
 		num_col = c(1, 2),
 		fct_col = factor(c("x", "y")),

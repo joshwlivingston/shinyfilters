@@ -186,7 +186,7 @@ There are three possible ways to run code, listed in rough order of desirability
 - Follow the tidyverse style guide
 - Always run `air format .` after generating code. (air is bundled with Positron so look there if you can't otherwise find it.)
 - The package supports R < 4.1. Don't use the base pipe (`|>`) or `\()` lambdas in `R/`, roxygen examples, or tests. Use intermediate assignments and `function(x) ...` instead. No magrittr pipe (`%>%`) either.
-- Vignettes may use `|>` in chunks with `eval = new_r, include = new_r` (`new_r <- getRversion() >= "4.1"`), each paired with a `%>%` chunk using `eval = !new_r, include = !new_r`. Unevaluated chunks aren't parsed, so R CMD check passes on old R.
+- Vignettes may use `|>` in chunks with `eval = getRversion() >= "4.1", include = getRversion() >= "4.1"` (inlined to guarantee evaluation), each paired with a `%>%` chunk using `eval = !getRversion() >= "4.1", include = !getRversion() >= "4.1"`. Unevaluated chunks aren't parsed, so R CMD check passes on old R.
 - Don't call `pkg::fn()` in `R/`. Import with `usethis::use_import_from("pkg", "fn")` and call `fn()` directly. (Tests may use `pkg::fn()`.)
 
 ### Test style
@@ -208,7 +208,7 @@ There are three possible ways to run code, listed in rough order of desirability
 - Every user-facing function should be exported and have roxygen2 documentation.
 - Internal functions should not have roxygen documentation.
 - Wrap roxygen2 comments to 80 characters.
-- Write examples the way users write code. Use named arguments where a positional call reads oddly: `with_filter(filters, origin = "radio")`, not `with_filter(filters, origin, "radio")`. Prefer the package's `nyc_flights` data over built-in datasets such as `mtcars` or `iris`. Check a dataset's source before relying on it: `nycflights13::flights` isn't base R. (`with_filter()` and `nyc_flights` arrive with #107.)
+- Write examples the way users write code. Use named arguments where a positional call reads oddly: `with_filters(filters, origin = "radio")`, not `with_filters(filters, origin, "radio")`. Prefer the package's `nyc_flights` data over built-in datasets such as `mtcars` or `iris`. Check a dataset's source before relying on it: `nycflights13::flights` isn't base R. (`with_filters()` and `nyc_flights` arrive with #107.)
 - Whenever you add a new (non-internal) documentation topic, also add the topic to `_pkgdown.yml`.
 - Always re-document the package after changing a roxygen2 comment.
 - Use `pkgdown::check_pkgdown()` to check that all topics are included in the reference index.

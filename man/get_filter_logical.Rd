@@ -37,9 +37,15 @@ or \code{>} (\code{FALSE}) on \code{val[[1]]}.}
 numeric or Date, \code{lte} controls whether to use \code{<=} (\code{TRUE}, default)
 or \code{<} (\code{FALSE}) on \code{val[[2]]}.}
 }
+
+When \code{val} is a character vector, such as the value of a select or radio
+input, and \code{x} isn't a character, factor, or logical vector, the elements of
+\code{x} are compared as text. A datetime \code{x} is compared as its date, whether
+\code{val} is text, a Date, or a datetime.
 }
 \examples{
 df <- data.frame(
+  stringsAsFactors = FALSE,
   category = rep(letters[1:3], each = 4),
   value = 1:12,
   date = Sys.Date() + 0:11

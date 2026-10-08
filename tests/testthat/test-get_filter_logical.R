@@ -4,7 +4,7 @@ test_that("get_filter_logical() returns all TRUE when val is empty", {
 	result <- get_filter_logical(x, val = numeric(0))
 	expect_equal(result, rep(TRUE, 10))
 
-	df <- data.frame(a = 1:5)
+	df <- data.frame(stringsAsFactors = FALSE, a = 1:5)
 	result <- get_filter_logical(df, val = character(0), column = "a")
 	expect_equal(result, rep(TRUE, 5))
 })
@@ -18,6 +18,7 @@ test_that("get_filter_logical() returns NULL for NULL input", {
 # data.frame methods ####
 test_that("get_filter_logical() filters data.frame columns correctly", {
 	df <- data.frame(
+		stringsAsFactors = FALSE,
 		chr_col = c("a", "b", "c", "a", "b"),
 		num_col = 1:5
 	)
@@ -37,7 +38,7 @@ test_that("get_filter_logical() filters data.frame columns correctly", {
 })
 
 test_that("get_filter_logical() throws error for missing column", {
-	df <- data.frame(a = 1:5, b = letters[1:5])
+	df <- data.frame(stringsAsFactors = FALSE, a = 1:5, b = letters[1:5])
 	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
 		get_filter_logical(df, val = "test", column = "nonexistent")
 	})
@@ -147,6 +148,46 @@ test_that("get_filter_logical() filters numeric vectors with multiple values", {
 	expect_equal(result, x %in% c(2, 5, 8))
 })
 
+## character values ####
+test_that("get_filter_logical() filters numeric vectors by character values", {
+	x <- c(2, 100000, 0.1 + 0.2, NA)
+	expect_identical(
+		get_filter_logical(x, val = "0.3"),
+		c(FALSE, FALSE, TRUE, FALSE)
+	)
+	expect_identical(
+		get_filter_logical(x, val = c("2", "1e+05")),
+		c(TRUE, TRUE, FALSE, FALSE)
+	)
+	expect_identical(get_filter_logical(1:3, val = "a"), c(FALSE, FALSE, FALSE))
+	expect_identical(apply_filters(df_config, list(x = "9")), df_config[2, ])
+})
+
+test_that("get_filter_logical() filters dates and lists by character values", {
+	df <- data.frame(day = as.Date("2024-01-03") - c(0, 2, 2))
+	df$time <- as.POSIXct(
+		c("2024-01-03 10:00", "2024-01-01 09:00", "2024-01-01 17:30"),
+		tz = "UTC"
+	)
+	expect_identical(
+		get_filter_logical(df$day, val = "2024-01-01"),
+		c(FALSE, TRUE, TRUE)
+	)
+	expect_identical(
+		get_filter_logical(df$time, val = "2024-01-01"),
+		c(FALSE, TRUE, TRUE)
+	)
+	expect_identical(
+		get_filter_logical(list("a", "b", "a"), val = "a"),
+		c(TRUE, FALSE, TRUE)
+	)
+	# The filtered columns keep their types
+	expect_identical(
+		apply_filters(df, list(day = "2024-01-01", time = "2024-01-01")),
+		df[2:3, ]
+	)
+})
+
 ## NA handling ####
 test_that("get_filter_logical() handles NA values in numeric data", {
 	x <- c(1, 2, NA, 4, 5)
@@ -213,6 +254,16 @@ test_that("get_filter_logical() filters POSIXct vectors", {
 		result,
 		as.Date(x) >= as.Date(x[3]) & as.Date(x) <= as.Date(x[7])
 	)
+
+	# The Date a date input returns
+	expect_identical(
+		get_filter_logical(x, val = as.Date(x[5])),
+		as.Date(x) <= as.Date(x[5])
+	)
+	expect_identical(
+		get_filter_logical(x, val = as.Date(c(x[3], x[7]))),
+		as.Date(x) >= as.Date(x[3]) & as.Date(x) <= as.Date(x[7])
+	)
 })
 
 # POSIXlt `x` provided ####
@@ -253,7 +304,8 @@ test_that("get_filter_logical() falls back to all TRUE for every unsupported x/v
 	is_supported <- function(x, val) {
 		(x %in% chr_like && val %in% chr_like) ||
 			(x %in% date_like && val %in% date_like) ||
-			(x %in% time_like && val %in% time_like)
+			(x %in% time_like && val %in% c(time_like, "Date")) ||
+			val == "character"
 	}
 
 	for (x_type in names(xs)) {
@@ -278,7 +330,10 @@ test_that("get_filter_logical() falls back to all TRUE for every unsupported x/v
 })
 
 test_that("get_filter_logical() warns when falling back for mismatched types", {
-	expect_snapshot(get_filter_logical(1:3, "a"), variant = snapshot_variant())
+	expect_snapshot(
+		get_filter_logical(letters[1:3], 1),
+		variant = snapshot_variant()
+	)
 })
 
 # Empty inputs ####
@@ -337,7 +392,10 @@ test_that("get_filter_logical: non-logical vector returned", {
 	) {
 		integer(length(x))
 	}
-	df <- data.frame(x = ClassCharacter(letters), stringsAsFactors = FALSE)
+	df <- data.frame(
+		stringsAsFactors = FALSE,
+		x = ClassCharacter(letters)
+	)
 	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
 		apply_filters(df, list(x = letters[1:5]))
 	})
@@ -351,7 +409,10 @@ test_that("get_filter_logical: logical vector of invalid length", {
 	) {
 		logical(length(x) - 1L)
 	}
-	df <- data.frame(x = ClassCharacter(letters), stringsAsFactors = FALSE)
+	df <- data.frame(
+		stringsAsFactors = FALSE,
+		x = ClassCharacter(letters)
+	)
 	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
 		apply_filters(df, list(x = letters[1:5]))
 	})

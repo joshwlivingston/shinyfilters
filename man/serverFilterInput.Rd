@@ -2,21 +2,37 @@
 % Please edit documentation in R/shiny.R
 \name{serverFilterInput}
 \alias{serverFilterInput}
+\alias{shinyfilters_server}
 \title{Run the backend server for filterInput}
 \usage{
 serverFilterInput(
   x,
-  input,
+  session = getDefaultReactiveDomain(),
   filter_combine_method = "and",
   args_apply_filters = NULL,
-  ...
+  ...,
+  input = deprecated()
+)
+
+shinyfilters_server(
+  x,
+  session = getDefaultReactiveDomain(),
+  filter_combine_method = "and",
+  args_apply_filters = NULL,
+  ...,
+  input = deprecated()
 )
 }
 \arguments{
-\item{x}{An object being filtered; typically a data.frame.}
+\item{x}{An object being filtered; typically the result of \code{\link[=shinyfilters]{shinyfilters()}}.}
 
-\item{input}{A \pkg{shiny} \code{input} object, or a reactive that resolves to a
-list of named values.}
+\item{session}{The \pkg{shiny} session whose inputs are read and updated.
+Defaults to the current session. The inputs of a configuration with a
+namespace (see \code{\link[=with_ns]{with_ns()}}) are found from any session of the app, so
+\code{shinyfilters_server()} can be called at the top level of the server or
+inside the module. The namespace is the full one, as in the UI: inside a
+module's server that is \code{session$ns(NULL)}, which differs from the
+module's \code{id} when modules are nested.}
 
 \item{filter_combine_method}{A string or function indicating how to combine
 multiple filters. If a string, it can be "and" (or "&") for logical AND,
@@ -27,13 +43,36 @@ vectors and return a combined logical vector.}
 \code{\link[=apply_filters]{apply_filters()}}.}
 
 \item{...}{Additional arguments passed to \code{\link[=updateFilterInput]{updateFilterInput()}}.}
+
+\item{input}{Deprecated: omit it, or use \code{session}. A \pkg{shiny} \code{input}
+object, or a reactive that resolves to a list of named values.}
 }
 \value{
-A reactiveValues list with a single element, \code{input_values}, which
-contains the current filter input values as a named list.
+A reactiveValues list with two elements: \code{filtered}, the filtered
+data, and \code{input_values}, the current filter input values as a named
+list.
 }
 \description{
-Run the backend server for filterInput
+\code{shinyfilters_server()} runs an observer that makes your filters
+interdependent. \code{serverFilterInput()} is an alias of
+\code{shinyfilters_server()}.
+}
+\details{
+Only the inputs that have no value are updated, and they are left without
+one. The inputs of a configuration made by \code{\link[=shinyfilters]{shinyfilters()}} are updated as
+\code{\link[=updateFilterInput]{updateFilterInput()}} updates them, from the filtered data.
+
+An input set by a function other than the \pkg{shiny} inputs
+\code{\link[=filterInput]{filterInput()}} creates needs the function that updates it. A
+\pkg{shinyWidgets} input, such as \code{shinyWidgets::pickerInput}, comes with
+its own. A column's update sends its choices, or its minimum and maximum,
+and that function is given the ones it has an argument for. One with an
+argument for none of them, such as
+\code{shinyWidgets::updateNumericRangeInput}, leaves its input as it is, so the
+input doesn't follow the other filters. Any other input, such as
+\code{shiny::checkboxGroupInput}, needs its update function named with
+\code{.update_fn := fn} among the input's arguments, as described in
+\code{\link[=with_filters]{with_filters()}}. Without it, \code{shinyfilters_server()} errors.
 }
 \examples{
 \dontshow{if (interactive() && requireNamespace("bslib") && requireNamespace("DT")) withAutoprint(\{ # examplesIf}
@@ -58,6 +97,7 @@ use_radio <- function(x) {
 }
 
 df_shared <- data.frame(
+  stringsAsFactors = FALSE,
 	 x = letters,
 	 y = use_radio(sample(c("red", "green", "blue"), 26, replace = TRUE)),
 	 z = round(runif(26, 0, 3.5), 2),
@@ -78,8 +118,8 @@ filters_ui <- function(id) {
 
 filters_server <- function(id) {
 	 moduleServer(id, function(input, output, session) {
- 		# serverFilterInput() returns a observe() expressionc
- 		serverFilterInput(df_shared, input = input, range = TRUE)
+ 		# serverFilterInput() returns a reactiveValues list
+ 		serverFilterInput(df_shared, range = TRUE)
  	})
 }
 

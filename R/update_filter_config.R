@@ -1,0 +1,274 @@
+# R/update_filter_config.R
+#
+# Update the inputs filterInput() creates for the columns of a shinyfilters
+# object
+
+## Method: updateFilterInput() ####
+method(updateFilterInput, class_shinyfilters) <- function(x, ...) {
+	._config_update_inputs(x, names(x@data), list(...), call = caller_env())
+}
+
+# Updates the inputs of `cols` from the configuration's data. `call` reaches
+# `._config_update()` through a closure: a call object in `MoreArgs` is
+# evaluated.
+._config_update_inputs <- function(config, cols, args, call) {
+	._check_update_fns(config, cols, call)
+	args <- ._config_update_args(config, args)
+	ids <- get_input_ids(config@data)[match(cols, names(config@data))]
+	mapply(
+		function(name, id) ._config_update(name, id, config, args, call),
+		cols,
+		ids,
+		SIMPLIFY = FALSE
+	)
+}
+
+# The configuration with its data filtered, which the server updates from
+._config_filtered <- function(config, data) {
+	._private()
+	._modify(config, data = data)
+}
+
+# The arguments every column's update gets: the configuration's defaults,
+# except the ones that set a value, and the session. A namespaced id is
+# complete, so it goes through the root session.
+._config_update_args <- function(config, args) {
+	defaults <- config@args[!(names(config@args) %in% VALUE_ARGS)]
+	args <- modifyList(defaults, args)
+	session <- args$session
+	if (is.null(session)) {
+		session <- getDefaultReactiveDomain()
+	}
+	if (!is.null(session) && !is.null(config@ns)) {
+		session <- session$rootScope()
+	}
+	args$session <- session
+	args
+}
+
+# The arguments that set an input's value. An update leaves the value alone.
+VALUE_ARGS <- c("value", "selected", "start", "end")
+
+# Updates the input for one column of a shinyfilters config
+._config_update <- function(name, id, config, args, call) {
+	col <- config@data[[name]]
+	if (!is.null(config@ns)) {
+		id <- ._resolve_ns(config@ns)(id)
+	}
+	col_args <- c(
+		list(x = col),
+		set_names(list(id), do.call(arg_name_input_id, c(list(col), args))),
+		args
+	)
+	override <- config@overrides[[name]]
+	input_args <- override$args[!(names(override$args) %in% VALUE_ARGS)]
+	if (length(input_args) > 0) {
+		col_args[[INPUT_ARGS]] <- ._input_args(input_args, config, name, call)
+	}
+	try_fetch(
+		if (!is.null(override$update)) {
+			do.call(
+				._call_update_filter_input,
+				c(
+					col_args,
+					list(
+						.f = override$update$fn,
+						.drop_unused = isTRUE(override$update$drop_unused)
+					)
+				)
+			)
+		} else if (is.null(override$input)) {
+			do.call(updateFilterInput, col_args)
+		} else {
+			do.call(
+				update_filter_input_override,
+				c(col_args, list(override = override$input))
+			)
+		},
+		error = function(cnd) {
+			._resignal_silent(cnd)
+			cli_abort(
+				"Can't update the input for column {.field {name}}.",
+				parent = cnd,
+				call = call
+			)
+		}
+	)
+}
+
+# An input set by a function can be updated only when the function that
+# updates it is known: `.update_fn` named it, or it is a shinyWidgets input. A
+# shiny input `filterInput()` creates is never set by a function: it resolves
+# to its keyword.
+._check_update_fns <- function(config, cols, call) {
+	unknown <- vapply(
+		cols,
+		function(name) {
+			override <- config@overrides[[name]]
+			is.function(override$input) && is.null(override$update)
+		},
+		logical(1)
+	)
+	if (any(unknown)) {
+		cols <- cols[unknown]
+		cli_abort(
+			c(
+				"Can't update the input for column{?s} {.field {cols}}.",
+				x = "{qty(cols)}{?Its/Their} input{?s} {?is/are} set by {?a function/functions} with no known update function.",
+				i = "Name one among the input's arguments: {.code <input>(.update_fn := <function>)}."
+			),
+			call = call
+		)
+	}
+}
+
+# The shiny function that updates an input, or `NULL` for any other function
+._update_fn <- function(fn) {
+	switch(
+		._input_name(fn),
+		dateInput = updateDateInput,
+		dateRangeInput = updateDateRangeInput,
+		numericInput = updateNumericInput,
+		radioButtons = updateRadioButtons,
+		selectInput = updateSelectInput,
+		selectizeInput = updateSelectizeInput,
+		sliderInput = updateSliderInput,
+		textAreaInput = updateTextAreaInput,
+		textInput = updateTextInput
+	)
+}
+
+# The function that updates a shinyWidgets input, with the name it prints
+# under, or `NULL` for any other function. It is found when the input is set,
+# while the function is the one in shinyWidgets' namespace: nothing is compared
+# later, when the configuration may have been saved and read back.
+#
+# Some of these functions don't take what a column's update is given: a
+# numeric column sends `min` and `max`, which `updateNumericRangeInput()` has
+# no argument for. So a shinyWidgets input's own update function is given only
+# the arguments it takes, where any other function named with `.update_fn`
+# errors on one it doesn't.
+._shinywidgets_update <- function(fn) {
+	if (!isNamespaceLoaded("shinyWidgets")) {
+		return(NULL)
+	}
+	ns <- asNamespace("shinyWidgets")
+	if (!identical(environment(fn), ns)) {
+		return(NULL)
+	}
+	exports <- getNamespaceExports(ns)
+	is_fn <- vapply(
+		exports,
+		function(name) identical(fn, get0(name, envir = ns, inherits = FALSE)),
+		logical(1)
+	)
+	if (!any(is_fn)) {
+		return(NULL)
+	}
+	update <- ._shinywidgets_update_name(exports[is_fn][[1]])
+	if (!(update %in% exports)) {
+		return(NULL)
+	}
+	list(
+		fn = get(update, envir = ns, inherits = FALSE),
+		label = paste0("shinyWidgets::", update),
+		drop_unused = TRUE
+	)
+}
+
+# The function that updates a column's input: the one named for it, or the one
+# its input comes with. A shinyWidgets input's own update function is treated
+# the same whether it was named or found, so a configuration that prints the
+# same behaves the same.
+._own_update <- function(update, own) {
+	if (is.null(update)) {
+		return(own)
+	}
+	if (!is.null(own) && identical(update$fn, own$fn)) {
+		update$drop_unused <- TRUE
+	}
+	update
+}
+
+# shinyWidgets names an update function after its input, `updatePickerInput()`
+# for `pickerInput()`, except for these.
+SHINYWIDGETS_UPDATES <- c(
+	airDatepickerInput = "updateAirDateInput",
+	airMonthpickerInput = "updateAirDateInput",
+	airYearpickerInput = "updateAirDateInput",
+	calendarProInput = "updateCalendarPro",
+	slimSelectInput = "updateSlimSelect",
+	virtualSelectInput = "updateVirtualSelect"
+)
+
+._shinywidgets_update_name <- function(input) {
+	if (input %in% names(SHINYWIDGETS_UPDATES)) {
+		return(SHINYWIDGETS_UPDATES[[input]])
+	}
+	paste0("update", toupper(substring(input, 1, 1)), substring(input, 2))
+}
+
+# Generic: update_filter_input_override() ####
+#
+# Mirrors `filter_input_override()` for keywords: the same signatures choose
+# the update that matches the input. An input set by a function is updated by
+# its `.update_fn` instead.
+update_filter_input_override <- new_generic(
+	"update_filter_input_override",
+	c("x", "override")
+)
+
+## Keyword flags supported by updateFilterInput() ####
+._update_filter_input_keyword <- function(x, override, ...) {
+	args <- ._keyword_args(list(...), override)
+	do.call(updateFilterInput, c(list(x = x), args))
+}
+
+method(
+	update_filter_input_override,
+	list(
+		class_character,
+		class_input_area |
+			class_input_radio |
+			class_input_select |
+			class_input_selectize |
+			class_input_textbox
+	)
+) <- ._update_filter_input_keyword
+
+method(
+	update_filter_input_override,
+	list(
+		class_factor | class_logical | class_list,
+		class_input_radio | class_input_select | class_input_selectize
+	)
+) <- ._update_filter_input_keyword
+
+method(
+	update_filter_input_override,
+	list(class_numeric, class_input_numeric | class_input_slider)
+) <- ._update_filter_input_keyword
+
+method(
+	update_filter_input_override,
+	list(class_Date | class_POSIXt, class_input_date | class_input_range)
+) <- ._update_filter_input_keyword
+
+## Discrete choices for a column that isn't discrete ####
+method(
+	update_filter_input_override,
+	list(
+		class_any,
+		class_input_radio | class_input_select | class_input_selectize
+	)
+) <- function(x, override, ...) {
+	choices <- ._coerced_choices(x, list(...))
+	update <- ._update_fn(._keyword_fn(override))
+	._call_update_input(update, choices, ...)
+}
+
+## Unsupported keyword ####
+method(
+	update_filter_input_override,
+	list(class_any, class_input_keyword)
+) <- ._abort_unsupported_keyword

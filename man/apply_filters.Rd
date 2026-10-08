@@ -17,7 +17,8 @@ apply_filters(
 \item{x}{An object to filter; typically a data.frame.}
 
 \item{filter_list}{A named list of filter values, used to filter the values
-in \code{x}. If \code{filter_list} is \code{NULL}, \code{x} is returned unmodified.}
+in \code{x}. If \code{filter_list} is \code{NULL}, \code{x} is returned unmodified. A missing
+value in \code{x} matches a filter only when \code{NA} is one of its values.}
 
 \item{filter_combine_method}{A string or function indicating how to combine
 multiple filters. If a string, it can be "and" (or "&") for logical AND,
@@ -36,7 +37,8 @@ retained.}
 }
 \value{
 A filtered object, or a named list of filtered objects if
-\code{expanded = TRUE}.
+\code{expanded = TRUE}. In a filtered data frame, a column whose class has no
+\code{[} method keeps its attributes, such as a class that chooses its input.
 }
 \description{
 Applies a list of filters to an object, returning the filtered object.
@@ -44,6 +46,7 @@ Applies a list of filters to an object, returning the filtered object.
 \examples{
 library(S7)
 df <- data.frame(
+ stringsAsFactors = FALSE,
  category = rep(letters[1:3], each = 4),
  value = 1:12,
  date = as.Date('2024-01-01') + 0:11

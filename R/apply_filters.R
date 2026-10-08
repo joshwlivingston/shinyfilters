@@ -4,7 +4,8 @@
 #'
 #' @param x An object to filter; typically a data.frame.
 #' @param filter_list A named list of filter values, used to filter the values
-#'   in `x`. If `filter_list` is `NULL`, `x` is returned unmodified.
+#'   in `x`. If `filter_list` is `NULL`, `x` is returned unmodified. A missing
+#'   value in `x` matches a filter only when `NA` is one of its values.
 #' @param filter_combine_method A string or function indicating how to combine
 #'   multiple filters. If a string, it can be "and" (or "&") for logical AND,
 #'   or "or" (or "|") for logical OR. If a function, it should take two logical
@@ -18,11 +19,13 @@
 #' @param ... Additional arguments passed to [get_filter_logical()].
 #'
 #' @returns A filtered object, or a named list of filtered objects if
-#'   `expanded = TRUE`.
+#'   `expanded = TRUE`. In a filtered data frame, a column whose class has no
+#'   `[` method keeps its attributes, such as a class that chooses its input.
 #'
 #' @examples
 #' library(S7)
 #' df <- data.frame(
+#'  stringsAsFactors = FALSE,
 #'  category = rep(letters[1:3], each = 4),
 #'  value = 1:12,
 #'  date = as.Date('2024-01-01') + 0:11
@@ -76,13 +79,45 @@ apply_filters <- function(
 		call = current_env()
 	)
 
+	if (S7_inherits(x, class_shinyfilters)) {
+		x <- x@data
+	}
 	if (is.data.frame(x)) {
 		if (!is.null(cols)) {
-			return(x[filter_logical, cols, drop = FALSE])
+			filtered <- x[filter_logical, cols, drop = FALSE]
+		} else {
+			filtered <- x[filter_logical, , drop = FALSE]
 		}
-		return(x[filter_logical, , drop = FALSE])
+		return(._restore_attributes(filtered, x))
 	}
 	return(x[filter_logical])
+}
+
+# Base `[` drops the attributes of a column whose class has no `[` method, and
+# with them the class that chooses the column's input. A tibble puts them
+# back; this does the same for any data frame. A class with a `[` method
+# decides what its subset keeps: a `ts` column drops its attributes on purpose.
+._restore_attributes <- function(filtered, x) {
+	for (name in names(filtered)) {
+		col <- x[[name]]
+		kept <- c(names(attributes(filtered[[name]])), "names", "dim", "dimnames")
+		dropped <- attributes(col)
+		dropped <- dropped[setdiff(names(dropped), kept)]
+		if (length(dropped) == 0 || ._has_subset_method(col)) {
+			next
+		}
+		attributes(filtered[[name]]) <- c(attributes(filtered[[name]]), dropped)
+	}
+	filtered
+}
+
+._has_subset_method <- function(x) {
+	for (cls in oldClass(x)) {
+		if (!is.null(getS3method("[", cls, optional = TRUE))) {
+			return(TRUE)
+		}
+	}
+	FALSE
 }
 
 ._prepare_filter_logical <- function(
@@ -130,6 +165,9 @@ apply_filters <- function(
 							...
 						)
 					._check_filter_logical(res, x_length, column_name, call = call)
+					# A missing value matches a filter only when `NA` is one of its
+					# values.
+					res[is.na(res)] <- FALSE
 					return(res)
 				}
 			)

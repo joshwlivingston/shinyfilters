@@ -137,6 +137,22 @@ method(args_filter_input, class_POSIXt) <- function(x, ...) {
 	list(choices = x)
 }
 
+# Generic: as_discrete ####
+#
+# The text a column's values have as discrete choices: what a select or radio
+# input shows for them, and what `get_filter_logical()` matches the input's
+# value against. Only a copy is coerced, never the column that is filtered.
+as_discrete <- new_generic("as_discrete", "x")
+
+method(as_discrete, class_any) <- function(x, ...) {
+	as.character(x)
+}
+
+# A datetime is its date, as it is for every other input.
+method(as_discrete, class_POSIXt) <- function(x, ...) {
+	as.character(as.Date(x))
+}
+
 check_supplied_arguments <- function(
 	args,
 	arg = caller_arg(args),
@@ -168,8 +184,9 @@ args_update_filter_input <- function(x, ...) {
 		args_provided$server <- FALSE
 	}
 	args <- do.call(args_filter_input, c(list(x = x), args_provided))
-	if (all(arg_name_input_value(x) %in% names(args))) {
-		args <- args[names(args) != arg_name_input_value(x)]
+	value_args <- do.call(arg_name_input_value, c(list(x = x), args_provided))
+	if (all(value_args %in% names(args))) {
+		args <- args[!(names(args) %in% value_args)]
 		if (identical(length(args), 0L)) {
 			return(NULL)
 		}

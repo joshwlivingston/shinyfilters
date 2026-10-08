@@ -1,0 +1,427 @@
+test_that("mutate() sets inputs by column name", {
+	skip_if_not_installed("dplyr")
+	cfg <- shinyfilters(df_config)
+	expect_identical(dplyr::mutate(cfg), cfg)
+	expect_identical(
+		filterInput(dplyr::mutate(cfg, x = "radio", letters = "selectize")),
+		filterInput(with_filters(cfg, x = "radio", letters = "selectize"))
+	)
+})
+
+test_that("mutate() sets inputs for the columns across() selects", {
+	skip_if_not_installed("dplyr")
+	cfg <- shinyfilters(df_config)
+	expect_identical(
+		filterInput(dplyr::mutate(cfg, across(where(is.numeric), "slider"))),
+		filterInput(with_filters(cfg, where(is.numeric), "slider"))
+	)
+})
+
+test_that("mutate() leaves another function named across() alone", {
+	skip_if_not_installed("dplyr")
+	cfg <- shinyfilters(df_config)
+	across <- function(x) x * 2L
+	expect_identical(
+		dplyr::mutate(cfg, y = across(x)),
+		dplyr::mutate(cfg, y = x * 2L)
+	)
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+		dplyr::mutate(cfg, across(x, "radio"))
+	})
+})
+
+test_that("mutate() reads `:=` arguments like with_filters()", {
+	skip_if_not_installed("dplyr")
+	cfg <- shinyfilters(df_config, slider = FALSE)
+	expect_identical(
+		filterInput(dplyr::mutate(
+			cfg,
+			x = shiny::sliderInput(value := range(.x)),
+			letters ~ label := "Letters"
+		)),
+		filterInput(with_filters(
+			cfg,
+			x = shiny::sliderInput(value := range(.x)),
+			letters ~ label := "Letters"
+		))
+	)
+	expect_identical(
+		dplyr::mutate(cfg, x := "radio"),
+		dplyr::mutate(cfg, x = "radio")
+	)
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+		dplyr::mutate(cfg, value := 1)
+	})
+})
+
+test_that("across() matches its arguments like dplyr::across()", {
+	skip_if_not_installed("dplyr")
+	cfg <- shinyfilters(df_config)
+	numeric_sliders <- filterInput(with_filters(cfg, where(is.numeric), "slider"))
+
+	expect_identical(
+		filterInput(dplyr::mutate(
+			cfg,
+			across(.cols = where(is.numeric), .fns = "slider")
+		)),
+		numeric_sliders
+	)
+	expect_identical(
+		filterInput(dplyr::mutate(cfg, across(.fns = "slider", where(is.numeric)))),
+		numeric_sliders
+	)
+	expect_identical(
+		filterInput(dplyr::mutate(cfg, across(.fns = "selectize"))),
+		filterInput(with_filters(cfg, everything(), "selectize"))
+	)
+	expect_identical(
+		filterInput(dplyr::mutate(cfg, dplyr::across(x, "radio"))),
+		filterInput(with_filters(cfg, x, "radio"))
+	)
+	expect_identical(
+		filterInput(dplyr::mutate(cfg, across(x, ~"radio"))),
+		filterInput(with_filters(cfg, x, "radio"))
+	)
+})
+
+test_that("mutate() and across() take an input with its arguments", {
+	skip_if_not_installed("dplyr")
+	cfg <- shinyfilters(df_config, slider = FALSE)
+	expect_identical(
+		filterInput(dplyr::mutate(cfg, x = "slider" ~ value := range(.x))),
+		filterInput(with_filters(cfg, x = "slider" ~ value := range(.x)))
+	)
+	expect_identical(
+		filterInput(dplyr::mutate(
+			cfg,
+			across(where(is.numeric), "slider" ~ value := range(.x))
+		)),
+		filterInput(with_filters(
+			cfg,
+			where(is.numeric) ~ "slider" ~ value := range(.x)
+		))
+	)
+
+	expect_snapshot(variant = snapshot_variant(), {
+		dplyr::mutate(cfg, x ~ step := 2)
+		dplyr::mutate(cfg, x = "slider" ~ value := range(.x))
+		dplyr::mutate(cfg, x = shiny::sliderInput(value := range(.x), step = 2))
+		dplyr::mutate(
+			cfg,
+			across(where(is.numeric), "slider" ~ value := range(.x))
+		)
+	})
+
+	sliders <- shinyfilters(df_config, slider = TRUE)
+	expect_identical(
+		filterInput(dplyr::mutate(sliders, x ~ value := range(.x))),
+		filterInput(with_args(sliders, x ~ value := range(.x)))
+	)
+	expect_identical(
+		filterInput(dplyr::mutate(
+			sliders,
+			across(where(is.numeric), value := range(.x))
+		)),
+		filterInput(with_args(sliders, where(is.numeric) ~ value := range(.x)))
+	)
+})
+
+test_that("mutate() and transmute() take `cols ~ input` formulas", {
+	skip_if_not_installed("dplyr")
+	cfg <- shinyfilters(df_config)
+	expect_identical(
+		filterInput(dplyr::mutate(cfg, where(is.numeric) ~ "slider")),
+		filterInput(with_filters(cfg, where(is.numeric), "slider"))
+	)
+	expect_identical(
+		names(dplyr::transmute(cfg, where(is.numeric) ~ "slider")),
+		c("x", "a_very_very_long_name")
+	)
+})
+
+test_that("mutate() applies its arguments in order", {
+	skip_if_not_installed("dplyr")
+	cfg <- shinyfilters(df_config)
+	expect_identical(
+		filterInput(dplyr::mutate(cfg, x = "radio", across(x, "selectize"))),
+		filterInput(with_filters(cfg, x = "selectize"))
+	)
+})
+
+test_that("mutate() adds and replaces columns", {
+	skip_if_not_installed("dplyr")
+	cfg <- shinyfilters(df_config)
+	added <- dplyr::mutate(cfg, y = x * 2, flag = TRUE, z = y + 1)
+	expect_identical(
+		as.data.frame(added),
+		transform(df_config, y = x * 2, flag = TRUE, z = x * 2 + 1)
+	)
+
+	replaced <- dplyr::mutate(cfg, x = "radio", x = x / 2)
+	expect_identical(as.data.frame(replaced)$x, df_config$x / 2)
+	expect_identical(
+		filterInput(replaced),
+		filterInput(with_filters(
+			shinyfilters(as.data.frame(replaced)),
+			x = "radio"
+		))
+	)
+})
+
+test_that("mutate() chooses the input for a column it added", {
+	skip_if_not_installed("dplyr")
+	cfg <- shinyfilters(df_config)
+	expect_identical(
+		filterInput(dplyr::mutate(cfg, y = x * 2, y = "slider")),
+		filterInput(with_filters(
+			shinyfilters(transform(df_config, y = x * 2)),
+			y = "slider"
+		))
+	)
+	expect_identical(
+		filterInput(dplyr::mutate(cfg, y = x * 2, across(y, "slider"))),
+		filterInput(dplyr::mutate(cfg, y = x * 2, y = "slider"))
+	)
+})
+
+test_that("mutate() changes the namespace with with_ns()", {
+	skip_if_not_installed("dplyr")
+	cfg <- shinyfilters(df_config)
+	ns <- shiny::NS("m")
+	expect_identical(dplyr::mutate(cfg, with_ns(ns)), with_ns(cfg, ns))
+	expect_identical(
+		filterInput(dplyr::mutate(cfg, with_ns("m"))),
+		filterInput(with_ns(cfg, ns))
+	)
+	expect_identical(
+		dplyr::mutate(cfg, with_ns(ns = ns), x = "radio", y = x * 2),
+		with_ns(dplyr::mutate(cfg, x = "radio", y = x * 2), ns)
+	)
+	expect_identical(
+		dplyr::mutate(with_ns(cfg, ns), shinyfilters::with_ns(NULL)),
+		cfg
+	)
+})
+
+test_that("mutate() labels a custom input the way with_filters() does", {
+	skip_if_not_installed("dplyr")
+	my_select <- function(inputId, label, choices) {
+		shiny::selectInput(inputId, label, choices)
+	}
+	cfg <- shinyfilters(df_config)
+	expect_snapshot(variant = snapshot_variant(), {
+		print(dplyr::mutate(cfg, across(letters, my_select)))
+		print(dplyr::mutate(cfg, letters = my_select))
+	})
+})
+
+test_that("print() marks columns added by mutate()", {
+	skip_if_not_installed("dplyr")
+	cfg <- dplyr::mutate(shinyfilters(df_config), y = x * 2, x = x / 2)
+	expect_snapshot(variant = snapshot_variant(), {
+		print(cfg)
+		print(dplyr::mutate(cfg, y = "slider", letters = "radio"))
+		print(dplyr::select(cfg, x, letters))
+		print(with_filters(cfg, z = y + 1, x = x / 2))
+	})
+})
+
+test_that("print() names the functions that chose inputs", {
+	skip_if_not_installed("dplyr")
+	cfg <- dplyr::mutate(shinyfilters(df_config), x = "slider")
+	expect_snapshot(variant = snapshot_variant(), {
+		print(cfg)
+		print(with_filters(cfg, letters = "radio"))
+		print(with_filters(cfg, x = "radio"))
+	})
+})
+
+test_that("select() keeps the selected columns", {
+	skip_if_not_installed("dplyr")
+	cfg <- shinyfilters(df_config)
+	expect_identical(
+		names(dplyr::select(cfg, where(is.numeric))),
+		c("x", "a_very_very_long_name")
+	)
+	expect_identical(names(dplyr::select(cfg, letters, x)), c("letters", "x"))
+})
+
+test_that("mutate() errors", {
+	skip_if_not_installed("dplyr")
+	cfg <- shinyfilters(df_config)
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+		dplyr::mutate(cfg, across(where(is.numeric)))
+		dplyr::mutate(cfg, x = across(where(is.numeric), "slider"))
+
+		dplyr::mutate(cfg, .keep = "none")
+		dplyr::mutate(cfg, .by = x)
+
+		dplyr::mutate(cfg, 1 + 1)
+		dplyr::mutate(cfg, nope = "radio")
+		dplyr::mutate(cfg, x = "radioo")
+
+		dplyr::mutate(cfg, y = shiny::selectInput)
+		dplyr::mutate(cfg, y = nope * 2)
+		dplyr::mutate(cfg, x = radio)
+		dplyr::mutate(cfg, y = 1:2)
+		dplyr::mutate(cfg, y = NULL)
+
+		dplyr::mutate(cfg, with_ns())
+		dplyr::mutate(cfg, with_ns(cfg, shiny::NS("m")))
+		dplyr::mutate(cfg, with_ns(1))
+	})
+})
+
+test_that("transmute() keeps only the columns it names", {
+	skip_if_not_installed("dplyr")
+	cfg <- shinyfilters(df_config)
+	kept <- dplyr::transmute(cfg, y = x * 2, x = "radio")
+	expect_identical(names(kept), c("y", "x"))
+	expect_identical(
+		as.data.frame(kept),
+		transform(df_config, y = x * 2)[c("y", "x")]
+	)
+	expect_identical(
+		filterInput(kept),
+		filterInput(dplyr::select(dplyr::mutate(cfg, y = x * 2, x = "radio"), y, x))
+	)
+	expect_identical(names(dplyr::transmute(cfg, x = "radio", x = x / 2)), "x")
+})
+
+test_that("transmute() keeps the columns across() selects", {
+	skip_if_not_installed("dplyr")
+	cfg <- shinyfilters(df_config)
+	expect_identical(
+		filterInput(dplyr::transmute(cfg, across(where(is.numeric), "slider"))),
+		filterInput(dplyr::select(
+			with_filters(cfg, where(is.numeric), "slider"),
+			where(is.numeric)
+		))
+	)
+	expect_identical(
+		names(dplyr::transmute(
+			cfg,
+			letters = "radio",
+			across(c(x, letters), "selectize"),
+			y = x * 2
+		)),
+		c("letters", "x", "y")
+	)
+})
+
+test_that("transmute() changes the namespace with with_ns()", {
+	skip_if_not_installed("dplyr")
+	cfg <- shinyfilters(df_config)
+	ns <- shiny::NS("m")
+	expect_identical(
+		filterInput(dplyr::transmute(cfg, with_ns(ns), x = "radio")),
+		filterInput(with_ns(with_filters(cfg, x = "radio"), ns)["x"])
+	)
+})
+
+test_that("transmute() errors", {
+	skip_if_not_installed("dplyr")
+	cfg <- shinyfilters(df_config)
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+		dplyr::transmute(cfg, .keep = "none")
+		dplyr::transmute(cfg, 1 + 1)
+		dplyr::transmute(cfg, nope = "radio")
+
+		dplyr::transmute(cfg)
+		dplyr::transmute(cfg, with_ns("m"))
+		dplyr::transmute(cfg, with_ns())
+		dplyr::transmute(cfg, across(starts_with("nope"), "radio"))
+	})
+})
+
+test_that("pull() returns one column's input", {
+	skip_if_not_installed("dplyr")
+	cfg <- shinyfilters(df_config)
+	expect_identical(dplyr::pull(cfg, x), cfg[["x"]])
+	expect_identical(dplyr::pull(cfg, "x"), cfg[["x"]])
+	expect_identical(dplyr::pull(cfg), cfg[["a_very_very_long_name"]])
+})
+
+test_that("pull() returns the column asked for when one is named `var`", {
+	skip_if_not_installed("dplyr")
+	cfg <- shinyfilters(
+		data.frame(stringsAsFactors = FALSE, var = c("a", "b"), other = c(1, 2))
+	)
+	expect_identical(dplyr::pull(cfg, other), cfg$other)
+})
+
+test_that("pull() errors", {
+	skip_if_not_installed("dplyr")
+	cfg <- shinyfilters(df_config)
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+		dplyr::pull(cfg, x, name = letters)
+	})
+})
+
+test_that("a config placed in a UI renders its inputs", {
+	cfg <- shinyfilters(df_config, selectize = TRUE)
+	expect_identical(
+		htmltools::renderTags(shiny::sidebarPanel(cfg)),
+		htmltools::renderTags(shiny::sidebarPanel(filterInput(cfg)))
+	)
+})
+
+test_that("a config placed in the UI of a bookmarked app errors", {
+	shiny::shinyOptions(bookmarkStore = "url")
+	on.exit(shiny::shinyOptions(bookmarkStore = NULL))
+	cfg <- shinyfilters(df_config)
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+		htmltools::renderTags(shiny::sidebarPanel(cfg))
+	})
+	expect_no_error(htmltools::renderTags(shiny::sidebarPanel(filterInput(cfg))))
+})
+
+test_that("a config rendered in a session of a bookmarked app doesn't error", {
+	cfg <- shinyfilters(df_config)
+	shiny::withReactiveDomain(shiny::MockShinySession$new(), {
+		shiny::shinyOptions(bookmarkStore = "url")
+		expect_identical(
+			shiny::getShinyOption("bookmarkStore"),
+			"url"
+		)
+		expect_no_error(htmltools::renderTags(shiny::sidebarPanel(cfg)))
+	})
+})
+
+test_that("as.data.frame() returns the data", {
+	cfg <- with_filters(shinyfilters(df_config), x = "radio")
+	expect_identical(as.data.frame(cfg), df_config)
+})
+
+test_that("as_tibble() returns the data", {
+	skip_if_not_installed("tibble")
+	cfg <- shinyfilters(df_config)
+	expect_identical(tibble::as_tibble(cfg), tibble::as_tibble(df_config))
+})
+
+test_that("as.data.table() returns the data", {
+	skip_if_not_installed("data.table")
+	cfg <- shinyfilters(df_config)
+	expect_identical(
+		data.table::as.data.table(cfg),
+		data.table::as.data.table(df_config)
+	)
+})
+
+test_that("the class name the S3 registrations use is stable", {
+	expect_identical(
+		class(shinyfilters(df_config))[[1]],
+		"shinyfilters::shinyfilters"
+	)
+})
+
+test_that("select() errors name the user's call", {
+	skip_if_not_installed("dplyr")
+	cfg <- shinyfilters(df_config)
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+		dplyr::select(cfg, nope)
+		dplyr::select(cfg)
+		dplyr::select(cfg, where(is.complex))
+		dplyr::select(cfg, where(is.complex), where(is.raw))
+	})
+})

@@ -24,11 +24,17 @@
 #'      or `<` (`FALSE`) on `val[[2]]`.}
 #' }
 #'
+#' When `val` is a character vector, such as the value of a select or radio
+#' input, and `x` isn't a character, factor, or logical vector, the elements of
+#' `x` are compared as text. A datetime `x` is compared as its date, whether
+#' `val` is text, a Date, or a datetime.
+#'
 #' @returns A logical vector indicating which elements of `x` match the filter
 #'   criteria specified by `val`.
 #'
 #' @examples
 #' df <- data.frame(
+#'   stringsAsFactors = FALSE,
 #'   category = rep(letters[1:3], each = 4),
 #'   value = 1:12,
 #'   date = Sys.Date() + 0:11
@@ -76,6 +82,17 @@ method(get_filter_logical, list(x = class_any, val = class_any)) <- function(
 		call = caller_env()
 	)
 	return(rep(TRUE, length(x)))
+}
+
+method(
+	get_filter_logical,
+	list(x = class_shinyfilters, val = class_any)
+) <- function(
+	x,
+	val,
+	...
+) {
+	get_filter_logical(x@data, val, ...)
 }
 
 method(
@@ -157,10 +174,19 @@ method(
 	return(logical_out)
 }
 
-method(get_filter_logical, list(class_POSIXt, class_POSIXt)) <- function(
-	x,
-	val,
-	...
-) {
+# A select or radio input returns its choices as text. A column that isn't
+# text is compared as the text `as_discrete()` gives those choices.
+method(
+	get_filter_logical,
+	list(x = class_any, val = class_character)
+) <- function(x, val, ...) {
+	as_discrete(x) %in% val
+}
+
+# A datetime column's date input returns a Date.
+method(
+	get_filter_logical,
+	list(class_POSIXt, class_Date | class_POSIXt)
+) <- function(x, val, ...) {
 	get_filter_logical(x = as.Date(x), val = as.Date(val), ...)
 }

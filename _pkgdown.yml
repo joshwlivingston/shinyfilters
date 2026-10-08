@@ -11,17 +11,26 @@ navbar:
   components:
     catalog:
       text: Catalog
-      href: articles/filter-input-catalog.html
+      href: articles/shinyfilters-catalog.html
     articles:
       text: Articles
       menu:
-      - text: Customizing shinyfilters
-        href: articles/customizing-shinyfilters.html
+      - text: Extending shinyfilters
+        href: articles/extending-shinyfilters.html
 reference:
 - title: Basic usage
 - contents: 
   - filterInput
   - updateFilterInput
+- title: Configure filters
+- contents:
+  - shinyfilters
+  - shinyfilters-class
+  - with_filters
+  - with_args
+  - with_ns
+  - with_defaults
+  - shinyfilters-dplyr
 - title: Usage with shiny
 - contents: 
   - serverFilterInput
@@ -34,6 +43,9 @@ reference:
   - get_filter_logical  
   - get_input_ids
   - get_input_labels
+- title: Data
+- contents:
+  - nyc_flights
 - title: Internal functions
 - contents:
   - call_filter_input

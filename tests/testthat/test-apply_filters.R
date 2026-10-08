@@ -9,14 +9,14 @@ test_that("apply_filters() returns unmodified object when filter_list is NULL", 
 test_that("apply_filters() filters data.frame with single column filter", {
 	filter_list <- list(chr_col = "a")
 	result <- apply_filters(test_df, filter_list)
-	expected <- test_df[test_df$chr_col == "a", , drop = FALSE]
+	expected <- rows_with_classes(test_df, test_df$chr_col == "a")
 	expect_identical(result, expected)
 })
 
 test_that("apply_filters() filters data.frame with multiple values in single column", {
 	filter_list <- list(chr_col = c("a", "b"))
 	result <- apply_filters(test_df, filter_list)
-	expected <- test_df[test_df$chr_col %in% c("a", "b"), , drop = FALSE]
+	expected <- rows_with_classes(test_df, test_df$chr_col %in% c("a", "b"))
 	expect_identical(result, expected)
 })
 
@@ -26,11 +26,10 @@ test_that("apply_filters() filters with logical AND (default)", {
 		num_col = c(1, 2)
 	)
 	result <- apply_filters(test_df, filter_list, filter_combine_method = "and")
-	expected <- test_df[
-		test_df$chr_col == "a" & test_df$num_col %in% c(1, 2),
-		,
-		drop = FALSE
-	]
+	expected <- rows_with_classes(
+		test_df,
+		test_df$chr_col == "a" & test_df$num_col %in% c(1, 2)
+	)
 	expect_identical(result, expected)
 })
 
@@ -40,11 +39,10 @@ test_that("apply_filters() filters with logical OR", {
 		num_col = c(1, 2)
 	)
 	result <- apply_filters(test_df, filter_list, filter_combine_method = "or")
-	expected <- test_df[
-		test_df$chr_col == "a" | test_df$num_col %in% c(1, 2),
-		,
-		drop = FALSE
-	]
+	expected <- rows_with_classes(
+		test_df,
+		test_df$chr_col == "a" | test_df$num_col %in% c(1, 2)
+	)
 	expect_identical(result, expected)
 })
 
@@ -89,7 +87,7 @@ test_that("apply_filters() works with custom combine function", {
 		test_df$chr_col == "a",
 		test_df$num_col %in% c(1, 2)
 	)
-	expected <- test_df[expected_logical, , drop = FALSE]
+	expected <- rows_with_classes(test_df, expected_logical)
 	expect_identical(result, expected)
 })
 
@@ -160,6 +158,74 @@ test_that("apply_filters() filters vectors", {
 	result <- apply_filters(x, filter_list)
 	expected <- x[x %in% c(1, 2, 3)]
 	expect_identical(result, expected)
+})
+
+# Column attributes ####
+test_that("apply_filters() keeps the column attributes row subsetting drops", {
+	df <- data.frame(stringsAsFactors = FALSE, chr = c("x", "y", "z"), num = 1:3)
+	df$chr <- use_radio(df$chr)
+	attr(df$num, "label") <- "Number"
+	result <- apply_filters(df, list(num = c(2, 3)))
+	expect_identical(result$chr, use_radio(c("y", "z")))
+	expect_identical(attr(result$num, "label"), "Number")
+	expect_identical(
+		apply_filters(df, list(num = c(2, 3)), cols = "chr")$chr,
+		use_radio(c("y", "z"))
+	)
+})
+
+test_that("apply_filters() leaves a column to its own `[` method", {
+	df <- data.frame(
+		stringsAsFactors = FALSE,
+		series = stats::ts(1:4),
+		group = c("a", "a", "b", "b")
+	)
+	expect_identical(apply_filters(df, list(group = "a"))$series, 1:2)
+})
+
+# Missing values ####
+test_that("apply_filters() drops rows with a missing value in a filtered column", {
+	df <- data.frame(
+		stringsAsFactors = FALSE,
+		num = c(1, NA, 3),
+		chr = c("x", NA, "z")
+	)
+	expect_identical(apply_filters(df, list(num = c(0, 5))), df[c(1, 3), ])
+	expect_identical(apply_filters(df, list(chr = "x")), df[1, ])
+	expect_identical(apply_filters(c(1, NA, 3), list(x = c(0, 5))), c(1, 3))
+})
+
+test_that("apply_filters() combines filters after a missing value fails its own", {
+	df <- data.frame(
+		stringsAsFactors = FALSE,
+		num = c(1, NA, 3),
+		chr = c("x", "x", "z")
+	)
+	filter_list <- list(num = c(0, 5), chr = "z")
+	expect_identical(
+		apply_filters(df, filter_list, filter_combine_method = "or"),
+		df[c(1, 3), ]
+	)
+	expect_identical(
+		apply_filters(df, filter_list, filter_combine_method = xor),
+		df[1, ]
+	)
+	expect_identical(
+		apply_filters(
+			df,
+			list(num = c(0, 5), chr = "x"),
+			filter_combine_method = xor
+		),
+		df[2:3, ]
+	)
+})
+
+test_that("apply_filters() keeps a missing value when NA is a filter value", {
+	df <- data.frame(stringsAsFactors = FALSE, num = c(1, NA, 3))
+	expect_identical(
+		apply_filters(df, list(num = c(1, NA))),
+		df[1:2, , drop = FALSE]
+	)
 })
 
 # Combination tests ####

@@ -1,16 +1,62 @@
 # shinyfilters (development version)
 
-## Additions
-* Error and warning messages now use cli with richer formatting.
-* The `ns` argument of `filterInput()` now behaves like `shiny::NS()`, accepting any argument.
+## New API
+
+`shinyfilters()` is a new function to configure filters. It displays an informative print and allows for configuration without extending methods directly. The functions listed here support `shinyfilters` objects (#111).
+
+### View data
+
+* `print()` displays the current configuration and if/how any settings were applied.
+* `as.data.frame()`, `as_tibble()`, and `as.data.table()` return the data.frame behind a configuration (#105).
+
+### Choose columns
+
+* `[` and `dplyr::select()` keep only the selected columns of a configuration (#105).
+* `[[`, `$`, and `dplyr::pull()` return the input for one column of a configuration (#105).
+* The tidyselect helpers, such as `everything()` and `where()`, are re-exported and supported in `dplyr` functions, as well as `[` and `[[`.
+
+### Add, remove, or modify filters
+
+* `with_filters()` chooses the input for columns, and adds or replaces computed columns (#105, #111).
+* `dplyr::mutate()` is supported, matching `with_filters()`'s behavior.
+* `dplyr::transmute()` is also supported, leaving only the columns called in `transmute()`.
+* `with_filters()` and `dplyr::mutate()` take `across(cols, input)` to choose one input for several columns; `across()` is read as written, so dplyr isn't needed (#105).
+* `with_args()` sets the arguments of columns' inputs with `cols ~ arg := value`, such as `dep_delay ~ value := range(.x)`, where `.x` is the column, and each column keeps its input (#105, #134).
+* `with_filters()` and `dplyr::mutate()` read `arg := value` too, alone as in `with_args()` or with the input it is for, as in `col = "slider" ~ arg := value` and `col = sliderInput(arg := value)` (#105, #134).
+* `.update_fn := fn`, among an input's arguments, names the function that updates an input shinyfilters doesn't know, such as `shiny::updateCheckboxGroupInput` for `shiny::checkboxGroupInput` (#105).
+* `with_filters()` gives a shinyWidgets input, such as `shinyWidgets::pickerInput`, its own update function, so it needs no `.update_fn` (#34).
+
+### Update defaults
+
+* `with_defaults()` sets or removes the arguments a configuration passes to `filterInput()` for every column (#105).
+* `with_ns()` sets or removes the namespace of a configuration (#105).
+
+### Run the server
+
+* `shinyfilters_server()` is the new name of `serverFilterInput()`, and also returns the filtered data, as `filtered`. Its `input` argument is deprecated: omit it, or pass `session` (#105).
+* `shinyfilters_server()` updates the inputs of a configuration as `updateFilterInput()` does, and reads and updates the inputs of its namespace wherever it is called (#105).
+* `updateFilterInput()` updates the inputs of a configuration, each with the function and arguments that match the input its column uses (#105).
+
+## Other new features
+
+* Error and warning messages use cli formatting.
+* `nyc_flights` is a new example dataset of [flights departing New York City](https://nycflights13.tidyverse.org/) (#36).
 
 ## Minor improvements
 
-* shinyfilters no longer requires S7 0.2.0 or later (#113).
+* shinyfilters now works with S7 0.1.0 (#113).
+* `arg_name_input_id()` and `arg_name_input_label()` now return `"inputId"` and `"label"` for an `x` of any class, so `with_filters()` can give a column of any class a radio or select input (#111).
 
 ## Bugfixes
 
-* `filterInput()` now throws an error when the provided object is all missing.
+* `apply_filters()` now drops a row whose filtered value is missing, instead of returning a row of `NA`s, unless `NA` is one of the filter's values (#136).
+* `apply_filters()` now keeps the attributes of a data frame's columns, as it does for a tibble, so `serverFilterInput()` updates a column of a custom class with that class's `updateFilterInput()` method (#136).
+* `args_update_filter_input()` now leaves out `start` and `end` when `range = TRUE`, as it leaves out the value of every other input (#136).
+* `filterInput()` now errors when `x` is all missing.
+* `filterInput()`'s `ns` argument behaves like `shiny::NS()`, accepting any argument.
+* `get_filter_logical()` now filters a datetime `x` by a Date `val`, the value of a date input, instead of keeping every element (#136).
+* `get_filter_logical()` now filters an `x` that isn't a character, factor, or logical vector by a character `val`, the value of a select or radio input, instead of keeping every element (#136).
+* `serverFilterInput()` now leaves a radio input with no selection unselected when it updates its choices, instead of selecting the first one (#136).
 
 # shinyfilters 0.3.1
 

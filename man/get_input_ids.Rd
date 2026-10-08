@@ -19,6 +19,7 @@ Returns the (unnamespaced) ids of the inputs for the provided object.
 }
 \examples{
 df <- data.frame(
+  stringsAsFactors = FALSE,
   name = c("Alice", "Bob"),
   age = c(25, 30),
   completed = c(TRUE, FALSE)
