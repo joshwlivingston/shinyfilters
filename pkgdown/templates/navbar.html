@@ -1,11 +1,16 @@
-{{! pkgdown 2.2.1's BS5 navbar.html, with the version as a plain link to the home page and a placeholder that the pkgdown workflow replaces with the version menu. }}
+{{! pkgdown 2.2.1's BS5 navbar.html, with the version as a plain number that opens the version menu. The menu's one item, `li.version-menu`, is a fallback that the pkgdown workflow replaces with the list of versions. }}
 {{#navbar}}
 <nav class="navbar navbar-expand-lg fixed-top {{#bg}}bg-{{{.}}}{{/bg}}" {{#type}}data-bs-theme="{{{.}}}"{{/type}} aria-label="{{#translate}}{{site_nav}}{{/translate}}">
   <div class="container">
     {{#includes}}{{{before_title}}}{{/includes}}
     <a class="navbar-brand me-2" href="{{#site}}{{root}}{{/site}}index.html">{{#site}}{{title}}{{/site}}</a>
 
-    <a class="nav-text small text-muted text-decoration-none me-auto" href="{{#site}}{{root}}{{/site}}index.html">{{#package}}{{version}}{{/package}}</a>
+    <div class="dropdown me-auto">
+      <button class="nav-text small text-muted dropdown-toggle border-0 bg-transparent p-0" type="button" id="dropdown-versions" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">{{#package}}{{version}}{{/package}}</button>
+      <ul class="dropdown-menu" aria-labelledby="dropdown-versions">
+        <li class="version-menu"><a class="dropdown-item" href="{{#site}}{{root}}{{/site}}index.html">{{#package}}{{version}}{{/package}}</a></li>
+      </ul>
+    </div>
 
     {{#includes}}{{{before_navbar}}}{{/includes}}
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="{{#translate}}{{toggle_nav}}{{/translate}}">
@@ -16,7 +21,6 @@
       {{#left}}
       <ul class="navbar-nav me-auto">
       {{{.}}}
-      <!-- version-menu -->
       </ul>
       {{/left}}
 
