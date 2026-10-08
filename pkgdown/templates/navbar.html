@@ -1,4 +1,4 @@
-{{! pkgdown 2.2.1's BS5 navbar.html, with the version as a plain link to the home page. }}
+{{! pkgdown 2.2.1's BS5 navbar.html, with the version as a plain link to the home page and a placeholder that the pkgdown workflow replaces with the version menu. }}
 {{#navbar}}
 <nav class="navbar navbar-expand-lg fixed-top {{#bg}}bg-{{{.}}}{{/bg}}" {{#type}}data-bs-theme="{{{.}}}"{{/type}} aria-label="{{#translate}}{{site_nav}}{{/translate}}">
   <div class="container">
@@ -16,6 +16,7 @@
       {{#left}}
       <ul class="navbar-nav me-auto">
       {{{.}}}
+      <!-- version-menu -->
       </ul>
       {{/left}}
 

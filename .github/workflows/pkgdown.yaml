@@ -164,6 +164,28 @@ jobs:
           cp -r docs/dev site/dev
           dev=$(sed -n 's/^Version: *//p' DESCRIPTION)
           [ -e "site/$dev" ] || redirect docs/dev "$SITE_URL/dev" "site/$dev"
+          # The version menu lists the latest release, dev, then each earlier
+          # release. It replaces a placeholder in every page on each deploy, so
+          # cached sites also list releases published after they were built.
+          item='<li><a class="dropdown-item" href="%s">%s</a></li>'
+          items=$(
+            if [ -n "$LATEST" ]; then
+              printf "$item" "$SITE_URL/" "${LATEST#v} (latest)"
+            fi
+            printf "$item" "$SITE_URL/dev/" dev
+            for tag in $TAGS; do
+              if [ "$tag" != "$LATEST" ]; then
+                printf "$item" "$SITE_URL/${tag#v}/" "${tag#v}"
+              fi
+            done
+          )
+          menu=$(printf '%s' \
+            '<li class="nav-item dropdown">' \
+            '<button class="nav-link dropdown-toggle" type="button" id="dropdown-versions" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Versions</button>' \
+            '<ul class="dropdown-menu" aria-labelledby="dropdown-versions">' \
+            "$items" \
+            '</ul></li>')
+          find site -name '*.html' -exec sed -i "s|<!-- version-menu -->|$menu|" {} +
         env:
           TAGS: ${{ steps.releases.outputs.tags }}
           LATEST: ${{ steps.releases.outputs.latest }}
