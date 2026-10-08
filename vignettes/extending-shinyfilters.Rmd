@@ -18,8 +18,8 @@ knitr::opts_chunk$set(
 shinyfilters is built to be fully customizable. This article demonstrates 
 the ways in which you can customize shinyfilters.
 
-1. [Extending shinyfilters](#extending-shinyfilters)
-2. [Overwriting shinyfilters](#overwriting-shinyfilters)
+1. [Extending `filterInput()`](#extending-filterinput)
+2. [Overwriting `filterInput()`](#overwriting-filterinput)
 
 # Motivation
 
@@ -70,7 +70,7 @@ filterInput(people, inputId = "people", label = "Pick a person:")
 To allow `filterInput()` to be called on `people`, you can *extend* 
 `filterInput()`.
 
-# Extending shinyfilters
+# Extending filterInput()
 Extending `filterInput()` involves two steps:
 
 1. Define a method for `filterInput()`.
@@ -122,7 +122,7 @@ Now you can call `filterInput()`:
 filterInput(people, inputId = "people", label = "Pick a person:")
 ```
 
-# Overwriting shinyfilters
+# Overwriting filterInput()
 
 Overwriting `filterInput()` is similar to extending `filterInput()`, except 
 that when you *overwrite*, you replace an *existing* method. Use overwriting 
