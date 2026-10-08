@@ -11,20 +11,18 @@
 
 ### Choose columns
 
-* `[` and `dplyr::select()` keep only the selected columns of a configuration (#105).
-* `[[`, `$`, and `dplyr::pull()` return the input for one column of a configuration (#105).
-* The tidyselect helpers, such as `everything()` and `where()`, are re-exported and supported in `dplyr` functions, as well as `[` and `[[`.
+* `[` keeps only the selected columns of a configuration (#105).
+* `[[`, and `$` return the input for one column of a configuration (#105).
+* The tidyselect helpers, such as `everything()` and `where()`, are re-exported and supported in `[` and `[[`.
 
 ### Add, remove, or modify filters
 
 * `with_filters()` chooses the input for columns, and adds or replaces computed columns (#105, #111).
-* `dplyr::mutate()` is supported, matching `with_filters()`'s behavior.
-* `dplyr::transmute()` is also supported, leaving only the columns called in `transmute()`.
-* `with_filters()` and `dplyr::mutate()` take `across(cols, input)` to choose one input for several columns; `across()` is read as written, so dplyr isn't needed (#105).
-* `with_args()` sets the arguments of columns' inputs with `cols ~ arg := value`, such as `dep_delay ~ value := range(.x)`, where `.x` is the column, and each column keeps its input (#105, #134).
-* `with_filters()` and `dplyr::mutate()` read `arg := value` too, alone as in `with_args()` or with the input it is for, as in `col = "slider" ~ arg := value` and `col = sliderInput(arg := value)` (#105, #134).
-* `.update_fn := fn`, among an input's arguments, names the function that updates an input shinyfilters doesn't know, such as `shiny::updateCheckboxGroupInput` for `shiny::checkboxGroupInput` (#105).
+* `with_filters()` takes `across(cols, input)` to choose one input for several columns (#105).
+* `with_args()` sets the arguments of columns' inputs (#105, #134).
+* `.update_fn = fn`, among an input's arguments, names the function that updates an input shinyfilters doesn't know, such as `shiny::updateCheckboxGroupInput` for `shiny::checkboxGroupInput` (#105).
 * `with_filters()` gives a shinyWidgets input, such as `shinyWidgets::pickerInput`, its own update function, so it needs no `.update_fn` (#34).
+
 
 ### Update defaults
 

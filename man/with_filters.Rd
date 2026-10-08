@@ -15,14 +15,14 @@ formulas, and \code{across()} calls:
 \item \code{with_filters(.filters, cols, input)}: \code{cols} selects columns with
 <\code{\link[tidyselect:language]{tidy-select}}>, such as \code{cyl},
 \code{c(mpg, disp)}, or \code{where(is.numeric)}. In place of \code{input},
-\code{arg := value} sets an argument of the inputs the columns have.
+\code{list(arg = value)} sets arguments of the inputs the columns have.
 \item \code{with_filters(.filters, col = input, ...)}: each name is a column.
 \item \code{with_filters(.filters, col = expression, ...)}: adds or replaces a
 column, computed from the other columns. A replaced column keeps its
 input. A function or a single string is always read as an input, and
-code with \verb{:=} arguments as an input's arguments; any other value is the
-column's data. A column takes precedence over a variable of the same
-name.
+\code{input ~ list(...)} as an input with its arguments; any other value is
+the column's data. A column takes precedence over a variable of the
+same name.
 \item \code{with_filters(.filters, cols ~ input, ...)}: a two-sided formula selects
 columns on its left, like \code{cols} above, and names one input for all of
 them on its right. It can be mixed with named columns.
@@ -34,11 +34,9 @@ The call is read as written and never run, so \pkg{dplyr} isn't
 needed. Another function named \code{across()}, your own or an attached
 package's, is never read this way: it is called like any other
 function. Write \code{dplyr::across()} to select columns then.
-\item \code{with_filters(.filters, cols ~ arg := value, ...)}: sets an argument of
-the inputs the columns have, as \code{\link[=with_args]{with_args()}} does. \code{list()} holds
-several arguments, and \code{across(cols, arg := value)} works too.
-\item \code{with_filters(.filters, col := value, ...)}: the same as \code{col = value}
-when \code{col} is a column. \verb{:=} never adds a column.
+\item \code{with_filters(.filters, cols ~ list(arg = value), ...)}: sets arguments
+of the inputs the columns have, as \code{\link[=with_args]{with_args()}} does.
+\code{across(cols, list(arg = value))} works too.
 }
 
 Each input is either a keyword or the \pkg{shiny} input function it
@@ -55,17 +53,15 @@ arguments \code{\link[=args_filter_input]{args_filter_input()}} returns for the 
 other arguments they accept.
 
 An input takes its arguments with it, wherever an input goes. Write
-\code{input ~ arguments}, such as \code{col = "slider" ~ value := range(.x)} or
-\code{cols ~ "slider" ~ list(value := range(.x), step = 5)}, or call the
-function with \verb{:=} arguments, such as
-\code{col = sliderInput(value := range(.x))}. Either is read as written and
-never run; \code{\link[=with_args]{with_args()}} describes the arguments.
+\code{input ~ list(...)}, such as \code{col = "slider" ~ list(value = range(.x))}
+or \code{cols ~ "slider" ~ list(value = range(.x), step = 5)}. It is read as
+written and never run; \code{\link[=with_args]{with_args()}} describes the arguments.
 
 \code{\link[=shinyfilters_server]{shinyfilters_server()}} needs the function that updates an input that
 isn't one \code{\link[=filterInput]{filterInput()}} creates. A \pkg{shinyWidgets} input comes with
 its own, such as \code{updatePickerInput()} for \code{pickerInput()}. For any other,
-name it with \code{.update_fn := fn} among the arguments, such as
-\code{col = checkboxGroupInput(.update_fn := updateCheckboxGroupInput)}.
+name it with \code{.update_fn = fn} among the arguments, such as
+\code{col = checkboxGroupInput ~ list(.update_fn = updateCheckboxGroupInput)}.
 
 Arguments stay with the column: setting it again adds to them, replacing
 those of the same name, and an input chosen later keeps the ones it has an
@@ -106,7 +102,7 @@ with_filters(
 )
 
 # Give an input its arguments. `.x` is the column the input is for.
-with_filters(filters, dep_delay = "slider" ~ value := range(.x))
+with_filters(filters, dep_delay = "slider" ~ list(value = range(.x)))
 
 # Add a column computed from the others
 with_filters(filters, delay_sq = dep_delay^2)

@@ -13,19 +13,18 @@ with_args(.filters, ...)
 with <\code{\link[tidyselect:language]{tidy-select}}> and sets arguments for their
 inputs:
 \itemize{
-\item \code{cols ~ arg := value}: one argument.
-\item \code{cols ~ list(arg := value, ...)}: several. Inside \code{list()}, \code{=} works
-as well as \verb{:=}.
-\item \code{across(cols, arg := value)} or \code{across(cols, list(...))}: the same,
-written like \code{\link[dplyr:across]{dplyr::across()}}.
+\item \code{cols ~ list(arg = value, ...)}: the columns on the left, their
+arguments on the right.
+\item \code{across(cols, list(arg = value, ...))}: the same, written like
+\code{\link[dplyr:across]{dplyr::across()}}.
 }
 
-\verb{:=} and \code{across()} are read as written and never run, so no package
-that defines them is needed.
+\code{across()} is read as written and never run, so no package that defines
+it is needed.
 
 Arguments replace the ones shinyfilters passes for the column, such as
 \code{label}, \code{choices}, \code{min}, \code{max}, and \code{value}. \code{inputId} can't be set: an
-input's id is always its column's name. \code{.update_fn := fn} names the
+input's id is always its column's name. \code{.update_fn = fn} names the
 function that updates the input instead, as described in
 \code{\link[=with_filters]{with_filters()}}.
 
@@ -52,17 +51,21 @@ for.
 filters <- shinyfilters(nyc_flights)
 
 # A range slider: `.x` is the column the input is created for
-filters <- with_args(filters, dep_delay ~ value := range(.x))
+filters <- with_args(filters, dep_delay ~ list(value = range(.x)))
 filters$dep_delay
 
 # Several arguments
-with_args(filters, dep_delay ~ list(value := range(.x), step = 5))
+with_args(filters, dep_delay ~ list(value = range(.x), step = 5))
 
 # The same arguments for several columns
-with_args(filters, across(c(dep_delay, distance), value := range(.x)))
+with_args(filters, across(c(dep_delay, distance), list(value = range(.x))))
 
 # Different arguments for different columns
-with_args(filters, dep_delay ~ step := 5, origin ~ label := "Airport")
+with_args(
+  filters,
+  dep_delay ~ list(step = 5),
+  origin ~ list(label = "Airport")
+)
 }
 \seealso{
 \code{\link[=with_filters]{with_filters()}} to choose inputs, \code{\link[=with_defaults]{with_defaults()}} to set

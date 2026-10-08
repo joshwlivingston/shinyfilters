@@ -71,7 +71,7 @@ argument for none of them, such as
 \code{shinyWidgets::updateNumericRangeInput}, leaves its input as it is, so the
 input doesn't follow the other filters. Any other input, such as
 \code{shiny::checkboxGroupInput}, needs its update function named with
-\code{.update_fn := fn} among the input's arguments, as described in
+\code{.update_fn = fn} among the input's arguments, as described in
 \code{\link[=with_filters]{with_filters()}}. Without it, \code{shinyfilters_server()} errors.
 }
 \examples{

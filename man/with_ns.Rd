@@ -22,10 +22,6 @@ The updated configuration.
 made by \code{\link[=shinyfilters]{shinyfilters()}} applies to its input ids. Use it to build a
 configuration once and reuse it in several modules.
 }
-\details{
-Inside \code{\link[dplyr:mutate]{dplyr::mutate()}}, call it without the configuration:
-\code{mutate(filters, with_ns("id"))}.
-}
 \examples{
 filters <- shinyfilters(nyc_flights)
 

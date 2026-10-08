@@ -115,7 +115,7 @@ VALUE_ARGS <- c("value", "selected", "start", "end")
 			c(
 				"Can't update the input for column{?s} {.field {cols}}.",
 				x = "{qty(cols)}{?Its/Their} input{?s} {?is/are} set by {?a function/functions} with no known update function.",
-				i = "Name one among the input's arguments: {.code <input>(.update_fn := <function>)}."
+				i = "Name one among the input's arguments: {.code <input> ~ list(.update_fn = <function>)}."
 			),
 			call = call
 		)

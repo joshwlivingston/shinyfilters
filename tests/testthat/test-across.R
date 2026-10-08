@@ -69,10 +69,6 @@ test_that("across() that resolves to dplyr's function selects columns", {
 		filterInput(with_filters(cfg, across(x, "radio"))),
 		filterInput(with_filters(cfg, x, "radio"))
 	)
-	expect_identical(
-		filterInput(dplyr::mutate(cfg, across(x, "radio"))),
-		filterInput(with_filters(cfg, x, "radio"))
-	)
 })
 
 test_that("with_filters() leaves another function named across() alone", {
@@ -104,7 +100,7 @@ test_that("with_filters() errors with across()", {
 
 		with_filters(cfg, across(x, letters ~ "radio"))
 		with_filters(cfg, across(x, ~ mean(.x)))
-		with_filters(cfg, across(x, ~ list(step := 2)))
+		with_filters(cfg, across(x, ~ list(step = 2)))
 
 		with_filters(cfg, base::across(x, "radio"))
 	})

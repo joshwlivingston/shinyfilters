@@ -67,19 +67,6 @@ filters |> with_filters(date = "range")
 ```{r, eval = !getRversion() >= "4.1", include = !getRversion() >= "4.1"}
 filters %>% with_filters(date = "range")
 ```
-
-* Use `dplyr::mutate()`:
-```{r, eval = getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = getRversion() >= "4.1", message = FALSE}
-library(dplyr)
-
-filters |> mutate(date = "range")
-```
-
-```{r, eval = !getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = !getRversion() >= "4.1", message = FALSE}
-library(dplyr)
-
-filters %>% mutate(date = "range")
-```
 <br>
 
 See `vignette("shinyfilters-catalog")` for the full list of input functions
@@ -90,55 +77,44 @@ available in `shinyfilters`.
 * Use `with_args()`:
 ```{r, eval = getRversion() >= "4.1", include = getRversion() >= "4.1"}
 filters |>
-	with_args(dep_delay ~ value := range(.x))
+	with_args(dep_delay ~ list(value = range(.x)))
 ```
 
 ```{r, eval = !getRversion() >= "4.1", include = !getRversion() >= "4.1"}
 filters %>%
-	with_args(dep_delay ~ value := range(.x))
+	with_args(dep_delay ~ list(value = range(.x)))
 ```
 
 * Use `with_filters()`:
 ```{r, eval = getRversion() >= "4.1", include = getRversion() >= "4.1"}
 filters |>
-	with_filters(dep_delay ~ value := range(.x))
+	with_filters(dep_delay ~ list(value = range(.x)))
 ```
 
 ```{r, eval = !getRversion() >= "4.1", include = !getRversion() >= "4.1"}
 filters %>%
-	with_filters(dep_delay ~ value := range(.x))
+	with_filters(dep_delay ~ list(value = range(.x)))
 ```
 
 * Choose the input and set its arguments together:
 ```{r, eval = getRversion() >= "4.1", include = getRversion() >= "4.1"}
 filters |>
-	with_filters(dep_delay = "slider" ~ value := range(.x))
+	with_filters(dep_delay = "slider" ~ list(value = range(.x)))
 ```
 
 ```{r, eval = !getRversion() >= "4.1", include = !getRversion() >= "4.1"}
 filters %>%
-	with_filters(dep_delay = "slider" ~ value := range(.x))
+	with_filters(dep_delay = "slider" ~ list(value = range(.x)))
 ```
 
 ```{r, eval = getRversion() >= "4.1", include = getRversion() >= "4.1"}
 filters |>
-	with_filters(dep_delay = sliderInput(value := range(.x)))
+	with_filters(dep_delay = sliderInput ~ list(value = range(.x)))
 ```
 
 ```{r, eval = !getRversion() >= "4.1", include = !getRversion() >= "4.1"}
 filters %>%
-	with_filters(dep_delay = sliderInput(value := range(.x)))
-```
-
-* Use `dplyr::mutate()`:
-```{r, eval = getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = getRversion() >= "4.1"}
-filters |>
-	mutate(dep_delay ~ value := range(.x))
-```
-
-```{r, eval = !getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = !getRversion() >= "4.1"}
-filters %>%
-	mutate(dep_delay ~ value := range(.x))
+	with_filters(dep_delay = sliderInput ~ list(value = range(.x)))
 ```
 <br>
 
@@ -148,7 +124,7 @@ filters %>%
 ```{r, eval = getRversion() >= "4.1", include = getRversion() >= "4.1"}
 filters |>
 	with_filters(
-		dep_delay ~ value := range(.x),
+		dep_delay ~ list(value = range(.x)),
 		distance  = 1.609344 * distance
 	)
 ```
@@ -156,7 +132,7 @@ filters |>
 ```{r, eval = !getRversion() >= "4.1", include = !getRversion() >= "4.1"}
 filters %>%
 	with_filters(
-		dep_delay ~ value := range(.x),
+		dep_delay ~ list(value = range(.x)),
 		distance  = 1.609344 * distance
 	)
 ```
@@ -165,63 +141,14 @@ filters %>%
 ```{r, eval = getRversion() >= "4.1", include = getRversion() >= "4.1"}
 filters |>
 	with_filters(
-		across(where(is.numeric), value := range(.x))
+		across(where(is.numeric), list(value = range(.x)))
 	)
 ```
 
 ```{r, eval = !getRversion() >= "4.1", include = !getRversion() >= "4.1"}
 filters %>%
 	with_filters(
-		across(where(is.numeric), value := range(.x))
-	)
-```
-
-* Set multiple filters inside `dplyr::mutate()`:
-```{r, eval = getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = getRversion() >= "4.1"}
-filters |>
-	mutate(
-		dep_delay ~ value := range(.x),
-		distance  = 1.609344 * distance
-	)
-```
-
-```{r, eval = !getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = !getRversion() >= "4.1"}
-filters %>%
-	mutate(
-		dep_delay ~ value := range(.x),
-		distance  = 1.609344 * distance
-	)
-```
-
-* Use `dplyr::across()` inside `dplyr::mutate()`:
-```{r, eval = getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = getRversion() >= "4.1"}
-filters |>
-	mutate(
-		across(where(is.numeric), value := range(.x))
-	)
-```
-
-```{r, eval = !getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = !getRversion() >= "4.1"}
-filters %>%
-	mutate(
-		across(where(is.numeric), value := range(.x))
-	)
-```
-
-* Use `dplyr::transmute()` to keep only the filters it names:
-```{r, eval = getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = getRversion() >= "4.1"}
-filters |>
-	transmute(
-		dep_delay ~ value := range(.x),
-		distance  = 1.609344 * distance
-	)
-```
-
-```{r, eval = !getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = !getRversion() >= "4.1"}
-filters %>%
-	transmute(
-		dep_delay ~ value := range(.x),
-		distance  = 1.609344 * distance
+		across(where(is.numeric), list(value = range(.x)))
 	)
 ```
 <br>
@@ -243,17 +170,6 @@ filters |>
 filters %>%
 	with_ns("sidebar-mod")
 ```
-
-* Use `with_ns()` inside `dplyr::mutate()`:
-```{r, eval = getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = getRversion() >= "4.1"}
-filters |>
-	mutate(with_ns("sidebar-mod"))
-```
-
-```{r, eval = !getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = !getRversion() >= "4.1"}
-filters %>%
-	mutate(with_ns("sidebar-mod"))
-```
 <br>
 
 ### Use a non-shiny input function
@@ -273,33 +189,20 @@ filters %>%
 	with_filters(dest = pickerInput)
 ```
 
-* Or in `dplyr::mutate()`:
-```{r, eval = getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE) && requireNamespace("shinyWidgets", quietly = TRUE), include = getRversion() >= "4.1"}
-filters |>
-	mutate(dest = pickerInput)
-```
-
-```{r, eval = !getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE) && requireNamespace("shinyWidgets", quietly = TRUE), include = !getRversion() >= "4.1"}
-filters %>%
-	mutate(dest = pickerInput)
-```
-
 * For an input from anywhere else, name the function that updates it with `.update_fn`:
 ```{r, eval = getRversion() >= "4.1", include = getRversion() >= "4.1"}
 filters |>
 	with_filters(
-		origin = shiny::checkboxGroupInput(
-			.update_fn := shiny::updateCheckboxGroupInput
-		)
+		origin = shiny::checkboxGroupInput ~
+			list(.update_fn = shiny::updateCheckboxGroupInput)
 	)
 ```
 
 ```{r, eval = !getRversion() >= "4.1", include = !getRversion() >= "4.1"}
 filters %>%
 	with_filters(
-		origin = shiny::checkboxGroupInput(
-			.update_fn := shiny::updateCheckboxGroupInput
-		)
+		origin = shiny::checkboxGroupInput ~
+			list(.update_fn = shiny::updateCheckboxGroupInput)
 	)
 ```
 <br>
@@ -315,15 +218,6 @@ allowing you to place the filters anywhere in an application
 ```{r}
 filters[starts_with("d")]
 ```
-
-* Use `dplyr::select()`:
-```{r, eval = getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = getRversion() >= "4.1"}
-filters |> select(starts_with("d"))
-```
-
-```{r, eval = !getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = !getRversion() >= "4.1"}
-filters %>% select(starts_with("d"))
-```
 <br>
 
 ### Select one filter
@@ -338,16 +232,6 @@ filters$dest
 * Use `[[`:
 ```{r}
 filters[["dest"]]
-```
-<br>
-
-* Use `dplyr::pull()`:
-```{r, eval = getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = getRversion() >= "4.1"}
-filters |> pull(dest)
-```
-
-```{r, eval = !getRversion() >= "4.1" && requireNamespace("dplyr", quietly = TRUE), include = !getRversion() >= "4.1"}
-filters %>% pull(dest)
 ```
 <br>
 

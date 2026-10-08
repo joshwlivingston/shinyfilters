@@ -1,8 +1,4 @@
 # R/with_args.R
-#
-# with_args(): set the arguments of the inputs columns have, and the reader of
-# `arg := value` that `with_filters()` and `mutate()` share with it. `:=` is
-# read as written and never evaluated: shinyfilters has no `:=` of its own.
 
 # Function: with_args() ####
 #' Set the Arguments of Inputs
@@ -20,18 +16,17 @@
 #'   with <[`tidy-select`][tidyselect::language]> and sets arguments for their
 #'   inputs:
 #'
-#'   * `cols ~ arg := value`: one argument.
-#'   * `cols ~ list(arg := value, ...)`: several. Inside `list()`, `=` works
-#'     as well as `:=`.
-#'   * `across(cols, arg := value)` or `across(cols, list(...))`: the same,
-#'     written like [dplyr::across()].
+#'   * `cols ~ list(arg = value, ...)`: the columns on the left, their
+#'     arguments on the right.
+#'   * `across(cols, list(arg = value, ...))`: the same, written like
+#'     [dplyr::across()].
 #'
-#'   `:=` and `across()` are read as written and never run, so no package
-#'   that defines them is needed.
+#'   `across()` is read as written and never run, so no package that defines
+#'   it is needed.
 #'
 #'   Arguments replace the ones shinyfilters passes for the column, such as
 #'   `label`, `choices`, `min`, `max`, and `value`. `inputId` can't be set: an
-#'   input's id is always its column's name. `.update_fn := fn` names the
+#'   input's id is always its column's name. `.update_fn = fn` names the
 #'   function that updates the input instead, as described in
 #'   [with_filters()].
 #'
@@ -50,22 +45,26 @@
 #' filters <- shinyfilters(nyc_flights)
 #'
 #' # A range slider: `.x` is the column the input is created for
-#' filters <- with_args(filters, dep_delay ~ value := range(.x))
+#' filters <- with_args(filters, dep_delay ~ list(value = range(.x)))
 #' filters$dep_delay
 #'
 #' # Several arguments
-#' with_args(filters, dep_delay ~ list(value := range(.x), step = 5))
+#' with_args(filters, dep_delay ~ list(value = range(.x), step = 5))
 #'
 #' # The same arguments for several columns
-#' with_args(filters, across(c(dep_delay, distance), value := range(.x)))
+#' with_args(filters, across(c(dep_delay, distance), list(value = range(.x))))
 #'
 #' # Different arguments for different columns
-#' with_args(filters, dep_delay ~ step := 5, origin ~ label := "Airport")
+#' with_args(
+#'   filters,
+#'   dep_delay ~ list(step = 5),
+#'   origin ~ list(label = "Airport")
+#' )
 #' @export
 with_args <- function(.filters, ...) {
 	check_shinyfilters(.filters)
 	call <- current_env()
-	quos <- enquos(..., .unquote_names = FALSE)
+	quos <- enquos(...)
 	if (length(quos) == 0) {
 		._abort_with_args_form(call = call)
 	}
@@ -104,7 +103,7 @@ with_args <- function(.filters, ...) {
 		args <- ._across_args(
 			quo,
 			call = call,
-			hint = "Put several arguments in {.code list()}."
+			hint = "Put the arguments in {.code list()}."
 		)
 		env <- quo_get_env(quo)
 		return(list(
@@ -120,40 +119,30 @@ with_args <- function(.filters, ...) {
 ._abort_with_args_form <- function(call, quo = NULL, name = "", rhs = NULL) {
 	label <- NULL
 	if (!is.null(quo)) {
-		label <- ._label(quo)
+		label <- as_label(quo)
 		if (name != "") {
 			label <- paste(name, "=", label)
 		}
 	}
-	is_input <- ._is_input_name(rhs) ||
-		is_formula(rhs, lhs = TRUE) ||
-		._is_formula_walrus(rhs) ||
-		._is_input_call(rhs)
+	is_input <- ._is_input_name(rhs) || is_formula(rhs, lhs = TRUE)
 	cli_abort(
 		c(
-			"{.fn with_args} takes {.code cols ~ arg := value} formulas and {.fn across} calls.",
+			"{.fn with_args} takes {.code cols ~ list(arg = value)} formulas and {.fn across} calls.",
 			x = if (!is.null(label)) "{.code {label}} isn't one of these.",
 			x = if (!is.null(quo)) ._other_across_hint(list(quo)),
 			i = if (is_input) "To choose an input, use {.fn with_filters}.",
-			i = "One argument: {.code with_args(filters, x ~ value := range(.x))}.",
-			i = "Several: {.code with_args(filters, x ~ list(value := range(.x), step = 5))}.",
-			i = "Several columns: {.code with_args(filters, across(c(x, y), value := range(.x)))}."
+			i = "One column: {.code with_args(filters, x ~ list(value = range(.x), step = 5))}.",
+			i = "Several columns: {.code with_args(filters, across(c(x, y), list(value = range(.x))))}."
 		),
 		call = call
 	)
 }
 
-# Reading `:=` -------------------------------------------------------------
+# Reading arguments ----------------------------------------------------------
 
-# `cols ~ <spec>`. R reads `left ~ arg := value` as `(left ~ arg) := value`, so
-# a formula that ends in a `:=` argument arrives as a `:=` call.
+# `cols ~ <spec>`
 ._is_cols_formula <- function(quo) {
-	expr <- quo_get_expr(quo)
-	is_formula(expr, lhs = TRUE) || ._is_formula_walrus(expr)
-}
-
-._is_formula_walrus <- function(expr) {
-	is_call(expr, ":=", n = 2) && is_formula(expr[[2]], lhs = TRUE)
+	is_formula(quo_get_expr(quo), lhs = TRUE)
 }
 
 # The columns a formula selects on its left, and what it gives them on its
@@ -162,13 +151,8 @@ with_args <- function(.filters, ...) {
 ._formula_spec <- function(quo) {
 	expr <- quo_get_expr(quo)
 	env <- quo_get_env(quo)
-	if (._is_formula_walrus(expr)) {
-		left <- f_lhs(expr[[2]])
-		right <- call2(":=", f_rhs(expr[[2]]), expr[[3]])
-	} else {
-		left <- f_lhs(expr)
-		right <- f_rhs(expr)
-	}
+	left <- f_lhs(expr)
+	right <- f_rhs(expr)
 	if (is_formula(left, lhs = TRUE)) {
 		right <- call2("~", f_rhs(left), right)
 		left <- f_lhs(left)
@@ -176,45 +160,32 @@ with_args <- function(.filters, ...) {
 	list(cols = new_quosure(left, env), input = new_quosure(right, env))
 }
 
-# Reads a `:=` spec as it was written: the arguments it sets and, when it has
-# one, the input they are for. `NULL` for any other code, which is evaluated
-# instead. `list_is_args`: outside a formula or `across()`, `list()` is a
-# column's data unless a `:=` marks it.
+# Reads a spec as it was written: the arguments `list()` sets and, in
+# `input ~ list(...)`, the input they are for. `NULL` for any other code, which
+# is evaluated instead. `list_is_args`: outside a formula or `across()`,
+# `list()` is a column's data.
 ._read_spec <- function(expr, call, list_is_args = TRUE) {
 	input <- NULL
-	if (._is_formula_walrus(expr)) {
-		# `input ~ arg := value`
-		input <- list(f_lhs(expr[[2]]))
-		args <- call2(":=", f_rhs(expr[[2]]), expr[[3]])
-	} else if (is_formula(expr, lhs = TRUE)) {
+	if (is_formula(expr, lhs = TRUE)) {
 		# `input ~ list(...)`
 		input <- list(f_lhs(expr))
 		args <- f_rhs(expr)
-	} else if (._is_arg_walrus(expr)) {
+	} else if (list_is_args && is_call(expr, "list")) {
 		args <- expr
-	} else if (is_call(expr, "list")) {
-		if (!list_is_args && !._has_walrus(expr)) {
-			return(NULL)
-		}
-		args <- expr
-	} else if (._is_input_call(expr)) {
-		# `fn(arg := value, ...)`
-		input <- list(expr[[1]])
-		args <- expr
-		args[[1]] <- quote(list)
 	} else {
 		return(NULL)
 	}
 	arg_exprs <- ._arg_exprs(args)
 	if (is.null(arg_exprs)) {
-		label <- ._label(expr)
+		label <- as_label(expr)
 		cli_abort(
 			c(
 				"Can't read {.code {label}}.",
-				i = if (!is.null(input)) {
-					"An input is followed by its arguments: {.code input ~ arg := value}."
-				},
-				i = "Arguments are written {.code arg := value}, or {.code list(arg := value, ...)} for several."
+				i = if (is.null(input)) {
+					"Arguments are written {.code list(arg = value, ...)}."
+				} else {
+					"An input is followed by its arguments: {.code input ~ list(arg = value, ...)}."
+				}
 			),
 			call = call
 		)
@@ -223,96 +194,25 @@ with_args <- function(.filters, ...) {
 	list(input = input, args = arg_exprs)
 }
 
-# A function called with `:=` arguments, such as `sliderInput(value := 1)`: an
-# input and its arguments. The function is named by a symbol or `pkg::fn`, so a
-# call such as `x[, y := 1]` stays the ordinary code it is. `list()` holds
-# arguments; it isn't an input.
-._is_input_call <- function(expr) {
-	if (!is.call(expr) || is_call(expr, "list") || !._has_walrus(expr)) {
-		return(FALSE)
-	}
-	head <- expr[[1]]
-	if (is_call(head, c("::", ":::"))) {
-		return(TRUE)
-	}
-	is_symbol(head) && make.names(as.character(head)) == as.character(head)
-}
-
-._has_walrus <- function(expr) {
-	any(vapply(
-		as.list(expr)[-1],
-		function(arg) is_call(arg, ":="),
-		logical(1)
-	))
-}
-
-# The value expressions of `arg := value` or `list(...)`, named by argument, or
-# `NULL` for anything else. In `list()`, `arg = value` works too; an element
-# that is neither keeps an empty name.
+# The value expressions of `list(...)`, named by argument, or `NULL` for
+# anything else. An unnamed element keeps an empty name.
 ._arg_exprs <- function(expr) {
-	if (._is_arg_walrus(expr)) {
-		els <- list(expr)
-	} else if (is_call(expr, "list")) {
-		els <- call_args(expr)
-		# A trailing comma leaves an empty argument.
-		els <- els[!vapply(els, is_missing, logical(1))]
-	} else {
+	if (!is_call(expr, "list")) {
 		return(NULL)
 	}
+	els <- call_args(expr)
+	# A trailing comma leaves an empty argument.
+	els <- els[!vapply(els, is_missing, logical(1))]
 	if (length(els) == 0) {
 		return(NULL)
 	}
-	nms <- names2(els)
-	is_walrus <- nms == "" & vapply(els, ._is_arg_walrus, logical(1))
-	nms[is_walrus] <- vapply(
-		els[is_walrus],
-		function(el) as.character(el[[2]]),
-		character(1)
-	)
-	# `lapply()`, so a `NULL` value stays in the list.
-	values <- lapply(seq_along(els), function(i) {
-		if (is_walrus[[i]]) els[[i]][[3]] else els[[i]]
-	})
-	set_names(values, nms)
-}
-
-._is_arg_walrus <- function(expr) {
-	is_call(expr, ":=", n = 2) && (is_symbol(expr[[2]]) || is_string(expr[[2]]))
-}
-
-# `col := value` is `col = value`, as rlang reads it, when the configuration
-# has the column. Anything else needs its columns named first.
-._name_walrus <- function(quos, config, call, fn) {
-	nms <- names2(quos)
-	for (i in which(nms == "")) {
-		expr <- quo_get_expr(quos[[i]])
-		if (!._is_arg_walrus(expr)) {
-			next
-		}
-		name <- as.character(expr[[2]])
-		if (!(name %in% names(config@data))) {
-			label <- ._label(expr)
-			cli_abort(
-				c(
-					"Can't find column {.field {name}}.",
-					x = "{.code {label}} needs an existing column on its left.",
-					i = "To set an argument, select columns: {.code {fn}(filters, cols ~ {label})}.",
-					i = "To add a column, name it with {.code =}: {.code {fn}(filters, {name} = <expression>)}."
-				),
-				call = call
-			)
-		}
-		quos[[i]] <- new_quosure(expr[[3]], quo_get_env(quos[[i]]))
-		nms[[i]] <- name
-	}
-	names(quos) <- nms
-	quos
+	set_names(els, names2(els))
 }
 
 # Overrides ------------------------------------------------------------------
 
-# The override a `:=` spec gives a column: its arguments and, when it has one,
-# its input.
+# The override a spec gives a column: its arguments and, when it has one, its
+# input.
 ._spec_override <- function(spec, env, config, call, fn) {
 	override <- ._args_override(spec$args, env, config, call = call, fn = fn)
 	if (!is.null(spec$input)) {
@@ -350,12 +250,12 @@ with_args <- function(.filters, ...) {
 	override
 }
 
-# Checks the arguments `:=` sets and captures their values. `data` holds the
+# Checks the arguments a spec sets and captures their values. `data` holds the
 # configuration's columns, which a value evaluated now can use.
 ._capture_args <- function(exprs, env, data, call, fn) {
 	nms <- names(exprs)
 	if (any(nms == "")) {
-		unnamed <- ._label(exprs[nms == ""][[1]])
+		unnamed <- as_label(exprs[nms == ""][[1]])
 		cli_abort(
 			c("All arguments must be named.", x = "{.code {unnamed}} isn't."),
 			call = call
@@ -384,7 +284,7 @@ with_args <- function(.filters, ...) {
 			error = function(cnd) {
 				._resignal_silent(cnd)
 				cli_abort(
-					"Can't evaluate {.code {nm} := {as_label(quo)}}.",
+					"Can't evaluate {.code {nm} = {as_label(quo)}}.",
 					parent = cnd,
 					call = call
 				)
@@ -400,16 +300,6 @@ with_args <- function(.filters, ...) {
 	} else {
 		eval_tidy(quo, data = data)
 	}
-}
-
-# Code as the user wrote it. `as_label()` prints `:=` as a prefix call, so code
-# that has one is deparsed instead, on one line.
-._label <- function(x) {
-	expr <- if (is_quosure(x)) quo_get_expr(x) else x
-	if (!(":=" %in% all.names(expr))) {
-		return(as_label(x))
-	}
-	paste(expr_deparse(expr, width = 500L), collapse = " ")
 }
 
 # The name a function was written with: `fn` or `pkg::fn`. Anything else, such

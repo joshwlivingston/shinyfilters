@@ -25,10 +25,6 @@
 		cls,
 		`.DollarNames.shinyfilters::shinyfilters`
 	)
-	._s3_register("dplyr::mutate", cls, `mutate.shinyfilters::shinyfilters`)
-	._s3_register("dplyr::transmute", cls, `transmute.shinyfilters::shinyfilters`)
-	._s3_register("dplyr::select", cls, `select.shinyfilters::shinyfilters`)
-	._s3_register("dplyr::pull", cls, `pull.shinyfilters::shinyfilters`)
 	._s3_register(
 		"tibble::as_tibble",
 		cls,

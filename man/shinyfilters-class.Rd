@@ -41,18 +41,6 @@ matching \code{cols}.
 \code{[} and \code{[[}
 }
 
-\subsection{dplyr}{
-
-Some \code{dplyr} verbs are also supported:\tabular{ll}{
-   \strong{dplyr} \tab \strong{shinyfilters} \cr
-   \code{mutate} \tab \code{with_filters} \cr
-   \code{select} \tab \code{[} \cr
-   \code{transmute} \tab \code{with_filters} + \code{select} \cr
-   \code{pull} \tab \code{[[} \cr
-}
-
-}
-
 \subsection{In a \pkg{shiny} app}{
 
 A \code{shinyfilters} object can be placed directly inside a ui:
@@ -81,7 +69,6 @@ The following functions create filters:
 \item \code{[[}
 \item \code{$}
 \item \link{filterInput}
-\item \link[dplyr:pull]{dplyr::pull}
 }
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{ui <- function(request) \{

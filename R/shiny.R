@@ -37,7 +37,7 @@
 #' `shinyWidgets::updateNumericRangeInput`, leaves its input as it is, so the
 #' input doesn't follow the other filters. Any other input, such as
 #' `shiny::checkboxGroupInput`, needs its update function named with
-#' `.update_fn := fn` among the input's arguments, as described in
+#' `.update_fn = fn` among the input's arguments, as described in
 #' [with_filters()]. Without it, `shinyfilters_server()` errors.
 #'
 #' @returns A reactiveValues list with two elements: `filtered`, the filtered

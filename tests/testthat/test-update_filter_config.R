@@ -122,7 +122,7 @@ test_that("updateFilterInput() passes the arguments an update takes", {
 	cfg <- shinyfilters(df_config)
 	slider <- with_filters(
 		cfg,
-		x = "slider" ~ list(value := range(.x), step := 2, width := "50%")
+		x = "slider" ~ list(value = range(.x), step = 2, width = "50%")
 	)
 	expect_identical(
 		update_messages(updateFilterInput(slider["x"])),
@@ -132,7 +132,7 @@ test_that("updateFilterInput() passes the arguments an update takes", {
 	)
 	radio <- with_filters(
 		cfg,
-		letters = "radio" ~ list(label := "Letters", inline := TRUE)
+		letters = "radio" ~ list(label = "Letters", inline = TRUE)
 	)
 	expect_identical(
 		update_messages(updateFilterInput(radio["letters"])),
@@ -145,7 +145,10 @@ test_that("updateFilterInput() passes the arguments an update takes", {
 	)
 	expect_identical(
 		update_messages(updateFilterInput(
-			with_args(shinyfilters(df_config, slider = TRUE), x ~ step := 2)["x"]
+			with_args(
+				shinyfilters(df_config, slider = TRUE),
+				x ~ list(step = 2)
+			)["x"]
 		)),
 		update_messages(
 			shiny::updateSliderInput(inputId = "x", min = 2L, max = 10L, step = 2)
@@ -175,7 +178,7 @@ test_that("updateFilterInput() leaves out a default that sets a value", {
 test_that("arguments that use `.x` are computed from the data being updated", {
 	cfg <- with_args(
 		shinyfilters(df_config),
-		letters ~ choices := toupper(sort(unique(.x)))
+		letters ~ list(choices = toupper(sort(unique(.x))))
 	)
 	expect_identical(
 		update_messages(updateFilterInput(cfg["letters"])),
@@ -189,10 +192,8 @@ test_that("arguments that use `.x` are computed from the data being updated", {
 test_that("updateFilterInput() calls `.update_fn`", {
 	cfg <- with_filters(
 		shinyfilters(df_config),
-		letters = shiny::checkboxGroupInput(
-			inline := TRUE,
-			.update_fn := shiny::updateCheckboxGroupInput
-		)
+		letters = shiny::checkboxGroupInput ~
+			list(inline = TRUE, .update_fn = shiny::updateCheckboxGroupInput)
 	)
 	expect_identical(
 		update_messages(updateFilterInput(cfg["letters"])),
@@ -245,9 +246,8 @@ test_that("a shinyWidgets update function is given only the arguments it takes",
 	expect_identical(update_messages(updateFilterInput(found["x"])), expected)
 	named <- with_filters(
 		cfg,
-		x = shinyWidgets::numericRangeInput(
-			.update_fn := shinyWidgets::updateNumericRangeInput
-		)
+		x = shinyWidgets::numericRangeInput ~
+			list(.update_fn = shinyWidgets::updateNumericRangeInput)
 	)
 	expect_identical(update_messages(updateFilterInput(named["x"])), expected)
 })
@@ -272,9 +272,8 @@ test_that("`.update_fn` wins over a shinyWidgets input's own update function", {
 	cfg <- shinyfilters(df_config)
 	named <- with_filters(
 		cfg,
-		letters = shinyWidgets::pickerInput(
-			.update_fn := shiny::updateSelectInput
-		)
+		letters = shinyWidgets::pickerInput ~
+			list(.update_fn = shiny::updateSelectInput)
 	)
 	expected <- update_messages(shiny::updateSelectInput(
 		inputId = "letters",
@@ -379,9 +378,8 @@ test_that("updateFilterInput() errors for an input it can't update", {
 
 		update_messages(updateFilterInput(with_filters(
 			cfg,
-			letters = shiny::checkboxGroupInput(
-				.update_fn := shiny::updateNumericInput
-			)
+			letters = shiny::checkboxGroupInput ~
+				list(.update_fn = shiny::updateNumericInput)
 		)))
 	})
 })

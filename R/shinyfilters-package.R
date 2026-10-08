@@ -38,17 +38,6 @@
 #' \pkg{shinyfilters} supports <[`tidy-select`][tidyselect::language]> in both
 #' `[` and `[[`
 #'
-#' ## dplyr
-#'
-#' Some `dplyr` verbs are also supported:
-#'
-#' | **dplyr**   | **shinyfilters**          |
-#' |-------------|---------------------------|
-#' | `mutate`    | `with_filters`            |
-#' | `select`    | `[`                       |
-#' | `transmute` | `with_filters` + `select` |
-#' | `pull`      | `[[`                      |
-#'
 #' ## In a \pkg{shiny} app
 #'
 #' A `shinyfilters` object can be placed directly inside a ui:
@@ -75,7 +64,6 @@
 #' * `[[`
 #' * `$`
 #' * [filterInput]
-#' * [dplyr::pull]
 #'
 #' ```
 #' ui <- function(request) {
@@ -182,7 +170,6 @@ NULL
 #' @importFrom rlang enquo
 #' @importFrom rlang enquos
 #' @importFrom rlang eval_tidy
-#' @importFrom rlang expr_deparse
 #' @importFrom rlang f_lhs
 #' @importFrom rlang f_rhs
 #' @importFrom rlang inject

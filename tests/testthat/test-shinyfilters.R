@@ -86,12 +86,12 @@ test_that("with_filters() takes `cols ~ input` formulas", {
 			cfg,
 			everything() ~ "selectize",
 			x = "radio",
-			a_very_very_long_name ~ "slider" ~ value := range(.x)
+			a_very_very_long_name ~ "slider" ~ list(value = range(.x))
 		)),
 		filterInput(with_filters(
 			with_filters(cfg, everything(), "selectize"),
 			x = "radio",
-			a_very_very_long_name = "slider" ~ value := range(.x)
+			a_very_very_long_name = "slider" ~ list(value = range(.x))
 		))
 	)
 })
@@ -445,7 +445,8 @@ test_that("print() handles long names", {
 		on_time = !delayed,
 		across(where(is.numeric) & !dep_delay, "slider"),
 		origin = shiny::radioButtons,
-		dep_delay ~ value := urgfjkbhqaewpqaedoufikljshygbqaeoliurgfjkbhqaewp(.x)
+		dep_delay ~
+			list(value = urgfjkbhqaewpqaedoufikljshygbqaeoliurgfjkbhqaewp(.x))
 	)
 	expect_snapshot(print(filters), variant = snapshot_variant())
 })
