@@ -609,7 +609,9 @@ test_that("with_args() errors", {
 		with_args(cfg, x ~ list())
 
 		with_args(cfg, x ~ list(step = 2, 5))
+		# jarl-ignore-start duplicated_arguments: test
 		with_args(cfg, x ~ list(step = 2, step = 4))
+		# jarl-ignore-end duplicated_arguments
 		with_args(cfg, x ~ list(inputId = "y"))
 
 		with_args(cfg, nope ~ list(step = 2))
