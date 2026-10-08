@@ -21,6 +21,7 @@ jobs:
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       DEPLOY: ${{ github.event_name != 'pull_request' }}
+      SITE_URL: https://joshwlivingston.github.io/shinyfilters
     steps:
       - uses: actions/checkout@v4
         with:
@@ -37,29 +38,40 @@ jobs:
           extra-packages: any::pkgdown, local::.
           needs: website
 
+      # build_site_github_pages() resolves source links before it applies
+      # `override`, so each site's ref is set when its pkgdown object is created.
       - name: Build dev site
         run: |
-          pkgdown::build_site_github_pages(
-            new_process = FALSE,
-            install = FALSE,
+          pkg <- pkgdown::as_pkgdown(
+            ".",
             override = list(repo = list(branch = Sys.getenv("SOURCE_REF")))
+          )
+          pkgdown::build_site_github_pages(
+            pkg,
+            new_process = FALSE,
+            install = FALSE
           )
         shell: Rscript {0}
         env:
           PKGDOWN_DEV_MODE: devel
           SOURCE_REF: ${{ github.event.repository.default_branch }}
 
-      # Each release is served at /<version>/, the latest release also at the
-      # root, and the dev site at /dev/. Each deploy replaces the whole site,
-      # so built releases are cached and only new releases are built.
+      # The latest release is served at the root, each earlier release at
+      # /<version>/, and the dev site at /dev/. /<latest version>/ redirects to
+      # the root and /<dev version>/ to /dev/. Each deploy replaces the whole
+      # site, so built releases are cached, and a release is only built when
+      # it's new or the URL it's served at has changed. Releases are built with
+      # the templates on this ref, and the cache key includes a hash of them
+      # and of this file, so changing how sites are built rebuilds them all.
       - name: Find releases
         id: releases
         if: env.DEPLOY == 'true'
         run: |
           tags=$(gh release list --exclude-drafts --exclude-pre-releases --json tagName --jq '.[].tagName' | tr '\n' ' ')
+          latest=$(gh release view --json tagName --jq .tagName 2>/dev/null || true)
           echo "tags=$tags" >> "$GITHUB_OUTPUT"
-          echo "latest=$(gh release view --json tagName --jq .tagName 2>/dev/null)" >> "$GITHUB_OUTPUT"
-          echo "key=$(echo "$tags" | sha256sum | cut -c1-16)" >> "$GITHUB_OUTPUT"
+          echo "latest=$latest" >> "$GITHUB_OUTPUT"
+          echo "key=$(echo "$tags $latest" | sha256sum | cut -c1-16)" >> "$GITHUB_OUTPUT"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -68,49 +80,87 @@ jobs:
         uses: actions/cache@v4
         with:
           path: releases
-          key: pkgdown-releases-${{ steps.releases.outputs.key }}
-          restore-keys: pkgdown-releases-
+          key: pkgdown-releases-${{ hashFiles('.github/workflows/pkgdown.yaml', 'pkgdown/templates/**') }}-${{ steps.releases.outputs.key }}
+          restore-keys: pkgdown-releases-${{ hashFiles('.github/workflows/pkgdown.yaml', 'pkgdown/templates/**') }}-
 
       - name: Build release sites
         if: env.DEPLOY == 'true'
         run: |
-          url <- "https://joshwlivingston.github.io/shinyfilters"
+          url <- Sys.getenv("SITE_URL")
+          latest <- Sys.getenv("LATEST")
+          templates <- file.path(getwd(), "pkgdown", "templates")
           tags <- strsplit(trimws(Sys.getenv("TAGS")), " ")[[1]]
           for (tag in tags) {
             version <- sub("^v", "", tag)
             dest <- file.path(getwd(), "releases", version)
-            if (dir.exists(dest)) next
+            site_url <- if (tag == latest) url else paste0(url, "/", version)
+            # Reuse a cached site only if it was built for the URL it's served at.
+            built <- file.path(dest, "pkgdown.yml")
+            if (file.exists(built)) {
+              built_url <- yaml::read_yaml(built)$urls$reference
+              if (identical(built_url, paste0(site_url, "/reference"))) next
+            }
             src <- file.path(tempdir(), tag)
             system2("git", c("worktree", "add", src, tag))
             pak::local_install_deps(src, upgrade = FALSE, dependencies = TRUE)
-            pkgdown::build_site_github_pages(
+            pkg <- pkgdown::as_pkgdown(
               src,
+              override = list(
+                destination = dest,
+                url = site_url,
+                repo = list(branch = tag),
+                template = list(path = templates)
+              )
+            )
+            pkgdown::build_site_github_pages(
+              pkg,
               dest_dir = dest,
               install = TRUE,
-              new_process = TRUE,
-              override = list(
-                url = paste0(url, "/", version),
-                repo = list(branch = tag)
-              )
+              new_process = TRUE
             )
           }
         shell: Rscript {0}
         env:
           PKGDOWN_DEV_MODE: release
           TAGS: ${{ steps.releases.outputs.tags }}
+          LATEST: ${{ steps.releases.outputs.latest }}
 
       - name: Combine sites
         if: env.DEPLOY == 'true'
         run: |
+          # redirect <site> <url> <dir>: for each page of <site>, writes a page
+          # to <dir> that redirects to the same page under <url>.
+          redirect() {
+            (cd "$1" && find . -name '*.html' -printf '%P\n') | while read -r page; do
+              target="$2/$page"
+              case "$target" in */index.html) target="${target%index.html}" ;; esac
+              mkdir -p "$3/$(dirname "$page")"
+              printf '%s\n' \
+                '<!DOCTYPE html>' \
+                '<meta charset="utf-8">' \
+                '<title>Redirecting</title>' \
+                '<meta name="robots" content="noindex">' \
+                "<link rel=\"canonical\" href=\"$target\">" \
+                "<script>location.replace(\"$target\" + location.search + location.hash)</script>" \
+                "<meta http-equiv=\"refresh\" content=\"0; url=$target\">" \
+                > "$3/$page"
+            done
+          }
           if [ -n "$LATEST" ]; then
             cp -r "releases/${LATEST#v}" site
           else
             cp -r docs/dev site
           fi
           for tag in $TAGS; do
-            cp -r "releases/${tag#v}" "site/${tag#v}"
+            if [ "$tag" = "$LATEST" ]; then
+              redirect "releases/${tag#v}" "$SITE_URL" "site/${tag#v}"
+            else
+              cp -r "releases/${tag#v}" "site/${tag#v}"
+            fi
           done
           cp -r docs/dev site/dev
+          dev=$(sed -n 's/^Version: *//p' DESCRIPTION)
+          [ -e "site/$dev" ] || redirect docs/dev "$SITE_URL/dev" "site/$dev"
         env:
           TAGS: ${{ steps.releases.outputs.tags }}
           LATEST: ${{ steps.releases.outputs.latest }}
