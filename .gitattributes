@@ -2,7 +2,7 @@
 *.Rd linguist-documentation
 
 # Ignore tests from language graph statistics
-tests/** linguist-detectable
+tests/** -linguist-detectable
 
 # Ignore pkgdown from language graph
-pkgdown/** linguist-detectable
+pkgdown/** -linguist-detectable
