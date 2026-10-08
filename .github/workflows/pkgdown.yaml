@@ -65,12 +65,17 @@ jobs:
       # it's new or the URL it's served at has changed. Releases are built with
       # the templates on this ref, and the cache key includes a hash of them
       # and of this file, so changing how sites are built rebuilds them all.
+      # A failed lookup fails the step, so `latest` is only empty when there
+      # are no releases.
       - name: Find releases
         id: releases
         if: env.DEPLOY == 'true'
         run: |
-          tags=$(gh release list --exclude-drafts --exclude-pre-releases --json tagName --jq '.[].tagName' | tr '\n' ' ')
-          latest=$(gh release view --json tagName --jq .tagName 2>/dev/null || true)
+          tags=$(gh release list --exclude-drafts --exclude-pre-releases --json tagName --jq '[.[].tagName] | join(" ")')
+          latest=
+          if [ -n "$tags" ]; then
+            latest=$(gh release view --json tagName --jq .tagName)
+          fi
           echo "tags=$tags" >> "$GITHUB_OUTPUT"
           echo "latest=$latest" >> "$GITHUB_OUTPUT"
           echo "key=$(echo "$tags $latest" | sha256sum | cut -c1-16)" >> "$GITHUB_OUTPUT"
