@@ -181,6 +181,16 @@ jobs:
             done
           )
           find site -name '*.html' -exec sed -i "s|<li class=\"version-menu\"><a [^>]*>[^<]*</a></li>|$items|" {} +
+          # Every page with a navbar must now hold the list. If the pattern
+          # above stops matching what pkgdown writes, the deploy fails instead
+          # of publishing menus that list one version.
+          pages=$(grep -rl --include='*.html' '<nav' site || true)
+          unfilled=$(for page in $pages; do grep -qF -- "$items" "$page" || echo "$page"; done)
+          if [ -z "$pages" ] || [ -n "$unfilled" ]; then
+            echo "::error::The version menu wasn't filled in on these pages:"
+            echo "${unfilled:-(no page has a navbar)}"
+            exit 1
+          fi
         env:
           TAGS: ${{ steps.releases.outputs.tags }}
           LATEST: ${{ steps.releases.outputs.latest }}
