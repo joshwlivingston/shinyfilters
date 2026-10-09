@@ -855,6 +855,7 @@ test_that("`[` returns a config with the selected columns (tidyselect)", {
 	skip_if_not_installed("tidyselect")
 	cfg <- with_filters(shinyfilters(df_config, slider = TRUE), x = "radio")
 	sub <- cfg[c("x", "letters")]
+	cols <- c("factors", "x")
 	expect_identical(
 		names(cfg[tidyselect::where(is.numeric)]),
 		c("x", "a_very_very_long_name")
