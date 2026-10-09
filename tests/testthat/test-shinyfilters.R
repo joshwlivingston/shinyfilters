@@ -446,6 +446,8 @@ test_that("print() handles long names (tidyselect)", {
 	data <- nyc_flights
 	data$awpirgbeqaprkjgbaepirgfbawpirgbeqaprkjgbaepirgfbawpirgbe <- data$carrier
 	data$carrier <- NULL
+	filters <- shinyfilters(data, range = TRUE, selectize = TRUE)
+	filters <- with_ns(filters, "sidebar-mod")
 	filters <- with_filters(
 		filters,
 		on_time = !delayed,
