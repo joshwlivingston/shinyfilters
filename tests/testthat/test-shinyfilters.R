@@ -70,10 +70,6 @@ test_that("a shiny input is matched as it is now, not as it was when built", {
 test_that("with_filters() takes `cols ~ input` formulas", {
 	cfg <- shinyfilters(df_config)
 	expect_identical(
-		filterInput(with_filters(cfg, where(is.numeric) ~ "slider")),
-		filterInput(with_filters(cfg, where(is.numeric), "slider"))
-	)
-	expect_identical(
 		filterInput(with_filters(
 			cfg,
 			x ~ shiny::radioButtons,
@@ -81,15 +77,24 @@ test_that("with_filters() takes `cols ~ input` formulas", {
 		)),
 		filterInput(with_filters(cfg, x = "radio", letters = "selectize"))
 	)
+})
+
+test_that("with_filters() takes `cols ~ input` formulas (tidyselect)", {
+	skip_if_not_installed("tidyselect")
+	cfg <- shinyfilters(df_config)
+	expect_identical(
+		filterInput(with_filters(cfg, tidyselect::where(is.numeric) ~ "slider")),
+		filterInput(with_filters(cfg, tidyselect::where(is.numeric), "slider"))
+	)
 	expect_identical(
 		filterInput(with_filters(
 			cfg,
-			everything() ~ "selectize",
+			tidyselect::everything() ~ "selectize",
 			x = "radio",
 			a_very_very_long_name ~ "slider" ~ list(value = range(.x))
 		)),
 		filterInput(with_filters(
-			with_filters(cfg, everything(), "selectize"),
+			with_filters(cfg, tidyselect::everything(), "selectize"),
 			x = "radio",
 			a_very_very_long_name = "slider" ~ list(value = range(.x))
 		))
@@ -97,14 +102,19 @@ test_that("with_filters() takes `cols ~ input` formulas", {
 })
 
 test_that("with_filters() selects columns with tidyselect", {
+	skip_if_not_installed("tidyselect")
 	cfg <- shinyfilters(df_config, slider = FALSE)
 	expected <- filterInput(shinyfilters(df_config))
 	expect_identical(
-		filterInput(with_filters(cfg, where(is.numeric), "slider")),
+		filterInput(with_filters(cfg, tidyselect::where(is.numeric), "slider")),
 		expected
 	)
 	expect_identical(
-		filterInput(with_filters(cfg, c(x, a_very_very_long_name), "slider")),
+		filterInput(with_filters(
+			cfg,
+			tidyselect::all_of(c("x", "a_very_very_long_name")),
+			"slider"
+		)),
 		expected
 	)
 })
@@ -299,7 +309,7 @@ test_that("overrides work on columns with NA", {
 test_that("every column overridden, and one-column data frames", {
 	res <- filterInput(with_filters(
 		shinyfilters(df_config),
-		everything(),
+		names(df_config),
 		"radio"
 	))
 	expect_length(res, ncol(df_config))
@@ -326,8 +336,9 @@ test_that("`ns` applies to keyword, function, and default inputs", {
 })
 
 test_that("with_filters(): last write wins", {
+	skip_if_not_installed("tidyselect")
 	cfg <- shinyfilters(df_config)
-	specific_last <- with_filters(cfg, where(is.numeric), "slider")
+	specific_last <- with_filters(cfg, tidyselect::where(is.numeric), "slider")
 	specific_last <- filterInput(with_filters(specific_last, x = "radio"))
 	expect_identical(
 		specific_last[[3]],
@@ -336,7 +347,7 @@ test_that("with_filters(): last write wins", {
 	class_last <- with_filters(cfg, x = "radio")
 	class_last <- filterInput(with_filters(
 		class_last,
-		where(is.numeric),
+		tidyselect::where(is.numeric),
 		"slider"
 	))
 	expect_identical(
@@ -440,10 +451,18 @@ test_that("print() handles long names", {
 	data$carrier <- NULL
 	filters <- shinyfilters(data, range = TRUE, selectize = TRUE)
 	filters <- with_ns(filters, "sidebar-mod")
+	expect_snapshot(print(filters), variant = snapshot_variant())
+})
+
+test_that("print() handles long names (tidyselect)", {
+	skip_if_not_installed("tidyselect")
+	data <- nyc_flights
+	data$awpirgbeqaprkjgbaepirgfbawpirgbeqaprkjgbaepirgfbawpirgbe <- data$carrier
+	data$carrier <- NULL
 	filters <- with_filters(
 		filters,
 		on_time = !delayed,
-		across(where(is.numeric) & !dep_delay, "slider"),
+		across(tidyselect::where(is.numeric) & !dep_delay, "slider"),
 		origin = shiny::radioButtons,
 		dep_delay ~
 			list(value = urgfjkbhqaewpqaedoufikljshygbqaeoliurgfjkbhqaewp(.x))
@@ -468,7 +487,11 @@ test_that("range override on Date and POSIXct columns", {
 		dte = as.Date("2024-01-01") + 0:1,
 		dtm = as.POSIXct("2024-01-01", tz = "UTC") + 0:1 * 86400
 	)
-	res <- filterInput(with_filters(shinyfilters(df), everything(), "range"))
+	res <- filterInput(with_filters(
+		shinyfilters(df),
+		names(df),
+		"range"
+	))
 	expect_identical(
 		res[[1]],
 		filterInput(df$dte, inputId = "dte", label = "dte", range = TRUE)
@@ -485,7 +508,7 @@ test_that("radio override on Date and POSIXct columns -> dates as choices", {
 		c("2024-01-02 10:00", "2024-01-01 09:00", "2024-01-01 17:30"),
 		tz = "UTC"
 	)
-	cfg <- with_filters(shinyfilters(df), everything(), "radio")
+	cfg <- with_filters(shinyfilters(df), names(df), "radio")
 	res <- filterInput(cfg)
 	dates <- as.Date("2024-01-01") + 0:1
 	expect_identical(res[[1]], shiny::radioButtons("dte", "dte", choices = dates))
@@ -560,10 +583,8 @@ test_that("shinyfilters() and with_filters() errors", {
 		with_filters(cfg, x = "radio", "letters")
 		with_filters(cfg, nope = "radio")
 		with_filters(cfg, nope, "radio")
-		with_filters(cfg, where(is.logical), "radio")
 		with_filters(cfg, x = "radioo")
 		with_filters(cfg, nope ~ "radio")
-		with_filters(cfg, where(is.logical) ~ "radio")
 		with_filters(cfg, x ~ "radioo")
 		with_filters(cfg, ~"radio")
 		with_filters(cfg, x, c("radio", "slider"))
@@ -590,6 +611,15 @@ test_that("shinyfilters() and with_filters() errors", {
 			stringsAsFactors = FALSE,
 			a = NA_integer_
 		)))
+	})
+})
+
+test_that("shinyfilters() and with_filters() errors (tidyselect)", {
+	skip_if_not_installed("tidyselect")
+	cfg <- shinyfilters(df_config)
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+		with_filters(cfg, tidyselect::where(is.logical), "radio")
+		with_filters(cfg, tidyselect::where(is.logical) ~ "radio")
 	})
 })
 
@@ -826,10 +856,6 @@ test_that("`[` returns a config with the selected columns", {
 	expect_identical(names(cfg[-1]), names(df_config)[-1])
 	expect_identical(names(cfg[c("x", "x")]), "x")
 	expect_identical(names(cfg[c(x, letters)]), c("x", "letters"))
-	expect_identical(
-		names(cfg[where(is.numeric)]),
-		c("x", "a_very_very_long_name")
-	)
 	cols <- c("factors", "x")
 	expect_identical(names(cfg[all_of(cols)]), cols)
 	x <- "letters"
@@ -838,6 +864,16 @@ test_that("`[` returns a config with the selected columns", {
 	expect_snapshot(
 		print(cfg[c("letters", "x")]),
 		variant = snapshot_variant()
+	)
+})
+
+test_that("`[` returns a config with the selected columns (tidyselect)", {
+	skip_if_not_installed("tidyselect")
+	cfg <- with_filters(shinyfilters(df_config, slider = TRUE), x = "radio")
+	sub <- cfg[c("x", "letters")]
+	expect_identical(
+		names(cfg[tidyselect::where(is.numeric)]),
+		c("x", "a_very_very_long_name")
 	)
 })
 

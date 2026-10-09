@@ -20,13 +20,6 @@
       i Keywords are strings, e.g. `"slider"`.
       i Functions are shiny inputs, e.g. `shiny::radioButtons()`.
     Code
-      with_filters(cfg, across(where(is.numeric)))
-    Condition
-      Error in `with_filters()`:
-      ! `across()` needs an input as its second argument.
-      i Keywords are strings, e.g. `"slider"`.
-      i Functions are shiny inputs, e.g. `shiny::radioButtons()`.
-    Code
       with_filters(cfg, across(x, "radio", .names = "{.col}_1"))
     Condition
       Error in `with_filters()`:
@@ -38,13 +31,6 @@
       Error in `with_filters()`:
       ! `across()` takes only `.cols` and `.fns` here.
       x Got 1 extra argument.
-    Code
-      with_filters(cfg, x = across(where(is.numeric), "slider"))
-    Condition
-      Error in `with_filters()`:
-      ! `across()` can't be named.
-      i `across()` already selects the columns it sets.
-      i To set one column, use `x = input`.
     Code
       with_filters(cfg, across(x, letters ~ "radio"))
     Condition
@@ -72,4 +58,21 @@
       i Select columns: `with_filters(filters, c(a, b), "radio")`.
       i Name columns: `with_filters(filters, a = "radio", b = "slider")`.
       i Mix the two: `with_filters(filters, c(a, b) ~ "radio", x = "slider")`.
+
+# with_filters() errors with across() (tidyselect)
+
+    Code
+      with_filters(cfg, across(tidyselect::where(is.numeric)))
+    Condition
+      Error in `with_filters()`:
+      ! `across()` needs an input as its second argument.
+      i Keywords are strings, e.g. `"slider"`.
+      i Functions are shiny inputs, e.g. `shiny::radioButtons()`.
+    Code
+      with_filters(cfg, x = across(tidyselect::where(is.numeric), "slider"))
+    Condition
+      Error in `with_filters()`:
+      ! `across()` can't be named.
+      i `across()` already selects the columns it sets.
+      i To set one column, use `x = input`.
 

@@ -118,21 +118,16 @@
     Code
       print(filters)
     Output
-      <shinyfilters> * 8 filters * namespace "sidebar-mod"
+      <shinyfilters> * 7 filters * namespace "sidebar-mod"
       
       Filters
-           date                       <date>  dateRangeInput
-        *  origin                     <fct>   radioButtons
-           dest                       <chr>   selectizeInput
-           dep_delay                  <dbl>   sliderInput
-                                                value = urgfjkbhqaewpqaedoufikljshygbqaeoli...
-        *  distance                   <dbl>   sliderInput
-           delayed                    <lgl>   selectizeInput
-           awpirgbeqaprkjgbaepirg...  <chr>   selectizeInput
-        +  on_time                    <lgl>   selectizeInput
-      
-      * Filter set by `with_filters()`
-      + Filter added by `with_filters()`
+        date                       <date>  dateRangeInput
+        origin                     <fct>   selectizeInput
+        dest                       <chr>   selectizeInput
+        dep_delay                  <dbl>   sliderInput
+        distance                   <dbl>   sliderInput
+        delayed                    <lgl>   selectizeInput
+        awpirgbeqaprkjgbaepirg...  <chr>   selectizeInput
 
 # errors from a function override name the column
 
@@ -219,11 +214,6 @@
       ! Can't select columns that don't exist.
       x Column `nope` doesn't exist.
     Code
-      with_filters(cfg, where(is.logical), "radio")
-    Condition
-      Error in `with_filters()`:
-      ! `where(is.logical)` doesn't select any columns.
-    Code
       with_filters(cfg, x = "radioo")
     Condition
       Error in `with_filters()`:
@@ -235,11 +225,6 @@
       Error in `with_filters()`:
       ! Can't select columns that don't exist.
       x Column `nope` doesn't exist.
-    Code
-      with_filters(cfg, where(is.logical) ~ "radio")
-    Condition
-      Error in `with_filters()`:
-      ! `where(is.logical)` doesn't select any columns.
     Code
       with_filters(cfg, x ~ "radioo")
     Condition
@@ -351,6 +336,19 @@
     Condition
       Error in `filterInput()`:
       ! Column a must have at least one non-missing value.
+
+# shinyfilters() and with_filters() errors (tidyselect)
+
+    Code
+      with_filters(cfg, tidyselect::where(is.logical), "radio")
+    Condition
+      Error in `with_filters()`:
+      ! `tidyselect::where(is.logical)` doesn't select any columns.
+    Code
+      with_filters(cfg, tidyselect::where(is.logical) ~ "radio")
+    Condition
+      Error in `with_filters()`:
+      ! `tidyselect::where(is.logical)` doesn't select any columns.
 
 # with_ns() errors
 

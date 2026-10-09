@@ -106,7 +106,7 @@ test_that("radio on a column that isn't discrete -> choices are updated", {
 		tz = "UTC"
 	)
 	df$dur <- as.difftime(c(3, 1, 1), units = "mins")
-	cfg <- with_filters(shinyfilters(df), everything(), "radio")
+	cfg <- with_filters(shinyfilters(df), names(df), "radio")
 	dates <- as.Date("2024-01-01") + 0:1
 	expect_identical(
 		update_messages(updateFilterInput(cfg)),

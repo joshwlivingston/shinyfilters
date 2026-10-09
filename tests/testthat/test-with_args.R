@@ -32,13 +32,17 @@ test_that("with_args() sets several arguments with list()", {
 })
 
 test_that("with_args() sets arguments for the columns across() selects", {
+	skip_if_not_installed("tidyselect")
 	cfg <- shinyfilters(df_config)
 	expect_identical(
 		filterInput(with_args(
 			cfg,
-			across(where(is.numeric), list(value = range(.x)))
+			across(tidyselect::where(is.numeric), list(value = range(.x)))
 		)),
-		filterInput(with_args(cfg, where(is.numeric) ~ list(value = range(.x))))
+		filterInput(with_args(
+			cfg,
+			tidyselect::where(is.numeric) ~ list(value = range(.x))
+		))
 	)
 	expect_identical(
 		filterInput(with_args(
@@ -47,7 +51,7 @@ test_that("with_args() sets arguments for the columns across() selects", {
 		)),
 		filterInput(with_args(
 			cfg,
-			where(is.numeric) ~ list(value = range(.x), step = 2)
+			tidyselect::where(is.numeric) ~ list(value = range(.x), step = 2)
 		))
 	)
 	expect_identical(
@@ -77,8 +81,17 @@ test_that("with_args() applies its arguments in order", {
 			a_very_very_long_name ~ list(step = 0.5)
 		))
 	)
+})
+
+test_that("with_args() applies its arguments in order (tidyselect)", {
+	skip_if_not_installed("tidyselect")
+	cfg <- shinyfilters(df_config)
 	expect_identical(
-		with_args(cfg, where(is.numeric) ~ list(step = 2), x ~ list(step = 4))$x,
+		with_args(
+			cfg,
+			tidyselect::where(is.numeric) ~ list(step = 2),
+			x ~ list(step = 4)
+		)$x,
 		shiny::sliderInput("x", "x", min = 2L, max = 10L, value = 10L, step = 4)
 	)
 })
@@ -139,8 +152,20 @@ test_that("an input chosen later keeps the with_args() arguments it names", {
 		shinyfilters(df_config, slider = FALSE),
 		x ~ list(value = range(.x))
 	)
+})
+
+test_that("an input chosen later keeps the with_args() arguments it names (tidyselect)", {
+	skip_if_not_installed("tidyselect")
+	cfg <- with_args(
+		shinyfilters(df_config),
+		x ~ list(step = 2, ticks = FALSE)
+	)
+	args_first <- with_args(
+		shinyfilters(df_config, slider = FALSE),
+		x ~ list(value = range(.x))
+	)
 	expect_identical(
-		with_filters(args_first, where(is.numeric) ~ "slider")$x,
+		with_filters(args_first, tidyselect::where(is.numeric) ~ "slider")$x,
 		shiny::sliderInput("x", "x", min = 2L, max = 10L, value = c(2L, 10L))
 	)
 })
@@ -375,15 +400,25 @@ test_that("print() shows what each way of writing with_args() sets", {
 	expect_snapshot(variant = snapshot_variant(), {
 		with_args(cfg, x ~ list(value = range(.x)))
 		with_args(cfg, x ~ list(value = range(.x), step = 2))
-		with_args(cfg, across(where(is.numeric), list(value = range(.x))))
-		with_args(
-			cfg,
-			across(where(is.numeric), list(value = range(.x), step = 2))
-		)
 		with_args(
 			cfg,
 			x ~ list(value = range(.x)),
 			letters ~ list(label = "Letters")
+		)
+	})
+})
+
+test_that("print() shows what each way of writing with_args() sets (tidyselect)", {
+	skip_if_not_installed("tidyselect")
+	cfg <- shinyfilters(df_config)
+	expect_snapshot(variant = snapshot_variant(), {
+		with_args(
+			cfg,
+			across(tidyselect::where(is.numeric), list(value = range(.x)))
+		)
+		with_args(
+			cfg,
+			across(tidyselect::where(is.numeric), list(value = range(.x), step = 2))
 		)
 	})
 })
@@ -393,23 +428,9 @@ test_that("print() shows what each way of writing with_filters() sets", {
 	expect_snapshot(variant = snapshot_variant(), {
 		with_filters(cfg, x ~ list(step = 2))
 		with_filters(cfg, x ~ list(step = 2, width = "50%"))
-		with_filters(cfg, across(where(is.numeric), list(step = 2)))
-
 		with_filters(cfg, x = "slider" ~ list(value = range(.x)))
 		with_filters(cfg, x = "slider" ~ list(value = range(.x), step = 2))
 		with_filters(cfg, x = shiny::sliderInput ~ list(value = range(.x)))
-
-		with_filters(cfg, where(is.numeric) ~ "slider" ~ list(value = range(.x)))
-		with_filters(
-			cfg,
-			where(is.numeric) ~ "slider" ~ list(value = range(.x), step = 2)
-		)
-
-		with_filters(
-			cfg,
-			across(where(is.numeric), "slider" ~ list(value = range(.x)))
-		)
-
 		with_filters(
 			cfg,
 			letters = shiny::checkboxGroupInput ~
@@ -418,10 +439,34 @@ test_that("print() shows what each way of writing with_filters() sets", {
 	})
 })
 
+test_that("print() shows what each way of writing with_filters() sets (tidyselect)", {
+	skip_if_not_installed("tidyselect")
+	cfg <- shinyfilters(df_config, slider = FALSE)
+	expect_snapshot(variant = snapshot_variant(), {
+		with_filters(cfg, across(tidyselect::where(is.numeric), list(step = 2)))
+		with_filters(
+			cfg,
+			tidyselect::where(is.numeric) ~ "slider" ~ list(value = range(.x))
+		)
+		with_filters(
+			cfg,
+			tidyselect::where(is.numeric) ~ "slider" ~ list(
+				value = range(.x),
+				step = 2
+			)
+		)
+		with_filters(
+			cfg,
+			across(tidyselect::where(is.numeric), "slider" ~ list(value = range(.x)))
+		)
+	})
+})
+
 test_that("print() shows the arguments of inputs with_filters() chose", {
+	skip_if_not_installed("tidyselect")
 	cfg <- with_filters(
 		shinyfilters(df_config, slider = FALSE),
-		across(where(is.numeric), "slider" ~ list(value = range(.x))),
+		across(tidyselect::where(is.numeric), "slider" ~ list(value = range(.x))),
 		letters = "radio" ~ list(inline = TRUE, label = "Letters"),
 		factors = "selectize",
 		x = x * 2L
@@ -461,24 +506,29 @@ test_that("with_filters() sets arguments like with_args()", {
 		filterInput(with_filters(cfg, x, list(value = range(.x)))),
 		filterInput(with_args(cfg, x ~ list(value = range(.x))))
 	)
+})
+
+test_that("with_filters() sets arguments like with_args() (tidyselect)", {
+	skip_if_not_installed("tidyselect")
+	cfg <- shinyfilters(df_config)
 	expect_identical(
 		filterInput(with_filters(
 			cfg,
-			where(is.numeric) ~ list(value = range(.x), step = 2)
+			tidyselect::where(is.numeric) ~ list(value = range(.x), step = 2)
 		)),
 		filterInput(with_args(
 			cfg,
-			where(is.numeric) ~ list(value = range(.x), step = 2)
+			tidyselect::where(is.numeric) ~ list(value = range(.x), step = 2)
 		))
 	)
 	expect_identical(
 		filterInput(with_filters(
 			cfg,
-			across(where(is.numeric), list(value = range(.x)))
+			across(tidyselect::where(is.numeric), list(value = range(.x)))
 		)),
 		filterInput(with_args(
 			cfg,
-			across(where(is.numeric), list(value = range(.x)))
+			across(tidyselect::where(is.numeric), list(value = range(.x)))
 		))
 	)
 })
@@ -615,12 +665,19 @@ test_that("with_args() errors", {
 		with_args(cfg, x ~ list(inputId = "y"))
 
 		with_args(cfg, nope ~ list(step = 2))
-		with_args(cfg, where(is.logical) ~ list(step = 2))
 		with_args(cfg, x ~ list(max = nope * 2))
 
 		with_args(cfg, across(x))
 		with_args(cfg, across(x, step = 2, min = 0))
 		with_args(cfg, across(x, list(step = 2), .names = "a"))
 		with_args(cfg, x = across(x, list(step = 2)))
+	})
+})
+
+test_that("with_args() errors (tidyselect)", {
+	skip_if_not_installed("tidyselect")
+	cfg <- shinyfilters(df_config)
+	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+		with_args(cfg, tidyselect::where(is.logical) ~ list(step = 2))
 	})
 })

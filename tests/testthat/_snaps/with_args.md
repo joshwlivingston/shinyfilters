@@ -36,32 +36,6 @@
                                         step  = 2
         a_very_very_long_name  <dbl>  sliderInput
     Code
-      with_args(cfg, across(where(is.numeric), list(value = range(.x))))
-    Output
-      <shinyfilters> * 4 filters
-      
-      Filters
-        letters                <chr>  selectizeInput
-        factors                <fct>  selectizeInput
-        x                      <int>  sliderInput
-                                        value = range(.x, na.rm = TRUE)
-        a_very_very_long_name  <dbl>  sliderInput
-                                        value = range(.x, na.rm = TRUE)
-    Code
-      with_args(cfg, across(where(is.numeric), list(value = range(.x), step = 2)))
-    Output
-      <shinyfilters> * 4 filters
-      
-      Filters
-        letters                <chr>  selectizeInput
-        factors                <fct>  selectizeInput
-        x                      <int>  sliderInput
-                                        value = range(.x, na.rm = TRUE)
-                                        step  = 2
-        a_very_very_long_name  <dbl>  sliderInput
-                                        value = range(.x, na.rm = TRUE)
-                                        step  = 2
-    Code
       with_args(cfg, x ~ list(value = range(.x)), letters ~ list(label = "Letters"))
     Output
       <shinyfilters> * 4 filters
@@ -73,6 +47,36 @@
         x                      <int>  sliderInput
                                         value = range(.x, na.rm = TRUE)
         a_very_very_long_name  <dbl>  sliderInput
+
+# print() shows what each way of writing with_args() sets (tidyselect)
+
+    Code
+      with_args(cfg, across(tidyselect::where(is.numeric), list(value = range(.x))))
+    Output
+      <shinyfilters> * 4 filters
+      
+      Filters
+        letters                <chr>  selectizeInput
+        factors                <fct>  selectizeInput
+        x                      <int>  sliderInput
+                                        value = range(.x, na.rm = TRUE)
+        a_very_very_long_name  <dbl>  sliderInput
+                                        value = range(.x, na.rm = TRUE)
+    Code
+      with_args(cfg, across(tidyselect::where(is.numeric), list(value = range(.x),
+      step = 2)))
+    Output
+      <shinyfilters> * 4 filters
+      
+      Filters
+        letters                <chr>  selectizeInput
+        factors                <fct>  selectizeInput
+        x                      <int>  sliderInput
+                                        value = range(.x, na.rm = TRUE)
+                                        step  = 2
+        a_very_very_long_name  <dbl>  sliderInput
+                                        value = range(.x, na.rm = TRUE)
+                                        step  = 2
 
 # print() shows what each way of writing with_filters() sets
 
@@ -104,23 +108,6 @@
                                            step  = 2
                                            width = "50%"
         #  a_very_very_long_name  <dbl>  numericInput
-      
-      Default Overrides
-        slider = FALSE
-      
-      # Filter set by default argument
-    Code
-      with_filters(cfg, across(where(is.numeric), list(step = 2)))
-    Output
-      <shinyfilters> * 4 filters
-      
-      Filters
-           letters                <chr>  selectizeInput
-           factors                <fct>  selectizeInput
-        #  x                      <int>  numericInput
-                                           step = 2
-        #  a_very_very_long_name  <dbl>  numericInput
-                                           step = 2
       
       Default Overrides
         slider = FALSE
@@ -179,59 +166,6 @@
       # Filter set by default argument
       * Filter set by `with_filters()`
     Code
-      with_filters(cfg, where(is.numeric) ~ "slider" ~ list(value = range(.x)))
-    Output
-      <shinyfilters> * 4 filters
-      
-      Filters
-           letters                <chr>  selectizeInput
-           factors                <fct>  selectizeInput
-        *  x                      <int>  sliderInput
-                                           value = range(.x, na.rm = TRUE)
-        *  a_very_very_long_name  <dbl>  sliderInput
-                                           value = range(.x, na.rm = TRUE)
-      
-      Default Overrides
-        slider = FALSE
-      
-      * Filter set by `with_filters()`
-    Code
-      with_filters(cfg, where(is.numeric) ~ "slider" ~ list(value = range(.x), step = 2))
-    Output
-      <shinyfilters> * 4 filters
-      
-      Filters
-           letters                <chr>  selectizeInput
-           factors                <fct>  selectizeInput
-        *  x                      <int>  sliderInput
-                                           value = range(.x, na.rm = TRUE)
-                                           step  = 2
-        *  a_very_very_long_name  <dbl>  sliderInput
-                                           value = range(.x, na.rm = TRUE)
-                                           step  = 2
-      
-      Default Overrides
-        slider = FALSE
-      
-      * Filter set by `with_filters()`
-    Code
-      with_filters(cfg, across(where(is.numeric), "slider" ~ list(value = range(.x))))
-    Output
-      <shinyfilters> * 4 filters
-      
-      Filters
-           letters                <chr>  selectizeInput
-           factors                <fct>  selectizeInput
-        *  x                      <int>  sliderInput
-                                           value = range(.x, na.rm = TRUE)
-        *  a_very_very_long_name  <dbl>  sliderInput
-                                           value = range(.x, na.rm = TRUE)
-      
-      Default Overrides
-        slider = FALSE
-      
-      * Filter set by `with_filters()`
-    Code
       with_filters(cfg, letters = shiny::checkboxGroupInput ~ list(inline = TRUE,
         .update_fn = shiny::updateCheckboxGroupInput))
     Output
@@ -249,6 +183,82 @@
         slider = FALSE
       
       # Filter set by default argument
+      * Filter set by `with_filters()`
+
+# print() shows what each way of writing with_filters() sets (tidyselect)
+
+    Code
+      with_filters(cfg, across(tidyselect::where(is.numeric), list(step = 2)))
+    Output
+      <shinyfilters> * 4 filters
+      
+      Filters
+           letters                <chr>  selectizeInput
+           factors                <fct>  selectizeInput
+        #  x                      <int>  numericInput
+                                           step = 2
+        #  a_very_very_long_name  <dbl>  numericInput
+                                           step = 2
+      
+      Default Overrides
+        slider = FALSE
+      
+      # Filter set by default argument
+    Code
+      with_filters(cfg, tidyselect::where(is.numeric) ~ "slider" ~ list(value = range(
+        .x)))
+    Output
+      <shinyfilters> * 4 filters
+      
+      Filters
+           letters                <chr>  selectizeInput
+           factors                <fct>  selectizeInput
+        *  x                      <int>  sliderInput
+                                           value = range(.x, na.rm = TRUE)
+        *  a_very_very_long_name  <dbl>  sliderInput
+                                           value = range(.x, na.rm = TRUE)
+      
+      Default Overrides
+        slider = FALSE
+      
+      * Filter set by `with_filters()`
+    Code
+      with_filters(cfg, tidyselect::where(is.numeric) ~ "slider" ~ list(value = range(
+        .x), step = 2))
+    Output
+      <shinyfilters> * 4 filters
+      
+      Filters
+           letters                <chr>  selectizeInput
+           factors                <fct>  selectizeInput
+        *  x                      <int>  sliderInput
+                                           value = range(.x, na.rm = TRUE)
+                                           step  = 2
+        *  a_very_very_long_name  <dbl>  sliderInput
+                                           value = range(.x, na.rm = TRUE)
+                                           step  = 2
+      
+      Default Overrides
+        slider = FALSE
+      
+      * Filter set by `with_filters()`
+    Code
+      with_filters(cfg, across(tidyselect::where(is.numeric), "slider" ~ list(value = range(
+        .x))))
+    Output
+      <shinyfilters> * 4 filters
+      
+      Filters
+           letters                <chr>  selectizeInput
+           factors                <fct>  selectizeInput
+        *  x                      <int>  sliderInput
+                                           value = range(.x, na.rm = TRUE)
+        *  a_very_very_long_name  <dbl>  sliderInput
+                                           value = range(.x, na.rm = TRUE)
+      
+      Default Overrides
+        slider = FALSE
+      
       * Filter set by `with_filters()`
 
 # print() shows the arguments of inputs with_filters() chose
@@ -472,11 +482,6 @@
       ! Can't select columns that don't exist.
       x Column `nope` doesn't exist.
     Code
-      with_args(cfg, where(is.logical) ~ list(step = 2))
-    Condition
-      Error in `with_args()`:
-      ! `where(is.logical)` doesn't select any columns.
-    Code
       with_args(cfg, x ~ list(max = nope * 2))
     Condition
       Error in `with_args()`:
@@ -512,4 +517,12 @@
       x `x = across(x, list(step = 2))` isn't one of these.
       i One column: `with_args(filters, x ~ list(value = range(.x), step = 5))`.
       i Several columns: `with_args(filters, across(c(x, y), list(value = range(.x))))`.
+
+# with_args() errors (tidyselect)
+
+    Code
+      with_args(cfg, tidyselect::where(is.logical) ~ list(step = 2))
+    Condition
+      Error in `with_args()`:
+      ! `tidyselect::where(is.logical)` doesn't select any columns.
 
