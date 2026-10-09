@@ -136,21 +136,6 @@ filters %>%
 		distance  = 1.609344 * distance
 	)
 ```
-
-* Use `across()` inside `with_filters()`:
-```{r, eval = getRversion() >= "4.1", include = getRversion() >= "4.1"}
-filters |>
-	with_filters(
-		across(where(is.numeric), list(value = range(.x)))
-	)
-```
-
-```{r, eval = !getRversion() >= "4.1", include = !getRversion() >= "4.1"}
-filters %>%
-	with_filters(
-		across(where(is.numeric), list(value = range(.x)))
-	)
-```
 <br>
 
 ### Use a namespace

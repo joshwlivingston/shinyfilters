@@ -18,7 +18,6 @@
 ### Add, remove, or modify filters
 
 * `with_filters()` chooses the input for columns, and adds or replaces computed columns (#105, #111).
-* `with_filters()` takes `across(cols, input)` to choose one input for several columns (#105).
 * `with_args()` sets the arguments of columns' inputs (#105, #134).
 * `.update_fn = fn`, among an input's arguments, names the function that updates an input shinyfilters doesn't know, such as `shiny::updateCheckboxGroupInput` for `shiny::checkboxGroupInput` (#105).
 * `with_filters()` gives a shinyWidgets input, such as `shinyWidgets::pickerInput`, its own update function, so it needs no `.update_fn` (#34).
