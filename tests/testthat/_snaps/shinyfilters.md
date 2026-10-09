@@ -129,6 +129,27 @@
         delayed                    <lgl>   selectizeInput
         awpirgbeqaprkjgbaepirg...  <chr>   selectizeInput
 
+# print() handles long names (tidyselect)
+
+    Code
+      print(filters)
+    Output
+      <shinyfilters> * 8 filters * namespace "sidebar-mod"
+      
+      Filters
+           date                       <date>  dateRangeInput
+        *  origin                     <fct>   radioButtons
+           dest                       <chr>   selectizeInput
+           dep_delay                  <dbl>   sliderInput
+                                                value = urgfjkbhqaewpqaedoufikljshygbqaeoli...
+           distance                   <dbl>   sliderInput
+           delayed                    <lgl>   selectizeInput
+           awpirgbeqaprkjgbaepirg...  <chr>   selectizeInput
+        +  on_time                    <lgl>   selectizeInput
+      
+      * Filter set by `with_filters()`
+      + Filter added by `with_filters()`
+
 # errors from a function override name the column
 
     Code
