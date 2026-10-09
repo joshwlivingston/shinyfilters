@@ -119,6 +119,7 @@ importFrom(rlang,
   quo,
   quo_get_env,
   quo_get_expr,
+  sym,
   try_fetch
 )
 importFrom(shiny,

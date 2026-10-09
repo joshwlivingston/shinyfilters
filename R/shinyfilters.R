@@ -322,9 +322,24 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 }
 
 ._base_eval_select <- function(x, sel) {
-	nl <- as.list(seq_along(x))
+	nl <- seq_along(x)
 	names(nl) <- names(x)
-	eval(sel, nl, parent.frame())
+	if (is_quosure(sel)) {
+		sel <- quo_get_expr(sel)
+	}
+	parsed <- ._get_dropped_expr(sel, FALSE)
+	cols <- eval(parsed$expr, as.list(nl), parent.frame())
+	if (parsed$is_drop) {
+		cols <- setdiff(names(x), cols)
+	}
+	nl[cols]
+}
+
+._get_dropped_expr <- function(x, res = FALSE) {
+	if (length(x) == 1 || !identical(x[[1]], sym("!"))) {
+		return(list(expr = x, is_drop = res))
+	}
+	._get_dropped_expr(x[[2:length(x)]], !res)
 }
 
 # Creates the input for one column, selected by name or position
@@ -933,15 +948,17 @@ method(.with_filters, class_shinyfilters) <- function(
 
 ._select_by_pkg <- function(x, selection, call) {
 	if (isNamespaceLoaded("tidyselect")) {
-		names(tidyselect::eval_select(
-			selection,
-			x@data,
-			allow_rename = FALSE,
-			error_call = call
-		))
+		cols <-
+			tidyselect::eval_select(
+				selection,
+				x@data,
+				allow_rename = FALSE,
+				error_call = call
+			)
 	} else {
-		._base_eval_select(x, selection)
+		cols <- ._base_eval_select(x, selection)
 	}
+	names(cols)
 }
 
 # The columns a tidyselect expression selects: at least one

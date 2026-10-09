@@ -183,6 +183,7 @@ NULL
 #' @importFrom rlang quo
 #' @importFrom rlang quo_get_env
 #' @importFrom rlang quo_get_expr
+#' @importFrom rlang sym
 #' @importFrom rlang try_fetch
 #' @importFrom S7 class_any
 #' @importFrom S7 class_character
