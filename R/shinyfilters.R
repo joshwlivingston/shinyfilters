@@ -335,7 +335,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 }
 
 abort_column_not_found <- function(quo, call) {
-	abort_not_found(as_label(quo), call)
+	abort_not_found(as_name(quo), call)
 }
 
 abort_columns_not_found <- function(cols, call) {

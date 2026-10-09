@@ -91,6 +91,7 @@ importFrom(methods,
 )
 importFrom(rlang,
   as_label,
+  as_name,
   call2,
   call_args,
   call_match,

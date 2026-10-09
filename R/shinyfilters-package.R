@@ -157,6 +157,7 @@ NULL
 #' @importFrom methods formalArgs
 #' @importFrom methods functionBody
 #' @importFrom rlang as_label
+#' @importFrom rlang as_name
 #' @importFrom rlang call_args
 #' @importFrom rlang call_match
 #' @importFrom rlang call2
