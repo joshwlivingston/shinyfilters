@@ -83,8 +83,7 @@
 #' accordion(shinyfilters(nyc_flights))
 #' #> Error:
 #' #> ! <shinyfilters> objects cannot be used in some shiny functions.
-#' #> ℹ Use `[[`, `$`, `filterInput()`, or `dplyr::pull()` to render the filters
-#' #>   directly.
+#' #> ℹ Use `[[`, `$`, or `filterInput()` to render the filters directly.
 #' ```
 #' <br>
 #'

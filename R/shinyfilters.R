@@ -188,7 +188,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	cli_abort(
 		c(
 			"{.cls shinyfilters} objects cannot be used in some shiny functions.",
-			i = "Use {.code [[}, {.code $}, {.fn filterInput}, or {.code dplyr::pull()} to render the filters directly."
+			i = "Use {.code [[}, {.code $}, or {.fn filterInput} to render the filters directly."
 		),
 		call = NULL
 	)
@@ -264,7 +264,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 		cli_abort(
 			c(
 				"{.cls shinyfilters} objects cannot be placed in the UI of apps with bookmarking enabled.",
-				i = "Use {.code [[}, {.code $}, {.fn filterInput}, or {.code dplyr::pull()} inside the UI function to render the filters directly, so they restore their bookmarked values."
+				i = "Use {.code [[}, {.code $}, or {.fn filterInput} inside the UI function to render the filters directly, so they restore their bookmarked values."
 			),
 			call = NULL
 		)
