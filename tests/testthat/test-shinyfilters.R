@@ -367,19 +367,6 @@ test_that("with_filters() adds and replaces columns", {
 			x = "radio"
 		))
 	)
-
-	expect_identical(
-		filterInput(with_filters(
-			with_filters(cfg, y = x * 2),
-			y = "slider",
-			across(letters, "radio")
-		)),
-		filterInput(with_filters(
-			shinyfilters(transform(df_config, y = x * 2)),
-			y = "slider",
-			letters = "radio"
-		))
-	)
 })
 
 test_that("print() marks columns added by with_filters()", {
@@ -443,7 +430,6 @@ test_that("print() handles long names", {
 	filters <- with_filters(
 		filters,
 		on_time = !delayed,
-		across(where(is.numeric) & !dep_delay, "slider"),
 		origin = shiny::radioButtons,
 		dep_delay ~
 			list(value = urgfjkbhqaewpqaedoufikljshygbqaeoliurgfjkbhqaewp(.x))

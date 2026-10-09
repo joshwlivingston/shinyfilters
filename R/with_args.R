@@ -12,17 +12,10 @@
 #' for.
 #'
 #' @param .filters A configuration created by [shinyfilters()].
-#' @param ... Any number of formulas and `across()` calls. Each selects columns
-#'   with <[`tidy-select`][tidyselect::language]> and sets arguments for their
-#'   inputs:
+#' @param ... Any number of formulas.
 #'
 #'   * `cols ~ list(arg = value, ...)`: the columns on the left, their
 #'     arguments on the right.
-#'   * `across(cols, list(arg = value, ...))`: the same, written like
-#'     [dplyr::across()].
-#'
-#'   `across()` is read as written and never run, so no package that defines
-#'   it is needed.
 #'
 #'   Arguments replace the ones shinyfilters passes for the column, such as
 #'   `label`, `choices`, `min`, `max`, and `value`. `inputId` can't be set: an
@@ -52,7 +45,7 @@
 #' with_args(filters, dep_delay ~ list(value = range(.x), step = 5))
 #'
 #' # The same arguments for several columns
-#' with_args(filters, across(c(dep_delay, distance), list(value = range(.x))))
+#' with_args(filters, c(dep_delay, distance) ~ list(value = range(.x)))
 #'
 #' # Different arguments for different columns
 #' with_args(
@@ -99,18 +92,6 @@ with_args <- function(.filters, ...) {
 	if (name == "" && ._is_cols_formula(quo)) {
 		return(._formula_spec(quo))
 	}
-	if (name == "" && ._is_across_call(quo)) {
-		args <- ._across_args(
-			quo,
-			call = call,
-			hint = "Put the arguments in {.code list()}."
-		)
-		env <- quo_get_env(quo)
-		return(list(
-			cols = new_quosure(args$cols, env),
-			input = new_quosure(args$fns, env)
-		))
-	}
 	._abort_with_args_form(call, quo, name)
 }
 
@@ -124,15 +105,12 @@ with_args <- function(.filters, ...) {
 			label <- paste(name, "=", label)
 		}
 	}
-	is_input <- ._is_input_name(rhs) || is_formula(rhs, lhs = TRUE)
 	cli_abort(
 		c(
-			"{.fn with_args} takes {.code cols ~ list(arg = value)} formulas and {.fn across} calls.",
+			"{.fn with_args} takes {.code cols ~ list(arg = value)} formulas.",
 			x = if (!is.null(label)) "{.code {label}} isn't one of these.",
-			x = if (!is.null(quo)) ._other_across_hint(list(quo)),
-			i = if (is_input) "To choose an input, use {.fn with_filters}.",
 			i = "One column: {.code with_args(filters, x ~ list(value = range(.x), step = 5))}.",
-			i = "Several columns: {.code with_args(filters, across(c(x, y), list(value = range(.x))))}."
+			i = "Several columns: {.code with_args(filters, c(x, y) ~ list(value = range(.x))))}."
 		),
 		call = call
 	)
@@ -162,8 +140,8 @@ with_args <- function(.filters, ...) {
 
 # Reads a spec as it was written: the arguments `list()` sets and, in
 # `input ~ list(...)`, the input they are for. `NULL` for any other code, which
-# is evaluated instead. `list_is_args`: outside a formula or `across()`,
-# `list()` is a column's data.
+# is evaluated instead. `list_is_args`: outside a formula, `list()` is a
+# column's data.
 ._read_spec <- function(expr, call, list_is_args = TRUE) {
 	input <- NULL
 	if (is_formula(expr, lhs = TRUE)) {

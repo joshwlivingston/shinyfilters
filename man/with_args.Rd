@@ -9,18 +9,11 @@ with_args(.filters, ...)
 \arguments{
 \item{.filters}{A configuration created by \code{\link[=shinyfilters]{shinyfilters()}}.}
 
-\item{...}{Any number of formulas and \code{across()} calls. Each selects columns
-with <\code{\link[tidyselect:language]{tidy-select}}> and sets arguments for their
-inputs:
+\item{...}{Any number of formulas.
 \itemize{
 \item \code{cols ~ list(arg = value, ...)}: the columns on the left, their
 arguments on the right.
-\item \code{across(cols, list(arg = value, ...))}: the same, written like
-\code{\link[dplyr:across]{dplyr::across()}}.
 }
-
-\code{across()} is read as written and never run, so no package that defines
-it is needed.
 
 Arguments replace the ones shinyfilters passes for the column, such as
 \code{label}, \code{choices}, \code{min}, \code{max}, and \code{value}. \code{inputId} can't be set: an
@@ -58,7 +51,7 @@ filters$dep_delay
 with_args(filters, dep_delay ~ list(value = range(.x), step = 5))
 
 # The same arguments for several columns
-with_args(filters, across(c(dep_delay, distance), list(value = range(.x))))
+with_args(filters, c(dep_delay, distance) ~ list(value = range(.x)))
 
 # Different arguments for different columns
 with_args(

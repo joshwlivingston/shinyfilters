@@ -1,15 +1,3 @@
-# with_args() leaves another function named across() alone
-
-    Code
-      with_args(cfg, across(x, list(step = 2)))
-    Condition
-      Error in `with_args()`:
-      ! `with_args()` takes `cols ~ list(arg = value)` formulas and `across()` calls.
-      x `across(x, list(step = 2))` isn't one of these.
-      x `across()` is another function here. To select columns, use `dplyr::across()` or a formula.
-      i One column: `with_args(filters, x ~ list(value = range(.x), step = 5))`.
-      i Several columns: `with_args(filters, across(c(x, y), list(value = range(.x))))`.
-
 # print() shows what each way of writing with_args() sets
 
     Code
@@ -35,32 +23,6 @@
                                         value = range(.x, na.rm = TRUE)
                                         step  = 2
         a_very_very_long_name  <dbl>  sliderInput
-    Code
-      with_args(cfg, across(where(is.numeric), list(value = range(.x))))
-    Output
-      <shinyfilters> * 4 filters
-      
-      Filters
-        letters                <chr>  selectizeInput
-        factors                <fct>  selectizeInput
-        x                      <int>  sliderInput
-                                        value = range(.x, na.rm = TRUE)
-        a_very_very_long_name  <dbl>  sliderInput
-                                        value = range(.x, na.rm = TRUE)
-    Code
-      with_args(cfg, across(where(is.numeric), list(value = range(.x), step = 2)))
-    Output
-      <shinyfilters> * 4 filters
-      
-      Filters
-        letters                <chr>  selectizeInput
-        factors                <fct>  selectizeInput
-        x                      <int>  sliderInput
-                                        value = range(.x, na.rm = TRUE)
-                                        step  = 2
-        a_very_very_long_name  <dbl>  sliderInput
-                                        value = range(.x, na.rm = TRUE)
-                                        step  = 2
     Code
       with_args(cfg, x ~ list(value = range(.x)), letters ~ list(label = "Letters"))
     Output
@@ -104,23 +66,6 @@
                                            step  = 2
                                            width = "50%"
         #  a_very_very_long_name  <dbl>  numericInput
-      
-      Default Overrides
-        slider = FALSE
-      
-      # Filter set by default argument
-    Code
-      with_filters(cfg, across(where(is.numeric), list(step = 2)))
-    Output
-      <shinyfilters> * 4 filters
-      
-      Filters
-           letters                <chr>  selectizeInput
-           factors                <fct>  selectizeInput
-        #  x                      <int>  numericInput
-                                           step = 2
-        #  a_very_very_long_name  <dbl>  numericInput
-                                           step = 2
       
       Default Overrides
         slider = FALSE
@@ -215,23 +160,6 @@
       
       * Filter set by `with_filters()`
     Code
-      with_filters(cfg, across(where(is.numeric), "slider" ~ list(value = range(.x))))
-    Output
-      <shinyfilters> * 4 filters
-      
-      Filters
-           letters                <chr>  selectizeInput
-           factors                <fct>  selectizeInput
-        *  x                      <int>  sliderInput
-                                           value = range(.x, na.rm = TRUE)
-        *  a_very_very_long_name  <dbl>  sliderInput
-                                           value = range(.x, na.rm = TRUE)
-      
-      Default Overrides
-        slider = FALSE
-      
-      * Filter set by `with_filters()`
-    Code
       with_filters(cfg, letters = shiny::checkboxGroupInput ~ list(inline = TRUE,
         .update_fn = shiny::updateCheckboxGroupInput))
     Output
@@ -263,14 +191,13 @@
                                            inline = TRUE
                                            label  = "Letters"
         *  factors                <fct>  selectizeInput
-        ^  x                      <int>  sliderInput
-                                           value = range(.x, na.rm = TRUE)
-        *  a_very_very_long_name  <dbl>  sliderInput
-                                           value = range(.x, na.rm = TRUE)
+        ^  x                      <int>  numericInput
+        #  a_very_very_long_name  <dbl>  numericInput
       
       Default Overrides
         slider = FALSE
       
+      # Filter set by default argument
       * Filter set by `with_filters()`
       ^ Filter replaced by `with_filters()`
 
@@ -402,52 +329,41 @@
       with_args(cfg)
     Condition
       Error in `with_args()`:
-      ! `with_args()` takes `cols ~ list(arg = value)` formulas and `across()` calls.
+      ! `with_args()` takes `cols ~ list(arg = value)` formulas.
       i One column: `with_args(filters, x ~ list(value = range(.x), step = 5))`.
-      i Several columns: `with_args(filters, across(c(x, y), list(value = range(.x))))`.
+      i Several columns: `with_args(filters, c(x, y) ~ list(value = range(.x))))`.
     Code
       with_args(cfg, x = list(step = 2))
     Condition
       Error in `with_args()`:
-      ! `with_args()` takes `cols ~ list(arg = value)` formulas and `across()` calls.
+      ! `with_args()` takes `cols ~ list(arg = value)` formulas.
       x `x = list(step = 2)` isn't one of these.
       i One column: `with_args(filters, x ~ list(value = range(.x), step = 5))`.
-      i Several columns: `with_args(filters, across(c(x, y), list(value = range(.x))))`.
+      i Several columns: `with_args(filters, c(x, y) ~ list(value = range(.x))))`.
     Code
       with_args(cfg, x ~ "slider")
     Condition
       Error in `with_args()`:
-      ! `with_args()` takes `cols ~ list(arg = value)` formulas and `across()` calls.
+      ! `with_args()` takes `cols ~ list(arg = value)` formulas.
       x `x ~ "slider"` isn't one of these.
-      i To choose an input, use `with_filters()`.
       i One column: `with_args(filters, x ~ list(value = range(.x), step = 5))`.
-      i Several columns: `with_args(filters, across(c(x, y), list(value = range(.x))))`.
+      i Several columns: `with_args(filters, c(x, y) ~ list(value = range(.x))))`.
     Code
       with_args(cfg, x ~ "slider" ~ list(value = 1))
     Condition
       Error in `with_args()`:
-      ! `with_args()` takes `cols ~ list(arg = value)` formulas and `across()` calls.
+      ! `with_args()` takes `cols ~ list(arg = value)` formulas.
       x `x ~ "slider" ~ list(value = 1)` isn't one of these.
-      i To choose an input, use `with_filters()`.
       i One column: `with_args(filters, x ~ list(value = range(.x), step = 5))`.
-      i Several columns: `with_args(filters, across(c(x, y), list(value = range(.x))))`.
-    Code
-      with_args(cfg, across(x, "slider" ~ list(value = 1)))
-    Condition
-      Error in `with_args()`:
-      ! `with_args()` takes `cols ~ list(arg = value)` formulas and `across()` calls.
-      x `across(x, "slider" ~ list(value = 1))` isn't one of these.
-      i To choose an input, use `with_filters()`.
-      i One column: `with_args(filters, x ~ list(value = range(.x), step = 5))`.
-      i Several columns: `with_args(filters, across(c(x, y), list(value = range(.x))))`.
+      i Several columns: `with_args(filters, c(x, y) ~ list(value = range(.x))))`.
     Code
       with_args(cfg, x ~ list())
     Condition
       Error in `with_args()`:
-      ! `with_args()` takes `cols ~ list(arg = value)` formulas and `across()` calls.
+      ! `with_args()` takes `cols ~ list(arg = value)` formulas.
       x `x ~ list()` isn't one of these.
       i One column: `with_args(filters, x ~ list(value = range(.x), step = 5))`.
-      i Several columns: `with_args(filters, across(c(x, y), list(value = range(.x))))`.
+      i Several columns: `with_args(filters, c(x, y) ~ list(value = range(.x))))`.
     Code
       with_args(cfg, x ~ list(step = 2, 5))
     Condition
@@ -483,33 +399,4 @@
       ! Can't evaluate `max = nope * 2`.
       Caused by error:
       ! object 'nope' not found
-    Code
-      with_args(cfg, across(x))
-    Condition
-      Error in `with_args()`:
-      ! `with_args()` takes `cols ~ list(arg = value)` formulas and `across()` calls.
-      x `across(x)` isn't one of these.
-      i One column: `with_args(filters, x ~ list(value = range(.x), step = 5))`.
-      i Several columns: `with_args(filters, across(c(x, y), list(value = range(.x))))`.
-    Code
-      with_args(cfg, across(x, step = 2, min = 0))
-    Condition
-      Error in `with_args()`:
-      ! `across()` takes only `.cols` and `.fns` here.
-      x Got 2 extra arguments.
-      i Put the arguments in `list()`.
-    Code
-      with_args(cfg, across(x, list(step = 2), .names = "a"))
-    Condition
-      Error in `with_args()`:
-      ! `across()` doesn't support `.names` here.
-      i It selects columns; it doesn't rename them.
-    Code
-      with_args(cfg, x = across(x, list(step = 2)))
-    Condition
-      Error in `with_args()`:
-      ! `with_args()` takes `cols ~ list(arg = value)` formulas and `across()` calls.
-      x `x = across(x, list(step = 2))` isn't one of these.
-      i One column: `with_args(filters, x ~ list(value = range(.x), step = 5))`.
-      i Several columns: `with_args(filters, across(c(x, y), list(value = range(.x))))`.
 
