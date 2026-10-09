@@ -206,7 +206,11 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	if (missing(i)) {
 		return(x)
 	}
-	selection <- new_quosure(substitute(i), parent.frame())
+	selection <- if (isNamespaceLoaded("tidyselect")) {
+		new_quosure(substitute(i), parent.frame())
+	} else {
+		substitute(i)
+	}
 	res <- ._select_columns(x, selection, as_label(selection), call)
 	inputs <- filterInput(res)
 	# One column gives its input, as `$` does.
@@ -231,7 +235,11 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	if (missing(i)) {
 		return(x)
 	}
-	selection <- new_quosure(substitute(i), parent.frame())
+	selection <- selection <- if (isNamespaceLoaded("tidyselect")) {
+		new_quosure(substitute(i), parent.frame())
+	} else {
+		substitute(i)
+	}
 	._select_columns(x, selection, as_label(selection), call)
 }
 
@@ -293,13 +301,8 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 ._select_columns <- function(x, selection, label, call) {
 	._private()
 	cols <- try_fetch(
-		names(eval_select(
-			selection,
-			x@data,
-			allow_rename = FALSE,
-			error_call = call
-		)),
-		vctrs_error_subscript = function(cnd) {
+		._select_by_pkg(x, selection, call),
+		error = function(cnd) {
 			cnd$call <- call
 			stop(cnd)
 		}
@@ -316,6 +319,12 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 		added = if (length(added) > 0) added else character(),
 		replaced = if (length(replaced) > 0) replaced else character()
 	)
+}
+
+._base_eval_select <- function(x, sel) {
+	nl <- as.list(seq_along(x))
+	names(nl) <- names(x)
+	eval(sel, nl, parent.frame())
 }
 
 # Creates the input for one column, selected by name or position
@@ -787,12 +796,15 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 #'   origin = "radio"
 #' )
 #'
-#' # across() selects columns too. Later arguments win.
-#' with_filters(
-#'   filters,
-#'   across(everything(), "selectize"),
-#'   origin = "radio"
-#' )
+#' # across() selects columns too
+#' if (requireNamespace("tidyselect", quietly = TRUE)) {
+#'   with_filters(
+#'     filters,
+#'     across(tidyselect::everything(), "selectize"),
+#'     origin = "radio"
+#'   )
+#' }
+#'
 #'
 #' # Give an input its arguments. `.x` is the column the input is for.
 #' with_filters(filters, dep_delay = "slider" ~ list(value = range(.x)))
@@ -919,14 +931,22 @@ method(.with_filters, class_shinyfilters) <- function(
 	._spec_override(spec, quo_get_env(quo), config, call = call, fn = fn)
 }
 
+._select_by_pkg <- function(x, selection, call) {
+	if (isNamespaceLoaded("tidyselect")) {
+		names(tidyselect::eval_select(
+			selection,
+			x@data,
+			allow_rename = FALSE,
+			error_call = call
+		))
+	} else {
+		._base_eval_select(x, selection)
+	}
+}
+
 # The columns a tidyselect expression selects: at least one
 ._eval_cols <- function(config, cols, call) {
-	selected <- names(eval_select(
-		cols,
-		config@data,
-		allow_rename = FALSE,
-		error_call = call
-	))
+	selected <- ._select_by_pkg(config, cols, call)
 	if (length(selected) == 0) {
 		cli_abort(
 			"{.code {as_label(cols)}} doesn't select any columns.",

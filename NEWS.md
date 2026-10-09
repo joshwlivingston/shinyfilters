@@ -13,7 +13,7 @@
 
 * `[` keeps only the selected columns of a configuration (#105).
 * `[[`, and `$` return the input for one column of a configuration (#105).
-* The tidyselect helpers, such as `everything()` and `where()`, are re-exported and supported in `[` and `[[`.
+* The tidyselect helpers, such as `everything()` and `where()`, are optionally supported in `[` and `[[`.
 
 ### Add, remove, or modify filters
 

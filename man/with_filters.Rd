@@ -94,12 +94,15 @@ with_filters(
   origin = "radio"
 )
 
-# across() selects columns too. Later arguments win.
-with_filters(
-  filters,
-  across(everything(), "selectize"),
-  origin = "radio"
-)
+# across() selects columns too
+if (requireNamespace("tidyselect", quietly = TRUE)) {
+  with_filters(
+    filters,
+    across(tidyselect::everything(), "selectize"),
+    origin = "radio"
+  )
+}
+
 
 # Give an input its arguments. `.x` is the column the input is for.
 with_filters(filters, dep_delay = "slider" ~ list(value = range(.x)))

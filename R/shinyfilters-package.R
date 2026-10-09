@@ -68,7 +68,7 @@
 #'
 #' ```
 #' ui <- function(request) {
-#'   page_sidebar(sidebar = filters[[everything()]])
+#'   page_sidebar(sidebar = filterInput(filters))
 #' }
 #' ```
 #' <br>
@@ -154,8 +154,6 @@ NULL
 #' @importFrom cli qty
 #' @importFrom cli symbol
 #' @importFrom htmltools tagList
-#' @importFrom methods formalArgs
-#' @importFrom methods functionBody
 #' @importFrom rlang as_label
 #' @importFrom rlang call_args
 #' @importFrom rlang call_match
@@ -212,7 +210,6 @@ NULL
 #' @importFrom shiny NS
 #' @importFrom shiny observe
 #' @importFrom shiny reactiveValues
-#' @importFrom tidyselect eval_select
 #' @importFrom utils getS3method
 #' @importFrom utils methods
 #' @importFrom utils modifyList

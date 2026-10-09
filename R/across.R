@@ -48,7 +48,7 @@
 # arguments of a captured call, fill in the defaults, and collect anything else
 # into `...`, so every unsupported form gets its own error.
 ._across_signature <- function(
-	.cols = everything(),
+	.cols = NULL,
 	.fns = NULL,
 	...,
 	.names = NULL

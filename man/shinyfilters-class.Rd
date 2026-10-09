@@ -73,7 +73,7 @@ The following functions create filters:
 }
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{ui <- function(request) \{
-  page_sidebar(sidebar = filters[[everything()]])
+  page_sidebar(sidebar = filterInput(filters))
 \}
 }\if{html}{\out{</div>}}\if{html}{\out{
 <br>

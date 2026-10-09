@@ -138,7 +138,7 @@ filters %>%
 ```
 
 * Use `across()` inside `with_filters()`:
-```{r, eval = getRversion() >= "4.1", include = getRversion() >= "4.1"}
+```{r, eval = getRversion() >= "4.1" && requireNamespace("tidyselect", quietly = TRUE), include = getRversion() >= "4.1"}
 filters |>
 	with_filters(
 		across(where(is.numeric), list(value = range(.x)))
@@ -216,7 +216,19 @@ allowing you to place the filters anywhere in an application
 
 * Use `[`:
 ```{r}
+filters[-c(carrier, origin)]
+```
+
+* Use `[` with <[`tidy-select`][tidyselect::language]>:
+```{r, eval = requireNamespace("tidyselect", quietly = TRUE), message = FALSE}
+library(tidyselect)
+
 filters[starts_with("d")]
+```
+
+* Select and create with `[[`:
+```{r}
+filters[[c(carrier, origin)]]
 ```
 <br>
 
