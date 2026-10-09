@@ -5,6 +5,8 @@
 \alias{shinyfilters-package}
 \title{shinyfilters: Create 'shiny' Inputs from Vectors, 'data.frames', or any R Object}
 \description{
+\if{html}{\figure{logo.svg}{options: style='float: right' alt='logo' width='120'}}
+
 Provides an interface to 'shiny' inputs used for filtering vectors, data.frames, and other objects. 'S7'-based implementation allows for seamless extensibility.
 }
 \seealso{
