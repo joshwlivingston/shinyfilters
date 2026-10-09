@@ -206,11 +206,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	if (missing(i)) {
 		return(x)
 	}
-	selection <- if (isNamespaceLoaded("tidyselect")) {
-		new_quosure(substitute(i), parent.frame())
-	} else {
-		substitute(i)
-	}
+	selection <- new_quosure(substitute(i), parent.frame())
 	res <- ._select_columns(x, selection, as_label(selection), call)
 	inputs <- filterInput(res)
 	# One column gives its input, as `$` does.
@@ -235,11 +231,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	if (missing(i)) {
 		return(x)
 	}
-	selection <- selection <- if (isNamespaceLoaded("tidyselect")) {
-		new_quosure(substitute(i), parent.frame())
-	} else {
-		substitute(i)
-	}
+	selection <- new_quosure(substitute(i), parent.frame())
 	._select_columns(x, selection, as_label(selection), call)
 }
 
@@ -324,22 +316,12 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 ._base_eval_select <- function(x, sel) {
 	nl <- seq_along(x)
 	names(nl) <- names(x)
-	if (is_quosure(sel)) {
-		sel <- quo_get_expr(sel)
+	expr <- quo_get_expr(sel)
+	res <- eval_tidy(sel, nl)
+	if (!is.character(res)) {
+		res <- names(x)[res]
 	}
-	parsed <- ._get_dropped_expr(sel, FALSE)
-	cols <- eval(parsed$expr, as.list(nl), parent.frame())
-	if (parsed$is_drop) {
-		cols <- setdiff(names(x), cols)
-	}
-	nl[cols]
-}
-
-._get_dropped_expr <- function(x, res = FALSE) {
-	if (length(x) == 1 || !identical(x[[1]], sym("!"))) {
-		return(list(expr = x, is_drop = res))
-	}
-	._get_dropped_expr(x[[2:length(x)]], !res)
+	return(res)
 }
 
 # Creates the input for one column, selected by name or position
@@ -733,7 +715,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 #'
 #' @param .filters A configuration created by [shinyfilters()].
 #' @param ... Either two unnamed arguments, or any number of named arguments,
-#'   formulas, and `across()` calls:
+#'   or formulas:
 #'
 #'   * `with_filters(.filters, cols, input)`: `cols` selects columns with
 #'     <[`tidy-select`][tidyselect::language]>, such as `cyl`,
@@ -749,17 +731,8 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 #'   * `with_filters(.filters, cols ~ input, ...)`: a two-sided formula selects
 #'     columns on its left, like `cols` above, and names one input for all of
 #'     them on its right. It can be mixed with named columns.
-#'   * `with_filters(.filters, across(cols, input), ...)`: `across()` does the
-#'     same as a formula, with the first two arguments of [dplyr::across()].
-#'     `cols` defaults to every column, and `input` can be a one-sided
-#'     formula, such as `~ "slider"`. Its other arguments aren't supported.
-#'     The call is read as written and never run, so \pkg{dplyr} isn't
-#'     needed. Another function named `across()`, your own or an attached
-#'     package's, is never read this way: it is called like any other
-#'     function. Write `dplyr::across()` to select columns then.
 #'   * `with_filters(.filters, cols ~ list(arg = value), ...)`: sets arguments
 #'     of the inputs the columns have, as [with_args()] does.
-#'     `across(cols, list(arg = value))` works too.
 #'
 #'   Each input is either a keyword or the \pkg{shiny} input function it
 #'   stands for, such as [shiny::radioButtons()] for `"radio"`. The keywords
@@ -811,16 +784,6 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 #'   origin = "radio"
 #' )
 #'
-#' # across() selects columns too
-#' if (requireNamespace("tidyselect", quietly = TRUE)) {
-#'   with_filters(
-#'     filters,
-#'     across(tidyselect::everything(), "selectize"),
-#'     origin = "radio"
-#'   )
-#' }
-#'
-#'
 #' # Give an input its arguments. `.x` is the column the input is for.
 #' with_filters(filters, dep_delay = "slider" ~ list(value = range(.x)))
 #'
@@ -860,27 +823,17 @@ method(.with_filters, class_shinyfilters) <- function(
 	}
 	nms <- names2(quos)
 	named <- nms != ""
-	is_across <- vapply(quos, ._is_across_call, logical(1))
 	is_formula <- !named & vapply(quos, ._is_cols_formula, logical(1))
 
-	if (any(is_across & named)) {
-		i <- which(is_across & named)[[1]]
-		._abort_across_named(nms[[i]], call = .call)
-	}
-
-	loose <- !named & !is_across & !is_formula
+	loose <- !named & !is_formula
 	if (any(loose)) {
 		._abort_with_filter_form(quos[loose], call = .call)
 	}
 
 	# One argument at a time, so each sees the columns the earlier ones computed.
 	for (i in seq_along(quos)) {
-		if (is_across[[i]] || is_formula[[i]]) {
-			spec <- if (is_formula[[i]]) {
-				._formula_spec(quos[[i]])
-			} else {
-				._across_spec(quos[[i]], call = .call)
-			}
+		if (is_formula[[i]]) {
+			spec <- ._formula_spec(quos[[i]])
 			config <- ._override_cols(
 				config,
 				spec$cols,
@@ -909,19 +862,13 @@ method(.with_filters, class_shinyfilters) <- function(
 		return(FALSE)
 	}
 	cols <- quos[[1]]
-	!._is_across_call(cols) &&
-		!._is_cols_formula(cols) &&
-		!._is_across_call(quos[[2]])
+	!._is_cols_formula(cols)
 }
 
 ._abort_with_filter_form <- function(quos, call) {
 	cli_abort(
 		c(
-			"{.fn with_filters} takes two unnamed arguments, or named arguments, {.code cols ~ input} formulas, and {.fn across} calls.",
-			x = ._other_across_hint(quos),
-			i = "Select columns: {.code with_filters(filters, c(a, b), \"radio\")}.",
-			i = "Name columns: {.code with_filters(filters, a = \"radio\", b = \"slider\")}.",
-			i = "Mix the two: {.code with_filters(filters, c(a, b) ~ \"radio\", x = \"slider\")}."
+			"{.fn with_filters} takes two unnamed arguments, named arguments, or formulas."
 		),
 		call = call
 	)
@@ -936,8 +883,8 @@ method(.with_filters, class_shinyfilters) <- function(
 	._set_overrides(config, overrides)
 }
 
-# What the right side of a formula, or the second argument of `across()`, gives
-# its columns: a spec, read as written, or an input, evaluated.
+# What the right side of a formula gives its columns: a spec, read as written,
+# or an input, evaluated.
 ._value_override <- function(config, quo, call, fn) {
 	spec <- ._read_spec(quo_get_expr(quo), call = call)
 	if (is.null(spec)) {
@@ -949,16 +896,16 @@ method(.with_filters, class_shinyfilters) <- function(
 ._select_by_pkg <- function(x, selection, call) {
 	if (isNamespaceLoaded("tidyselect")) {
 		cols <-
-			tidyselect::eval_select(
+			names(tidyselect::eval_select(
 				selection,
 				x@data,
 				allow_rename = FALSE,
 				error_call = call
-			)
+			))
 	} else {
 		cols <- ._base_eval_select(x, selection)
 	}
-	names(cols)
+	cols
 }
 
 # The columns a tidyselect expression selects: at least one

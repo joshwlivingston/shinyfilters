@@ -10,7 +10,7 @@ with_filters(.filters, ...)
 \item{.filters}{A configuration created by \code{\link[=shinyfilters]{shinyfilters()}}.}
 
 \item{...}{Either two unnamed arguments, or any number of named arguments,
-formulas, and \code{across()} calls:
+or formulas:
 \itemize{
 \item \code{with_filters(.filters, cols, input)}: \code{cols} selects columns with
 <\code{\link[tidyselect:language]{tidy-select}}>, such as \code{cyl},
@@ -26,17 +26,8 @@ same name.
 \item \code{with_filters(.filters, cols ~ input, ...)}: a two-sided formula selects
 columns on its left, like \code{cols} above, and names one input for all of
 them on its right. It can be mixed with named columns.
-\item \code{with_filters(.filters, across(cols, input), ...)}: \code{across()} does the
-same as a formula, with the first two arguments of \code{\link[dplyr:across]{dplyr::across()}}.
-\code{cols} defaults to every column, and \code{input} can be a one-sided
-formula, such as \code{~ "slider"}. Its other arguments aren't supported.
-The call is read as written and never run, so \pkg{dplyr} isn't
-needed. Another function named \code{across()}, your own or an attached
-package's, is never read this way: it is called like any other
-function. Write \code{dplyr::across()} to select columns then.
 \item \code{with_filters(.filters, cols ~ list(arg = value), ...)}: sets arguments
 of the inputs the columns have, as \code{\link[=with_args]{with_args()}} does.
-\code{across(cols, list(arg = value))} works too.
 }
 
 Each input is either a keyword or the \pkg{shiny} input function it
@@ -93,16 +84,6 @@ with_filters(
   where(is.character) ~ "selectize",
   origin = "radio"
 )
-
-# across() selects columns too
-if (requireNamespace("tidyselect", quietly = TRUE)) {
-  with_filters(
-    filters,
-    across(tidyselect::everything(), "selectize"),
-    origin = "radio"
-  )
-}
-
 
 # Give an input its arguments. `.x` is the column the input is for.
 with_filters(filters, dep_delay = "slider" ~ list(value = range(.x)))

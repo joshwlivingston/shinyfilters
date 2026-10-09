@@ -172,34 +172,22 @@
       with_filters(cfg)
     Condition
       Error in `with_filters()`:
-      ! `with_filters()` takes two unnamed arguments, or named arguments, `cols ~ input` formulas, and `across()` calls.
-      i Select columns: `with_filters(filters, c(a, b), "radio")`.
-      i Name columns: `with_filters(filters, a = "radio", b = "slider")`.
-      i Mix the two: `with_filters(filters, c(a, b) ~ "radio", x = "slider")`.
+      ! `with_filters()` takes two unnamed arguments, named arguments, or formulas.
     Code
       with_filters(cfg, x)
     Condition
       Error in `with_filters()`:
-      ! `with_filters()` takes two unnamed arguments, or named arguments, `cols ~ input` formulas, and `across()` calls.
-      i Select columns: `with_filters(filters, c(a, b), "radio")`.
-      i Name columns: `with_filters(filters, a = "radio", b = "slider")`.
-      i Mix the two: `with_filters(filters, c(a, b) ~ "radio", x = "slider")`.
+      ! `with_filters()` takes two unnamed arguments, named arguments, or formulas.
     Code
       with_filters(cfg, x, "radio", "slider")
     Condition
       Error in `with_filters()`:
-      ! `with_filters()` takes two unnamed arguments, or named arguments, `cols ~ input` formulas, and `across()` calls.
-      i Select columns: `with_filters(filters, c(a, b), "radio")`.
-      i Name columns: `with_filters(filters, a = "radio", b = "slider")`.
-      i Mix the two: `with_filters(filters, c(a, b) ~ "radio", x = "slider")`.
+      ! `with_filters()` takes two unnamed arguments, named arguments, or formulas.
     Code
       with_filters(cfg, x = "radio", "letters")
     Condition
       Error in `with_filters()`:
-      ! `with_filters()` takes two unnamed arguments, or named arguments, `cols ~ input` formulas, and `across()` calls.
-      i Select columns: `with_filters(filters, c(a, b), "radio")`.
-      i Name columns: `with_filters(filters, a = "radio", b = "slider")`.
-      i Mix the two: `with_filters(filters, c(a, b) ~ "radio", x = "slider")`.
+      ! `with_filters()` takes two unnamed arguments, named arguments, or formulas.
     Code
       with_filters(cfg, nope = "radio")
     Condition
@@ -235,10 +223,7 @@
       with_filters(cfg, ~"radio")
     Condition
       Error in `with_filters()`:
-      ! `with_filters()` takes two unnamed arguments, or named arguments, `cols ~ input` formulas, and `across()` calls.
-      i Select columns: `with_filters(filters, c(a, b), "radio")`.
-      i Name columns: `with_filters(filters, a = "radio", b = "slider")`.
-      i Mix the two: `with_filters(filters, c(a, b) ~ "radio", x = "slider")`.
+      ! `with_filters()` takes two unnamed arguments, named arguments, or formulas.
     Code
       with_filters(cfg, x, c("radio", "slider"))
     Condition
