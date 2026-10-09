@@ -155,12 +155,9 @@ NULL
 #' @importFrom htmltools tagList
 #' @importFrom methods formalArgs
 #' @importFrom methods functionBody
-#' @importFrom rlang !!
-#' @importFrom rlang !!!
 #' @importFrom rlang as_label
 #' @importFrom rlang call_args
 #' @importFrom rlang call_match
-#' @importFrom rlang call_modify
 #' @importFrom rlang call2
 #' @importFrom rlang caller_arg
 #' @importFrom rlang caller_env
@@ -215,7 +212,6 @@ NULL
 #' @importFrom shiny observe
 #' @importFrom shiny reactiveValues
 #' @importFrom tidyselect eval_select
-#' @importFrom tidyselect vars_pull
 #' @importFrom utils getS3method
 #' @importFrom utils methods
 #' @importFrom utils modifyList

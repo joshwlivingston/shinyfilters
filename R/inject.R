@@ -19,9 +19,7 @@ expr_inject <- function(expr, env, arg, value, overwrite) {
 		return(expr)
 	}
 
-	# 1. Recurse into arguments FIRST
-	# Using native base R AST modification (expr[[i]]) is vastly safer than rlang::call_modify
-	# because it preserves positional structure precisely.
+	# 1. Recurse into arguments
 	if (length(expr) > 1) {
 		for (i in 2:length(expr)) {
 			expr[[i]] <- expr_inject(expr[[i]], env, arg, value, overwrite)

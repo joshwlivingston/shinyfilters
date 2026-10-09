@@ -101,13 +101,10 @@ importFrom(methods,
   functionBody
 )
 importFrom(rlang,
-  "!!!",
-  "!!",
   as_label,
   call2,
   call_args,
   call_match,
-  call_modify,
   caller_arg,
   caller_env,
   current_call,
@@ -172,7 +169,6 @@ importFrom(tidyselect,
   num_range,
   one_of,
   starts_with,
-  vars_pull,
   where
 )
 importFrom(utils,
