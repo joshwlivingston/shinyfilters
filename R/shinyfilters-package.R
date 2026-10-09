@@ -20,7 +20,8 @@
 #'
 #' ## Shape
 #'
-#' `dim(filters)`, `nrow(filters)`, and `ncol(filters)` describe the dimensions.
+#' `dim(filters)`, `length(filters)`, `nrow(filters)`, and `ncol(filters)`
+#' describe the dimensions.
 #'
 #' ## Data
 #'

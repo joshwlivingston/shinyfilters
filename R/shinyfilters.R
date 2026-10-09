@@ -252,6 +252,10 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	dim(x@data)
 }
 
+`length.shinyfilters::shinyfilters` <- function(x) {
+	length(x@data)
+}
+
 # shiny renders the page after its restore context has closed, so inputs
 # created here would silently ignore bookmarked values. Inside a session
 # (`renderUI()`, `insertUI()`), the session's restore context still applies.

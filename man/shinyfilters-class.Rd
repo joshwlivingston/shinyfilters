@@ -20,7 +20,8 @@ The object behaves much like the data.frame that defines it.
 
 \subsection{Shape}{
 
-\code{dim(filters)}, \code{nrow(filters)}, and \code{ncol(filters)} describe the dimensions.
+\code{dim(filters)}, \code{length(filters)}, \code{nrow(filters)}, and \code{ncol(filters)}
+describe the dimensions.
 }
 
 \subsection{Data}{
