@@ -313,16 +313,45 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	)
 }
 
-._base_eval_select <- function(x, sel) {
+._base_eval_select <- function(x, sel, call) {
 	nl <- seq_along(x)
 	names(nl) <- names(x)
-	expr <- quo_get_expr(sel)
-	res <- eval_tidy(sel, nl)
-	if (!is.character(res)) {
-		res <- names(x)[res]
+	res <- tryCatch(
+		eval_tidy(sel, nl),
+		error = function(e) {
+			abort_column_not_found(sel, call)
+		}
+	)
+	if (is.character(res)) {
+		missing <- setdiff(res, names(x))
+		if (length(missing) == 1) {
+			abort_column_not_found(sel, call)
+		} else if (length(missing) > 1) {
+			abort_columns_not_found(missing, call)
+		}
+		return(res)
 	}
-	return(res)
+	names(x)[res]
 }
+
+abort_column_not_found <- function(quo, call) {
+	abort_not_found(as_label(quo), call)
+}
+
+abort_columns_not_found <- function(cols, call) {
+	abort_not_found(cols, call)
+}
+
+abort_not_found <- function(x, call) {
+	cli_abort(
+		c(
+			"Can't select columns that don't exist.",
+			"x" = "Column{?s} {.code {x}} {?doesn't/don't} exist."
+		),
+		call = call
+	)
+}
+
 
 # Creates the input for one column, selected by name or position
 ._config_column <- function(config, col, call) {
@@ -891,7 +920,7 @@ method(.with_filters, class_shinyfilters) <- function(
 				error_call = call
 			))
 	} else {
-		cols <- ._base_eval_select(x, selection)
+		cols <- ._base_eval_select(x, selection, call)
 	}
 	cols
 }
