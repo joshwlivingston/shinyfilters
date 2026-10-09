@@ -381,16 +381,28 @@ test_that("print() shows what each way of writing with_filters() sets", {
 		with_filters(cfg, x = "slider" ~ list(value = range(.x), step = 2))
 		with_filters(cfg, x = shiny::sliderInput ~ list(value = range(.x)))
 
-		with_filters(cfg, where(is.numeric) ~ "slider" ~ list(value = range(.x)))
-		with_filters(
-			cfg,
-			where(is.numeric) ~ "slider" ~ list(value = range(.x), step = 2)
-		)
-
 		with_filters(
 			cfg,
 			letters = shiny::checkboxGroupInput ~
 				list(inline = TRUE, .update_fn = shiny::updateCheckboxGroupInput)
+		)
+	})
+})
+
+test_that("print() shows what each way of writing with_filters() sets (tidyselect)", {
+	skip_if_not_installed('tidyselect')
+	cfg <- shinyfilters(df_config, slider = FALSE)
+	expect_snapshot(variant = snapshot_variant(), {
+		with_filters(
+			cfg,
+			tidyselect::where(is.numeric) ~ "slider" ~ list(value = range(.x))
+		)
+		with_filters(
+			cfg,
+			tidyselect::where(is.numeric) ~ "slider" ~ list(
+				value = range(.x),
+				step = 2
+			)
 		)
 	})
 })

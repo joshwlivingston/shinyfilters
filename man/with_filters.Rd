@@ -12,10 +12,6 @@ with_filters(.filters, ...)
 \item{...}{Either two unnamed arguments, or any number of named arguments,
 or formulas:
 \itemize{
-\item \code{with_filters(.filters, cols, input)}: \code{cols} selects columns with
-<\code{\link[tidyselect:language]{tidy-select}}>, such as \code{cyl},
-\code{c(mpg, disp)}, or \code{where(is.numeric)}. In place of \code{input},
-\code{list(arg = value)} sets arguments of the inputs the columns have.
 \item \code{with_filters(.filters, col = input, ...)}: each name is a column.
 \item \code{with_filters(.filters, col = expression, ...)}: adds or replaces a
 column, computed from the other columns. A replaced column keeps its
@@ -74,16 +70,8 @@ filters <- shinyfilters(nyc_flights)
 filters <- with_filters(filters, origin = "radio", carrier = "selectize")
 filters
 
-# Choose one input for several columns with tidyselect
-filters <- with_filters(filters, where(is.numeric), "slider")
-filterInput(filters)
-
-# Or select columns and name others in one call
-with_filters(
-  filters,
-  where(is.character) ~ "selectize",
-  origin = "radio"
-)
+# Choose one input for several columns
+filters <- with_filters(filters, dep_delay:origin, "slider")
 
 # Give an input its arguments. `.x` is the column the input is for.
 with_filters(filters, dep_delay = "slider" ~ list(value = range(.x)))

@@ -843,10 +843,8 @@ test_that("`[` returns a config with the selected columns", {
 	expect_identical(names(cfg[c("x", "x")]), "x")
 	expect_identical(names(cfg[c(x, letters)]), c("x", "letters"))
 	cols <- c("factors", "x")
-	expect_identical(names(cfg[all_of(cols)]), cols)
 	x <- "letters"
 	expect_identical(names(cfg[x]), "x")
-	expect_identical(names(cfg[all_of(x)]), "letters")
 	expect_snapshot(
 		print(cfg[c("letters", "x")]),
 		variant = snapshot_variant()
@@ -861,6 +859,8 @@ test_that("`[` returns a config with the selected columns (tidyselect)", {
 		names(cfg[tidyselect::where(is.numeric)]),
 		c("x", "a_very_very_long_name")
 	)
+	expect_identical(names(cfg[tidyselect::all_of(cols)]), cols)
+	expect_identical(names(cfg[tidyselect::all_of(x)]), "letters")
 })
 
 test_that("`[` errors on unknown columns", {

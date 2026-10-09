@@ -717,10 +717,6 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 #' @param ... Either two unnamed arguments, or any number of named arguments,
 #'   or formulas:
 #'
-#'   * `with_filters(.filters, cols, input)`: `cols` selects columns with
-#'     <[`tidy-select`][tidyselect::language]>, such as `cyl`,
-#'     `c(mpg, disp)`, or `where(is.numeric)`. In place of `input`,
-#'     `list(arg = value)` sets arguments of the inputs the columns have.
 #'   * `with_filters(.filters, col = input, ...)`: each name is a column.
 #'   * `with_filters(.filters, col = expression, ...)`: adds or replaces a
 #'     column, computed from the other columns. A replaced column keeps its
@@ -773,16 +769,8 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 #' filters <- with_filters(filters, origin = "radio", carrier = "selectize")
 #' filters
 #'
-#' # Choose one input for several columns with tidyselect
-#' filters <- with_filters(filters, where(is.numeric), "slider")
-#' filterInput(filters)
-#'
-#' # Or select columns and name others in one call
-#' with_filters(
-#'   filters,
-#'   where(is.character) ~ "selectize",
-#'   origin = "radio"
-#' )
+#' # Choose one input for several columns
+#' filters <- with_filters(filters, dep_delay:origin, "slider")
 #'
 #' # Give an input its arguments. `.x` is the column the input is for.
 #' with_filters(filters, dep_delay = "slider" ~ list(value = range(.x)))

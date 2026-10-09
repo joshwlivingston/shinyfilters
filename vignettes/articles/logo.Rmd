@@ -1,0 +1,1453 @@
+---
+title: "Building the logo"
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+	collapse = TRUE,
+	comment = "#>",
+	fig.align = "center",
+	out.width = "70%"
+)
+```
+
+The shinyfilters hex logo is a funnel with Shiny's swoosh across it at the top
+of the sticker, and "shinyfilters" level across the bottom. Nothing has an
+outline or a shadow. The sticker and the funnel each fade from top to bottom.
+
+This article builds the logo, and then [draws over it](#diagrams) to show that
+each thing it says of the logo is so. Its code runs when the site is built, so
+every picture here is what the code beside it draws.
+
+Only a few things are [set by hand](#set-by-hand): the font, the colors of the
+sticker, the size, shape and place of the swoosh, and a few sizes of the
+funnel. The rest is worked out from those, so that the parts fit:
+
+- The head of the swoosh. In Shiny's logo the swoosh grows out of the "y", and
+  has no head of its own. Here its lower edge runs on round the circle that it
+  is curving along where Shiny's stops, and ends in a point on that circle.
+- The top of the funnel. It is as wide as the circle that the far edge of the
+  swoosh's fin lies on. And it is at the height where the circle of the head is
+  at its highest, which is exactly where the top edge of the funnel stops and
+  its right corner starts: carried on, the head would run into the top of the
+  funnel without a turn.
+- The lip of the funnel, where its sides run straight down from its top. Put
+  the circle of the fin on the funnel, with its middle half way down the lip,
+  and it rests on the lower edge of the swoosh: it touches that edge and does
+  not cross it.
+- The neck of the funnel. The cone ends on the lower edge of the swoosh, on
+  both sides, so that only the spout shows below the swoosh.
+- Where things sit. The swoosh is in the middle of the sticker from side to
+  side, and it and the funnel are as near the top as they can be with a margin
+  between them and the border. The word is as wide as the swoosh, so each
+  starts and ends where the other does, and is as near the bottom as it can be
+  with the same margin. The spout stops the same margin above the word.
+- The colors of the funnel. They are tints of the magenta that heads a printed
+  `<shinyfilters>` object, #BB00BB, chosen so that the funnel stands out from
+  the sticker behind it by the same amount all the way down: a little more than
+  the 3 to 1 that WCAG 2.1 asks of the edge of a shape (1.4.11, non-text
+  contrast).
+
+Only the swoosh alludes to Shiny's logo. The lettering and the colors are
+deliberately not Shiny's.
+
+## Sources
+
+There are two, both pinned to a commit:
+
+- Swoosh: the Shiny sticker in rstudio/hex-stickers, CC0 1.0.
+- Lettering: Baloo 2 Medium, SIL Open Font License 1.1.
+
+The outlines of the letters are read with systemfonts and textshaping.
+
+```{r}
+library(systemfonts)
+library(textshaping)
+
+shiny_url <- paste0(
+	"https://raw.githubusercontent.com/rstudio/hex-stickers/",
+	"69528093ef59f541e5a4798dbcb00e60267e8870/SVG/shiny.svg"
+)
+font_url <- paste0(
+	"https://raw.githubusercontent.com/google/fonts/",
+	"00ab40e1cdf29190ad0c1432c079f950185e11f4/",
+	"ofl/baloo2/Baloo2-Medium.ttf"
+)
+```
+
+## Set by hand
+
+### Colors
+
+```{r}
+sky <- c("#4A0D82", "#1C0038") # the sticker, top to bottom
+edge <- "#10002B" # its border
+ink <- "#FFFFFF" # the word and the swoosh
+```
+
+The funnel has no colors here: they are worked out from the sticker's,
+[below](#the-colors-of-the-funnel). It stands out from the sticker by this
+much, as WCAG measures contrast, which is a little more than the 3 that it asks
+for.
+
+```{r}
+contrast <- 3.1
+```
+
+### Sticker
+
+Everything below is in the sticker's units unless it says otherwise: 2521 wide
+and 2911 high, with y running down. The Shiny sticker is the same size.
+
+```{r}
+size <- c(2521, 2911)
+edge_width <- 72 # of the border
+margin <- edge_width # between the border and what is nearest to it
+```
+
+### Wordmark
+
+How big the word is and where it sits are not set here: the swoosh and the
+border decide them, [below](#where-things-sit).
+
+```{r}
+word <- "shinyfilters"
+```
+
+### Swoosh
+
+Shiny's swoosh is drawn against the baseline of Shiny's lettering, which climbs
+at `level`. `foot` is a point on that baseline, on Shiny's sticker: the foot of
+the "h". The swoosh is first put in units in which `foot` is at 0 and the
+baseline is level, with x along it and y down from it.
+
+```{r}
+level <- 7.5
+foot <- c(760, 1548)
+```
+
+There it is stretched along and across the baseline, about the point
+`swoosh_cut`, which is on the stroke that joined its head to the "y". Then it
+is scaled, and turned to climb again: at `climb`, which is the angle it climbs
+at in Shiny's logo, and by `swoosh_tilt` more, where less than 0 is steeper.
+`swoosh_cut` then goes at `swoosh_at` on the sticker. That is not yet where the
+swoosh ends up: it and the funnel are moved together,
+[below](#where-things-sit), to their place by the border.
+
+```{r}
+swoosh_cut <- c(1463, -73)
+swoosh_stretch <- c(1.95, 1.3)
+swoosh_scale <- 0.462
+climb <- 7.5
+swoosh_tilt <- -2.8
+swoosh_at <- c(2113, 1197)
+swoosh_run <- 40 # how far round its circle the head runs on, in degrees
+```
+
+### Funnel
+
+Where it is, how wide its mouth is, how high its lip is, where its cone ends
+and its spout starts, and how long its spout is are not set here: the swoosh
+and the word decide them, [below](#the-funnel).
+
+```{r}
+funnel_spout <- 150 # half-width of the spout
+funnel_cut <- 160 # the spout is cut at a slant: its left ends this much higher
+funnel_round <- 90 # width of the line drawn round it, which rounds its corners
+```
+
+## Pieces
+
+The two sources are downloaded, and the Shiny sticker is read as one string.
+
+```{r}
+shiny_file <- tempfile(fileext = ".svg")
+font_file <- tempfile(fileext = ".ttf")
+download.file(shiny_url, shiny_file, mode = "wb", quiet = TRUE)
+download.file(font_url, font_file, mode = "wb", quiet = TRUE)
+
+shiny_svg <- paste(readLines(shiny_file, warn = FALSE), collapse = " ")
+```
+
+### Paths
+
+```{r}
+# Path data of the one path in the Shiny sticker with this class
+shiny_path <- function(class) {
+	pattern <- sprintf('<path class="%s" d="([^"]*)"', class)
+	path <- regmatches(shiny_svg, regexec(pattern, shiny_svg))[[1]][2]
+	gsub("\\s+", " ", path)
+}
+
+# Splits path data into subpaths. Each is a data frame of absolute segments,
+# one per row: start (x0, y0), control points, end (x, y). Lines are stored
+# as curves whose control points sit on their ends.
+parse_path <- function(data) {
+	token <- "[MmLlHhVvCcSsZz]|-?[0-9]*\\.?[0-9]+"
+	tokens <- regmatches(data, gregexpr(token, data))[[1]]
+	subpaths <- list()
+	segments <- list()
+	at <- c(0, 0)
+	start <- at
+	smooth <- NULL
+	command <- ""
+	i <- 1
+
+	take <- function(n) {
+		values <- as.numeric(tokens[i:(i + n - 1)])
+		i <<- i + n
+		values
+	}
+	segment <- function(c1, c2, to) {
+		row <- data.frame(
+			x0 = at[1],
+			y0 = at[2],
+			x1 = c1[1],
+			y1 = c1[2],
+			x2 = c2[1],
+			y2 = c2[2],
+			x = to[1],
+			y = to[2]
+		)
+		segments[[length(segments) + 1]] <<- row
+		at <<- to
+	}
+	finish <- function() {
+		if (length(segments) > 0) {
+			subpaths[[length(subpaths) + 1]] <<- do.call(rbind, segments)
+		}
+		segments <<- list()
+	}
+
+	while (i <= length(tokens)) {
+		if (grepl("[A-Za-z]", tokens[i])) {
+			command <- tokens[i]
+			i <- i + 1
+		}
+		origin <- if (command == tolower(command)) at else c(0, 0)
+		type <- toupper(command)
+		if (type == "M") {
+			finish()
+			at <- take(2) + origin
+			start <- at
+			command <- if (command == "m") "l" else "L"
+		} else if (type == "L") {
+			to <- take(2) + origin
+			segment(at, to, to)
+		} else if (type == "H") {
+			to <- c(take(1) + origin[1], at[2])
+			segment(at, to, to)
+		} else if (type == "V") {
+			to <- c(at[1], take(1) + origin[2])
+			segment(at, to, to)
+		} else if (type == "C") {
+			values <- take(6)
+			smooth <- values[3:4] + origin
+			segment(values[1:2] + origin, smooth, values[5:6] + origin)
+		} else if (type == "S") {
+			values <- take(4)
+			c1 <- if (is.null(smooth)) at else 2 * at - smooth
+			smooth <- values[1:2] + origin
+			segment(c1, smooth, values[3:4] + origin)
+		} else if (type == "Z") {
+			at <- start
+			finish()
+		}
+		if (!type %in% c("C", "S")) {
+			smooth <- NULL
+		}
+	}
+	finish()
+	subpaths
+}
+
+# Moves segments from Shiny's sticker into the units in which `foot` is at 0
+# and the baseline of Shiny's lettering is level
+leveled <- function(segments) {
+	angle <- level * pi / 180
+	for (point in list(
+		c("x0", "y0"),
+		c("x1", "y1"),
+		c("x2", "y2"),
+		c("x", "y")
+	)) {
+		x <- segments[[point[1]]] - foot[1]
+		y <- segments[[point[2]]] - foot[2]
+		segments[[point[1]]] <- x * cos(angle) - y * sin(angle)
+		segments[[point[2]]] <- x * sin(angle) + y * cos(angle)
+	}
+	segments
+}
+```
+
+### Curves and circles
+
+```{r}
+# Handles of a segment, one in each row
+handles <- function(segment) {
+	matrix(unlist(segment[c("x0", "x1", "x2", "x", "y0", "y1", "y2", "y")]), 4)
+}
+
+# Points along a curve with these handles
+bezier <- function(handles, t = seq(0, 1, length.out = 60)) {
+	cbind((1 - t)^3, 3 * (1 - t)^2 * t, 3 * (1 - t) * t^2, t^3) %*% handles
+}
+
+# The circle that a curve with these handles is curving along where it
+# starts: its middle and its radius
+circle_at_start <- function(handles) {
+	speed <- 3 * (handles[2, ] - handles[1, ])
+	bend <- 6 * (handles[1, ] - 2 * handles[2, ] + handles[3, ])
+	curvature <- (speed[1] * bend[2] - speed[2] * bend[1]) / sum(speed^2)^1.5
+	list(
+		middle = handles[1, ] +
+			c(-speed[2], speed[1]) / sqrt(sum(speed^2)) / curvature,
+		radius = abs(1 / curvature)
+	)
+}
+
+# The circle that lies nearest to points, one in each row, and how far off
+# it each point is
+circle_through <- function(points) {
+	off <- function(circle) {
+		sqrt((points[, 1] - circle[1])^2 + (points[, 2] - circle[2])^2) - circle[3]
+	}
+	# The nearest by the squares of the distances, which can be solved for,
+	# is where the search starts
+	first <- qr.solve(cbind(2 * points, 1), rowSums(points^2))
+	first[3] <- sqrt(first[3] + sum(first[1:2]^2))
+	fit <- optim(
+		first,
+		function(circle) sum(off(circle)^2),
+		method = "BFGS",
+		control = list(reltol = 1e-15, maxit = 1000)
+	)
+	list(middle = fit$par[1:2], radius = fit$par[3], off = off(fit$par))
+}
+```
+
+### Letters
+
+```{r}
+# Outlines of the letters of a string, 1000 units to the em with y = 0 on
+# the baseline, one row for each point
+outlines <- function(text) {
+	glyphs <- shape_text(text, path = font_file, size = 1000, res = 72)$shape
+	letters <- lapply(seq_len(nrow(glyphs)), function(i) {
+		outline <- glyph_outline(
+			glyphs$index[i],
+			path = font_file,
+			size = 1000,
+			tolerance = 0.2
+		)
+		data.frame(
+			letter = i,
+			contour = paste(i, outline$contour),
+			x = outline$x + glyphs$x_offset[i],
+			y = glyphs$y_offset[1] - glyphs$y_offset[i] - outline$y,
+			stringsAsFactors = FALSE
+		)
+	})
+	do.call(rbind, letters)
+}
+```
+
+### Shapes on the sticker
+
+```{r}
+# Path data for closed shapes, each a matrix of points
+path_data <- function(shapes) {
+	paths <- vapply(
+		shapes,
+		function(shape) {
+			points <- sprintf("%.1f,%.1f", shape[, 1], shape[, 2])
+			paste0("M", paste(points, collapse = "L"), "Z")
+		},
+		""
+	)
+	paste(paths, collapse = "")
+}
+
+# Points turned through an angle, as SVG's rotate() turns them
+turned <- function(points, angle) {
+	angle <- angle * pi / 180
+	cbind(
+		points[, 1] * cos(angle) - points[, 2] * sin(angle),
+		points[, 1] * sin(angle) + points[, 2] * cos(angle)
+	)
+}
+
+# Where the hands of a clock point, this far from `middle`
+on_clock <- function(hours, radius, middle = size / 2) {
+	turn <- hours * pi / 6
+	cbind(middle[1] + radius * sin(turn), middle[2] - radius * cos(turn))
+}
+
+# A vector made 1 long
+unit <- function(v) {
+	v / sqrt(sum(v^2))
+}
+
+# Points as SVG lists the corners of a polygon
+points <- function(x, y) {
+	paste(sprintf("%.1f,%.1f", x, y), collapse = " ")
+}
+
+# A hexagon this far inside the edge of the sticker
+hexagon <- function(inset) {
+	corners <- on_clock(seq(0, 10, by = 2), (size[1] / 2 - inset) / cos(pi / 6))
+	points(corners[, 1], corners[, 2])
+}
+
+# A gradient through these colors, between two points on the sticker
+gradient <- function(id, colors, from, to) {
+	c(
+		sprintf('<linearGradient id="%s" gradientUnits="userSpaceOnUse"', id),
+		sprintf(
+			' x1="%.1f" y1="%.1f" x2="%.1f" y2="%.1f">',
+			from[1],
+			from[2],
+			to[1],
+			to[2]
+		),
+		sprintf(
+			'<stop offset="%s" stop-color="%s"/>',
+			seq(0, 1, length.out = length(colors)),
+			colors
+		),
+		"</linearGradient>"
+	)
+}
+```
+
+## Logo
+
+### The word
+
+The word, 1000 units to the em, on a level baseline, starting at 0. It is
+scaled and placed once there is a swoosh to fit it to.
+
+```{r}
+letters <- outlines(word)
+letters$x <- letters$x - min(letters$x)
+```
+
+### The swoosh
+
+Shiny's wordmark is one path in its sticker, and the fourth subpath of that is
+"hiny" joined to the swoosh. Nine of its segments are the swoosh. Segment 168
+is its lower edge, from its head as far as under the "n", and segment 1 the
+rest of that edge, to the tip of the fin. Segment 4 is the far edge of the fin,
+from its tip to the tip of the tail. Segments 7 and 8 are the upper edge, back
+to the head. The segments between round the two tips. The stroke that joins the
+head to the "y" is left out.
+
+Below, the nine are numbered in that order: 1 and 2 are the lower edge, 5 the
+far edge of the fin, and 8 and 9 the upper edge.
+
+```{r}
+swoosh <- leveled(parse_path(shiny_path("st2"))[[4]])[c(168, 1:8), ]
+
+# Points on the swoosh, where they are on the sticker before the swoosh and
+# the funnel are moved to their place
+swoosh_on_sticker <- function(points) {
+	points <- sweep(sweep(points, 2, swoosh_cut), 2, swoosh_stretch, "*")
+	sweep(
+		turned(points, swoosh_tilt - climb) * swoosh_scale,
+		2,
+		swoosh_at,
+		"+"
+	)
+}
+
+# The handles of those nine segments, on the sticker
+swoosh <- lapply(seq_len(nrow(swoosh)), function(i) {
+	swoosh_on_sticker(handles(swoosh[i, ]))
+})
+
+# The far edge of the fin is all but an arc of a circle: this one, which it
+# is nowhere more than 4 units off
+fin_circle <- circle_through(bezier(swoosh[[5]], seq(0, 1, length.out = 200)))
+```
+
+### The head
+
+The lower edge of the head stops where Shiny's does, curving along a circle. It
+runs on round that circle for `swoosh_run` degrees, to the tip. The upper edge
+is carried on to the tip too, and comes into it along the circle, so that the
+head ends in a point that lies on the circle and along it.
+
+`head_spoke` runs from the middle of the circle to where the lower edge stops,
+`head_way` is the way the edge is running as it gets there, and `head_turn` is
+which way round the circle that is: 1 for clockwise.
+
+```{r}
+head_circle <- circle_at_start(swoosh[[1]])
+head_spoke <- swoosh[[1]][1, ] - head_circle$middle
+head_way <- unit(swoosh[[1]][1, ] - swoosh[[1]][2, ])
+head_turn <- sign(head_spoke[1] * head_way[2] - head_spoke[2] * head_way[1])
+
+# The point this many degrees round the head's circle from where the lower
+# edge stops, and the way the circle is running there
+round_head <- function(degrees) {
+	angle <- atan2(head_spoke[2], head_spoke[1]) + head_turn * degrees * pi / 180
+	list(
+		at = head_circle$middle + head_circle$radius * c(cos(angle), sin(angle)),
+		way = head_turn * c(-sin(angle), cos(angle))
+	)
+}
+
+# The curve that carries the upper edge on to the tip. It leaves the upper
+# edge the way that edge is running, and comes into the tip the way the circle
+# is, with handles a third as long as it is from one end to the other.
+head_tip <- round_head(swoosh_run)
+head_edge <- swoosh[[9]]
+head_reach <- sqrt(sum((head_tip$at - head_edge[4, ])^2)) / 3
+head_close <- rbind(
+	head_edge[4, ],
+	head_edge[4, ] + head_reach * unit(head_edge[4, ] - head_edge[3, ]),
+	head_tip$at - head_reach * head_tip$way,
+	head_tip$at
+)
+
+# The lower edge of the swoosh, and how far down it is at x
+lower_edge <- swoosh[1:2]
+under_swoosh <- function(x) {
+	for (curve in lower_edge) {
+		if (x >= min(curve[c(1, 4), 1]) && x <= max(curve[c(1, 4), 1])) {
+			t <- uniroot(
+				function(t) bezier(curve, t)[1] - x,
+				c(0, 1),
+				tol = 1e-12
+			)$root
+			return(bezier(curve, t)[2])
+		}
+	}
+}
+
+# Points round the swoosh, from the tip of its head and back to it
+swoosh <- rbind(
+	t(vapply(
+		seq(swoosh_run, 0, length.out = 60)[-60],
+		function(degrees) round_head(degrees)$at,
+		c(0, 0)
+	)),
+	do.call(rbind, lapply(swoosh, bezier)),
+	bezier(head_close)
+)
+```
+
+### The funnel
+
+The funnel is drawn with a thick line of its own color round it, which rounds
+its corners. Where a side of the cone turns down into the spout, the edge of
+the funnel has a corner. It is `reach` out from the corner of the shape that
+the line is drawn round and, for a side at `angle` to the spout,
+`reach * tan(angle / 2)` below it.
+
+```{r}
+reach <- funnel_round / 2
+```
+
+The top of the funnel is as wide as the circle of the fin. And it is where the
+circle of the head is at its highest: that point is where the top edge of the
+funnel stops and the round of its right corner starts. The corner is a smaller
+circle that touches the head's there from inside, so the head, carried on, runs
+into the top of the funnel without a turn.
+
+These are of the shape that the funnel's line is drawn round: half the width of
+its mouth, and where the middle and the top of its mouth are.
+
+```{r}
+funnel_mouth <- fin_circle$radius - reach
+funnel_x <- head_circle$middle[1] - funnel_mouth
+funnel_top <- head_circle$middle[2] - head_circle$radius + reach
+```
+
+The funnel is widest down its lip, where its sides run straight down from its
+top. Put the circle of the fin on the funnel, with its middle half way down the
+lip, and it is as wide as the funnel. The lip is as high as it takes for that
+circle to rest on the lower edge of the swoosh: to touch it, and not cross it.
+So no funnel shows between the swoosh and the circle.
+
+`below_circle()` is how far the lower edge is below the lowest that the circle
+is at x, for a circle with its middle level with 0. Where that is least is
+where they touch, and it is how far down the middle of the circle is.
+
+```{r}
+below_circle <- function(x) {
+	under_swoosh(x) - sqrt(fin_circle$radius^2 - (x - funnel_x)^2)
+}
+funnel_rest <- optimize(below_circle, funnel_x + c(-1, 1) * funnel_mouth)
+funnel_lip <- 2 * (funnel_rest$objective - funnel_top)
+funnel_rest <- c(funnel_rest$minimum, under_swoosh(funnel_rest$minimum))
+```
+
+The cone is symmetrical: its sides are at the same angle to the spout. Each
+runs down until that corner is on the lower edge of the swoosh, so that the
+swoosh covers the neck on both sides. The swoosh climbs, so the right side
+stops higher than the left, and a spout of a set width hangs right of the
+middle of the mouth. This finds the angle of the sides and how far right the
+spout hangs.
+
+```{r}
+# Height of the neck on a side (-1 left, 1 right), for a spout this far right
+neck <- function(side, angle, right) {
+	run <- funnel_mouth - funnel_spout - side * right
+	funnel_top + funnel_lip + run / tan(angle)
+}
+
+# The angle that puts the corner on that side on the swoosh
+fitted <- function(side, right) {
+	x <- funnel_x + right + side * (funnel_spout + reach)
+	uniroot(
+		function(angle) {
+			neck(side, angle, right) + reach * tan(angle / 2) - under_swoosh(x)
+		},
+		c(0.2, 1.2),
+		tol = 1e-12
+	)$root
+}
+
+funnel_right <- uniroot(
+	function(right) fitted(-1, right) - fitted(1, right),
+	c(-100, 100),
+	tol = 1e-10
+)$root
+funnel_angle <- fitted(1, funnel_right)
+funnel_neck <- c(
+	neck(-1, funnel_angle, funnel_right),
+	neck(1, funnel_angle, funnel_right)
+)
+```
+
+### Where things sit
+
+The swoosh and the funnel go at the top of the sticker, and the word at the
+bottom, as on most hex stickers. Each is as far that way as it can be with
+`margin` between it and the border.
+
+```{r}
+# How far points reach towards the side of the sticker at an hour of the
+# clock, from its middle, and how far that side is
+reach_to <- function(points, hour) {
+	max(sweep(points, 2, size / 2) %*% c(on_clock(hour, 1, c(0, 0))))
+}
+side_at <- size[1] / 2 - edge_width
+```
+
+The swoosh and the funnel are moved, together, so that the swoosh is in the
+middle from side to side, and then up, until the first of them is `margin` from
+one of the two upper sides. Of the funnel, it is the round of a top corner that
+is nearest.
+
+```{r}
+funnel_corners <- cbind(funnel_x + c(-1, 1) * funnel_mouth, funnel_top)
+emblem_move <- c(size[1] / 2 - mean(range(swoosh[, 1])), 0)
+emblem_move[2] <- max(vapply(
+	c(11, 1),
+	function(hour) {
+		towards <- c(on_clock(hour, 1, c(0, 0)))
+		reached <- max(
+			reach_to(swoosh, hour),
+			reach_to(funnel_corners, hour) + reach
+		)
+		(side_at - margin - reached - emblem_move[1] * towards[1]) / towards[2]
+	},
+	0
+))
+```
+
+The word is as wide as the swoosh, so each starts and ends where the other
+does. It is in the middle from side to side, and as far down as it can be with
+`margin` between it and the two lower sides.
+
+```{r}
+word_width <- diff(range(swoosh[, 1]))
+word_scale <- word_width / max(letters$x)
+letters$x <- (size[1] - word_width) / 2 + letters$x * word_scale
+letters$y <- letters$y * word_scale
+word_base <- min(vapply(
+	c(5, 7),
+	function(hour) {
+		towards <- c(on_clock(hour, 1, c(0, 0)))
+		reached <- reach_to(as.matrix(letters[c("x", "y")]), hour)
+		(side_at - margin - reached) / towards[2]
+	},
+	0
+))
+letters$y <- letters$y + word_base
+```
+
+The spout stops `margin` above the word, where it is longest. `funnel_end` is
+where it ends before the swoosh and the funnel are moved: left, right.
+
+```{r}
+funnel_end <- min(letters$y) -
+	margin -
+	reach -
+	emblem_move[2] -
+	c(funnel_cut, 0)
+letters <- lapply(split(letters[c("x", "y")], letters$contour), as.matrix)
+
+# The corners of the shape that the funnel's line is drawn round
+funnel_at <- cbind(
+	funnel_x +
+		c(-1, 1, 1, 0, 0, 0, 0, -1) * funnel_mouth +
+		c(0, 0, 0, 1, 1, 1, 1, 0) * funnel_right +
+		c(0, 0, 0, 1, 1, -1, -1, 0) * funnel_spout,
+	c(
+		funnel_top,
+		funnel_top,
+		funnel_top + funnel_lip,
+		funnel_neck[2],
+		funnel_end[2],
+		funnel_end[1],
+		funnel_neck[1],
+		funnel_top + funnel_lip
+	)
+)
+```
+
+### The shapes
+
+The shapes are each written once, with no color, and drawn as often as they are
+needed, in the colors they are needed in.
+
+```{r}
+shapes <- c(
+	sprintf(
+		'<path id="shape-letters" d="%s"/>',
+		path_data(letters)
+	),
+	sprintf('<path id="shape-swoosh" d="%s"/>', path_data(list(swoosh))),
+	sprintf(
+		'<polygon id="shape-funnel" stroke-linejoin="round" points="%s"/>',
+		points(funnel_at[, 1], funnel_at[, 2])
+	)
+)
+
+# A shape in a color, with a line this wide round it in the same color
+drawn <- function(shape, color, width = 0) {
+	sprintf(
+		'<use xlink:href="#shape-%s" fill="%s" stroke="%s" stroke-width="%s"/>',
+		shape,
+		color,
+		color,
+		width
+	)
+}
+
+# What moves the swoosh and the funnel to where they go
+emblem <- sprintf(
+	'<g transform="translate(%.1f,%.1f)">',
+	emblem_move[1],
+	emblem_move[2]
+)
+```
+
+### The colors of the funnel
+
+```{r}
+# The red, green and blue of a color, each from 0 to 255
+parts <- function(color) {
+	strtoi(substring(color, c(2, 4, 6), c(3, 5, 7)), 16)
+}
+
+# How bright a color is, from 0 for black to 1 for white: what WCAG calls
+# its relative luminance. One color stands out from a darker one by
+# `(brightness + 0.05) / (the darker one's brightness + 0.05)`, which WCAG
+# calls their contrast ratio.
+brightness <- function(color) {
+	part <- parts(color) / 255
+	part <- ifelse(part <= 0.03928, part / 12.92, ((part + 0.055) / 1.055)^2.4)
+	sum(part * c(0.2126, 0.7152, 0.0722))
+}
+
+# The color of the sticker this far down it: it fades evenly from the first
+# of its colors at the top of the sticker to the second at the bottom
+sky_at <- function(y) {
+	ends <- vapply(sky, parts, c(0, 0, 0))
+	mixed <- round(ends[, 1] + (ends[, 2] - ends[, 1]) * y / size[2])
+	sprintf("#%02X%02X%02X", mixed[1], mixed[2], mixed[3])
+}
+
+# The magenta that stands out from a darker color by `contrast`. It is the
+# magenta that heads a printed <shinyfilters> object, #BB00BB, made lighter
+# or darker: as much red as blue, and no green. Its red and blue are rounded
+# up, so that it stands out by no less.
+magenta_on <- function(color) {
+	part <- (contrast * (brightness(color) + 0.05) - 0.05) / (0.2126 + 0.0722)
+	part <- ceiling(255 * (1.055 * part^(1 / 2.4) - 0.055))
+	sprintf("#%02X00%02X", part, part)
+}
+```
+
+The funnel fades as the sticker does behind it, from its top to the end of its
+spout, and stands out from the sticker by `contrast` at both. Between them it
+stands out by nearly as much: with these colors, by 3.11 to 3.13.
+
+```{r}
+funnel_span <- c(funnel_top - reach, funnel_end[2] + reach)
+funnel_fill <- vapply(
+	funnel_span + emblem_move[2],
+	function(y) magenta_on(sky_at(y)),
+	""
+)
+```
+
+### The picture
+
+```{r}
+svg <- c(
+	sprintf(
+		paste0(
+			'<svg xmlns="http://www.w3.org/2000/svg"',
+			' xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 %s %s">'
+		),
+		size[1],
+		size[2]
+	),
+	"<title>shinyfilters</title>",
+	"<defs>",
+	gradient("sky", sky, c(0, 0), c(0, size[2])),
+	gradient("funnel", funnel_fill, c(0, funnel_span[1]), c(0, funnel_span[2])),
+	shapes,
+	"</defs>",
+	sprintf('<polygon fill="%s" points="%s"/>', edge, hexagon(0)),
+	sprintf('<polygon fill="url(#sky)" points="%s"/>', hexagon(edge_width)),
+	emblem,
+	drawn("funnel", "url(#funnel)", funnel_round),
+	drawn("swoosh", ink),
+	"</g>",
+	drawn("letters", ink),
+	"</svg>"
+)
+```
+
+Each picture in this article is written as an SVG among the article's figures,
+and shown.
+
+```{r logo, fig.alt = "The shinyfilters logo: a dark purple hex sticker with a magenta funnel at the top, a white swoosh across the funnel, and the word shinyfilters in white across the bottom."}
+# Writes a picture among the article's figures, and shows it. Run by hand, it
+# writes a temporary file instead.
+draw <- function(svg, name) {
+	knitting <- isTRUE(getOption("knitr.in.progress"))
+	to <- if (knitting) knitr::opts_chunk$get("fig.path") else tempfile()
+	file <- paste0(to, name, ".svg")
+	dir.create(dirname(file), recursive = TRUE, showWarnings = FALSE)
+	writeLines(svg, file)
+	knitr::include_graphics(file)
+}
+
+draw(svg, "logo")
+```
+
+## Diagrams
+
+The rest of this article draws over the logo, to show that each thing said of
+it above is so. These are diagrams, not logos.
+
+### Marks
+
+```{r}
+marks <- c("#00E5FF", "#FFB000") # two colors, to tell two things apart
+mark_width <- 8
+mark_dashes <- c(26, 16)
+```
+
+Where a picture rings a place to draw it again, enlarged, the ring is this
+size, and what is in it is drawn this many times as large. The enlarged places
+have these middles: in [the neck](#neck), the left corner and the right, and in
+[the fin](#fin), where the circle rests.
+
+```{r}
+ring <- 57.5
+zoom <- 4
+loupe <- rbind(c(500, 1050), c(2060, 1560))
+fin_loupe <- c(2060, 1560)
+```
+
+In [the contrast](#contrast), `sampled` is how far down the funnel each ringed
+place is: 0 is its top and 1 the end of its spout. They miss the swoosh. And
+`figure_height` is how tall the figures are.
+
+```{r}
+sampled <- c(0.06, 0.17, 0.32, 0.68, 0.8)
+figure_height <- 62
+```
+
+### Drawing over the logo
+
+```{r}
+# The swoosh and the funnel are worked out in one place and then moved to
+# another. This moves points with them.
+moved <- function(points) {
+	sweep(matrix(points, ncol = 2), 2, emblem_move, "+")
+}
+
+# An element drawn as a line in a color, over a wider black one, so that it
+# shows on anything
+mark <- function(element, color, width = mark_width, dashed = FALSE) {
+	dashes <- if (dashed) {
+		sprintf(' stroke-dasharray="%s"', paste(mark_dashes, collapse = " "))
+	} else {
+		""
+	}
+	sprintf(
+		'<%s fill="none" stroke="%s" stroke-width="%s"%s/>',
+		element,
+		c("#000000", color),
+		width + c(6, 0),
+		dashes
+	)
+}
+
+circle <- function(middle, radius) {
+	sprintf('circle cx="%.1f" cy="%.1f" r="%.1f"', middle[1], middle[2], radius)
+}
+
+# A line through points, one in each row
+line <- function(through) {
+	through <- sprintf("%.1f,%.1f", through[, 1], through[, 2])
+	sprintf('path d="M%s"', paste(through, collapse = "L"))
+}
+
+dot <- function(middle, color, radius = 12) {
+	sprintf(
+		'<%s fill="%s" stroke="#000000" stroke-width="%s"/>',
+		circle(middle, radius),
+		color,
+		radius / 2
+	)
+}
+
+# What keeps a drawing to the circle that a place is enlarged in
+lens <- function(id, to) {
+	sprintf(
+		'<clipPath id="lens-%s"><%s/></clipPath>',
+		id,
+		circle(to, ring * zoom)
+	)
+}
+
+# Where a point of the picture is when the place `from` is enlarged at `to`
+enlarged_at <- function(point, from, to) {
+	to + zoom * (point - from)
+}
+
+# The place `from` again, enlarged, in a circle at `to` that is joined to the
+# ring round `from`. `within` is drawn in that circle too, over the picture.
+magnified <- function(from, to, id, color, within = NULL) {
+	towards <- unit(to - from)
+	c(
+		sprintf('<g clip-path="url(#lens-%s)">', id),
+		sprintf(
+			paste0(
+				'<use xlink:href="#picture"',
+				' transform="translate(%.1f,%.1f) scale(%s) translate(%.1f,%.1f)"/>'
+			),
+			to[1],
+			to[2],
+			zoom,
+			-from[1],
+			-from[2]
+		),
+		within,
+		"</g>",
+		mark(circle(to, ring * zoom), color),
+		mark(circle(from, ring), color),
+		mark(
+			line(rbind(from + ring * towards, to - ring * zoom * towards)),
+			color
+		)
+	)
+}
+
+# The logo with more drawn on it. `under` is part of the picture, and is
+# enlarged with it in `neck`. `over` is not, and none of it shows past the
+# edge of the sticker.
+diagram <- function(over, under = NULL, defs = NULL) {
+	drawn_from <- match("</defs>", svg)
+	c(
+		svg[seq_len(drawn_from - 1)],
+		sprintf(
+			'<clipPath id="sticker"><polygon points="%s"/></clipPath>',
+			hexagon(0)
+		),
+		defs,
+		"</defs>",
+		'<g id="picture">',
+		svg[(drawn_from + 1):(length(svg) - 1)],
+		under,
+		"</g>",
+		'<g clip-path="url(#sticker)">',
+		over,
+		"</g>",
+		"</svg>"
+	)
+}
+```
+
+### Fin
+
+The top of the funnel is as wide as the circle that the far edge of the
+swoosh's fin lies on, and that circle, with its middle half way down the
+funnel's lip, rests on the lower edge of the swoosh. The circle is drawn on the
+fin, and again on the funnel, with a line across it. Where it rests on the
+swoosh is ringed, and drawn again, enlarged, in a circle.
+
+```{r fin, fig.alt = "The logo with the circle of the swoosh's fin drawn on the fin and again on the funnel, where it is as wide as the funnel's top. The place where it rests on the swoosh is enlarged."}
+# The fin's circle where it is, with a line from its middle to its edge. And
+# again with its middle on the funnel, half way down its lip, with the same
+# line each way: it ends on the edge of the funnel on each side.
+across <- rbind(c(-1, 0), c(1, 0)) * fin_circle$radius
+on_fin <- c(moved(fin_circle$middle))
+on_funnel <- c(moved(c(funnel_x, funnel_top + funnel_lip / 2)))
+
+# Where the circle on the funnel rests on the lower edge of the swoosh. It is
+# drawn again, enlarged, with the circle drawn over it at the same weight of
+# line: the swoosh is on one side of the circle there and the funnel on the
+# other, with none of the funnel between the swoosh and the circle.
+rests <- c(moved(funnel_rest))
+
+draw(
+	diagram(
+		defs = lens("rest", fin_loupe),
+		over = c(
+			mark(circle(on_funnel, fin_circle$radius), marks[2], 4),
+			mark(line(sweep(across, 2, on_funnel, "+")), marks[2]),
+			dot(on_funnel, marks[2]),
+			dot(on_funnel + across[1, ], marks[2]),
+			dot(on_funnel + across[2, ], marks[2]),
+			mark(circle(on_fin, fin_circle$radius), marks[1]),
+			mark(line(rbind(on_fin, on_fin + across[2, ])), marks[1]),
+			dot(on_fin, marks[1]),
+			dot(on_fin + across[2, ], marks[1]),
+			magnified(
+				rests,
+				fin_loupe,
+				"rest",
+				marks[2],
+				within = mark(
+					circle(
+						enlarged_at(on_funnel, rests, fin_loupe),
+						zoom * fin_circle$radius
+					),
+					marks[2],
+					4
+				)
+			)
+		)
+	),
+	"fin"
+)
+```
+
+### Head
+
+The head of the swoosh runs on round the circle that its lower edge is curving
+along, and that circle, carried on, is at its highest where the top edge of the
+funnel stops and its corner starts. The circle, the run of the head, the rest
+of the way to the funnel, the line of the funnel's top and the circle of its
+corner are drawn.
+
+```{r head, fig.alt = "The logo with the circle of the swoosh's head drawn. The head runs part of the way round it, and it is at its highest on the line of the funnel's top, where the funnel's right corner starts."}
+# How far round its circle the head would have to run to be at its highest
+head_top <- (head_turn *
+	(-90 - atan2(head_spoke[2], head_spoke[1]) * 180 / pi)) %%
+	360
+
+# The points on the head's circle from this many degrees round to that
+head_arc <- function(from, to) {
+	arc <- vapply(
+		seq(from, to, length.out = 200),
+		function(degrees) round_head(degrees)$at,
+		c(0, 0)
+	)
+	moved(t(arc))
+}
+
+# The line of the top edge of the funnel, carried on each way past where the
+# circle touches it. And the round of the funnel's right corner, as a whole
+# circle: the head's circle touches it, and the top edge, at the same point.
+highest <- c(moved(round_head(head_top)$at))
+level_with <- sweep(rbind(c(-300, 0), c(300, 0)), 2, highest, "+")
+corner_circle <- circle(moved(c(funnel_x + funnel_mouth, funnel_top)), reach)
+
+draw(
+	diagram(c(
+		mark(line(level_with), marks[2], 4, dashed = TRUE),
+		mark(corner_circle, marks[2], 4),
+		mark(
+			circle(moved(head_circle$middle), head_circle$radius),
+			marks[1],
+			4,
+			dashed = TRUE
+		),
+		mark(line(head_arc(0, swoosh_run)), marks[2]),
+		mark(line(head_arc(swoosh_run, head_top)), marks[1]),
+		mark(circle(highest, 30), marks[1]),
+		dot(moved(round_head(0)$at), marks[2]),
+		dot(moved(head_tip$at), marks[1])
+	)),
+	"head"
+)
+```
+
+### Neck
+
+The cone ends on the lower edge of the swoosh on both sides, and is
+symmetrical. Each corner where the cone turns down into the spout is ringed,
+and drawn again, enlarged, in a circle. The edges of the cone are carried on
+under the swoosh to those corners, and on down to where they meet, which is
+under the middle of the mouth.
+
+```{r neck, fig.alt = "The logo with the two corners where the funnel's cone turns into its spout enlarged: each lies on the lower edge of the swoosh. The edges of the cone are carried on to meet under the middle of the funnel's mouth."}
+# On a side (-1 left, 1 right): the way out of the cone through that side,
+# and the way down along it
+out_of <- function(side) {
+	c(side * cos(funnel_angle), sin(funnel_angle))
+}
+down <- function(side) {
+	c(-side * sin(funnel_angle), cos(funnel_angle))
+}
+
+# The corner in the edge of the funnel where the cone turns down into the
+# spout
+corner <- function(side) {
+	moved(c(
+		funnel_x + funnel_right + side * (funnel_spout + reach),
+		funnel_neck[(side + 3) / 2] + reach * tan(funnel_angle / 2)
+	))
+}
+
+# Where the edge of that side of the cone starts, under the lip. And where
+# the two edges would meet if they were carried on down: it is under the
+# middle of the mouth, because the sides are at the same angle.
+edge_from <- function(side) {
+	lip <- c(funnel_x + side * funnel_mouth, funnel_top + funnel_lip)
+	moved(lip + reach * out_of(side))
+}
+apex <- edge_from(1) +
+	down(1) * (edge_from(1)[1] - moved(c(funnel_x, 0))[1]) / sin(funnel_angle)
+
+draw(
+	diagram(
+		defs = c(
+			'<clipPath id="under-swoosh">',
+			sprintf('<path d="%s"/>', path_data(list(moved(swoosh)))),
+			"</clipPath>",
+			lens("left", loupe[1, ]),
+			lens("right", loupe[2, ])
+		),
+		under = c(
+			# The edges of the cone where the swoosh hides them
+			'<g clip-path="url(#under-swoosh)">',
+			mark(line(rbind(edge_from(-1), corner(-1))), marks[1], dashed = TRUE),
+			mark(line(rbind(edge_from(1), corner(1))), marks[2], dashed = TRUE),
+			"</g>",
+			dot(corner(-1), marks[1], 5),
+			dot(corner(1), marks[2], 5)
+		),
+		over = c(
+			# The edges carried on to where they meet, and the middle of the mouth
+			mark(line(rbind(corner(-1), apex)), marks[1], 4, dashed = TRUE),
+			mark(line(rbind(corner(1), apex)), marks[2], 4, dashed = TRUE),
+			mark(
+				line(rbind(moved(c(funnel_x, funnel_top - reach)), apex)),
+				"#FFFFFF",
+				4,
+				dashed = TRUE
+			),
+			dot(apex, "#FFFFFF"),
+			magnified(c(corner(-1)), loupe[1, ], "left", marks[1]),
+			magnified(c(corner(1)), loupe[2, ], "right", marks[2])
+		)
+	),
+	"neck"
+)
+```
+
+### Place
+
+The swoosh is in the middle of the sticker and the word is as wide as it, and
+the same margin, as wide as the border, is left at the top, at the bottom, and
+between the spout and the word. The middle and the ends are drawn as lines, and
+each margin as a circle that just fits it. One more of those circles is drawn
+on the border.
+
+```{r place, fig.alt = "The logo with lines down the middle of the sticker and down from each end of the swoosh to each end of the word, and small circles of one size that just fit the margins at the top, at the bottom, and between the spout and the word."}
+# The way to the side of the sticker at an hour of the clock, and the point
+# among some that is furthest that way
+towards <- function(hour) {
+	c(on_clock(hour, 1, c(0, 0)))
+}
+furthest <- function(points, hour) {
+	points[which.max(points %*% towards(hour)), ]
+}
+
+# A circle as wide as the margin, touching a point, on the side of it that
+# is this way. If the margin is right, it just fits.
+gauge <- function(point, way, color = marks[2]) {
+	c(
+		mark(circle(point + margin / 2 * way, margin / 2), color, 4),
+		dot(point, color, 6)
+	)
+}
+
+swoosh_now <- moved(swoosh)
+letters_now <- do.call(rbind, letters)
+ends <- range(swoosh_now[, 1])
+word_top <- min(letters_now[, 2])
+
+# The nearest of the swoosh to the border at the top, of the word to it at
+# the bottom, and of the spout to the word
+nearest_top <- furthest(swoosh_now, 1)
+nearest_bottom <- furthest(letters_now, 7)
+spout_end <- c(moved(funnel_at[5, ])) + c(0, reach)
+
+draw(
+	diagram(c(
+		# The middle of the sticker, and of the swoosh
+		mark(
+			line(cbind(size[1] / 2, c(edge_width, size[2] - edge_width))),
+			"#FFFFFF",
+			4,
+			dashed = TRUE
+		),
+		mark(line(cbind(ends, mean(swoosh_now[, 2]))), marks[1], 4),
+		dot(c(mean(ends), mean(swoosh_now[, 2])), marks[1]),
+		# The ends of the swoosh, carried down to the ends of the word
+		mark(
+			line(cbind(ends[1], c(min(swoosh_now[, 2]), max(letters_now[, 2])))),
+			marks[1],
+			4,
+			dashed = TRUE
+		),
+		mark(
+			line(cbind(ends[2], c(min(swoosh_now[, 2]), max(letters_now[, 2])))),
+			marks[1],
+			4,
+			dashed = TRUE
+		),
+		# The top of the word, which the spout stops short of
+		mark(line(cbind(ends, word_top)), marks[2], 4, dashed = TRUE),
+		# The margins, and the border, which is as wide
+		gauge(nearest_top, towards(1)),
+		gauge(nearest_top + margin * towards(1), towards(1), "#FFFFFF"),
+		gauge(nearest_bottom, towards(7)),
+		gauge(nearest_bottom + margin * towards(7), towards(7), "#FFFFFF"),
+		gauge(spout_end, c(0, 1))
+	)),
+	"place"
+)
+```
+
+### Contrast
+
+The funnel stands out from the sticker by the same amount all the way down, and
+the white of the swoosh stands out from the funnel by more. Five places on the
+edge of the funnel are ringed in one color, each with how much the funnel
+stands out from the sticker there, as WCAG measures contrast. Two places where
+the swoosh crosses the funnel are ringed in the other, each with how much the
+white stands out from the funnel there.
+
+```{r contrast, fig.alt = "The logo with five places ringed down the left edge of the funnel, each marked with a contrast ratio a little over 3, and two places ringed where the swoosh crosses the funnel, each marked with a ratio near 4.9."}
+# A color part of the way from one to another, as red, green and blue
+between <- function(colors, share) {
+	ends <- vapply(colors, parts, c(0, 0, 0))
+	ends[, 1] + (ends[, 2] - ends[, 1]) * share
+}
+
+# How bright red, green and blue are together, as `brightness()` has it
+bright <- function(part) {
+	part <- part / 255
+	part <- ifelse(part <= 0.03928, part / 12.92, ((part + 0.055) / 1.055)^2.4)
+	sum(part * c(0.2126, 0.7152, 0.0722))
+}
+
+# The left edge of the funnel, this far down it before it is moved: on the
+# lip, on the cone, or on the spout
+left_edge <- function(y) {
+	lip <- funnel_top + funnel_lip
+	start <- c(funnel_x - funnel_mouth, lip) + reach * out_of(-1)
+	turn <- funnel_neck[1] + reach * tan(funnel_angle / 2)
+	if (y <= start[2]) {
+		funnel_x - funnel_mouth - reach
+	} else if (y <= turn) {
+		start[1] + (y - start[2]) * tan(funnel_angle)
+	} else {
+		funnel_x + funnel_right - funnel_spout - reach
+	}
+}
+
+# Figures, as shapes, this tall, ending at a point, or starting at it if
+# `after`
+figures <- function(text, at, after = FALSE) {
+	shapes <- outlines(text)
+	scale <- figure_height / diff(range(outlines("0")$y))
+	from <- if (after) min(shapes$x) else max(shapes$x)
+	shapes$x <- at[1] + (shapes$x - from) * scale
+	shapes$y <- at[2] + shapes$y * scale + figure_height / 2
+	shapes <- path_data(lapply(
+		split(shapes[c("x", "y")], shapes$contour),
+		as.matrix
+	))
+	c(
+		sprintf(
+			paste0(
+				'<path fill="#000000" stroke="#000000" stroke-width="14"',
+				' stroke-linejoin="round" d="%s"/>'
+			),
+			shapes
+		),
+		sprintf('<path fill="#FFFFFF" d="%s"/>', shapes)
+	)
+}
+
+# A place on the edge of the funnel, ringed, with how much the funnel stands
+# out from the sticker there
+stands_out <- function(share) {
+	y <- funnel_span[1] + share * diff(funnel_span)
+	at <- c(moved(c(left_edge(y), y)))
+	funnel <- bright(between(funnel_fill, share))
+	sticker <- bright(between(sky, at[2] / size[2]))
+	c(
+		mark(circle(at, 40), marks[1], 5),
+		figures(
+			sprintf("%.2f", (funnel + 0.05) / (sticker + 0.05)),
+			at - c(64, 0)
+		)
+	)
+}
+
+# How far down the upper and the lower edge of the swoosh are at x, before
+# it is moved
+swoosh_edges <- function(x) {
+	to <- swoosh[c(2:nrow(swoosh), 1), ]
+	crosses <- (swoosh[, 1] - x) * (to[, 1] - x) < 0
+	share <- (x - swoosh[crosses, 1]) / (to[crosses, 1] - swoosh[crosses, 1])
+	range(swoosh[crosses, 2] + share * (to[crosses, 2] - swoosh[crosses, 2]))
+}
+
+# A place where an edge of the swoosh crosses the funnel, before it is moved,
+# ringed, with how much the white of the swoosh stands out from the funnel
+# there. The figures go on the funnel: up and to the left of a place on the
+# upper edge, and down and to the right of one on the lower.
+white_on <- function(at, upper) {
+	funnel <- bright(between(
+		funnel_fill,
+		(at[2] - funnel_span[1]) / diff(funnel_span)
+	))
+	at <- c(moved(at))
+	c(
+		mark(circle(at, 40), marks[2], 5),
+		figures(
+			sprintf("%.2f", (bright(parts(ink)) + 0.05) / (funnel + 0.05)),
+			at + if (upper) c(-64, -50) else c(64, 50),
+			after = !upper
+		)
+	)
+}
+
+# The upper edge of the swoosh where it is over the right of the spout, and
+# its lower edge where it is over the left of the spout
+on_upper <- funnel_x + funnel_right + 0.6 * funnel_spout
+on_upper <- c(on_upper, swoosh_edges(on_upper)[1])
+on_lower <- funnel_x + funnel_right - 0.6 * funnel_spout
+on_lower <- c(on_lower, swoosh_edges(on_lower)[2])
+
+draw(
+	diagram(c(
+		unlist(lapply(sampled, stands_out)),
+		white_on(on_upper, upper = TRUE),
+		white_on(on_lower, upper = FALSE)
+	)),
+	"contrast"
+)
+```
+
+## Files
+
+Of all this, the package keeps one file: the logo, as `man/figures/logo.svg`.
+To write it again, run the chunks above from the top of the package, and then:
+
+```{r, eval = FALSE}
+writeLines(svg, "man/figures/logo.svg")
+```
+
+The site's favicons are the logo too, in the middle of a square with nothing
+round it. They are kept in `pkgdown/favicon`, which is not part of the built
+package, and are made with magick:
+
+```{r, eval = FALSE}
+library(magick)
+
+favicons <- "pkgdown/favicon"
+master_height <- 512
+
+# Rasterized at twice the size, to be scaled down for clean edges
+rasterize <- function(svg) {
+	file <- tempfile(fileext = ".svg")
+	writeLines(svg, file)
+	image_read(file, density = 96 * 2 * master_height / size[2])
+}
+
+# magick paints SVG onto white. To keep the corners transparent, paint the
+# canvas in the border color, then cut the hexagon out with its silhouette.
+canvas <- sprintf('<rect width="%s" height="%s" fill="%%s"/>', size[1], size[2])
+master <- rasterize(append(svg, sprintf(canvas, edge), after = 1))
+silhouette <- rasterize(c(
+	svg[1],
+	sprintf(canvas, "#000"),
+	sprintf('<polygon fill="#fff" points="%s"/>', hexagon(0)),
+	"</svg>"
+))
+silhouette <- image_convert(silhouette, type = "Grayscale", matte = FALSE)
+master <- image_composite(master, silhouette, operator = "CopyOpacity")
+
+# The logo this many pixels high, in the middle of a square
+icon <- function(pixels) {
+	logo <- image_resize(master, paste0("x", pixels))
+	image_extent(logo, paste0(pixels, "x", pixels), color = "none")
+}
+
+# An icon written among the favicons, as a PNG
+png <- function(pixels, name) {
+	image_write(icon(pixels), file.path(favicons, name), format = "png")
+}
+
+dir.create(favicons, showWarnings = FALSE)
+writeLines(svg, file.path(favicons, "favicon.svg"))
+png(96, "favicon-96x96.png")
+png(180, "apple-touch-icon.png")
+png(192, "web-app-manifest-192x192.png")
+png(512, "web-app-manifest-512x512.png")
+
+# One file with the icon at each of these sizes, for whatever size it is shown
+# at: at the largest only, it is blurred when shown larger
+image_write(
+	image_join(lapply(c(16, 32, 48, 64, 128, 256), icon)),
+	file.path(favicons, "favicon.ico"),
+	format = "ico"
+)
+
+# The icons that the site offers a phone to keep it by
+manifest_icon <- '{"src": "web-app-manifest-%1$sx%1$s.png", "sizes": "%1$sx%1$s", "type": "image/png"}'
+writeLines(
+	c(
+		"{",
+		'  "name": "shinyfilters",',
+		'  "short_name": "shinyfilters",',
+		'  "icons": [',
+		sprintf(paste0("    ", manifest_icon, "%2$s"), c(192, 512), c(",", "")),
+		"  ],",
+		sprintf('  "theme_color": "%s",', sky[1]),
+		sprintf('  "background_color": "%s",', sky[2]),
+		'  "display": "standalone"',
+		"}"
+	),
+	file.path(favicons, "site.webmanifest")
+)
+```
