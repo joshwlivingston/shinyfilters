@@ -154,6 +154,8 @@ NULL
 #' @importFrom cli qty
 #' @importFrom cli symbol
 #' @importFrom htmltools tagList
+#' @importFrom methods formalArgs
+#' @importFrom methods functionBody
 #' @importFrom rlang as_label
 #' @importFrom rlang call_args
 #' @importFrom rlang call_match
