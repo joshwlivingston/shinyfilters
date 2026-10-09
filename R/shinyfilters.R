@@ -317,32 +317,29 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	nl <- seq_along(x)
 	names(nl) <- names(x)
 	res <- tryCatch(
-		eval_tidy(sel, nl),
+		unique(eval_tidy(sel, nl)),
 		error = function(e) {
-			abort_column_not_found(sel, call)
+			abort_quo_not_found(sel, call)
 		}
 	)
 	if (is.character(res)) {
 		missing <- setdiff(res, names(x))
-		if (length(missing) == 1) {
-			abort_column_not_found(sel, call)
-		} else if (length(missing) > 1) {
+		if (length(missing) != 0) {
 			abort_columns_not_found(missing, call)
 		}
-		return(res)
 	}
-	names(x)[res]
+	return(res)
 }
 
-abort_column_not_found <- function(quo, call) {
-	abort_not_found(as_name(quo), call)
+abort_quo_not_found <- function(quo, call) {
+	cols <- tryCatch(
+		as_name(quo),
+		error = function(e) as_label(quo)
+	)
+	abort_columns_not_found(cols, call)
 }
 
-abort_columns_not_found <- function(cols, call) {
-	abort_not_found(cols, call)
-}
-
-abort_not_found <- function(x, call) {
+abort_columns_not_found <- function(x, call) {
 	cli_abort(
 		c(
 			"Can't select columns that don't exist.",
@@ -913,14 +910,27 @@ method(.with_filters, class_shinyfilters) <- function(
 ._select_by_pkg <- function(x, selection, call) {
 	if (isNamespaceLoaded("tidyselect")) {
 		cols <-
-			names(tidyselect::eval_select(
+			tidyselect::eval_select(
 				selection,
 				x@data,
 				allow_rename = FALSE,
 				error_call = call
-			))
+			)
 	} else {
 		cols <- ._base_eval_select(x, selection, call)
+	}
+	if (is.numeric(cols)) {
+		cols_oob <- cols[cols > length(x)]
+		if (length(cols_oob) > 0) {
+			cli_abort(
+				c(
+					"Can't select columns past the end.",
+					"i" = "Location{?s} {as.character(cols_oob)} {?doesn't/don't} exist.",
+					"i" = "There are only {ncol(x)} columns."
+				)
+			)
+		}
+		return(names(x)[cols])
 	}
 	cols
 }

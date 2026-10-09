@@ -691,10 +691,14 @@
       i There are only 4 columns.
     Code
       cfg[TRUE]
-    Condition
-      Error in `cfg[TRUE]`:
-      ! Can't select columns.
-      x Subscript must be numeric or character, not `TRUE`.
+    Output
+      <shinyfilters> * 4 filters
+      
+      Filters
+        letters                <chr>  selectizeInput
+        factors                <fct>  selectizeInput
+        x                      <int>  sliderInput
+        a_very_very_long_name  <dbl>  sliderInput
     Code
       cfg[0]
     Condition
