@@ -348,7 +348,7 @@
       with_filters(cfg, tidyselect::where(is.logical) ~ "radio")
     Condition
       Error in `with_filters()`:
-      ! Unable to locate columns.
+      ! `tidyselect::where(is.logical)` doesn't select any columns.
 
 # with_ns() errors
 

@@ -375,5 +375,5 @@
       with_args(cfg, tidyselect::where(is.logical) ~ list(step = 2))
     Condition
       Error in `with_args()`:
-      ! Unable to locate columns.
+      ! `tidyselect::where(is.logical)` doesn't select any columns.
 

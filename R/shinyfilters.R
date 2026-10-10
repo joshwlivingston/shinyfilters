@@ -815,7 +815,7 @@ abort_columns_not_found <- function(x, call) {
 with_filters <- function(.filters, ...) {
 	check_shinyfilters(.filters)
 	if (...length() == 0) {
-		._abort_with_filter_form(list(), call = current_env())
+		._abort_with_filter(current_env())
 	}
 	.with_filters(.filters, ..., .call = current_env())
 }
@@ -828,28 +828,22 @@ with_filters <- function(.filters, ...) {
 ) {
 	config <- .filters
 	quos <- enquos(...)
-	if (._is_cols_input_pair(quos)) {
-		return(._override_cols(
-			config,
-			quos[[1]],
-			quos[[2]],
-			call = .call,
-			fn = .fn
-		))
-	}
 	nms <- names2(quos)
 	named <- nms != ""
 	is_formula <- !named & vapply(quos, ._is_cols_formula, logical(1))
 
 	loose <- !named & !is_formula
 	if (any(loose)) {
-		._abort_with_filter_form(quos[loose], call = .call)
+		._abort_with_filter(.call)
 	}
 
 	# One argument at a time, so each sees the columns the earlier ones computed.
 	for (i in seq_along(quos)) {
 		quo <- quos[[i]]
 		if (is_formula(quo_get_expr(quo))) {
+			if (!is.null(nms) && nms[[i]] != "") {
+				._abort_with_filter(.call)
+			}
 			spec <- ._formula_spec(quo)
 			config <- ._override_cols(
 				config,
@@ -873,17 +867,7 @@ with_filters <- function(.filters, ...) {
 	config
 }
 
-# `with_filters(filters, cols, input)`: two unnamed arguments, the first a plain
-# column selection. The second is the columns' input, however it is written.
-._is_cols_input_pair <- function(quos) {
-	if (length(quos) != 2 || any(names2(quos) != "")) {
-		return(FALSE)
-	}
-	cols <- quos[[1]]
-	!._is_cols_formula(cols)
-}
-
-._abort_with_filter_form <- function(quos, call) {
+._abort_with_filter <- function(call) {
 	cli_abort(
 		c(
 			"{.fn with_filters} takes two unnamed arguments, named arguments, or formulas."
@@ -935,21 +919,16 @@ with_filters <- function(.filters, ...) {
 		))
 	}
 
-	if (!.tried.column && (!isNamespaceLoaded("tidyselect") || .col.first)) {
-		return(tryCatch(
-			._base_eval_select(x, selection, call),
-			error = function(e) {
-				._resolve_cols(x, selection, call, eval = TRUE, .tried.column = TRUE)
-			}
+	if (isNamespaceLoaded("tidyselect")) {
+		return(tidyselect::eval_select(
+			selection,
+			x@data,
+			allow_rename = FALSE,
+			error_call = call
 		))
 	}
 
-	tidyselect::eval_select(
-		selection,
-		x@data,
-		allow_rename = FALSE,
-		error_call = call
-	)
+	._base_eval_select(x, selection, call)
 }
 
 ._select_by_pkg <- function(x, selection, call, .col.first = FALSE) {
@@ -976,7 +955,10 @@ with_filters <- function(.filters, ...) {
 		}
 		return(names(x)[cols])
 	}
-	cols
+	if (!is.character(cols)) {
+		cli_abort("Unable to locate columns.", call = call)
+	}
+	unique(cols)
 }
 
 # The columns a tidyselect expression selects: at least one

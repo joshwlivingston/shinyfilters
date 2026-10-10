@@ -99,7 +99,7 @@ test_that("an input chosen later keeps the with_args() arguments it names", {
 
 	radio <- with_filters(
 		shinyfilters(df_config),
-		letters = "radio" ~ list(inline = TRUE, label = "Letters")
+		letters ~ "radio" ~ list(inline = TRUE, label = "Letters")
 	)
 	expect_identical(
 		with_filters(radio, letters = "selectize")$letters,
@@ -157,10 +157,10 @@ test_that("an input chosen later that takes `...` keeps every argument", {
 
 test_that("an input a column doesn't support keeps every argument", {
 	cfg <- shinyfilters(df_config)
-	set <- with_filters(cfg, factors = "select" ~ list(inline = TRUE))
+	set <- with_filters(cfg, factors ~ "select" ~ list(inline = TRUE))
 	expect_identical(
 		with_filters(with_filters(set, factors = "slider"), factors = "radio"),
-		with_filters(cfg, factors = "radio" ~ list(inline = TRUE))
+		with_filters(cfg, factors ~ "radio" ~ list(inline = TRUE))
 	)
 })
 
@@ -168,12 +168,12 @@ test_that("arguments add to the ones set earlier", {
 	cfg <- shinyfilters(df_config)
 	expect_identical(
 		with_filters(
-			with_filters(cfg, x = "slider" ~ list(step = 2, width = "50%")),
-			x = "slider" ~ list(width = "100%", ticks = FALSE)
+			with_filters(cfg, x ~ "slider" ~ list(step = 2, width = "50%")),
+			x ~ "slider" ~ list(width = "100%", ticks = FALSE)
 		),
 		with_filters(
 			cfg,
-			x = "slider" ~ list(step = 2, width = "100%", ticks = FALSE)
+			x ~ "slider" ~ list(step = 2, width = "100%", ticks = FALSE)
 		)
 	)
 })
@@ -185,8 +185,8 @@ test_that("an input is the same written as a keyword or a function", {
 		with_filters(cfg, x = "slider")
 	)
 	expect_identical(
-		with_filters(cfg, x = shiny::sliderInput ~ list(step = 2)),
-		with_filters(cfg, x = "slider" ~ list(step = 2))
+		with_filters(cfg, x ~ shiny::sliderInput ~ list(step = 2)),
+		with_filters(cfg, x ~ "slider" ~ list(step = 2))
 	)
 })
 
@@ -197,11 +197,7 @@ test_that("a function of the user's own takes arguments", {
 	}
 	expected <- shiny::numericInput("x", "x", 10L, 2L, 10L, 2)
 	expect_identical(
-		with_filters(cfg, x = my_numeric ~ list(step = 2))$x,
-		expected
-	)
-	expect_identical(
-		with_filters(cfg, x, my_numeric ~ list(step = 2))$x,
+		with_filters(cfg, x ~ my_numeric ~ list(step = 2))$x,
 		expected
 	)
 })
@@ -377,13 +373,13 @@ test_that("print() shows what each way of writing with_filters() sets", {
 		with_filters(cfg, x ~ list(step = 2))
 		with_filters(cfg, x ~ list(step = 2, width = "50%"))
 
-		with_filters(cfg, x = "slider" ~ list(value = range(.x)))
-		with_filters(cfg, x = "slider" ~ list(value = range(.x), step = 2))
-		with_filters(cfg, x = shiny::sliderInput ~ list(value = range(.x)))
+		with_filters(cfg, x ~ "slider" ~ list(value = range(.x)))
+		with_filters(cfg, x ~ "slider" ~ list(value = range(.x), step = 2))
+		with_filters(cfg, x ~ shiny::sliderInput ~ list(value = range(.x)))
 
 		with_filters(
 			cfg,
-			letters = shiny::checkboxGroupInput ~
+			letters ~ shiny::checkboxGroupInput ~
 				list(inline = TRUE, .update_fn = shiny::updateCheckboxGroupInput)
 		)
 	})
@@ -421,10 +417,10 @@ test_that("print() shows `.update_fn`", {
 	div_input <- function(inputId, label, ...) shiny::tags$div()
 	cfg <- with_filters(
 		shinyfilters(df_config),
-		letters = shiny::checkboxGroupInput ~
+		letters ~ shiny::checkboxGroupInput ~
 			list(inline = TRUE, .update_fn = shiny::updateCheckboxGroupInput),
-		factors = checkbox ~ list(.update_fn = update_checkbox),
-		x = div_input ~ list(.update_fn = function(session, inputId, ...) NULL)
+		factors ~ checkbox ~ list(.update_fn = update_checkbox),
+		x ~ div_input ~ list(.update_fn = function(session, inputId, ...) NULL)
 	)
 	expect_snapshot(print(cfg), variant = snapshot_variant())
 })
@@ -436,7 +432,7 @@ test_that("with_filters() sets arguments like with_args()", {
 		filterInput(with_args(cfg, x ~ list(value = range(.x))))
 	)
 	expect_identical(
-		filterInput(with_filters(cfg, x, list(value = range(.x)))),
+		filterInput(with_filters(cfg, x ~ list(value = range(.x)))),
 		filterInput(with_args(cfg, x ~ list(value = range(.x))))
 	)
 })
@@ -466,19 +462,11 @@ test_that("with_filters() takes `input ~ arguments`", {
 		value = c(2L, 10L)
 	)
 	expect_identical(
-		with_filters(cfg, x = "slider" ~ list(value = range(.x)))$x,
-		expected
-	)
-	expect_identical(
 		with_filters(cfg, x ~ "slider" ~ list(value = range(.x)))$x,
 		expected
 	)
 	expect_identical(
-		with_filters(cfg, x = shiny::sliderInput ~ list(value = range(.x)))$x,
-		expected
-	)
-	expect_identical(
-		with_filters(cfg, x, "slider" ~ list(value = range(.x)))$x,
+		with_filters(cfg, x ~ shiny::sliderInput ~ list(value = range(.x)))$x,
 		expected
 	)
 })
@@ -496,7 +484,7 @@ test_that("`.update_fn` names the function that updates an input", {
 	checkbox <- with_filters(cfg, letters = shiny::checkboxGroupInput)
 	set <- with_filters(
 		cfg,
-		letters = shiny::checkboxGroupInput ~
+		letters ~ shiny::checkboxGroupInput ~
 			list(.update_fn = shiny::updateCheckboxGroupInput)
 	)
 	expect_identical(
@@ -519,14 +507,14 @@ test_that("`.update_fn` stays with the input it updates", {
 	cfg <- shinyfilters(df_config)
 	set <- with_filters(
 		cfg,
-		letters = shiny::checkboxGroupInput ~
+		letters ~ shiny::checkboxGroupInput ~
 			list(.update_fn = shiny::updateCheckboxGroupInput)
 	)
 	expect_identical(
 		with_args(set, letters ~ list(inline = TRUE)),
 		with_filters(
 			cfg,
-			letters = shiny::checkboxGroupInput ~
+			letters ~ shiny::checkboxGroupInput ~
 				list(inline = TRUE, .update_fn = shiny::updateCheckboxGroupInput)
 		)
 	)
