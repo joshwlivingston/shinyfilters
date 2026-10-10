@@ -726,7 +726,7 @@
       cfg[t]
     Condition
       Error in `cfg[t]`:
-      ! Unable to locate columns.
+      ! Predicate must return `TRUE` or `FALSE`, not a character matrix.
 
 # a shinyfilters object's properties are read-only
 

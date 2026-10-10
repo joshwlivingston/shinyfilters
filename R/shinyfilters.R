@@ -910,22 +910,48 @@ with_filters <- function(.filters, ...) {
 	.col.first = FALSE,
 	.tried.column = FALSE
 ) {
+	res <- NULL
 	if (eval && !.col.first) {
-		return(tryCatch(
-			eval_tidy(selection),
+		tryCatch(
+			{
+				res <- eval_tidy(selection)
+				if (!is.function(res)) {
+					# A tidyselect expression, `where(is.numeric)`, returns a function.
+					# If that's the case, we do not return and evaluate it as
+					# a tidyselect expression instead
+					#
+					# In this case, the provided expression, evaluted literally, is a
+					# function.
+					return(res)
+				}
+			},
 			error = function(e) {
 				._resolve_cols(x, selection, call, eval = FALSE)
 			}
-		))
+		)
 	}
 
 	if (isNamespaceLoaded("tidyselect")) {
-		return(tidyselect::eval_select(
-			selection,
-			x@data,
-			allow_rename = FALSE,
-			error_call = call
-		))
+		try_fetch(
+			{
+				res <- tidyselect::eval_select(
+					if (!is.function(res)) selection else res,
+					x@data,
+					allow_rename = FALSE,
+					error_call = call
+				)
+			},
+			error = function(cnd) {
+				if (!eval && .col.first) {
+					res <- ._resolve_cols(x, selection, call, eval = TRUE)
+				}
+				cnd_signal(cnd)
+			}
+		)
+	}
+
+	if (!is.null(res)) {
+		return(res)
 	}
 
 	._base_eval_select(x, selection, call)
