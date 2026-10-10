@@ -50,10 +50,8 @@
     Code
       updateFilterInput(with_filters(cfg, c(letters, factors), shiny::checkboxGroupInput))
     Condition
-      Error in `updateFilterInput()`:
-      ! Can't update the input for columns letters and factors.
-      x Their inputs are set by functions with no known update function.
-      i Name one among the input's arguments: `<input> ~ list(.update_fn = <function>)`.
+      Error in `with_filters()`:
+      ! `with_filters()` takes two unnamed arguments, named arguments, or formulas.
     Code
       update_messages(updateFilterInput(with_filters(cfg, factors = "slider")[
         "factors"]))

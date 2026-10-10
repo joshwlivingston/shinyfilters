@@ -204,13 +204,12 @@
       with_filters(cfg, nope, "radio")
     Condition
       Error in `with_filters()`:
-      ! Can't select columns that don't exist.
-      x Column `nope` doesn't exist.
+      ! `with_filters()` takes two unnamed arguments, named arguments, or formulas.
     Code
       with_filters(cfg, where(is.logical), "radio")
     Condition
       Error in `with_filters()`:
-      ! `where(is.logical)` doesn't select any columns.
+      ! `with_filters()` takes two unnamed arguments, named arguments, or formulas.
     Code
       with_filters(cfg, x = "radioo")
     Condition
@@ -243,8 +242,7 @@
       with_filters(cfg, x, c("radio", "slider"))
     Condition
       Error in `with_filters()`:
-      ! An input must be one of "area", "date", "numeric", "radio", "range", "select", "selectize", "slider", or "textbox", or a function.
-      x Got "radio" and "slider".
+      ! `with_filters()` takes two unnamed arguments, named arguments, or formulas.
     Code
       with_filters(cfg, x ~ 1)
     Condition
@@ -254,21 +252,17 @@
       with_filters(cfg, x, TRUE)
     Condition
       Error in `with_filters()`:
-      ! An input must be a keyword or a function, not `TRUE`.
+      ! `with_filters()` takes two unnamed arguments, named arguments, or formulas.
     Code
       with_filters(cfg, x, radio)
     Condition
       Error in `with_filters()`:
-      ! Can't evaluate the input `radio`.
-      i Keywords are strings, e.g. `"radio"`.
-      Caused by error:
-      ! object 'radio' not found
+      ! `with_filters()` takes two unnamed arguments, named arguments, or formulas.
     Code
       with_filters(cfg, x, range)
     Condition
       Error in `with_filters()`:
-      ! Can't use the function `range()` as an input.
-      i Keywords are strings: `"range"`.
+      ! `with_filters()` takes two unnamed arguments, named arguments, or formulas.
     Code
       with_filters(cfg, x = numeric)
     Condition

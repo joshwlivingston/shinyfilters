@@ -768,7 +768,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 #' filters
 #'
 #' # Choose one input for several columns with tidyselect
-#' filters <- with_filters(filters, where(is.numeric), "slider")
+#' filters <- with_filters(filters, where(is.numeric) ~ "slider")
 #' filterInput(filters)
 #'
 #' # Or select columns and name others in one call
@@ -806,15 +806,6 @@ method(.with_filters, class_shinyfilters) <- function(
 ) {
 	config <- .filters
 	quos <- enquos(...)
-	if (._is_cols_input_pair(quos)) {
-		return(._override_cols(
-			config,
-			quos[[1]],
-			quos[[2]],
-			call = .call,
-			fn = .fn
-		))
-	}
 	nms <- names2(quos)
 	named <- nms != ""
 	is_formula <- !named & vapply(quos, ._is_cols_formula, logical(1))
@@ -847,16 +838,6 @@ method(.with_filters, class_shinyfilters) <- function(
 	}
 
 	config
-}
-
-# `with_filters(filters, cols, input)`: two unnamed arguments, the first a plain
-# column selection. The second is the columns' input, however it is written.
-._is_cols_input_pair <- function(quos) {
-	if (length(quos) != 2 || any(names2(quos) != "")) {
-		return(FALSE)
-	}
-	cols <- quos[[1]]
-	!._is_cols_formula(cols)
 }
 
 ._abort_with_filter_form <- function(quos, call) {
