@@ -302,6 +302,10 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	if (length(cols) == 0) {
 		cli_abort("{.code {label}} doesn't select any columns.", call = call)
 	}
+	missing <- setdiff(cols, names(x@data))
+	if (length(missing) > 0) {
+		abort_columns_not_found(missing, call)
+	}
 	added <- x@added[intersect(names(x@added), cols)]
 	replaced <- x@replaced[intersect(names(x@replaced), cols)]
 	._modify(
@@ -816,9 +820,7 @@ with_filters <- function(.filters, ...) {
 	.with_filters(.filters, ..., .call = current_env())
 }
 
-.with_filters <- new_generic(".with_filters", ".filters")
-
-method(.with_filters, class_shinyfilters) <- function(
+.with_filters <- function(
 	.filters,
 	...,
 	.call = caller_env(),
@@ -846,20 +848,22 @@ method(.with_filters, class_shinyfilters) <- function(
 
 	# One argument at a time, so each sees the columns the earlier ones computed.
 	for (i in seq_along(quos)) {
-		if (is_formula[[i]]) {
-			spec <- ._formula_spec(quos[[i]])
+		quo <- quos[[i]]
+		if (is_formula(quo_get_expr(quo))) {
+			spec <- ._formula_spec(quo)
 			config <- ._override_cols(
 				config,
 				spec$cols,
 				spec$input,
 				call = .call,
-				fn = .fn
+				fn = .fn,
+				from.formula = TRUE
 			)
 		} else {
 			config <- ._set_column(
 				config,
 				nms[[i]],
-				quos[[i]],
+				quo,
 				call = .call,
 				fn = .fn
 			)
@@ -888,9 +892,16 @@ method(.with_filters, class_shinyfilters) <- function(
 	)
 }
 
-._override_cols <- function(config, cols, input, call, fn) {
+._override_cols <- function(
+	config,
+	cols,
+	input,
+	call,
+	fn,
+	from.formula = FALSE
+) {
 	._private()
-	selected <- ._eval_cols(config, cols, call = call)
+	selected <- ._eval_cols(config, cols, call = call, .col.first = from.formula)
 	override <- ._value_override(config, input, call = call, fn = fn)
 	overrides <- rep(list(override), length(selected))
 	names(overrides) <- selected
@@ -907,17 +918,50 @@ method(.with_filters, class_shinyfilters) <- function(
 	._spec_override(spec, quo_get_env(quo), config, call = call, fn = fn)
 }
 
-._select_by_pkg <- function(x, selection, call) {
-	if (isNamespaceLoaded("tidyselect")) {
-		cols <-
-			tidyselect::eval_select(
-				selection,
-				x@data,
-				allow_rename = FALSE,
-				error_call = call
-			)
-	} else {
-		cols <- ._base_eval_select(x, selection, call)
+._resolve_cols <- function(
+	x,
+	selection,
+	call,
+	eval = TRUE,
+	.col.first = FALSE,
+	.tried.column = FALSE
+) {
+	if (eval && !.col.first) {
+		return(tryCatch(
+			eval_tidy(selection),
+			error = function(e) {
+				._resolve_cols(x, selection, call, eval = FALSE)
+			}
+		))
+	}
+
+	if (!.tried.column && (!isNamespaceLoaded("tidyselect") || .col.first)) {
+		return(tryCatch(
+			._base_eval_select(x, selection, call),
+			error = function(e) {
+				._resolve_cols(x, selection, call, eval = TRUE, .tried.column = TRUE)
+			}
+		))
+	}
+
+	tidyselect::eval_select(
+		selection,
+		x@data,
+		allow_rename = FALSE,
+		error_call = call
+	)
+}
+
+._select_by_pkg <- function(x, selection, call, .col.first = FALSE) {
+	cols <- ._resolve_cols(x, selection, call, .col.first = .col.first)
+	if (is.logical(cols) && length(cols) != 1 && length(cols) != length(x)) {
+		cli_abort(
+			c(
+				"Can't subset columns with {.code cols}.",
+				"x" = "Logical subscript {.code cols} must be size 1 or {length(x)}, not {length(cols)}."
+			),
+			call = call
+		)
 	}
 	if (is.numeric(cols)) {
 		cols_oob <- cols[cols > length(x)]
@@ -936,8 +980,8 @@ method(.with_filters, class_shinyfilters) <- function(
 }
 
 # The columns a tidyselect expression selects: at least one
-._eval_cols <- function(config, cols, call) {
-	selected <- ._select_by_pkg(config, cols, call)
+._eval_cols <- function(config, cols, call, .col.first = FALSE) {
+	selected <- ._select_by_pkg(config, cols, call, .col.first = .col.first)
 	if (length(selected) == 0) {
 		cli_abort(
 			"{.code {as_label(cols)}} doesn't select any columns.",
