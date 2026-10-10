@@ -800,10 +800,10 @@ abort_columns_not_found <- function(x, call) {
 #' filters
 #'
 #' # Choose one input for several columns
-#' filters <- with_filters(filters, dep_delay:origin, "slider")
+#' filters <- with_filters(filters, dep_delay:origin ~ "slider")
 #'
 #' # Give an input its arguments. `.x` is the column the input is for.
-#' with_filters(filters, dep_delay = "slider" ~ list(value = range(.x)))
+#' with_filters(filters, dep_delay ~ "slider" ~ list(value = range(.x)))
 #'
 #' # Add a column computed from the others
 #' with_filters(filters, delay_sq = dep_delay^2)
