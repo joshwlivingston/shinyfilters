@@ -315,8 +315,7 @@
       with_filters(cfg, x, letters ~ "radio")
     Condition
       Error in `with_filters()`:
-      ! Can't read `letters ~ "radio"`.
-      i An input is followed by its arguments: `input ~ list(arg = value, ...)`.
+      ! `with_filters()` takes two unnamed arguments, named arguments, or formulas.
 
 # with_args() errors
 

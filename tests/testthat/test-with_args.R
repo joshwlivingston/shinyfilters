@@ -180,7 +180,7 @@ test_that("a function of the user's own takes arguments", {
 		expected
 	)
 	expect_identical(
-		with_filters(cfg, x, my_numeric ~ list(step = 2))$x,
+		with_filters(cfg, x ~ my_numeric ~ list(step = 2))$x,
 		expected
 	)
 })
@@ -413,7 +413,7 @@ test_that("with_filters() sets arguments like with_args()", {
 		filterInput(with_args(cfg, x ~ list(value = range(.x))))
 	)
 	expect_identical(
-		filterInput(with_filters(cfg, x, list(value = range(.x)))),
+		filterInput(with_filters(cfg, x ~ list(value = range(.x)))),
 		filterInput(with_args(cfg, x ~ list(value = range(.x))))
 	)
 	expect_identical(
@@ -447,10 +447,6 @@ test_that("with_filters() takes `input ~ arguments`", {
 	)
 	expect_identical(
 		with_filters(cfg, x = shiny::sliderInput ~ list(value = range(.x)))$x,
-		expected
-	)
-	expect_identical(
-		with_filters(cfg, x, "slider" ~ list(value = range(.x)))$x,
 		expected
 	)
 })
