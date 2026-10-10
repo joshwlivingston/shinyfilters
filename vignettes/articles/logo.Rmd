@@ -113,9 +113,8 @@ font_url <- paste0(
 ### Colors
 
 ```{r}
-# originally was a gradient from #4A0D82 to #1C0038, but graident was later
-# removed
-sky <- c("#4A0D82", "#4A0D82") # the sticker, top to bottom
+# originally was a gradient from #4A0D82 to #1C0038
+sky <- c("#691eae", "#290051") # the sticker, top to bottom
 edge <- "#10002B" # its border
 ink <- "#FFFFFF" # the word and the swoosh
 ```
