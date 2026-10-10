@@ -68,7 +68,7 @@
 #'
 #' ```
 #' ui <- function(request) {
-#'   page_sidebar(sidebar = filters[[everything()]])
+#'   page_sidebar(sidebar = filterInput(filters))
 #' }
 #' ```
 #' <br>
@@ -157,11 +157,13 @@ NULL
 #' @importFrom methods formalArgs
 #' @importFrom methods functionBody
 #' @importFrom rlang as_label
+#' @importFrom rlang as_name
 #' @importFrom rlang call_args
 #' @importFrom rlang call_match
 #' @importFrom rlang call2
 #' @importFrom rlang caller_arg
 #' @importFrom rlang caller_env
+#' @importFrom rlang cnd_signal
 #' @importFrom rlang current_call
 #' @importFrom rlang current_env
 #' @importFrom rlang enquo
@@ -185,6 +187,7 @@ NULL
 #' @importFrom rlang quo
 #' @importFrom rlang quo_get_env
 #' @importFrom rlang quo_get_expr
+#' @importFrom rlang sym
 #' @importFrom rlang try_fetch
 #' @importFrom S7 class_any
 #' @importFrom S7 class_character
@@ -212,7 +215,6 @@ NULL
 #' @importFrom shiny NS
 #' @importFrom shiny observe
 #' @importFrom shiny reactiveValues
-#' @importFrom tidyselect eval_select
 #' @importFrom utils getS3method
 #' @importFrom utils methods
 #' @importFrom utils modifyList

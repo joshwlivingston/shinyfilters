@@ -22,8 +22,6 @@ jobs:
       R_KEEP_PKG_SOURCE: yes
       NOT_CRAN: true
       SNAPSHOT: "2023-09-15"
-      # Old testthat formats snapshots differently; keep them in _snaps/r-3.5/
-      SHINYFILTERS_SNAPSHOT_VARIANT: r-3.5
 
     steps:
       - uses: actions/checkout@v4

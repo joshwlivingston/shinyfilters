@@ -106,7 +106,7 @@ test_that("radio on a column that isn't discrete -> choices are updated", {
 		tz = "UTC"
 	)
 	df$dur <- as.difftime(c(3, 1, 1), units = "mins")
-	cfg <- with_filters(shinyfilters(df), everything() ~ "radio")
+	cfg <- with_filters(shinyfilters(df), names(df) ~ "radio")
 	dates <- as.Date("2024-01-01") + 0:1
 	expect_identical(
 		update_messages(updateFilterInput(cfg)),
@@ -122,7 +122,7 @@ test_that("updateFilterInput() passes the arguments an update takes", {
 	cfg <- shinyfilters(df_config)
 	slider <- with_filters(
 		cfg,
-		x = "slider" ~ list(value = range(.x), step = 2, width = "50%")
+		x ~ "slider" ~ list(value = range(.x), step = 2, width = "50%")
 	)
 	expect_identical(
 		update_messages(updateFilterInput(slider["x"])),
@@ -132,7 +132,7 @@ test_that("updateFilterInput() passes the arguments an update takes", {
 	)
 	radio <- with_filters(
 		cfg,
-		letters = "radio" ~ list(label = "Letters", inline = TRUE)
+		letters ~ "radio" ~ list(label = "Letters", inline = TRUE)
 	)
 	expect_identical(
 		update_messages(updateFilterInput(radio["letters"])),
@@ -192,7 +192,7 @@ test_that("arguments that use `.x` are computed from the data being updated", {
 test_that("updateFilterInput() calls `.update_fn`", {
 	cfg <- with_filters(
 		shinyfilters(df_config),
-		letters = shiny::checkboxGroupInput ~
+		letters ~ shiny::checkboxGroupInput ~
 			list(inline = TRUE, .update_fn = shiny::updateCheckboxGroupInput)
 	)
 	expect_identical(
@@ -246,7 +246,7 @@ test_that("a shinyWidgets update function is given only the arguments it takes",
 	expect_identical(update_messages(updateFilterInput(found["x"])), expected)
 	named <- with_filters(
 		cfg,
-		x = shinyWidgets::numericRangeInput ~
+		x ~ shinyWidgets::numericRangeInput ~
 			list(.update_fn = shinyWidgets::updateNumericRangeInput)
 	)
 	expect_identical(update_messages(updateFilterInput(named["x"])), expected)
@@ -272,7 +272,7 @@ test_that("`.update_fn` wins over a shinyWidgets input's own update function", {
 	cfg <- shinyfilters(df_config)
 	named <- with_filters(
 		cfg,
-		letters = shinyWidgets::pickerInput ~
+		letters ~ shinyWidgets::pickerInput ~
 			list(.update_fn = shiny::updateSelectInput)
 	)
 	expected <- update_messages(shiny::updateSelectInput(

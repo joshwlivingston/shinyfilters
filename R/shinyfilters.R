@@ -293,19 +293,18 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 ._select_columns <- function(x, selection, label, call) {
 	._private()
 	cols <- try_fetch(
-		names(eval_select(
-			selection,
-			x@data,
-			allow_rename = FALSE,
-			error_call = call
-		)),
-		vctrs_error_subscript = function(cnd) {
+		._select_by_pkg(x, selection, call),
+		error = function(cnd) {
 			cnd$call <- call
 			stop(cnd)
 		}
 	)
 	if (length(cols) == 0) {
 		cli_abort("{.code {label}} doesn't select any columns.", call = call)
+	}
+	missing <- setdiff(cols, names(x@data))
+	if (length(missing) > 0) {
+		abort_columns_not_found(missing, call)
 	}
 	added <- x@added[intersect(names(x@added), cols)]
 	replaced <- x@replaced[intersect(names(x@replaced), cols)]
@@ -317,6 +316,43 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 		replaced = if (length(replaced) > 0) replaced else character()
 	)
 }
+
+._base_eval_select <- function(x, sel, call) {
+	nl <- seq_along(x)
+	names(nl) <- names(x)
+	res <- tryCatch(
+		unique(eval_tidy(sel, nl)),
+		error = function(e) {
+			abort_quo_not_found(sel, call)
+		}
+	)
+	if (is.character(res)) {
+		missing <- setdiff(res, names(x))
+		if (length(missing) != 0) {
+			abort_columns_not_found(missing, call)
+		}
+	}
+	return(res)
+}
+
+abort_quo_not_found <- function(quo, call) {
+	cols <- tryCatch(
+		as_name(quo),
+		error = function(e) as_label(quo)
+	)
+	abort_columns_not_found(cols, call)
+}
+
+abort_columns_not_found <- function(x, call) {
+	cli_abort(
+		c(
+			"Can't select columns that don't exist.",
+			"x" = "Column{?s} {.code {x}} {?doesn't/don't} exist."
+		),
+		call = call
+	)
+}
+
 
 # Creates the input for one column, selected by name or position
 ._config_column <- function(config, col, call) {
@@ -711,10 +747,6 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 #' @param ... Either two unnamed arguments, or any number of named arguments,
 #'   or formulas:
 #'
-#'   * `with_filters(.filters, cols, input)`: `cols` selects columns with
-#'     <[`tidy-select`][tidyselect::language]>, such as `cyl`,
-#'     `c(mpg, disp)`, or `where(is.numeric)`. In place of `input`,
-#'     `list(arg = value)` sets arguments of the inputs the columns have.
 #'   * `with_filters(.filters, col = input, ...)`: each name is a column.
 #'   * `with_filters(.filters, col = expression, ...)`: adds or replaces a
 #'     column, computed from the other columns. A replaced column keeps its
@@ -767,19 +799,11 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 #' filters <- with_filters(filters, origin = "radio", carrier = "selectize")
 #' filters
 #'
-#' # Choose one input for several columns with tidyselect
-#' filters <- with_filters(filters, where(is.numeric) ~ "slider")
-#' filterInput(filters)
-#'
-#' # Or select columns and name others in one call
-#' with_filters(
-#'   filters,
-#'   where(is.character) ~ "selectize",
-#'   origin = "radio"
-#' )
+#' # Choose one input for several columns
+#' filters <- with_filters(filters, dep_delay:origin ~ "slider")
 #'
 #' # Give an input its arguments. `.x` is the column the input is for.
-#' with_filters(filters, dep_delay = "slider" ~ list(value = range(.x)))
+#' with_filters(filters, dep_delay ~ "slider" ~ list(value = range(.x)))
 #'
 #' # Add a column computed from the others
 #' with_filters(filters, delay_sq = dep_delay^2)
@@ -791,14 +815,12 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 with_filters <- function(.filters, ...) {
 	check_shinyfilters(.filters)
 	if (...length() == 0) {
-		._abort_with_filter_form(list(), call = current_env())
+		._abort_with_filter(current_env())
 	}
 	.with_filters(.filters, ..., .call = current_env())
 }
 
-.with_filters <- new_generic(".with_filters", ".filters")
-
-method(.with_filters, class_shinyfilters) <- function(
+.with_filters <- function(
 	.filters,
 	...,
 	.call = caller_env(),
@@ -812,25 +834,30 @@ method(.with_filters, class_shinyfilters) <- function(
 
 	loose <- !named & !is_formula
 	if (any(loose)) {
-		._abort_with_filter_form(quos[loose], call = .call)
+		._abort_with_filter(.call)
 	}
 
 	# One argument at a time, so each sees the columns the earlier ones computed.
 	for (i in seq_along(quos)) {
-		if (is_formula[[i]]) {
-			spec <- ._formula_spec(quos[[i]])
+		quo <- quos[[i]]
+		if (is_formula(quo_get_expr(quo))) {
+			if (!is.null(nms) && nms[[i]] != "") {
+				._abort_with_filter(.call)
+			}
+			spec <- ._formula_spec(quo)
 			config <- ._override_cols(
 				config,
 				spec$cols,
 				spec$input,
 				call = .call,
-				fn = .fn
+				fn = .fn,
+				from.formula = TRUE
 			)
 		} else {
 			config <- ._set_column(
 				config,
 				nms[[i]],
-				quos[[i]],
+				quo,
 				call = .call,
 				fn = .fn
 			)
@@ -840,7 +867,7 @@ method(.with_filters, class_shinyfilters) <- function(
 	config
 }
 
-._abort_with_filter_form <- function(quos, call) {
+._abort_with_filter <- function(call) {
 	cli_abort(
 		c(
 			"{.fn with_filters} takes two unnamed arguments, named arguments, or formulas."
@@ -849,9 +876,16 @@ method(.with_filters, class_shinyfilters) <- function(
 	)
 }
 
-._override_cols <- function(config, cols, input, call, fn) {
+._override_cols <- function(
+	config,
+	cols,
+	input,
+	call,
+	fn,
+	from.formula = FALSE
+) {
 	._private()
-	selected <- ._eval_cols(config, cols, call = call)
+	selected <- ._eval_cols(config, cols, call = call, .col.first = from.formula)
 	override <- ._value_override(config, input, call = call, fn = fn)
 	overrides <- rep(list(override), length(selected))
 	names(overrides) <- selected
@@ -868,14 +902,94 @@ method(.with_filters, class_shinyfilters) <- function(
 	._spec_override(spec, quo_get_env(quo), config, call = call, fn = fn)
 }
 
+._resolve_cols <- function(
+	x,
+	selection,
+	call,
+	eval = TRUE,
+	.col.first = FALSE,
+	.tried.column = FALSE
+) {
+	res <- NULL
+	if (eval && !.col.first) {
+		tryCatch(
+			{
+				res <- eval_tidy(selection)
+				if (!is.function(res)) {
+					# A tidyselect expression, `where(is.numeric)`, returns a function.
+					# If that's the case, we do not return and evaluate it as
+					# a tidyselect expression instead
+					#
+					# In this case, the provided expression, evaluted literally, is a
+					# function.
+					return(res)
+				}
+			},
+			error = function(e) {
+				._resolve_cols(x, selection, call, eval = FALSE)
+			}
+		)
+	}
+
+	if (isNamespaceLoaded("tidyselect")) {
+		try_fetch(
+			{
+				res <- tidyselect::eval_select(
+					if (!is.function(res)) selection else res,
+					x@data,
+					allow_rename = FALSE,
+					error_call = call
+				)
+			},
+			error = function(cnd) {
+				if (!eval && .col.first) {
+					res <- ._resolve_cols(x, selection, call, eval = TRUE)
+				}
+				cnd_signal(cnd)
+			}
+		)
+	}
+
+	if (!is.null(res)) {
+		return(res)
+	}
+
+	._base_eval_select(x, selection, call)
+}
+
+._select_by_pkg <- function(x, selection, call, .col.first = FALSE) {
+	cols <- ._resolve_cols(x, selection, call, .col.first = .col.first)
+	if (is.logical(cols) && length(cols) != 1 && length(cols) != length(x)) {
+		cli_abort(
+			c(
+				"Can't subset columns with {.code cols}.",
+				"x" = "Logical subscript {.code cols} must be size 1 or {length(x)}, not {length(cols)}."
+			),
+			call = call
+		)
+	}
+	if (is.numeric(cols)) {
+		cols_oob <- cols[cols > length(x)]
+		if (length(cols_oob) > 0) {
+			cli_abort(
+				c(
+					"Can't select columns past the end.",
+					"i" = "Location{?s} {as.character(cols_oob)} {?doesn't/don't} exist.",
+					"i" = "There are only {ncol(x)} columns."
+				)
+			)
+		}
+		return(names(x)[cols])
+	}
+	if (!is.character(cols)) {
+		cli_abort("Unable to locate columns.", call = call)
+	}
+	unique(cols)
+}
+
 # The columns a tidyselect expression selects: at least one
-._eval_cols <- function(config, cols, call) {
-	selected <- names(eval_select(
-		cols,
-		config@data,
-		allow_rename = FALSE,
-		error_call = call
-	))
+._eval_cols <- function(config, cols, call, .col.first = FALSE) {
+	selected <- ._select_by_pkg(config, cols, call, .col.first = .col.first)
 	if (length(selected) == 0) {
 		cli_abort(
 			"{.code {as_label(cols)}} doesn't select any columns.",

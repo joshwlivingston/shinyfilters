@@ -72,7 +72,7 @@
       
       # Filter set by default argument
     Code
-      with_filters(cfg, x = "slider" ~ list(value = range(.x)))
+      with_filters(cfg, x ~ "slider" ~ list(value = range(.x)))
     Output
       <shinyfilters> * 4 filters
       
@@ -89,7 +89,7 @@
       # Filter set by default argument
       * Filter set by `with_filters()`
     Code
-      with_filters(cfg, x = "slider" ~ list(value = range(.x), step = 2))
+      with_filters(cfg, x ~ "slider" ~ list(value = range(.x), step = 2))
     Output
       <shinyfilters> * 4 filters
       
@@ -107,7 +107,7 @@
       # Filter set by default argument
       * Filter set by `with_filters()`
     Code
-      with_filters(cfg, x = shiny::sliderInput ~ list(value = range(.x)))
+      with_filters(cfg, x ~ shiny::sliderInput ~ list(value = range(.x)))
     Output
       <shinyfilters> * 4 filters
       
@@ -124,43 +124,7 @@
       # Filter set by default argument
       * Filter set by `with_filters()`
     Code
-      with_filters(cfg, where(is.numeric) ~ "slider" ~ list(value = range(.x)))
-    Output
-      <shinyfilters> * 4 filters
-      
-      Filters
-           letters                <chr>  selectizeInput
-           factors                <fct>  selectizeInput
-        *  x                      <int>  sliderInput
-                                           value = range(.x, na.rm = TRUE)
-        *  a_very_very_long_name  <dbl>  sliderInput
-                                           value = range(.x, na.rm = TRUE)
-      
-      Default Overrides
-        slider = FALSE
-      
-      * Filter set by `with_filters()`
-    Code
-      with_filters(cfg, where(is.numeric) ~ "slider" ~ list(value = range(.x), step = 2))
-    Output
-      <shinyfilters> * 4 filters
-      
-      Filters
-           letters                <chr>  selectizeInput
-           factors                <fct>  selectizeInput
-        *  x                      <int>  sliderInput
-                                           value = range(.x, na.rm = TRUE)
-                                           step  = 2
-        *  a_very_very_long_name  <dbl>  sliderInput
-                                           value = range(.x, na.rm = TRUE)
-                                           step  = 2
-      
-      Default Overrides
-        slider = FALSE
-      
-      * Filter set by `with_filters()`
-    Code
-      with_filters(cfg, letters = shiny::checkboxGroupInput ~ list(inline = TRUE,
+      with_filters(cfg, letters ~ shiny::checkboxGroupInput ~ list(inline = TRUE,
         .update_fn = shiny::updateCheckboxGroupInput))
     Output
       <shinyfilters> * 4 filters
@@ -178,28 +142,6 @@
       
       # Filter set by default argument
       * Filter set by `with_filters()`
-
-# print() shows the arguments of inputs with_filters() chose
-
-    Code
-      print(cfg)
-    Output
-      <shinyfilters> * 4 filters
-      
-      Filters
-        *  letters                <chr>  radioButtons
-                                           inline = TRUE
-                                           label  = "Letters"
-        *  factors                <fct>  selectizeInput
-        ^  x                      <int>  numericInput
-        #  a_very_very_long_name  <dbl>  numericInput
-      
-      Default Overrides
-        slider = FALSE
-      
-      # Filter set by default argument
-      * Filter set by `with_filters()`
-      ^ Filter replaced by `with_filters()`
 
 # print() shortens a long argument
 
@@ -260,17 +202,13 @@
     Code
       filterInput(with_filters(cfg, letters = "slider" ~ list(value = 1)))
     Condition
-      Error in `filterInput()`:
-      ! Can't create an input for column letters.
-      Caused by error:
-      ! "slider" isn't available for <character> columns.
-      i Use "area", "radio", "select", "selectize", or "textbox" instead.
+      Error in `with_filters()`:
+      ! `with_filters()` takes two unnamed arguments, named arguments, or formulas.
     Code
       with_filters(cfg, x = "sldier" ~ list(step = 2))
     Condition
       Error in `with_filters()`:
-      ! An input must be one of "area", "date", "numeric", "radio", "range", "select", "selectize", "slider", or "textbox", or a function.
-      x Got "sldier".
+      ! `with_filters()` takes two unnamed arguments, named arguments, or formulas.
 
 # with_filters() errors for an input's arguments
 
@@ -278,15 +216,12 @@
       with_filters(cfg, nope = "slider" ~ list(value = 1))
     Condition
       Error in `with_filters()`:
-      ! Can't find column nope.
-      x `"slider" ~ list(value = 1)` chooses the input for an existing column.
-      i To add a column, compute it from the others: `with_filters(filters, nope = <expression>)`.
+      ! `with_filters()` takes two unnamed arguments, named arguments, or formulas.
     Code
       with_filters(cfg, x = "slider" ~ list(value = 1, 5))
     Condition
       Error in `with_filters()`:
-      ! All arguments must be named.
-      x `5` isn't.
+      ! `with_filters()` takes two unnamed arguments, named arguments, or formulas.
     Code
       with_filters(cfg, x ~ list(inputId = "y"))
     Condition
@@ -297,7 +232,7 @@
       with_filters(cfg, x = "slider" ~ list(.update_fn = "updateSliderInput"))
     Condition
       Error in `with_filters()`:
-      ! `.update_fn` must be a function, not a string.
+      ! `with_filters()` takes two unnamed arguments, named arguments, or formulas.
     Code
       with_filters(cfg, x ~ list(max = nope * 2))
     Condition
@@ -309,8 +244,7 @@
       with_filters(cfg, x = "slider" ~ "radio")
     Condition
       Error in `with_filters()`:
-      ! Can't read `"slider" ~ "radio"`.
-      i An input is followed by its arguments: `input ~ list(arg = value, ...)`.
+      ! `with_filters()` takes two unnamed arguments, named arguments, or formulas.
     Code
       with_filters(cfg, x, letters ~ "radio")
     Condition
@@ -386,11 +320,6 @@
       Error in `with_args()`:
       ! Can't select columns that don't exist.
       x Column `nope` doesn't exist.
-    Code
-      with_args(cfg, where(is.logical) ~ list(step = 2))
-    Condition
-      Error in `with_args()`:
-      ! `where(is.logical)` doesn't select any columns.
     Code
       with_args(cfg, x ~ list(max = nope * 2))
     Condition
