@@ -75,7 +75,7 @@ filters <- with_filters(filters, origin = "radio", carrier = "selectize")
 filters
 
 # Choose one input for several columns with tidyselect
-filters <- with_filters(filters, where(is.numeric), "slider")
+filters <- with_filters(filters, where(is.numeric) ~ "slider")
 filterInput(filters)
 
 # Or select columns and name others in one call

@@ -768,7 +768,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 #' filters
 #'
 #' # Choose one input for several columns with tidyselect
-#' filters <- with_filters(filters, where(is.numeric), "slider")
+#' filters <- with_filters(filters, where(is.numeric) ~ "slider")
 #' filterInput(filters)
 #'
 #' # Or select columns and name others in one call
