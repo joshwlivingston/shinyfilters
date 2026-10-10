@@ -1,6 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 2521 2911">
 <title>shinyfilters</title>
 <defs>
+<filter id="shadow-swoosh-funnel" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="12.0" stdDeviation="24.0" flood-opacity="0.15"/></filter>
+<filter id="shadow-swoosh" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="9.6" stdDeviation="19.2" flood-opacity="0.20"/></filter>
+<filter id="shadow-funnel" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="7.2" stdDeviation="14.4" flood-opacity="0.25"/></filter>
+<filter id="shadow-text" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="4.8" stdDeviation="9.6" flood-opacity="0.40"/></filter>
+<mask id="funnel-mask">
+<use xlink:href="#shape-funnel" fill="#FFFFFF" stroke="#FFFFFF" stroke-width="90"/>
+</mask>
 <linearGradient id="sky" gradientUnits="userSpaceOnUse"
  x1="0.0" y1="0.0" x2="0.0" y2="2911.0">
 <stop offset="0" stop-color="#691eae"/>
@@ -18,8 +25,17 @@
 <polygon fill="#10002B" points="1260.5,-0.0 2521.0,727.7 2521.0,2183.3 1260.5,2911.0 0.0,2183.3 0.0,727.7"/>
 <polygon fill="url(#sky)" points="1260.5,83.1 2449.0,769.3 2449.0,2141.7 1260.5,2827.9 72.0,2141.7 72.0,769.3"/>
 <g transform="translate(-8.0,-329.2)">
+<g filter="url(#shadow-funnel)">
 <use xlink:href="#shape-funnel" fill="url(#funnel)" stroke="url(#funnel)" stroke-width="90"/>
+</g>
+<g filter="url(#shadow-swoosh)">
 <use xlink:href="#shape-swoosh" fill="#FFFFFF" stroke="#FFFFFF" stroke-width="0"/>
 </g>
+<g mask="url(#funnel-mask)"><g filter="url(#shadow-swoosh-funnel)">
+<use xlink:href="#shape-swoosh" fill="#FFFFFF" stroke="#FFFFFF" stroke-width="0"/>
+</g></g>
+</g>
+<g filter="url(#shadow-text)">
 <use xlink:href="#shape-letters" fill="#FFFFFF" stroke="#FFFFFF" stroke-width="0"/>
+</g>
 </svg>

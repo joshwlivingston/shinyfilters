@@ -117,6 +117,7 @@ font_url <- paste0(
 sky <- c("#691eae", "#290051") # the sticker, top to bottom
 edge <- "#10002B" # its border
 ink <- "#FFFFFF" # the word and the swoosh
+shadow <- 24 # depth of largest shadow
 ```
 
 The funnel has no colors here: they are worked out from the sticker's,
@@ -847,6 +848,16 @@ svg <- c(
 	),
 	"<title>shinyfilters</title>",
 	"<defs>",
+	sprintf(
+		'<filter id="shadow-%s" x="-20%%" y="-20%%" width="140%%" height="140%%"><feDropShadow dx="0" dy="%.1f" stdDeviation="%.1f" flood-opacity="%.2f"/></filter>',
+		c("swoosh-funnel", "swoosh", "funnel", "text"),
+		shadow * c(5, 4, 3, 2) / 10, # depth
+		shadow * c(5, 4, 3, 2) / 5,  # blur (2x depth)
+		c(0.15, 0.20, 0.25, 0.40)    # opacity (increases as objects get lower)
+	),
+	'<mask id="funnel-mask">',
+	drawn("funnel", "#FFFFFF", funnel_round),
+	'</mask>',
 	gradient("sky", sky, c(0, 0), c(0, size[2])),
 	gradient("funnel", funnel_fill, c(0, funnel_span[1]), c(0, funnel_span[2])),
 	shapes,
@@ -854,10 +865,19 @@ svg <- c(
 	sprintf('<polygon fill="%s" points="%s"/>', edge, hexagon(0)),
 	sprintf('<polygon fill="url(#sky)" points="%s"/>', hexagon(edge_width)),
 	emblem,
+	'<g filter="url(#shadow-funnel)">',
 	drawn("funnel", "url(#funnel)", funnel_round),
+	"</g>",
+	'<g filter="url(#shadow-swoosh)">',
 	drawn("swoosh", ink),
 	"</g>",
+	'<g mask="url(#funnel-mask)"><g filter="url(#shadow-swoosh-funnel)">',
+	drawn("swoosh", ink),
+	'</g></g>',
+	"</g>",
+	'<g filter="url(#shadow-text)">',
 	drawn("letters", ink),
+	"</g>",
 	"</svg>"
 )
 ```
