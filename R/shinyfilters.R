@@ -981,6 +981,26 @@ with_filters <- function(.filters, ...) {
 		}
 		return(names(x)[cols])
 	}
+	if (is.function(cols)) {
+		tryCatch(
+			{
+				match <- lapply(x@data, cols)
+				bool <- vapply(match, is_bool, logical(1L))
+				if (!all(bool)) {
+					example <- cols(x@data[, which(!bool)[1], drop = FALSE])
+					cli_abort(
+						c(
+							"Predicate must return {.code TRUE} or {.code FALSE}, not {.obj_type_friendly {example}}"
+						)
+					)
+				}
+				return(names(x)[Reduce(c, match)])
+			},
+			error = function(e) {
+				cli_abort("Unable to locate columns.", call = call)
+			}
+		)
+	}
 	if (!is.character(cols)) {
 		cli_abort("Unable to locate columns.", call = call)
 	}
