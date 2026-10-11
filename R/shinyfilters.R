@@ -995,7 +995,8 @@ with_filters <- function(.filters, ...) {
 			example <- cols(x@data[, which(!bool)[1], drop = FALSE])
 			cli_abort(
 				c(
-					"Predicate must return {.code TRUE} or {.code FALSE}, not {.obj_type_friendly {example}}"
+					"Predicate must return {.code TRUE} or {.code FALSE}, not {.obj_type_friendly {example}}.",
+					call = call
 				)
 			)
 		}
