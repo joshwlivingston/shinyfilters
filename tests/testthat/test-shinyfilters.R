@@ -7,7 +7,7 @@ test_that("shinyfilters() applies `ns` to input ids", {
 })
 
 test_that("shinyfilters(): `ns` must be result of shiny::NS()", {
-	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+	expect_snapshot(error = TRUE, {
 		shinyfilters(
 			data.frame(stringsAsFactors = FALSE, a = letters),
 			ns = function(x) x
@@ -70,7 +70,7 @@ test_that("a shiny input is matched as it is now, not as it was when built", {
 		with_filters(cfg, letters = upgraded),
 		with_filters(cfg, letters = "select")
 	)
-	expect_snapshot(print(cfg), variant = snapshot_variant())
+	expect_snapshot(print(cfg))
 })
 
 test_that("with_filters() takes `cols ~ input` formulas", {
@@ -157,7 +157,7 @@ test_that("`radio = TRUE` turns off the `selectize` default", {
 		res[[1]],
 		shiny::radioButtons("letters", "letters", choices = c("a", "b", "c"))
 	)
-	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+	expect_snapshot(error = TRUE, {
 		filterInput(shinyfilters(df_config, radio = TRUE, selectize = TRUE))
 	})
 })
@@ -381,7 +381,7 @@ test_that("with_filters() adds and replaces columns", {
 
 test_that("print() marks columns added by with_filters()", {
 	cfg <- with_filters(shinyfilters(df_config), y = x * 2)
-	expect_snapshot(variant = snapshot_variant(), {
+	expect_snapshot({
 		print(cfg)
 		print(cfg["y"])
 		print(cfg["x"])
@@ -390,7 +390,7 @@ test_that("print() marks columns added by with_filters()", {
 
 test_that("print() marks columns replaced by with_filters()", {
 	cfg <- with_filters(shinyfilters(df_config), x = x / 2, letters = letters)
-	expect_snapshot(variant = snapshot_variant(), {
+	expect_snapshot({
 		print(cfg)
 		print(cfg["x"])
 		print(cfg["letters"])
@@ -428,7 +428,7 @@ test_that("print() shows one marker per row", {
 	cfg <- with_filters(cfg, y = x * 2, x = x / 2, z = letters)
 	cfg <- with_filters(cfg, a_very_very_long_name = a_very_very_long_name + 1)
 	cfg <- with_filters(cfg, x = "radio", a_very_very_long_name = numericInput)
-	expect_snapshot(print(cfg), variant = snapshot_variant())
+	expect_snapshot(print(cfg))
 })
 
 test_that("print() handles long names", {
@@ -437,7 +437,7 @@ test_that("print() handles long names", {
 	data$carrier <- NULL
 	filters <- shinyfilters(data, range = TRUE, selectize = TRUE)
 	filters <- with_ns(filters, "sidebar-mod")
-	expect_snapshot(print(filters), variant = snapshot_variant())
+	expect_snapshot(print(filters))
 })
 
 test_that("print() handles long names (tidyselect)", {
@@ -454,7 +454,7 @@ test_that("print() handles long names (tidyselect)", {
 		dep_delay ~
 			list(value = urgfjkbhqaewpqaedoufikljshygbqaeoliurgfjkbhqaewp(.x))
 	)
-	expect_snapshot(print(filters), variant = snapshot_variant())
+	expect_snapshot(print(filters))
 })
 
 test_that("filterInput(<shinyfilters>, ...) merges with global arguments", {
@@ -542,7 +542,7 @@ test_that("errors from a function override name the column", {
 		rlang::abort("Not today.", call = NULL)
 	}
 	cfg <- with_filters(shinyfilters(df_config), x = broken)
-	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+	expect_snapshot(error = TRUE, {
 		filterInput(cfg)
 		cfg$x
 	})
@@ -558,7 +558,7 @@ test_that("a function override can use shiny::req()", {
 
 test_that("shinyfilters() and with_filters() errors", {
 	cfg <- shinyfilters(df_config)
-	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+	expect_snapshot(error = TRUE, {
 		shinyfilters(1:3)
 		shinyfilters(df_config[0, ])
 		shinyfilters(df_config, TRUE)
@@ -603,7 +603,7 @@ test_that("shinyfilters() and with_filters() errors", {
 test_that("shinyfilters() and with_filters() errors (tidyselect)", {
 	skip_if_not_installed("tidyselect")
 	cfg <- shinyfilters(df_config)
-	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+	expect_snapshot(error = TRUE, {
 		with_filters(cfg, tidyselect::where(is.logical), "radio")
 		with_filters(cfg, tidyselect::where(is.logical) ~ "radio")
 	})
@@ -638,7 +638,7 @@ test_that("with_ns() accepts a string", {
 
 test_that("with_ns() errors", {
 	cfg <- shinyfilters(df_config)
-	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+	expect_snapshot(error = TRUE, {
 		with_ns(df_config, shiny::NS("m"))
 		with_ns(cfg, function(x) x)
 		with_ns(cfg)
@@ -689,7 +689,7 @@ test_that("with_defaults() adds, replaces, and removes defaults", {
 
 test_that("with_defaults() errors", {
 	cfg <- shinyfilters(df_config)
-	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+	expect_snapshot(error = TRUE, {
 		with_defaults(df_config, slider = TRUE)
 		with_defaults(cfg, TRUE)
 		with_defaults(cfg, ns = shiny::NS("m"))
@@ -698,7 +698,7 @@ test_that("with_defaults() errors", {
 
 test_that("print() shows the namespace with_ns() sets", {
 	cfg <- shinyfilters(df_config, ns = shiny::NS("m"))
-	expect_snapshot(variant = snapshot_variant(), {
+	expect_snapshot({
 		print(with_ns(cfg, shiny::NS("other")))
 		print(with_ns(cfg, NULL))
 	})
@@ -710,7 +710,7 @@ test_that("print() shows each column's input", {
 	}
 	cfg <- shinyfilters(df_config, slider = TRUE, ns = shiny::NS("m"))
 	cfg <- with_filters(cfg, x = "radio", letters = my_select)
-	expect_snapshot(variant = snapshot_variant(), {
+	expect_snapshot({
 		print(shinyfilters(df_config))
 		print(cfg)
 		print(with_filters(shinyfilters(df_config), factors = "slider"))
@@ -721,7 +721,7 @@ test_that("print() shows each column's input", {
 })
 
 test_that("print() shows the defaults that differ from shinyfilters()'s", {
-	expect_snapshot(variant = snapshot_variant(), {
+	expect_snapshot({
 		print(shinyfilters(df_config, slider = FALSE, width = "200px"))
 		print(shinyfilters(df_config, radio = TRUE))
 		print(shinyfilters(df_config, selectize = FALSE, multiple = FALSE))
@@ -745,7 +745,7 @@ test_that("print() shows a datetime column's type", {
 		dte = as.Date("2024-01-01") + 0:1,
 		dtm = as.POSIXct("2024-01-01", tz = "UTC") + 0:1 * 86400
 	)
-	expect_snapshot(print(shinyfilters(df)), variant = snapshot_variant())
+	expect_snapshot(print(shinyfilters(df)))
 })
 
 test_that("print() resolves custom methods", {
@@ -765,7 +765,7 @@ test_that("print() resolves custom methods", {
 		class = "data.frame",
 		row.names = 1:2
 	)
-	expect_snapshot(print(shinyfilters(df)), variant = snapshot_variant())
+	expect_snapshot(print(shinyfilters(df)))
 })
 
 test_that("print() names the input of a method that changes it", {
@@ -779,7 +779,7 @@ test_that("print() names the input of a method that changes it", {
 		class = "data.frame",
 		row.names = 1:2
 	)
-	expect_snapshot(print(shinyfilters(df)), variant = snapshot_variant())
+	expect_snapshot(print(shinyfilters(df)))
 })
 
 test_that("`$`, `[[`, and names() access columns", {
@@ -798,7 +798,7 @@ test_that("`$`, `[[`, and names() access columns", {
 
 test_that("`$` and `[[` error on unknown columns", {
 	cfg <- shinyfilters(df_config)
-	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+	expect_snapshot(error = TRUE, {
 		cfg$nope
 		cfg[["nope"]]
 		cfg[[9]]
@@ -808,7 +808,7 @@ test_that("`$` and `[[` error on unknown columns", {
 
 test_that("a config placed in a UI that htmltools inspects errors", {
 	cfg <- shinyfilters(df_config)
-	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+	expect_snapshot(error = TRUE, {
 		htmltools::tagGetAttribute(cfg["x"], "class")
 		suppressMessages(htmltools::tagQuery(htmltools::div(cfg["x"]))$find(".a"))
 	})
@@ -819,7 +819,7 @@ test_that("a config placed in a UI that htmltools inspects errors", {
 test_that("a config placed in bslib::accordion() errors", {
 	skip_if_not_installed("bslib")
 	cfg <- shinyfilters(df_config)
-	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+	expect_snapshot(error = TRUE, {
 		bslib::accordion(cfg["x"])
 		suppressMessages(bslib::accordion(bslib::accordion_panel("A", cfg["x"])))
 	})
@@ -846,8 +846,7 @@ test_that("`[` returns a config with the selected columns", {
 	x <- "letters"
 	expect_identical(names(cfg[x]), "letters")
 	expect_snapshot(
-		print(cfg[c("letters", "x")]),
-		variant = snapshot_variant()
+		print(cfg[c("letters", "x")])
 	)
 })
 
@@ -867,7 +866,7 @@ test_that("`[` returns a config with the selected columns (tidyselect)", {
 
 test_that("`[` errors on unknown columns", {
 	cfg <- shinyfilters(df_config)
-	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+	expect_snapshot(error = TRUE, {
 		cfg["nope"]
 		cfg[9]
 		cfg[TRUE]
@@ -883,7 +882,7 @@ test_that("`[` errors on unknown columns", {
 
 test_that("a shinyfilters object's properties are read-only", {
 	cfg <- shinyfilters(df_config)
-	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+	expect_snapshot(error = TRUE, {
 		cfg@data <- df_config
 		cfg@args <- list(slider = TRUE)
 		cfg@ns <- shiny::NS("m")
@@ -900,7 +899,7 @@ test_that("a changed shinyfilters object is still read-only", {
 	defaulted <- with_defaults(cfg, slider = FALSE)
 	overridden <- with_filters(cfg, x = "radio")
 	selected <- cfg["x"]
-	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+	expect_snapshot(error = TRUE, {
 		namespaced@ns <- NULL
 		defaulted@args <- list()
 		overridden@overrides <- list()
@@ -910,7 +909,7 @@ test_that("a changed shinyfilters object is still read-only", {
 
 test_that("functions that change a shinyfilters object are internal", {
 	cfg <- shinyfilters(df_config)
-	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+	expect_snapshot(error = TRUE, {
 		call_as_user(S7::S7_class(cfg), data = df_config)
 		call_as_user(._modify, cfg, data = df_config)
 		call_as_user(._config_filtered, cfg, df_config)
@@ -935,7 +934,7 @@ test_that("a shinyfilters object changed through its attributes is invalid", {
 	attr(duplicated, "args") <- list(slider = TRUE, slider = FALSE)
 	custom_ns <- shinyfilters(df_config)
 	attr(custom_ns, "ns") <- function(id) id
-	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+	expect_snapshot(error = TRUE, {
 		S7::validate(unnamed)
 		S7::validate(duplicated)
 		S7::validate(custom_ns)

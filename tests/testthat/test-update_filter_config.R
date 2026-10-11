@@ -216,7 +216,7 @@ test_that("a shinyWidgets input is updated by its own update function", {
 			choices = c("a", "b", "c")
 		))
 	)
-	expect_snapshot(print(picker), variant = snapshot_variant())
+	expect_snapshot(print(picker))
 })
 
 test_that("a shinyWidgets update function with a name of its own is found", {
@@ -258,7 +258,7 @@ test_that("a function with no shinyWidgets update function isn't given one", {
 	my_input <- function(inputId, label, ...) NULL
 	my_hacky_input <- function(inputId, label, ...) NULL
 	environment(my_hacky_input) <- asNamespace("shinyWidgets")
-	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+	expect_snapshot(error = TRUE, {
 		updateFilterInput(
 			with_filters(cfg, letters = shinyWidgets::colorSelectorInput)
 		)
@@ -367,7 +367,7 @@ test_that("updateFilterInput() follows the date, numeric, and select keywords", 
 
 test_that("updateFilterInput() errors for an input it can't update", {
 	cfg <- shinyfilters(df_config)
-	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+	expect_snapshot(error = TRUE, {
 		updateFilterInput(with_filters(cfg, letters = shiny::checkboxGroupInput))
 		updateFilterInput(
 			with_filters(cfg, c(letters, factors), shiny::checkboxGroupInput)

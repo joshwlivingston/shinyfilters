@@ -356,7 +356,7 @@ test_that("a value can use shiny::req()", {
 
 test_that("print() shows what each way of writing with_args() sets", {
 	cfg <- shinyfilters(df_config)
-	expect_snapshot(variant = snapshot_variant(), {
+	expect_snapshot({
 		with_args(cfg, x ~ list(value = range(.x)))
 		with_args(cfg, x ~ list(value = range(.x), step = 2))
 		with_args(
@@ -369,7 +369,7 @@ test_that("print() shows what each way of writing with_args() sets", {
 
 test_that("print() shows what each way of writing with_filters() sets", {
 	cfg <- shinyfilters(df_config, slider = FALSE)
-	expect_snapshot(variant = snapshot_variant(), {
+	expect_snapshot({
 		with_filters(cfg, x ~ list(step = 2))
 		with_filters(cfg, x ~ list(step = 2, width = "50%"))
 
@@ -388,7 +388,7 @@ test_that("print() shows what each way of writing with_filters() sets", {
 test_that("print() shows what each way of writing with_filters() sets (tidyselect)", {
 	skip_if_not_installed('tidyselect')
 	cfg <- shinyfilters(df_config, slider = FALSE)
-	expect_snapshot(variant = snapshot_variant(), {
+	expect_snapshot({
 		with_filters(
 			cfg,
 			tidyselect::where(is.numeric) ~ "slider" ~ list(value = range(.x))
@@ -408,7 +408,7 @@ test_that("print() shortens a long argument", {
 		shinyfilters(df_config),
 		letters ~ list(label = "A label that runs past thirty characters")
 	)
-	expect_snapshot(print(cfg), variant = snapshot_variant())
+	expect_snapshot(print(cfg))
 })
 
 test_that("print() shows `.update_fn`", {
@@ -422,7 +422,7 @@ test_that("print() shows `.update_fn`", {
 		factors ~ checkbox ~ list(.update_fn = update_checkbox),
 		x ~ div_input ~ list(.update_fn = function(session, inputId, ...) NULL)
 	)
-	expect_snapshot(print(cfg), variant = snapshot_variant())
+	expect_snapshot(print(cfg))
 })
 
 test_that("with_filters() sets arguments like with_args()", {
@@ -530,7 +530,7 @@ test_that("`.update_fn` stays with the input it updates", {
 
 test_that("an argument an input can't take errors when the input is created", {
 	cfg <- shinyfilters(df_config)
-	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+	expect_snapshot(error = TRUE, {
 		filterInput(with_args(cfg, x ~ list(value = nope(.x))))
 		filterInput(with_args(cfg, x ~ list(valeu = 1)))
 		filterInput(with_args(cfg, letters ~ list(valeu = 1)))
@@ -542,7 +542,7 @@ test_that("an argument an input can't take errors when the input is created", {
 
 test_that("with_filters() errors for an input's arguments", {
 	cfg <- shinyfilters(df_config)
-	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+	expect_snapshot(error = TRUE, {
 		with_filters(cfg, nope = "slider" ~ list(value = 1))
 
 		with_filters(cfg, x = "slider" ~ list(value = 1, 5))
@@ -556,7 +556,7 @@ test_that("with_filters() errors for an input's arguments", {
 
 test_that("with_args() errors", {
 	cfg <- shinyfilters(df_config)
-	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+	expect_snapshot(error = TRUE, {
 		with_args(df_config, x ~ list(step = 2))
 		with_args(cfg)
 		with_args(cfg, x = list(step = 2))
@@ -578,7 +578,7 @@ test_that("with_args() errors", {
 test_that("with_args() errors (tidyselect)", {
 	skip_if_not_installed("tidyselect")
 	cfg <- shinyfilters(df_config)
-	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+	expect_snapshot(error = TRUE, {
 		with_args(cfg, tidyselect::where(is.logical) ~ list(step = 2))
 	})
 })
