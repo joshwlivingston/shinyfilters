@@ -449,8 +449,8 @@ parse_expr_column <- function(expr, mask, call) {
 				return(selected)
 			},
 			":" = {
-				# `-X:Y` is parsed as `(-X):Y`
-				# for selection, we read it as as `-(X:Y)`
+				# `-X:Y` is parsed by R as `(-X):Y`
+				# For selection, we read it here as `-(X:Y)`
 				if (is_minus(expr)) {
 					return(setdiff(all_cols, parse_here(strip_minus(expr))))
 				}
