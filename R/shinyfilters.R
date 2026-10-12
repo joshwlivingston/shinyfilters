@@ -290,6 +290,201 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 
 # Shared by `[` and dplyr's `select()`. Each passes the user's selection and
 # its own call and label, so errors name the code the user wrote.
+
+# Subsetting in shinyfilters
+#
+# Subsetting a shinyfilters object is designed to facilitate easy selection of
+# filters by different attributes. This is a common task when building a
+# sidebar with a lot of filters, where filters are often hierarchically
+# organized.
+#
+# The fastest way to support this is to implement tidyselect and add it as a
+# dependency. However, tidyselect has a particular way of evaluating
+# expressions, one that isn't a perfect fit for shinyfilters.
+#
+# For selection, shinyfilters implements methods for `[` and `[[`. They select
+# filters the same way; the difference is that `[[` also calls `filterInput()`.
+#
+# Selection also occurs inside `with_filters()`. There, all arguments are
+# are parsed by amtching one of these patterns:
+#
+# <column> = <input-keyword>
+# <column> = <input-function>(<arg>*)
+# <column> = set_filter(<input>*, <arg>*)
+# <columns> ~ <input-keyword>
+# <columns> ~ <input-function>(<arg>*)
+# <columns> ~ set_filter(<input>*, <arg>*)
+#
+# where:
+#
+# <column> is a valid column name.
+# <columns> is a valid column selection expression.
+# <input-function> is a valid shiny input function.
+# <input> is a valid input expression.
+# <arg> is a valid argument expression.
+# [X] OR [Y] means X, Y, or X and Y.
+# X* means 0 or more X.
+# set_filter() is a utility for argument-only expressions.
+#
+# Examples
+#
+# dep_delay ~ sliderInput(value = range(.x), step = 5, label = "Dep Delay")
+# where(is.numeric) ~ "slider"
+# c(origin, dest) ~ set_args(choices = sort(unique(.x), decreasing = TRUE))
+#
+# Each <tag>'s validity is enforced through its own function.
+#
+# <columns> | parse_expr_column()
+# <input>   | parse_expr_input()
+# <arg>     | parse_expr_arg()
+#
+# parse_expr_column() is what is used inside `[` and `[[` as well.
+#
+# parse_expr_column()
+#
+# A column expression is valid when:
+#
+# 1. It is a singular quoted or unquoted column name
+# 2. A vector or list of column names, quoted or unquoted, created by c()
+#    (or list()).
+#  * Note: this step does not include nyc_flights[c(dep_delay, origin)] but not
+#    nyc_flights[x], where x <- c("dep_delay", "origin")
+# It evaluates as a recyclable logical.
+# It is a character vector of valid column names.
+# It is a valid predicate function (inspiration from tidyselect).
+# It evaluates as a numeric vector of column indices.
+#
+# The following operations are supported
+#
+# X:Y
+# Sequence from X to Y.
+# X and Y are valid scalar column expressions, but cannot be a predicate function.
+#
+# !X
+# Not X.
+# X is a valid column expression.
+#
+# -X
+# Same as !X
+#
+# X & Y
+# The intersection of X and Y.
+# X and Y are valid column expressions.
+#
+# X | Y
+# The intersection of X and Y.
+# X and Y are valid column expressions.
+#
+# (X | Y) & Z
+# X and Z, Y and Z, or X, Y, and Z.
+# X, Y, and Z are valid column expressions.
+
+filter_select <- function(.filters, i, call = here()) {
+	if (missing(i)) {
+		return(.filters)
+	}
+	expr <- substitute(i, call)
+	mask <- setNames(as.list(seq_along(.filters)), nm = names(.filters@data))
+	res <- parse_expr_column(expr, mask, call)
+	._modify(
+		.filters,
+		data = .filters@data[, res, drop = FALSE]
+	)
+}
+
+parse_expr_column <- function(expr, mask, call) {
+	if (!is.language(expr) && !is.character(expr) && !is.numeric(expr)) {
+		expr <- substitute(expr)
+	}
+	all_cols <- names(mask)
+
+	# 1. A singular quoted or unquoted column name
+	single_col <- resolve_single_col(expr)
+	if (!is.null(single_col)) {
+		if (single_col %in% all_cols) {
+			return(single_col)
+		}
+	}
+
+	# 2. A call to another function
+	if (is.call(expr)) {
+		parse_here <- function(x) parse_expr_column(x, mask, call)
+		switch(
+			function_name(expr),
+			"c" = ,
+			"list" = {
+				# Bare c() or list() selects all columns
+				if (length(expr) == 1) {
+					return(all_cols)
+				}
+
+				# Parse elements while preserving order
+				provided <- unlist(lapply(as.list(expr[-1]), parse_here))
+				matched <- provided[provided %in% all_cols]
+				return(matched[!duplicated(matched)])
+			},
+			":" = {
+				from <- resolve_single_col(expr[[2]])
+				to <- resolve_single_col(expr[[3]])
+				if (length(from) != 1 || length(to) != 1) {
+					from_str <- deparse(expr[[2]])
+					to_str <- deparse(expr[[3]])
+					range_str <- paste0(from_str, ":", to_str)
+					cli_abort(
+						c(
+							"Invalid select expression provided.",
+							"i" = "Got {.code {range_str}}"
+						),
+						call = call
+					)
+				}
+				return(names(mask)[from:to])
+			},
+			"&" = return(intersect(parse_here(expr[[2]]), parse_here(expr[[3]]))),
+			"|" = return(union(parse_here(expr[[2]]), parse_here(expr[[3]]))),
+			"-" = ,
+			"!" = return(setdiff(names(mask), parse_here(expr[[2]]))),
+			"(" = return(parse_here(expr[[2]])),
+			"/" = return(setdiff(parse_here(expr[[2]]), parse_here(expr[[3]])))
+		)
+	}
+
+	# Return empty character vector if no matching columns found
+	character(0)
+}
+
+resolve_single_col <- function(node) {
+	if (is.symbol(node)) {
+		return(as.character(node))
+	} else if (is.character(node) && length(node) == 1) {
+		return(node)
+	}
+	NULL
+}
+
+function_name <- function(expr) {
+	fn_node <- expr[[1]]
+	fn_name <- if (is.symbol(fn_node)) {
+		as.character(fn_node)
+	} else if (
+		is.call(fn_node) &&
+			length(fn_node) == 3 &&
+			as.character(fn_node[[1]]) %in% c("::", ":::")
+	) {
+		as.character(fn_node[[3]])
+	} else {
+		""
+	}
+}
+
+here <- function() {
+	parent.frame()
+}
+
+there <- function() {
+	parent.frame(2)
+}
+
 ._select_columns <- function(x, selection, label, call) {
 	._private()
 	cols <- try_fetch(
@@ -315,6 +510,112 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 		added = if (length(added) > 0) added else character(),
 		replaced = if (length(replaced) > 0) replaced else character()
 	)
+}
+
+._resolve_cols <- function(
+	x,
+	selection,
+	call,
+	eval = TRUE,
+	.col.first = FALSE,
+	.tried.column = FALSE
+) {
+	res <- NULL
+	if (eval && !.col.first) {
+		tryCatch(
+			{
+				res <- eval_tidy(selection)
+				if (!is.function(res)) {
+					# A tidyselect expression, `where(is.numeric)`, returns a function.
+					# If that's the case, we do not return and evaluate it as
+					# a tidyselect expression instead
+					#
+					# In this case, the provided expression, evaluted literally, is a
+					# function.
+					return(res)
+				}
+			},
+			error = function(e) {
+				._resolve_cols(x, selection, call, eval = FALSE)
+			}
+		)
+	}
+
+	if (isNamespaceLoaded("tidyselect")) {
+		try_fetch(
+			{
+				res <- tidyselect::eval_select(
+					if (!is.function(res)) selection else res,
+					x@data,
+					allow_rename = FALSE,
+					error_call = call
+				)
+			},
+			error = function(cnd) {
+				if (!eval && .col.first) {
+					res <- ._resolve_cols(x, selection, call, eval = TRUE)
+				}
+				cnd_signal(cnd)
+			}
+		)
+	}
+
+	if (!is.null(res)) {
+		return(res)
+	}
+
+	._base_eval_select(x, selection, call)
+}
+
+._select_by_pkg <- function(x, selection, call, .col.first = FALSE) {
+	cols <- ._resolve_cols(x, selection, call, .col.first = .col.first)
+	if (is.logical(cols) && length(cols) != 1 && length(cols) != length(x)) {
+		cli_abort(
+			c(
+				"Can't subset columns with {.code cols}.",
+				"x" = "Logical subscript {.code cols} must be size 1 or {length(x)}, not {length(cols)}."
+			),
+			call = call
+		)
+	}
+	if (is.numeric(cols)) {
+		cols_oob <- cols[cols > length(x)]
+		if (length(cols_oob) > 0) {
+			cli_abort(
+				c(
+					"Can't select columns past the end.",
+					"i" = "Location{?s} {as.character(cols_oob)} {?doesn't/don't} exist.",
+					"i" = "There are only {ncol(x)} columns."
+				)
+			)
+		}
+		return(names(x)[cols])
+	}
+	if (is.function(cols)) {
+		tryCatch(
+			{
+				match <- lapply(x@data, cols)
+			},
+			error = function(e) {
+				cli_abort("Unable to locate columns.", call = call)
+			}
+		)
+		bool <- vapply(match, is_bool, logical(1L))
+		if (!all(bool)) {
+			example <- cols(x@data[, which(!bool)[1], drop = FALSE])
+			cli_abort(
+				c(
+					"Predicate must return {.code TRUE} or {.code FALSE}, not {.obj_type_friendly {example}}."
+				),
+				call = call
+			)
+		}
+		return(names(x)[Reduce(c, match)])
+	}
+	if (!is.character(cols)) {
+		cli_abort("Unable to locate columns.", call = call)
+	}
+	unique(cols)
 }
 
 ._base_eval_select <- function(x, sel, call) {
