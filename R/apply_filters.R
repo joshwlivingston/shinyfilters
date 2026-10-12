@@ -76,7 +76,7 @@ apply_filters <- function(
 		filter_list = filter_list,
 		filter_combine_method = filter_combine_method,
 		...,
-		call = current_env()
+		call = here()
 	)
 
 	if (S7_inherits(x, class_shinyfilters)) {
@@ -125,7 +125,7 @@ apply_filters <- function(
 	filter_list,
 	filter_combine_method,
 	...,
-	call = caller_env()
+	call = there()
 ) {
 	if (is.character(filter_combine_method)) {
 		filter_combine_method <-
@@ -180,7 +180,7 @@ apply_filters <- function(
 	filter_res,
 	x_length,
 	column_name = NULL,
-	call = caller_env()
+	call = there()
 ) {
 	if (!is.null(column_name)) {
 		filter_str <- format_inline("Filter on column {.val {column_name}}")

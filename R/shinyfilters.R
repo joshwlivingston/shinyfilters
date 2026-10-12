@@ -62,7 +62,7 @@ shinyfilters <- function(
 		cli_abort("{.arg .data} must have at least one row.")
 	}
 	if (!is.null(ns)) {
-		._resolve_ns(ns, call = current_env())
+		._resolve_ns(ns, call = here())
 	}
 	args <- list(...)
 	if (length(args) > 0) {
@@ -100,7 +100,7 @@ shinyfilters <- function(
 
 ## Method: filterInput() ####
 method(filterInput, class_shinyfilters) <- function(x, ...) {
-	call <- caller_env()
+	call <- there()
 	args <- ._config_args(x, ...)
 	data <- x@data
 	do.call(
@@ -1116,15 +1116,15 @@ abort_columns_not_found <- function(x, call) {
 with_filters <- function(.filters, ...) {
 	check_shinyfilters(.filters)
 	if (...length() == 0) {
-		._abort_with_filter(current_env())
+		._abort_with_filter(here())
 	}
-	.with_filters(.filters, ..., .call = current_env())
+	.with_filters(.filters, ..., .call = here())
 }
 
 .with_filters <- function(
 	.filters,
 	...,
-	.call = caller_env(),
+	.call = there(),
 	.fn = "with_filters"
 ) {
 	config <- .filters
@@ -1201,112 +1201,6 @@ with_filters <- function(.filters, ...) {
 		return(._new_override(quo, call = call, fn = fn))
 	}
 	._spec_override(spec, quo_get_env(quo), config, call = call, fn = fn)
-}
-
-._resolve_cols <- function(
-	x,
-	selection,
-	call,
-	eval = TRUE,
-	.col.first = FALSE,
-	.tried.column = FALSE
-) {
-	res <- NULL
-	if (eval && !.col.first) {
-		tryCatch(
-			{
-				res <- eval_tidy(selection)
-				if (!is.function(res)) {
-					# A tidyselect expression, `where(is.numeric)`, returns a function.
-					# If that's the case, we do not return and evaluate it as
-					# a tidyselect expression instead
-					#
-					# In this case, the provided expression, evaluted literally, is a
-					# function.
-					return(res)
-				}
-			},
-			error = function(e) {
-				._resolve_cols(x, selection, call, eval = FALSE)
-			}
-		)
-	}
-
-	if (isNamespaceLoaded("tidyselect")) {
-		try_fetch(
-			{
-				res <- tidyselect::eval_select(
-					if (!is.function(res)) selection else res,
-					x@data,
-					allow_rename = FALSE,
-					error_call = call
-				)
-			},
-			error = function(cnd) {
-				if (!eval && .col.first) {
-					res <- ._resolve_cols(x, selection, call, eval = TRUE)
-				}
-				cnd_signal(cnd)
-			}
-		)
-	}
-
-	if (!is.null(res)) {
-		return(res)
-	}
-
-	._base_eval_select(x, selection, call)
-}
-
-._select_by_pkg <- function(x, selection, call, .col.first = FALSE) {
-	cols <- ._resolve_cols(x, selection, call, .col.first = .col.first)
-	if (is.logical(cols) && length(cols) != 1 && length(cols) != length(x)) {
-		cli_abort(
-			c(
-				"Can't subset columns with {.code cols}.",
-				"x" = "Logical subscript {.code cols} must be size 1 or {length(x)}, not {length(cols)}."
-			),
-			call = call
-		)
-	}
-	if (is.numeric(cols)) {
-		cols_oob <- cols[cols > length(x)]
-		if (length(cols_oob) > 0) {
-			cli_abort(
-				c(
-					"Can't select columns past the end.",
-					"i" = "Location{?s} {as.character(cols_oob)} {?doesn't/don't} exist.",
-					"i" = "There are only {ncol(x)} columns."
-				)
-			)
-		}
-		return(names(x)[cols])
-	}
-	if (is.function(cols)) {
-		tryCatch(
-			{
-				match <- lapply(x@data, cols)
-			},
-			error = function(e) {
-				cli_abort("Unable to locate columns.", call = call)
-			}
-		)
-		bool <- vapply(match, is_bool, logical(1L))
-		if (!all(bool)) {
-			example <- cols(x@data[, which(!bool)[1], drop = FALSE])
-			cli_abort(
-				c(
-					"Predicate must return {.code TRUE} or {.code FALSE}, not {.obj_type_friendly {example}}."
-				),
-				call = call
-			)
-		}
-		return(names(x)[Reduce(c, match)])
-	}
-	if (!is.character(cols)) {
-		cli_abort("Unable to locate columns.", call = call)
-	}
-	unique(cols)
 }
 
 # The columns a tidyselect expression selects: at least one
@@ -1620,7 +1514,7 @@ resolve_filter_override <- new_generic("resolve_filter_override", "input")
 method(resolve_filter_override, class_character) <- function(
 	input,
 	...,
-	call = caller_env()
+	call = there()
 ) {
 	keywords <- names(INPUT_KEYWORDS)
 	if (length(input) != 1 || !(input %in% keywords)) {
@@ -1647,7 +1541,7 @@ method(resolve_filter_override, class_function) <- function(input, ...) {
 method(resolve_filter_override, class_any) <- function(
 	input,
 	...,
-	call = caller_env()
+	call = there()
 ) {
 	cli_abort(
 		"An input must be a keyword or a function, not {.obj_type_friendly {input}}.",

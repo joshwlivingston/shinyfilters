@@ -56,7 +56,7 @@
 #' @export
 with_args <- function(.filters, ...) {
 	check_shinyfilters(.filters)
-	call <- current_env()
+	call <- here()
 	quos <- enquos(...)
 	if (length(quos) == 0) {
 		._abort_with_args_form(call = call)
