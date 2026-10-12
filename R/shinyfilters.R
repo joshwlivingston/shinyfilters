@@ -439,8 +439,7 @@ parse_expr_column <- function(expr, mask, call) {
 			},
 			"&" = return(intersect(parse_here(expr[[2]]), parse_here(expr[[3]]))),
 			"|" = return(union(parse_here(expr[[2]]), parse_here(expr[[3]]))),
-			"!" = return(setdiff(names(mask), parse_here(expr[[2]]))),
-			"/" = return(setdiff(parse_here(expr[[2]]), parse_here(expr[[3]])))
+			"!" = return(setdiff(names(mask), parse_here(expr[[2]])))
 		)
 	}
 
@@ -483,13 +482,13 @@ there <- function() {
 abort_select_colon <- function(from, to, expr, call) {
 	from_diag <- if (length(from) != 1) colon_abort_message(from, expr[[2]])
 	to_diag <- if (length(to) != 1) colon_abort_message(to, expr[[3]])
-	range_str <- paste0(from_diag$code, ":", to_diag$code)
+	range_str <- deparse(expr)
 	cli_abort(
 		c(
 			"Invalid select expression provided.",
 			"i" = "Got {.code {range_str}}",
 			"i" = "Each side of {.code :} must be length 1.",
-			"i" = "Invalid length{qty(sum(!is.null(c(from_diag, to_diag))))}{?s}:",
+			"i" = "Invalid length{qty(c(from_diag, to_diag))}{?s}:",
 			from_diag$info,
 			to_diag$info
 		),
