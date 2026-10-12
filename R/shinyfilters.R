@@ -460,8 +460,18 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 					return(all_cols)
 				}
 				elements <- c_elements(expr)
-				if (all(vapply(elements, is.logical, logical(1)))) {
+				is_lgl <- vapply(elements, is.logical, logical(1))
+				if (all(is_lgl)) {
 					return(all_cols[unlist(elements)])
+				}
+				if (any(is_lgl)) {
+					cli_abort(
+						c(
+							"Can't select columns with {.code {deparse(expr)}}.",
+							"x" = "Logical values can't be combined with other selections."
+						),
+						call = call
+					)
 				}
 				if (all(vapply(elements, is.character, logical(1)))) {
 					cols <- unlist(elements)
