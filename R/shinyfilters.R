@@ -408,6 +408,15 @@ parse_expr_column <- function(expr, mask, call) {
 		parse_here <- function(x) parse_expr_column(x, mask, call)
 		switch(
 			function_name(expr),
+			"(" = return(parse_here(expr[[2]])),
+			"-" = {
+				if (length(expr) == 2) {
+					# unary
+					return(setdiff(all_cols, parse_here(expr[[2]])))
+				}
+				# binary
+				return(setdiff(parse_here(expr[[2]]), parse_here(expr[[3]])))
+			},
 			"c" = ,
 			"list" = {
 				# Bare c() or list() selects all columns
@@ -430,9 +439,7 @@ parse_expr_column <- function(expr, mask, call) {
 			},
 			"&" = return(intersect(parse_here(expr[[2]]), parse_here(expr[[3]]))),
 			"|" = return(union(parse_here(expr[[2]]), parse_here(expr[[3]]))),
-			"-" = ,
 			"!" = return(setdiff(names(mask), parse_here(expr[[2]]))),
-			"(" = return(parse_here(expr[[2]])),
 			"/" = return(setdiff(parse_here(expr[[2]]), parse_here(expr[[3]])))
 		)
 	}
