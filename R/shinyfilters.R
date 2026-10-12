@@ -393,9 +393,6 @@ filter_select <- function(.filters, i, call = here()) {
 }
 
 parse_expr_column <- function(expr, mask, call) {
-	if (!is.language(expr) && !is.character(expr) && !is.numeric(expr)) {
-		expr <- substitute(expr)
-	}
 	all_cols <- names(mask)
 
 	# 1. A singular quoted or unquoted column name
