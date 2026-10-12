@@ -481,6 +481,12 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 					}
 					cli_abort("Can't find column{?s} {.field {missing}}.", call = call)
 				}
+				if (all(vapply(elements, is.symbol, logical(1)))) {
+					cols <- vapply(elements, as.character, character(1))
+					if (all(cols %in% names(mask))) {
+						return(unique(cols))
+					}
+				}
 				selected <- if (is_minus(elements[[1]])) all_cols else character(0)
 				for (i in seq_along(elements)) {
 					selected <- if (is_minus(elements[[i]])) {
