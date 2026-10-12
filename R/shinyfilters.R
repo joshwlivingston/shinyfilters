@@ -214,7 +214,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	if (missing(i)) {
 		return(x)
 	}
-	selection <- filter_select(x, substitute(i), call)
+	selection <- ._filter_select(x, substitute(i), call)
 	inputs <- filterInput(selection)
 	if (length(inputs) == 1) {
 		# One column gives its input, as `$` does.
@@ -246,7 +246,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	if (missing(i)) {
 		return(x)
 	}
-	filter_select(x, substitute(i), call)
+	._filter_select(x, substitute(i), call)
 }
 
 `dim.shinyfilters::shinyfilters` <- function(x) {
@@ -387,39 +387,66 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 # X and Z, Y and Z, or X, Y, and Z.
 # X, Y, and Z are valid column expressions.
 
-filter_select <- function(.filters, expr, call = here()) {
-	mask <- setNames(as.list(seq_along(.filters)), nm = names(.filters@data))
-	res <- parse_expr_column(expr, mask, call)
+._filter_select <- function(.filters, expr, call = there()) {
+	# mask <- setNames(lapply(.filters@data, `[`, 0) as.list(seq_along(.filters)), nm = names(.filters@data))
+	res <- ._parse_expr_column(expr, .filters@data, call)
 	._modify(
 		.filters,
 		data = .filters@data[, res, drop = FALSE]
 	)
 }
 
-parse_expr_column <- function(expr, mask, call) {
+._parse_expr_column <- function(expr, mask, call) {
 	all_cols <- names(mask)
 
-	# 1. A singular quoted or unquoted column name
-	single_col <- resolve_single_col(expr)
-	if (!is.null(single_col)) {
-		if (single_col %in% all_cols) {
-			return(single_col)
+	if (is.symbol(expr)) {
+		char <- as.character(expr)
+		if (char %in% names(mask)) {
+			return(char)
+		}
+		if (is.null(get0(char))) {
+			cli_abort("Can't find column {.field {char}}.", call = call)
 		}
 	}
 
-	# 2. A call to another function
+	# A single column name as a string
+	if (is.character(expr) && length(expr) == 1 && expr %in% names(mask)) {
+		return(expr)
+	}
+
+	if (is.numeric(expr)) {
+		# A numeric index
+		if (expr <= length(mask)) {
+			return(names(mask)[expr])
+		}
+		cli_abort(
+			c(
+				"Can't select columns past the end.",
+				"i" = "Location {expr} doesn't exist.",
+				"i" = "There are only {length(mask)} columns."
+			),
+			call = call
+		)
+	}
+
+	if (is.logical(expr)) {
+		# A boolean
+		return(names(mask)[expr])
+	}
+
 	if (is.call(expr)) {
-		parse_here <- function(x) parse_expr_column(x, mask, call)
+		parse_here <- function(x) ._parse_expr_column(x, mask, call)
 		switch(
 			function_name(expr),
 			"(" = return(parse_here(expr[[2]])),
 			"-" = {
 				if (length(expr) == 2) {
 					# unary
-					return(setdiff(all_cols, parse_here(expr[[2]])))
+					return(all_cols[!all_cols %in% parse_here(expr[[2]])])
 				}
 				# binary
-				return(setdiff(parse_here(expr[[2]]), parse_here(expr[[3]])))
+				res <- parse_here(expr[[2]])
+				return(res[!res %in% parse_here(expr[[3]])])
 			},
 			"c" = ,
 			"list" = {
@@ -429,7 +456,6 @@ parse_expr_column <- function(expr, mask, call) {
 				}
 				elements <- c_elements(expr)
 				selected <- if (is_minus(elements[[1]])) all_cols else character(0)
-
 				for (i in seq_along(elements)) {
 					selected <- if (is_minus(elements[[i]])) {
 						# when - is used, take the set difference
@@ -437,10 +463,10 @@ parse_expr_column <- function(expr, mask, call) {
 						#
 						# to return dep_delay followed by anything not carrier, use !
 						# c(dep_delay, !carrier)
-						setdiff(selected, parse_here(strip_minus(elements[[i]])))
+						selected[!selected %in% parse_here(strip_minus(elements[[i]]))]
 					} else {
 						# standard path: accumulate selections via union
-						union(selected, parse_here(elements[[i]]))
+						unique(c(selected, parse_here(elements[[i]])))
 					}
 				}
 				return(selected)
@@ -449,7 +475,7 @@ parse_expr_column <- function(expr, mask, call) {
 				# `-X:Y` is parsed by R as `(-X):Y`
 				# For selection, we read it here as `-(X:Y)`
 				if (is_minus(expr)) {
-					return(setdiff(all_cols, parse_here(strip_minus(expr))))
+					return(all_cols[!all_cols %in% parse_here(strip_minus(expr))])
 				}
 				from <- parse_here(expr[[2]])
 				to <- parse_here(expr[[3]])
@@ -458,14 +484,183 @@ parse_expr_column <- function(expr, mask, call) {
 				}
 				abort_select_colon(from, to, expr, call)
 			},
-			"&" = return(intersect(parse_here(expr[[2]]), parse_here(expr[[3]]))),
-			"|" = return(union(parse_here(expr[[2]]), parse_here(expr[[3]]))),
-			"!" = return(setdiff(names(mask), parse_here(expr[[2]])))
+			"+" = ,
+			"&" = {
+				res_lhs <- parse_here(expr[[2]])
+				return(res_lhs[res_lhs %in% parse_here(expr[[3]])])
+			},
+			"|" = return(unique(c(parse_here(expr[[2]]), parse_here(expr[[3]])))),
+			"!" = return(names(mask)[!names(mask) %in% parse_here(expr[[2]])]),
+			"starts_with" = {
+				if (length(expr) > 2) {
+					cli_abort("too many argument starts_with", call = call)
+				}
+				if (!is.character(expr[[2]])) {
+					cli_abort("starts_with must be a single string", call = call)
+				}
+				return(grep(paste0("^", expr[[2]]), names(mask), value = TRUE))
+			},
+			"ends_with" = {
+				if (length(expr) > 2) {
+					cli_abort("too many argument ends_with", call = call)
+				}
+				if (!is.character(expr[[2]])) {
+					cli_abort("ends_with must be a single string", call = call)
+				}
+				return(grep(paste0(expr[[2]], "$"), names(mask), value = TRUE))
+			},
+			"contains" = {
+				if (length(expr) > 2) {
+					cli_abort("too many argument contains", call = call)
+				}
+				if (!is.character(expr[[2]])) {
+					cli_abort("contains must be a single string", call = call)
+				}
+				return(grep(expr[[2]], names(mask), value = TRUE))
+			},
+			"matches" = {
+				if (length(expr) > 2) {
+					cli_abort("too many argument matches", call = call)
+				}
+				if (!is.character(expr[[2]])) {
+					cli_abort("matches must be a single string", call = call)
+				}
+				return(grep(paste0("^", expr[[2]], "$"), names(mask), value = TRUE))
+			},
+			"num_range" = {
+				if (length(expr) > 3) {
+					cli_abort("too many argument num_range", call = call)
+				}
+
+				char <- expr[[2]]
+				if (is.symbol(char)) {
+					char <- as.character(char)
+				} else if (!is.character(char)) {
+					cli_abort("not coercible to character num_range", call = call)
+				}
+				if (!is.numeric(expr[[3]])) {
+					cli_abort("num_range must be a numeric vector", call = call)
+				}
+
+				cols <- paste0(char, expr[[3]])
+				missing <- cols[!cols %in% names(mask)]
+				if (length(missing) == 0) {
+					return(cols)
+				}
+				cli_abort("Can't find column{?s} {.field {missing}}.", call = call)
+			},
+			"all_of" = cli_abort("all_of not yet implemented", call = call),
+			"any_of" = cli_abort("any_of not yet implemented", call = call),
+			"everything" = return(names(mask)),
+			"last_col" = return(names(mask)[length(mask)]),
+			"where" = {
+				.f <- expr[[2]]
+				res <- lapply(mask, .f)
+				if (all(lengths(res) == 1)) {
+					res_lgl <- suppressWarnings(as.logical(unlist(res)))
+					if (!anyNA(res_lgl)) {
+						# logical vector
+						return(names(mask)[res_lgl])
+					}
+				}
+				cli_abort(
+					c(
+						"Predicate must return {.code TRUE}, {.code FALSE}.",
+						"i" = "Got {.code {deparse(expr)}}."
+					),
+					call = call
+				)
+			},
+			NULL
 		)
 	}
 
+	res <- eval(expr)
+
+	if (is.function(res)) {
+		.f <- res
+		res <- .f(mask)
+		if (all(lengths(res) == 1)) {
+			res_char <- suppressWarnings(as.character(unlist(res)))
+			if (!anyNA(res_char)) {
+				# character vector
+				missing <- res_char[!res_char %in% names(mask)]
+				if (length(missing) > 0) {
+					cli_abort(c("Bad!"), call = call)
+				}
+				return(res_char)
+			}
+
+			res_lgl <- suppressWarnings(as.logical(unlist(res)))
+			if (!anyNA(res_lgl)) {
+				# logical vector
+				return(names(mask)[res])
+			}
+		}
+
+		if (is.logical(res) && (length(res) == 1 || length(res) != length(mask))) {
+			if (length(res) == 1) {
+				res <- rep(res, length(mask))
+			}
+			return(names(mask)[res])
+		}
+
+		if (!is.logical(res)) {
+			cli_abort(
+				c(
+					"Predicate must return {.code TRUE}, {.code FALSE}, or a {.cls character} vector.",
+					"i" = "Got {.code {deparse(expr)}}."
+				),
+				call = call
+			)
+		}
+
+		cli_abort(
+			c(
+				"Can't subset columns with {.code {deparse(expr)}}.",
+				"x" = "Logical subscript must be size 1 or {length(mask)}, not {length(res)}."
+			),
+			call = call
+		)
+	}
+
+	if (is.character(res)) {
+		missing <- res[!res %in% names(mask)]
+		if (length(missing) == 0) {
+			return(res)
+		}
+		cli_abort("Can't find column{?s} {.field {missing}}.", call = call)
+	}
+
+	if (is.numeric(expr)) {
+		# A numeric index
+		expr_oob <- expr[expr > length(mask)]
+		if (length(expr_oob) == 0) {
+			return(names(mask)[expr])
+		}
+		cli_abort(
+			c(
+				"Can't select columns past the end.",
+				"i" = "Location{?s} {expr_oob} {doesn't/don't} exist.",
+				"i" = "There are only {length(mask)} columns."
+			),
+			call = call
+		)
+	}
+
+	if (is.logical(expr)) {
+		# A logical vector
+		return(names(mask)[expr])
+	}
+
 	# Return empty character vector if no matching columns found
-	character(0)
+	cli_abort(
+		c(
+			"Unable to parse selection.",
+			"i" = "Got {.code {deparse(expr)}}."
+		),
+		call = call
+	)
 }
 
 # Replace nested `c()`, `list()`, or `(` by its own elements
@@ -498,15 +693,6 @@ strip_minus <- function(expr) {
 	}
 	expr[[2]] <- strip_minus(expr[[2]])
 	expr
-}
-
-resolve_single_col <- function(node) {
-	if (is.symbol(node)) {
-		return(as.character(node))
-	} else if (is.character(node) && length(node) == 1) {
-		return(node)
-	}
-	NULL
 }
 
 function_name <- function(expr) {
