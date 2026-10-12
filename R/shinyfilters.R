@@ -202,15 +202,22 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 `[[.shinyfilters::shinyfilters` <- function(x, i, ...) {
 	call <- sys.call()
 	call[[1]] <- as.name("[[")
-	._check_columns_only(nargs(), call)
+	if (...length()) {
+		cli_abort(
+			c(
+				"Can't subset a {.cls shinyfilters} object by rows and columns.",
+				i = "Select columns with {.code x[cols]}."
+			),
+			call = call
+		)
+	}
 	if (missing(i)) {
 		return(x)
 	}
-	selection <- new_quosure(substitute(i), parent.frame())
-	res <- ._select_columns(x, selection, as_label(selection), call)
-	inputs <- filterInput(res)
-	# One column gives its input, as `$` does.
+	selection <- filter_select(x, substitute(i), call)
+	inputs <- filterInput(selection)
 	if (length(inputs) == 1) {
+		# One column gives its input, as `$` does.
 		return(inputs[[1]])
 	}
 	inputs
@@ -227,17 +234,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 `[.shinyfilters::shinyfilters` <- function(x, i, ...) {
 	call <- sys.call()
 	call[[1]] <- as.name("[")
-	._check_columns_only(nargs(), call)
-	if (missing(i)) {
-		return(x)
-	}
-	selection <- new_quosure(substitute(i), parent.frame())
-	._select_columns(x, selection, as_label(selection), call)
-}
-
-# `n_args` counts the object: more than one index asks for rows and columns.
-._check_columns_only <- function(n_args, call) {
-	if (n_args > 2) {
+	if (...length()) {
 		cli_abort(
 			c(
 				"Can't subset a {.cls shinyfilters} object by rows and columns.",
@@ -246,6 +243,10 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 			call = call
 		)
 	}
+	if (missing(i)) {
+		return(x)
+	}
+	filter_select(x, substitute(i), call)
 }
 
 `dim.shinyfilters::shinyfilters` <- function(x) {
@@ -386,11 +387,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 # X and Z, Y and Z, or X, Y, and Z.
 # X, Y, and Z are valid column expressions.
 
-filter_select <- function(.filters, i, call = here()) {
-	if (missing(i)) {
-		return(.filters)
-	}
-	expr <- substitute(i, call)
+filter_select <- function(.filters, expr, call = here()) {
 	mask <- setNames(as.list(seq_along(.filters)), nm = names(.filters@data))
 	res <- parse_expr_column(expr, mask, call)
 	._modify(
