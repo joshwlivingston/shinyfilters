@@ -845,7 +845,7 @@ test_that("`[` errors on unknown columns", {
 
 test_that("a shinyfilters object's properties are read-only", {
 	cfg <- shinyfilters(df_config)
-	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+	expect_snapshot(error = TRUE, variant = snapshot_variant(s7 = TRUE), {
 		cfg@data <- df_config
 		cfg@args <- list(slider = TRUE)
 		cfg@ns <- shiny::NS("m")
@@ -862,7 +862,7 @@ test_that("a changed shinyfilters object is still read-only", {
 	defaulted <- with_defaults(cfg, slider = FALSE)
 	overridden <- with_filters(cfg, x = "radio")
 	selected <- cfg["x"]
-	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+	expect_snapshot(error = TRUE, variant = snapshot_variant(s7 = TRUE), {
 		namespaced@ns <- NULL
 		defaulted@args <- list()
 		overridden@overrides <- list()
@@ -897,7 +897,7 @@ test_that("a shinyfilters object changed through its attributes is invalid", {
 	attr(duplicated, "args") <- list(slider = TRUE, slider = FALSE)
 	custom_ns <- shinyfilters(df_config)
 	attr(custom_ns, "ns") <- function(id) id
-	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+	expect_snapshot(error = TRUE, variant = snapshot_variant(s7 = TRUE), {
 		S7::validate(unnamed)
 		S7::validate(duplicated)
 		S7::validate(custom_ns)
