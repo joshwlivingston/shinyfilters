@@ -387,16 +387,21 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 # X and Z, Y and Z, or X, Y, and Z.
 # X, Y, and Z are valid column expressions.
 
-._filter_select <- function(.filters, expr, call = there()) {
+._filter_select <- function(
+	.filters,
+	expr,
+	call = there(),
+	env = parent.frame(2)
+) {
 	mask <- setNames(as.list(seq_along(.filters)), nm = names(.filters@data))
-	res <- ._parse_expr_column(expr, mask, .filters@data, call)
+	res <- ._parse_expr_column(expr, mask, .filters@data, call, env)
 	._modify(
 		.filters,
 		data = .filters@data[, res, drop = FALSE]
 	)
 }
 
-._parse_expr_column <- function(expr, mask, data, call) {
+._parse_expr_column <- function(expr, mask, data, call, env) {
 	all_cols <- names(mask)
 
 	if (is.symbol(expr)) {
@@ -404,7 +409,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 		if (char %in% names(mask)) {
 			return(char)
 		}
-		if (is.null(get0(char))) {
+		if (is.null(get0(char, env))) {
 			cli_abort("Can't find column {.field {char}}.", call = call)
 		}
 	}
@@ -435,7 +440,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	}
 
 	if (is.call(expr)) {
-		parse_here <- function(x) ._parse_expr_column(x, mask, call)
+		parse_here <- function(x) ._parse_expr_column(x, mask, data, call, env)
 		switch(
 			function_name(expr),
 			"(" = return(parse_here(expr[[2]])),
@@ -455,6 +460,17 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 					return(all_cols)
 				}
 				elements <- c_elements(expr)
+				if (all(vapply(elements, is.logical, logical(1)))) {
+					return(all_cols[unlist(elements)])
+				}
+				if (all(vapply(elements, is.character, logical(1)))) {
+					cols <- unlist(elements)
+					missing <- cols[!cols %in% names(mask)]
+					if (length(missing) == 0) {
+						return(unique(cols))
+					}
+					cli_abort("Can't find column{?s} {.field {missing}}.", call = call)
+				}
 				selected <- if (is_minus(elements[[1]])) all_cols else character(0)
 				for (i in seq_along(elements)) {
 					selected <- if (is_minus(elements[[i]])) {
@@ -484,7 +500,6 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 				}
 				abort_select_colon(from, to, expr, call)
 			},
-			"+" = ,
 			"&" = {
 				res_lhs <- parse_here(expr[[2]])
 				return(res_lhs[res_lhs %in% parse_here(expr[[3]])])
@@ -554,7 +569,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 			"everything" = return(names(mask)),
 			"last_col" = return(names(mask)[length(mask)]),
 			"where" = {
-				.f <- expr[[2]]
+				.f <- eval(expr[[2]], env)
 				res <- lapply(data, .f)
 				if (all(lengths(res) == 1)) {
 					res_lgl <- suppressWarnings(as.logical(unlist(res)))
@@ -575,7 +590,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 		)
 	}
 
-	res <- eval(expr)
+	res <- eval(expr, env)
 
 	if (is.function(res)) {
 		.f <- res
@@ -614,25 +629,25 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 		cli_abort("Can't find column{?s} {.field {missing}}.", call = call)
 	}
 
-	if (is.numeric(expr)) {
+	if (is.numeric(res)) {
 		# A numeric index
-		expr_oob <- expr[expr > length(mask)]
-		if (length(expr_oob) == 0) {
-			return(names(mask)[expr])
+		res_oob <- res[res > length(mask)]
+		if (length(res_oob) == 0) {
+			return(names(mask)[res])
 		}
 		cli_abort(
 			c(
 				"Can't select columns past the end.",
-				"i" = "Location{?s} {expr_oob} {doesn't/don't} exist.",
+				"i" = "Location{?s} {res_oob} {doesn't/don't} exist.",
 				"i" = "There are only {length(mask)} columns."
 			),
 			call = call
 		)
 	}
 
-	if (is.logical(expr)) {
+	if (is.logical(res)) {
 		# A logical vector
-		return(names(mask)[expr])
+		return(names(mask)[res])
 	}
 
 	# Return empty character vector if no matching columns found

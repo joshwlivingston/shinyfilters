@@ -216,9 +216,9 @@ class_shinyfilters <- new_class(
 	data = config@data,
 	args = config@args,
 	ns = config@ns,
-	overrides = config@overrides,
-	added = config@added,
-	replaced = config@replaced
+	overrides = config@overrides[names(config@overrides) %in% names(data)],
+	added = config@added[names(config@added) %in% names(data)],
+	replaced = config@replaced[names(config@replaced) %in% names(data)]
 ) {
 	._private()
 	class_shinyfilters(
