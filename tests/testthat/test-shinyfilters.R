@@ -844,7 +844,7 @@ test_that("`[` returns a config with the selected columns", {
 	expect_identical(names(cfg[c(x, letters)]), c("x", "letters"))
 	cols <- c("factors", "x")
 	x <- "letters"
-	expect_identical(names(cfg[x]), "letters")
+	expect_identical(names(cfg[x]), "x")
 	expect_snapshot(
 		print(cfg[c("letters", "x")])
 	)
