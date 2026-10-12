@@ -1,5 +1,7 @@
 # shinyfilters (development version)
 
+* `filterInput()` and related methods now accept ordinary lists with development S7.
+
 ## New API
 
 `shinyfilters()` is a new function to configure filters. It displays an informative print and allows for configuration without extending methods directly. The functions listed here support `shinyfilters` objects (#111).
