@@ -366,6 +366,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 #
 # -X
 # Same as !X
+# -X:Y is read as -(X:Y), not (-X):Y.
 #
 # X & Y
 # The intersection of X and Y.
@@ -430,8 +431,16 @@ parse_expr_column <- function(expr, mask, call) {
 				return(matched[!duplicated(matched)])
 			},
 			":" = {
-				from <- parse_here(expr[[2]])
-				to <- parse_here(expr[[3]])
+				lhs <- expr[[2]]
+				rhs <- expr[[3]]
+				if (is.call(lhs) && length(lhs) == 2 && function_name(lhs) == "-") {
+					# `-X:Y` is parsed as `(-X):Y`
+					# for selection, we read it as as `-(X:Y)`
+					expr[[2]] <- lhs[[2]]
+					return(setdiff(all_cols, parse_here(expr)))
+				}
+				from <- parse_here(lhs)
+				to <- parse_here(rhs)
 				if (length(from) == 1 && length(to) == 1) {
 					return(names(mask)[mask[[from]]:mask[[to]]])
 				}
