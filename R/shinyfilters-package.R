@@ -213,6 +213,7 @@ NULL
 #' @importFrom shiny NS
 #' @importFrom shiny observe
 #' @importFrom shiny reactiveValues
+#' @importFrom stats setNames
 #' @importFrom utils getS3method
 #' @importFrom utils methods
 #' @importFrom utils modifyList

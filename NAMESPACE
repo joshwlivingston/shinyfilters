@@ -147,6 +147,7 @@ importFrom(shiny,
   updateTextAreaInput,
   updateTextInput
 )
+importFrom(stats,setNames)
 importFrom(utils,
   getS3method,
   methods,
