@@ -440,7 +440,7 @@ parse_expr_column <- function(expr, mask, call) {
 						#
 						# to return dep_delay followed by anything not carrier, use !
 						# c(dep_delay, !carrier)
-						setdiff(selected, parse_here(removed))
+						setdiff(selected, parse_here(strip_minus(elements[[i]])))
 					} else {
 						# standard path: accumulate selections via union
 						union(selected, parse_here(elements[[i]]))
@@ -452,7 +452,7 @@ parse_expr_column <- function(expr, mask, call) {
 				# `-X:Y` is parsed as `(-X):Y`
 				# for selection, we read it as as `-(X:Y)`
 				if (is_minus(expr)) {
-					return(setdiff(all_cols, parse_here(negated)))
+					return(setdiff(all_cols, parse_here(strip_minus(expr))))
 				}
 				from <- parse_here(expr[[2]])
 				to <- parse_here(expr[[3]])
@@ -479,12 +479,15 @@ is_minus <- function(expr) {
 	if (name == "-" && length(expr) == 2) {
 		return(TRUE)
 	}
-	if (name == ":") {
-		if (is_minus(expr[[2]])) {
-			return(FALSE)
-		}
+	name == ":" && is_minus(expr[[2]])
+}
+
+strip_minus <- function(expr) {
+	if (function_name(expr) == "-") {
+		return(expr[[2]])
 	}
-	return(FALSE)
+	expr[[2]] <- strip_minus(expr[[2]])
+	expr
 }
 
 resolve_single_col <- function(node) {
