@@ -430,7 +430,7 @@ parse_expr_column <- function(expr, mask, call) {
 				if (length(expr) == 1) {
 					return(all_cols)
 				}
-				elements <- as.list(expr[-1])
+				elements <- c_elements(expr)
 				selected <- if (is_minus(elements[[1]])) all_cols else character(0)
 
 				for (i in seq_along(elements)) {
@@ -469,6 +469,19 @@ parse_expr_column <- function(expr, mask, call) {
 
 	# Return empty character vector if no matching columns found
 	character(0)
+}
+
+# Replace nested `c()`, `list()`, or `(` by its own elements
+c_elements <- function(expr) {
+	elements <- as.list(expr[-1])
+	out <- list()
+	for (i in seq_along(elements)) {
+		nested <- is.call(elements[[i]]) &&
+			length(elements[[i]]) > 1 &&
+			function_name(elements[[i]]) %in% c("c", "list", "(")
+		out <- c(out, if (nested) c_elements(elements[[i]]) else elements[i])
+	}
+	out
 }
 
 is_minus <- function(expr) {
