@@ -440,18 +440,21 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	}
 
 	if (is.call(expr)) {
-		parse_here <- function(x) ._parse_expr_column(x, mask, data, call, env)
 		switch(
 			function_name(expr),
-			"(" = return(parse_here(expr[[2]])),
+			"(" = return(._parse_expr_column(expr[[2]], mask, data, call, env)),
 			"-" = {
 				if (length(expr) == 2) {
 					# unary
-					return(all_cols[!all_cols %in% parse_here(expr[[2]])])
+					return(all_cols[
+						!all_cols %in% ._parse_expr_column(expr[[2]], mask, data, call, env)
+					])
 				}
 				# binary
-				res <- parse_here(expr[[2]])
-				return(res[!res %in% parse_here(expr[[3]])])
+				res <- ._parse_expr_column(expr[[2]], mask, data, call, env)
+				return(res[
+					!res %in% ._parse_expr_column(expr[[3]], mask, data, call, env)
+				])
 			},
 			"c" = ,
 			"list" = {
@@ -502,10 +505,22 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 						#
 						# to return dep_delay followed by anything not carrier, use !
 						# c(dep_delay, !carrier)
-						selected[!selected %in% parse_here(strip_minus(elements[[i]]))]
+						selected[
+							!selected %in%
+								._parse_expr_column(
+									strip_minus(elements[[i]]),
+									mask,
+									data,
+									call,
+									env
+								)
+						]
 					} else {
 						# standard path: accumulate selections via union
-						unique(c(selected, parse_here(elements[[i]])))
+						unique(c(
+							selected,
+							._parse_expr_column(elements[[i]], mask, data, call, env)
+						))
 					}
 				}
 				return(selected)
@@ -514,21 +529,31 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 				# `-X:Y` is parsed by R as `(-X):Y`
 				# For selection, we read it here as `-(X:Y)`
 				if (is_minus(expr)) {
-					return(all_cols[!all_cols %in% parse_here(strip_minus(expr))])
+					return(all_cols[
+						!all_cols %in%
+							._parse_expr_column(strip_minus(expr), mask, data, call, env)
+					])
 				}
-				from <- parse_here(expr[[2]])
-				to <- parse_here(expr[[3]])
+				from <- ._parse_expr_column(expr[[2]], mask, data, call, env)
+				to <- ._parse_expr_column(expr[[3]], mask, data, call, env)
 				if (length(from) == 1 && length(to) == 1) {
 					return(names(mask)[mask[[from]]:mask[[to]]])
 				}
 				abort_select_colon(from, to, expr, call)
 			},
 			"&" = {
-				res_lhs <- parse_here(expr[[2]])
-				return(res_lhs[res_lhs %in% parse_here(expr[[3]])])
+				res_lhs <- ._parse_expr_column(expr[[2]], mask, data, call, env)
+				return(res_lhs[
+					res_lhs %in% ._parse_expr_column(expr[[3]], mask, data, call, env)
+				])
 			},
-			"|" = return(unique(c(parse_here(expr[[2]]), parse_here(expr[[3]])))),
-			"!" = return(names(mask)[!names(mask) %in% parse_here(expr[[2]])]),
+			"|" = return(unique(c(
+				._parse_expr_column(expr[[2]], mask, data, call, env),
+				._parse_expr_column(expr[[3]], mask, data, call, env)
+			))),
+			"!" = return(names(mask)[
+				!names(mask) %in% ._parse_expr_column(expr[[2]], mask, data, call, env)
+			]),
 			"starts_with" = {
 				if (length(expr) > 2) {
 					cli_abort("too many argument starts_with", call = call)
