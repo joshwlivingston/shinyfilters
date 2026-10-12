@@ -421,21 +421,12 @@ parse_expr_column <- function(expr, mask, call) {
 				return(matched[!duplicated(matched)])
 			},
 			":" = {
-				from <- resolve_single_col(expr[[2]])
-				to <- resolve_single_col(expr[[3]])
-				if (length(from) != 1 || length(to) != 1) {
-					from_str <- deparse(expr[[2]])
-					to_str <- deparse(expr[[3]])
-					range_str <- paste0(from_str, ":", to_str)
-					cli_abort(
-						c(
-							"Invalid select expression provided.",
-							"i" = "Got {.code {range_str}}"
-						),
-						call = call
-					)
+				from <- parse_here(expr[[2]])
+				to <- parse_here(expr[[3]])
+				if (length(from) == 1 && length(to) == 1) {
+					return(names(mask)[mask[[from]]:mask[[to]]])
 				}
-				return(names(mask)[from:to])
+				abort_select_colon(from, to, expr, call)
 			},
 			"&" = return(intersect(parse_here(expr[[2]]), parse_here(expr[[3]]))),
 			"|" = return(union(parse_here(expr[[2]]), parse_here(expr[[3]]))),
@@ -480,6 +471,34 @@ here <- function() {
 
 there <- function() {
 	parent.frame(2)
+}
+
+abort_select_colon <- function(from, to, expr, call) {
+	from_diag <- if (length(from) != 1) colon_abort_message(from, expr[[2]])
+	to_diag <- if (length(to) != 1) colon_abort_message(to, expr[[3]])
+	range_str <- paste0(from_diag$code, ":", to_diag$code)
+	cli_abort(
+		c(
+			"Invalid select expression provided.",
+			"i" = "Got {.code {range_str}}",
+			"i" = "Each side of {.code :} must be length 1.",
+			"i" = "Invalid length{qty(sum(!is.null(c(from_diag, to_diag))))}{?s}:",
+			from_diag$info,
+			to_diag$info
+		),
+		call = call
+	)
+}
+
+colon_abort_message <- function(res, expr) {
+	str <- deparse(expr)
+	list(
+		code = str,
+		info = setNames(
+			format_inline("{.code {str}}, {length(res)}"),
+			"*"
+		)
+	)
 }
 
 ._select_columns <- function(x, selection, label, call) {
