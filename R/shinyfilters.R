@@ -473,18 +473,25 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 						call = call
 					)
 				}
-				if (all(vapply(elements, is.character, logical(1)))) {
-					cols <- unlist(elements)
-					missing <- cols[!cols %in% names(mask)]
+				if (
+					all(vapply(
+						elements,
+						function(x) is.character(x) || is.symbol(x),
+						logical(1)
+					))
+				) {
+					cols <- as.character(unlist(elements))
+					missing_lgl <- !cols %in% names(mask)
+					missing <- cols[missing_lgl]
 					if (length(missing) == 0) {
 						return(unique(cols))
 					}
-					cli_abort("Can't find column{?s} {.field {missing}}.", call = call)
-				}
-				if (all(vapply(elements, is.symbol, logical(1)))) {
-					cols <- vapply(elements, as.character, character(1))
-					if (all(cols %in% names(mask))) {
-						return(unique(cols))
+					bad <- vapply(elements, is.character, logical(1L)) & missing_lgl
+					if (any(bad)) {
+						cli_abort(
+							"Can't find column{?s} {.field {cols[bad]}}.",
+							call = call
+						)
 					}
 				}
 				selected <- if (is_minus(elements[[1]])) all_cols else character(0)
