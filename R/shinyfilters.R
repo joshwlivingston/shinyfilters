@@ -365,8 +365,14 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 # X is a valid column expression.
 #
 # -X
-# Same as !X
+# Same as !X, except as an element of c() or list().
 # -X:Y is read as -(X:Y), not (-X):Y.
+#
+# c(X, -Y, !Z)
+# Elements apply left to right.
+# -Y removes Y from the columns selected so far. When it comes first, it
+# removes Y from every column.
+# !Z adds every column that isn't Z.
 #
 # X & Y
 # The intersection of X and Y.
@@ -424,23 +430,32 @@ parse_expr_column <- function(expr, mask, call) {
 				if (length(expr) == 1) {
 					return(all_cols)
 				}
+				elements <- as.list(expr[-1])
+				selected <- if (is_minus(elements[[1]])) all_cols else character(0)
 
-				# Parse elements while preserving order
-				provided <- unlist(lapply(as.list(expr[-1]), parse_here))
-				matched <- provided[provided %in% all_cols]
-				return(matched[!duplicated(matched)])
+				for (i in seq_along(elements)) {
+					selected <- if (is_minus(elements[[i]])) {
+						# when - is used, take the set difference
+						# this means c(dep_delay, -carrier) returns dep_delay
+						#
+						# to return dep_delay followed by anything not carrier, use !
+						# c(dep_delay, !carrier)
+						setdiff(selected, parse_here(removed))
+					} else {
+						# standard path: accumulate selections via union
+						union(selected, parse_here(elements[[i]]))
+					}
+				}
+				return(selected)
 			},
 			":" = {
-				lhs <- expr[[2]]
-				rhs <- expr[[3]]
-				if (is.call(lhs) && length(lhs) == 2 && function_name(lhs) == "-") {
-					# `-X:Y` is parsed as `(-X):Y`
-					# for selection, we read it as as `-(X:Y)`
-					expr[[2]] <- lhs[[2]]
-					return(setdiff(all_cols, parse_here(expr)))
+				# `-X:Y` is parsed as `(-X):Y`
+				# for selection, we read it as as `-(X:Y)`
+				if (is_minus(expr)) {
+					return(setdiff(all_cols, parse_here(negated)))
 				}
-				from <- parse_here(lhs)
-				to <- parse_here(rhs)
+				from <- parse_here(expr[[2]])
+				to <- parse_here(expr[[3]])
 				if (length(from) == 1 && length(to) == 1) {
 					return(names(mask)[mask[[from]]:mask[[to]]])
 				}
@@ -454,6 +469,22 @@ parse_expr_column <- function(expr, mask, call) {
 
 	# Return empty character vector if no matching columns found
 	character(0)
+}
+
+is_minus <- function(expr) {
+	if (!is.call(expr)) {
+		return(FALSE)
+	}
+	name <- function_name(expr)
+	if (name == "-" && length(expr) == 2) {
+		return(TRUE)
+	}
+	if (name == ":") {
+		if (is_minus(expr[[2]])) {
+			return(FALSE)
+		}
+	}
+	return(FALSE)
 }
 
 resolve_single_col <- function(node) {
