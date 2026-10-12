@@ -388,15 +388,15 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 # X, Y, and Z are valid column expressions.
 
 ._filter_select <- function(.filters, expr, call = there()) {
-	# mask <- setNames(lapply(.filters@data, `[`, 0) as.list(seq_along(.filters)), nm = names(.filters@data))
-	res <- ._parse_expr_column(expr, .filters@data, call)
+	mask <- setNames(as.list(seq_along(.filters)), nm = names(.filters@data))
+	res <- ._parse_expr_column(expr, mask, .filters@data, call)
 	._modify(
 		.filters,
 		data = .filters@data[, res, drop = FALSE]
 	)
 }
 
-._parse_expr_column <- function(expr, mask, call) {
+._parse_expr_column <- function(expr, mask, data, call) {
 	all_cols <- names(mask)
 
 	if (is.symbol(expr)) {
@@ -555,7 +555,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 			"last_col" = return(names(mask)[length(mask)]),
 			"where" = {
 				.f <- expr[[2]]
-				res <- lapply(mask, .f)
+				res <- lapply(data, .f)
 				if (all(lengths(res) == 1)) {
 					res_lgl <- suppressWarnings(as.logical(unlist(res)))
 					if (!anyNA(res_lgl)) {
@@ -579,46 +579,28 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 
 	if (is.function(res)) {
 		.f <- res
-		res <- .f(mask)
+		res <- .f(data)
 		if (all(lengths(res) == 1)) {
-			res_char <- suppressWarnings(as.character(unlist(res)))
+			res_char <- suppressWarnings(as.character(res))
 			if (!anyNA(res_char)) {
 				# character vector
 				missing <- res_char[!res_char %in% names(mask)]
-				if (length(missing) > 0) {
-					cli_abort(c("Bad!"), call = call)
+				if (length(missing) == 0) {
+					return(res_char)
 				}
-				return(res_char)
+				cli_abort(c("Bad!"), call = call)
 			}
 
-			res_lgl <- suppressWarnings(as.logical(unlist(res)))
+			res_lgl <- suppressWarnings(as.logical(res))
 			if (!anyNA(res_lgl)) {
 				# logical vector
-				return(names(mask)[res])
+				return(names(mask)[res_lgl])
 			}
-		}
-
-		if (is.logical(res) && (length(res) == 1 || length(res) != length(mask))) {
-			if (length(res) == 1) {
-				res <- rep(res, length(mask))
-			}
-			return(names(mask)[res])
-		}
-
-		if (!is.logical(res)) {
-			cli_abort(
-				c(
-					"Predicate must return {.code TRUE}, {.code FALSE}, or a {.cls character} vector.",
-					"i" = "Got {.code {deparse(expr)}}."
-				),
-				call = call
-			)
 		}
 
 		cli_abort(
 			c(
-				"Can't subset columns with {.code {deparse(expr)}}.",
-				"x" = "Logical subscript must be size 1 or {length(mask)}, not {length(res)}."
+				"Predicate must return a {.cls logical} or {.cls character} vector, not {.obj_type_friendly {res}}."
 			),
 			call = call
 		)
