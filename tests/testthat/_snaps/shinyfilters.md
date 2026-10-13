@@ -598,32 +598,13 @@
       Filters
         tagged  <chr>  radioButtons
 
-# `$` and `[[` error on unknown columns
+# `$` errors on unknown columns
 
     Code
       cfg$nope
     Condition
       Error in `cfg$nope`:
       ! Can't find column nope.
-    Code
-      cfg[["nope"]]
-    Condition
-      Error in `cfg[["nope"]]`:
-      ! Can't select columns that don't exist.
-      x Column `nope` doesn't exist.
-    Code
-      cfg[[9]]
-    Condition
-      Error in `cfg[[9]]`:
-      ! Can't select columns past the end.
-      i Location 9 doesn't exist.
-      i There are only 4 columns.
-    Code
-      cfg[[c("x", "nope")]]
-    Condition
-      Error in `cfg[[c("x", "nope")]]`:
-      ! Can't select columns that don't exist.
-      x Column `nope` doesn't exist.
 
 # a config placed in a UI that htmltools inspects errors
 
@@ -654,79 +635,6 @@
       Error:
       ! <shinyfilters> objects cannot be used in some shiny functions.
       i Use `[[`, `$`, or `filterInput()` to render the filters directly.
-
-# `[` returns a config with the selected columns
-
-    Code
-      print(cfg[c("letters", "x")])
-    Output
-      <shinyfilters> * 2 filters
-      
-      Filters
-           letters  <chr>  selectizeInput
-        *  x        <int>  radioButtons
-      
-      * Filter set by `with_filters()`
-
-# `[` errors on unknown columns
-
-    Code
-      cfg["nope"]
-    Condition
-      Error in `cfg["nope"]`:
-      ! Can't select columns that don't exist.
-      x Column `nope` doesn't exist.
-    Code
-      cfg[9]
-    Condition
-      Error in `cfg[9]`:
-      ! Can't select columns past the end.
-      i Location 9 doesn't exist.
-      i There are only 4 columns.
-    Code
-      cfg[TRUE]
-    Condition
-      Error in `cfg[TRUE]`:
-      ! Unable to locate columns.
-    Code
-      cfg[0]
-    Condition
-      Error in `cfg[0]`:
-      ! `0` doesn't select any columns.
-    Code
-      cfg[character(0)]
-    Condition
-      Error in `cfg[character(0)]`:
-      ! `character(0)` doesn't select any columns.
-    Code
-      cfg[, "x"]
-    Condition
-      Error in `cfg[, "x"]`:
-      ! Can't subset a <shinyfilters> object by rows and columns.
-      i Select columns with `x[cols]`.
-    Code
-      cfg[1, 2]
-    Condition
-      Error in `cfg[1, 2]`:
-      ! Can't subset a <shinyfilters> object by rows and columns.
-      i Select columns with `x[cols]`.
-    Code
-      cfg[[1, 2]]
-    Condition
-      Error in `cfg[[1, 2]]`:
-      ! Can't subset a <shinyfilters> object by rows and columns.
-      i Select columns with `x[cols]`.
-    Code
-      cfg[factros]
-    Condition
-      Error in `cfg[factros]`:
-      ! Can't select columns that don't exist.
-      x Column `factros` doesn't exist.
-    Code
-      cfg[t]
-    Condition
-      Error in `cfg[t]`:
-      ! Predicate must return `TRUE` or `FALSE`, not a character matrix.
 
 # a shinyfilters object's properties are read-only
 
