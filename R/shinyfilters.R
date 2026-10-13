@@ -623,7 +623,23 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 					)
 				}
 			},
-			"any_of" = cli_abort("any_of not yet implemented", call = call),
+			"any_of" = {
+				if (length(expr) != 2) {
+					cli_abort("{.fn any_of} takes exactly one argument.", call = call)
+				}
+				res <- eval(expr[[2]], env)
+				# unlike all_of(), missing columns are dropped
+				if (is.character(res)) {
+					return(unique(res[res %in% mask]))
+				}
+				if (is.numeric(res)) {
+					return(mask[res[abs(res) <= length(mask)]])
+				}
+				cli_abort(
+					"{.fn any_of} needs a character or numeric vector, not {.obj_type_friendly {res}}.",
+					call = call
+				)
+			},
 			"everything" = return(mask),
 			"last_col" = return(mask[length(mask)]),
 			"where" = {
