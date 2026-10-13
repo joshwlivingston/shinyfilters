@@ -649,7 +649,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	}
 
 	if (is.null(res)) {
-	res <- eval(expr, env)
+		res <- eval(expr, env)
 	}
 
 	if (is.function(res)) {
@@ -661,7 +661,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 				# character vector
 				missing <- res_char[!res_char %in% mask]
 				if (length(missing) == 0) {
-					return(res_char)
+					return(unique(res_char))
 				}
 				cli_abort(c("Bad!"), call = call)
 			}
@@ -684,21 +684,21 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	if (is.character(res)) {
 		missing <- res[!res %in% mask]
 		if (length(missing) == 0) {
-			return(res)
+			return(unique(res))
 		}
 		cli_abort("Can't find column{?s} {.field {missing}}.", call = call)
 	}
 
 	if (is.numeric(res)) {
 		# A numeric index
-		res_oob <- res[res > length(mask)]
+		res_oob <- as.character(res[res > length(mask)])
 		if (length(res_oob) == 0) {
 			return(mask[res])
 		}
 		cli_abort(
 			c(
 				"Can't select columns past the end.",
-				"i" = "Location{?s} {res_oob} {doesn't/don't} exist.",
+				"i" = "Location{?s} {res_oob} {?doesn't/don't} exist.",
 				"i" = "There are only {length(mask)} columns."
 			),
 			call = call
