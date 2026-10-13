@@ -393,7 +393,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	call = there(),
 	env = parent.frame(2)
 ) {
-	mask <- setNames(as.list(seq_along(.filters)), nm = names(.filters@data))
+	mask <- names(.filters@data)
 	res <- ._parse_expr_column(expr, mask, .filters@data, call, env)
 	._modify(
 		.filters,
@@ -402,11 +402,9 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 }
 
 ._parse_expr_column <- function(expr, mask, data, call, env) {
-	all_cols <- names(mask)
-
 	if (is.symbol(expr)) {
 		char <- as.character(expr)
-		if (char %in% names(mask)) {
+		if (char %in% mask) {
 			return(char)
 		}
 		if (is.null(get0(char, env))) {
@@ -415,14 +413,14 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	}
 
 	# A single column name as a string
-	if (is.character(expr) && length(expr) == 1 && expr %in% names(mask)) {
+	if (is.character(expr) && length(expr) == 1 && expr %in% mask) {
 		return(expr)
 	}
 
 	if (is.numeric(expr)) {
 		# A numeric index
 		if (expr <= length(mask)) {
-			return(names(mask)[expr])
+			return(mask[expr])
 		}
 		cli_abort(
 			c(
@@ -436,7 +434,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 
 	if (is.logical(expr)) {
 		# A boolean
-		return(names(mask)[expr])
+		return(mask[expr])
 	}
 
 	if (is.call(expr)) {
@@ -446,8 +444,8 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 			"-" = {
 				if (length(expr) == 2) {
 					# unary
-					return(all_cols[
-						!all_cols %in% ._parse_expr_column(expr[[2]], mask, data, call, env)
+					return(mask[
+						!mask %in% ._parse_expr_column(expr[[2]], mask, data, call, env)
 					])
 				}
 				# binary
@@ -460,12 +458,12 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 			"list" = {
 				# Bare c() or list() selects all columns
 				if (length(expr) == 1) {
-					return(all_cols)
+					return(mask)
 				}
 				elements <- c_elements(expr)
 				is_lgl <- vapply(elements, is.logical, logical(1))
 				if (all(is_lgl)) {
-					return(all_cols[unlist(elements)])
+					return(mask[unlist(elements)])
 				}
 				if (any(is_lgl)) {
 					cli_abort(
@@ -484,7 +482,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 					))
 				) {
 					cols <- as.character(unlist(elements))
-					missing_lgl <- !cols %in% names(mask)
+					missing_lgl <- !cols %in% mask
 					missing <- cols[missing_lgl]
 					if (length(missing) == 0) {
 						return(unique(cols))
@@ -497,7 +495,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 						)
 					}
 				}
-				selected <- if (is_minus(elements[[1]])) all_cols else character(0)
+				selected <- if (is_minus(elements[[1]])) mask else character(0)
 				for (i in seq_along(elements)) {
 					selected <- if (is_minus(elements[[i]])) {
 						# when - is used, take the set difference
@@ -529,15 +527,15 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 				# `-X:Y` is parsed by R as `(-X):Y`
 				# For selection, we read it here as `-(X:Y)`
 				if (is_minus(expr)) {
-					return(all_cols[
-						!all_cols %in%
+					return(mask[
+						!mask %in%
 							._parse_expr_column(strip_minus(expr), mask, data, call, env)
 					])
 				}
 				from <- ._parse_expr_column(expr[[2]], mask, data, call, env)
 				to <- ._parse_expr_column(expr[[3]], mask, data, call, env)
 				if (length(from) == 1 && length(to) == 1) {
-					return(names(mask)[mask[[from]]:mask[[to]]])
+					return(mask[match(from, mask):match(to, mask)])
 				}
 				abort_select_colon(from, to, expr, call)
 			},
@@ -551,8 +549,8 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 				._parse_expr_column(expr[[2]], mask, data, call, env),
 				._parse_expr_column(expr[[3]], mask, data, call, env)
 			))),
-			"!" = return(names(mask)[
-				!names(mask) %in% ._parse_expr_column(expr[[2]], mask, data, call, env)
+			"!" = return(mask[
+				!mask %in% ._parse_expr_column(expr[[2]], mask, data, call, env)
 			]),
 			"starts_with" = {
 				if (length(expr) > 2) {
@@ -561,7 +559,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 				if (!is.character(expr[[2]])) {
 					cli_abort("starts_with must be a single string", call = call)
 				}
-				return(grep(paste0("^", expr[[2]]), names(mask), value = TRUE))
+				return(grep(paste0("^", expr[[2]]), mask, value = TRUE))
 			},
 			"ends_with" = {
 				if (length(expr) > 2) {
@@ -570,7 +568,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 				if (!is.character(expr[[2]])) {
 					cli_abort("ends_with must be a single string", call = call)
 				}
-				return(grep(paste0(expr[[2]], "$"), names(mask), value = TRUE))
+				return(grep(paste0(expr[[2]], "$"), mask, value = TRUE))
 			},
 			"contains" = {
 				if (length(expr) > 2) {
@@ -579,7 +577,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 				if (!is.character(expr[[2]])) {
 					cli_abort("contains must be a single string", call = call)
 				}
-				return(grep(expr[[2]], names(mask), value = TRUE))
+				return(grep(expr[[2]], mask, value = TRUE))
 			},
 			"matches" = {
 				if (length(expr) > 2) {
@@ -588,7 +586,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 				if (!is.character(expr[[2]])) {
 					cli_abort("matches must be a single string", call = call)
 				}
-				return(grep(paste0("^", expr[[2]], "$"), names(mask), value = TRUE))
+				return(grep(paste0("^", expr[[2]], "$"), mask, value = TRUE))
 			},
 			"num_range" = {
 				if (length(expr) > 3) {
@@ -606,7 +604,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 				}
 
 				cols <- paste0(char, expr[[3]])
-				missing <- cols[!cols %in% names(mask)]
+				missing <- cols[!cols %in% mask]
 				if (length(missing) == 0) {
 					return(cols)
 				}
@@ -614,8 +612,8 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 			},
 			"all_of" = cli_abort("all_of not yet implemented", call = call),
 			"any_of" = cli_abort("any_of not yet implemented", call = call),
-			"everything" = return(names(mask)),
-			"last_col" = return(names(mask)[length(mask)]),
+			"everything" = return(mask),
+			"last_col" = return(mask[length(mask)]),
 			"where" = {
 				.f <- eval(expr[[2]], env)
 				res <- lapply(data, .f)
@@ -623,7 +621,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 					res_lgl <- suppressWarnings(as.logical(unlist(res)))
 					if (!anyNA(res_lgl)) {
 						# logical vector
-						return(names(mask)[res_lgl])
+						return(mask[res_lgl])
 					}
 				}
 				cli_abort(
@@ -647,7 +645,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 			res_char <- suppressWarnings(as.character(res))
 			if (!anyNA(res_char)) {
 				# character vector
-				missing <- res_char[!res_char %in% names(mask)]
+				missing <- res_char[!res_char %in% mask]
 				if (length(missing) == 0) {
 					return(res_char)
 				}
@@ -657,7 +655,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 			res_lgl <- suppressWarnings(as.logical(res))
 			if (!anyNA(res_lgl)) {
 				# logical vector
-				return(names(mask)[res_lgl])
+				return(mask[res_lgl])
 			}
 		}
 
@@ -670,7 +668,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 	}
 
 	if (is.character(res)) {
-		missing <- res[!res %in% names(mask)]
+		missing <- res[!res %in% mask]
 		if (length(missing) == 0) {
 			return(res)
 		}
@@ -681,7 +679,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 		# A numeric index
 		res_oob <- res[res > length(mask)]
 		if (length(res_oob) == 0) {
-			return(names(mask)[res])
+			return(mask[res])
 		}
 		cli_abort(
 			c(
@@ -695,7 +693,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 
 	if (is.logical(res)) {
 		# A logical vector
-		return(names(mask)[res])
+		return(mask[res])
 	}
 
 	# Return empty character vector if no matching columns found
