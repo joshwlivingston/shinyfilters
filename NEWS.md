@@ -1,6 +1,6 @@
 # shinyfilters (development version)
 
-* `filterInput()` and related methods now accept ordinary lists with development S7.
+* Updates for compatibility with S7 > 0.2.2.
 
 ## New API
 
