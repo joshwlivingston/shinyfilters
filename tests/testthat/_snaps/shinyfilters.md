@@ -118,6 +118,22 @@
     Code
       print(filters)
     Output
+      <shinyfilters> * 7 filters * namespace "sidebar-mod"
+      
+      Filters
+        date                       <date>  dateRangeInput
+        origin                     <fct>   selectizeInput
+        dest                       <chr>   selectizeInput
+        dep_delay                  <dbl>   sliderInput
+        distance                   <dbl>   sliderInput
+        delayed                    <lgl>   selectizeInput
+        awpirgbeqaprkjgbaepirg...  <chr>   selectizeInput
+
+# print() handles long names (tidyselect)
+
+    Code
+      print(filters)
+    Output
       <shinyfilters> * 8 filters * namespace "sidebar-mod"
       
       Filters
@@ -206,11 +222,6 @@
       Error in `with_filters()`:
       ! `with_filters()` takes two unnamed arguments, named arguments, or formulas.
     Code
-      with_filters(cfg, where(is.logical), "radio")
-    Condition
-      Error in `with_filters()`:
-      ! `with_filters()` takes two unnamed arguments, named arguments, or formulas.
-    Code
       with_filters(cfg, x = "radioo")
     Condition
       Error in `with_filters()`:
@@ -222,11 +233,6 @@
       Error in `with_filters()`:
       ! Can't select columns that don't exist.
       x Column `nope` doesn't exist.
-    Code
-      with_filters(cfg, where(is.logical) ~ "radio")
-    Condition
-      Error in `with_filters()`:
-      ! `where(is.logical)` doesn't select any columns.
     Code
       with_filters(cfg, x ~ "radioo")
     Condition
@@ -330,6 +336,19 @@
     Condition
       Error in `filterInput()`:
       ! Column a must have at least one non-missing value.
+
+# shinyfilters() and with_filters() errors (tidyselect)
+
+    Code
+      with_filters(cfg, tidyselect::where(is.logical), "radio")
+    Condition
+      Error in `with_filters()`:
+      ! `with_filters()` takes two unnamed arguments, named arguments, or formulas.
+    Code
+      with_filters(cfg, tidyselect::where(is.logical) ~ "radio")
+    Condition
+      Error in `with_filters()`:
+      ! `tidyselect::where(is.logical)` doesn't select any columns.
 
 # with_ns() errors
 
@@ -668,8 +687,7 @@
       cfg[TRUE]
     Condition
       Error in `cfg[TRUE]`:
-      ! Can't select columns.
-      x Subscript must be numeric or character, not `TRUE`.
+      ! Unable to locate columns.
     Code
       cfg[0]
     Condition
@@ -708,8 +726,7 @@
       cfg[t]
     Condition
       Error in `cfg[t]`:
-      ! Can't select columns that don't exist.
-      x Column `t` doesn't exist.
+      ! Predicate must return `TRUE` or `FALSE`, not a character matrix.
 
 # a shinyfilters object's properties are read-only
 

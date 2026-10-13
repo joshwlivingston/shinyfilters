@@ -144,3 +144,7 @@ check_is_nonempty_string <- function(
 deprecated <- function() {
 	missing_arg()
 }
+
+is_bool <- function(x) {
+	is.logical(x) && length(x) == 1
+}

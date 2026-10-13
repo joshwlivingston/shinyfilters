@@ -65,8 +65,6 @@
       update_messages(updateFilterInput(with_filters(cfg, letters = shiny::checkboxGroupInput ~
         list(.update_fn = shiny::updateNumericInput))))
     Condition
-      Error in `updateFilterInput()`:
-      ! Can't update the input for column letters.
-      Caused by error:
-      ! unused argument (choices = c("a", "b", "c"))
+      Error in `with_filters()`:
+      ! `with_filters()` takes two unnamed arguments, named arguments, or formulas.
 

@@ -99,22 +99,22 @@ filters %>%
 * Choose the input and set its arguments together:
 ```{r, eval = getRversion() >= "4.1", include = getRversion() >= "4.1"}
 filters |>
-	with_filters(dep_delay = "slider" ~ list(value = range(.x)))
+	with_filters(dep_delay ~ "slider" ~ list(value = range(.x)))
 ```
 
 ```{r, eval = !getRversion() >= "4.1", include = !getRversion() >= "4.1"}
 filters %>%
-	with_filters(dep_delay = "slider" ~ list(value = range(.x)))
+	with_filters(dep_delay ~ "slider" ~ list(value = range(.x)))
 ```
 
 ```{r, eval = getRversion() >= "4.1", include = getRversion() >= "4.1"}
 filters |>
-	with_filters(dep_delay = sliderInput ~ list(value = range(.x)))
+	with_filters(dep_delay ~ sliderInput ~ list(value = range(.x)))
 ```
 
 ```{r, eval = !getRversion() >= "4.1", include = !getRversion() >= "4.1"}
 filters %>%
-	with_filters(dep_delay = sliderInput ~ list(value = range(.x)))
+	with_filters(dep_delay ~ sliderInput ~ list(value = range(.x)))
 ```
 <br>
 
@@ -178,7 +178,7 @@ filters %>%
 ```{r, eval = getRversion() >= "4.1", include = getRversion() >= "4.1"}
 filters |>
 	with_filters(
-		origin = shiny::checkboxGroupInput ~
+		origin ~ shiny::checkboxGroupInput ~
 			list(.update_fn = shiny::updateCheckboxGroupInput)
 	)
 ```
@@ -186,7 +186,7 @@ filters |>
 ```{r, eval = !getRversion() >= "4.1", include = !getRversion() >= "4.1"}
 filters %>%
 	with_filters(
-		origin = shiny::checkboxGroupInput ~
+		origin ~ shiny::checkboxGroupInput ~
 			list(.update_fn = shiny::updateCheckboxGroupInput)
 	)
 ```
@@ -201,7 +201,19 @@ allowing you to place the filters anywhere in an application
 
 * Use `[`:
 ```{r}
+filters[-c(carrier, origin)]
+```
+
+* Use `[` with <[`tidy-select`][tidyselect::language]>:
+```{r, eval = requireNamespace("tidyselect", quietly = TRUE), message = FALSE}
+library(tidyselect)
+
 filters[starts_with("d")]
+```
+
+* Select and create with `[[`:
+```{r}
+filters[[c(carrier, origin)]]
 ```
 <br>
 

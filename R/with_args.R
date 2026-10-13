@@ -71,7 +71,7 @@ with_args <- function(.filters, ...) {
 		if (is.null(args)) {
 			._abort_with_args_form(call, quo, nms[[i]], quo_get_expr(target$input))
 		}
-		cols <- ._eval_cols(config, target$cols, call = call)
+		cols <- ._eval_cols(config, target$cols, call = call, .col.first = TRUE)
 		override <- ._args_override(
 			args,
 			quo_get_env(quo),

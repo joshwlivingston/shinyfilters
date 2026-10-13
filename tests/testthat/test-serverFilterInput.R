@@ -41,11 +41,11 @@ test_that("serverFilterInput() still takes `input`, with a warning", {
 	withr::local_options(rlib_warning_verbosity = "verbose")
 	testServer(app_shiny(), {
 		res <- serverFilterInput(test_df, input)
-		expect_snapshot(session$flushReact(), variant = snapshot_variant())
+		expect_snapshot(session$flushReact())
 		expect_named(res$input_values, get_input_ids(test_df))
 
 		res <- serverFilterInput(test_df, input = input)
-		expect_snapshot(session$flushReact(), variant = snapshot_variant())
+		expect_snapshot(session$flushReact())
 		expect_named(res$input_values, get_input_ids(test_df))
 	})
 })
@@ -97,9 +97,9 @@ test_that("serverFilterInput() passes on a `selected` it is given", {
 test_that("shinyfilters_server() updates a configuration's empty inputs", {
 	cfg <- with_filters(
 		shinyfilters(df_config),
-		letters = "radio" ~
+		letters ~ "radio" ~
 			list(choices = toupper(sort(unique(.x))), inline = TRUE),
-		factors = shiny::checkboxGroupInput ~
+		factors ~ shiny::checkboxGroupInput ~
 			list(.update_fn = shiny::updateCheckboxGroupInput),
 		a_very_very_long_name = "slider"
 	)
@@ -178,7 +178,7 @@ test_that("shinyfilters_server() errors when called, for an input it can't updat
 		shinyfilters(df_config),
 		letters = shiny::checkboxGroupInput
 	)
-	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+	expect_snapshot(error = TRUE, {
 		shinyfilters_server(cfg)
 	})
 })
@@ -236,7 +236,7 @@ test_that("._prepare_input() with reactivevalues extracts values correctly", {
 test_that("serverFilterInput() with reactive() throws error when missing required columns", {
 	testServer(app_shiny(), {
 		input_list <- reactive(list(chr_col = "a", num_col = 5))
-		expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+		expect_snapshot(error = TRUE, {
 			._prepare_input(input_list, x = test_df)
 		})
 	})
@@ -250,8 +250,7 @@ test_that("serverFilterInput() with reactive() warns when extra columns provided
 			c(out, list(unsupported = "x"))
 		})
 		expect_snapshot(
-			invisible(._prepare_input(input_list, x = test_df)),
-			variant = snapshot_variant()
+			invisible(._prepare_input(input_list, x = test_df))
 		)
 	})
 })
