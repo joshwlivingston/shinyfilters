@@ -437,6 +437,7 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 		return(mask[expr])
 	}
 
+	res <- NULL
 	if (is.call(expr)) {
 		switch(
 			function_name(expr),
@@ -610,7 +611,18 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 				}
 				cli_abort("Can't find column{?s} {.field {missing}}.", call = call)
 			},
-			"all_of" = cli_abort("all_of not yet implemented", call = call),
+			"all_of" = {
+				if (length(expr) != 2) {
+					cli_abort("{.fn all_of} takes exactly one argument.", call = call)
+				}
+				res <- eval(expr[[2]], env)
+				if (!is.character(res) && !is.numeric(res)) {
+					cli_abort(
+						"{.fn all_of} needs a character or numeric vector, not {.obj_type_friendly {res}}.",
+						call = call
+					)
+				}
+			},
 			"any_of" = cli_abort("any_of not yet implemented", call = call),
 			"everything" = return(mask),
 			"last_col" = return(mask[length(mask)]),
@@ -636,7 +648,9 @@ method(filterInput, class_shinyfilters) <- function(x, ...) {
 		)
 	}
 
+	if (is.null(res)) {
 	res <- eval(expr, env)
+	}
 
 	if (is.function(res)) {
 		.f <- res
