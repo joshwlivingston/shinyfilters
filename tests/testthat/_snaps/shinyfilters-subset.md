@@ -26,45 +26,11 @@
       i Location 9 doesn't exist.
       i There are only 4 columns.
     Code
-      cfg[TRUE]
-    Output
-      <shinyfilters> * 4 filters
-      
-      Filters
-        letters                <chr>  selectizeInput
-        factors                <fct>  selectizeInput
-        x                      <int>  sliderInput
-        a_very_very_long_name  <dbl>  sliderInput
-    Code
-      cfg[0]
-    Output
-      <shinyfilters> * 0 filters
-      
-      Filters
+      cfg[c(x, TRUE)]
     Condition
-      Warning in `max()`:
-      no non-missing arguments to max; returning -Inf
-      Warning in `max()`:
-      no non-missing arguments to max; returning -Inf
-      Warning in `strrep()`:
-      NAs introduced by coercion to integer range
-    Output
-      
-    Code
-      cfg[character(0)]
-    Output
-      <shinyfilters> * 0 filters
-      
-      Filters
-    Condition
-      Warning in `max()`:
-      no non-missing arguments to max; returning -Inf
-      Warning in `max()`:
-      no non-missing arguments to max; returning -Inf
-      Warning in `strrep()`:
-      NAs introduced by coercion to integer range
-    Output
-      
+      Error in `cfg[c(x, TRUE)]`:
+      ! Can't select columns with `c(x, TRUE)`.
+      x Logical values can't be combined with other selections.
     Code
       cfg[, "x"]
     Condition
