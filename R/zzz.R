@@ -1,6 +1,10 @@
 # nocov start
 .onLoad <- function(libname, pkgname) {
-	methods_register()
+	if ("S7_on_load" %in% getNamespaceExports("S7")) {
+		S7::S7_on_load()
+	} else {
+		S7::methods_register()
+	}
 
 	cls <- "shinyfilters::shinyfilters"
 	._s3_register("base::$", cls, `$.shinyfilters::shinyfilters`)
@@ -44,3 +48,13 @@ the <- new.env(parent = emptyenv())
 # While `the$dry_run` is TRUE, the input callers return the input function
 # instead of calling it, so print() can show which input each column uses.
 the$dry_run <- FALSE
+
+.onUnload <- function(...) {
+	if ("S7_on_unload" %in% getNamespaceExports("S7")) {
+		S7::S7_on_unload()
+	}
+}
+
+if ("S7_on_build" %in% getNamespaceExports("S7")) {
+	S7::S7_on_build()
+}
