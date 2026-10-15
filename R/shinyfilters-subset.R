@@ -505,6 +505,39 @@
 		res <- eval(expr, env)
 	}
 
+	if (is.atomic(res)) {
+		if (anyNA(res)) {
+			missing <- is.na(res)
+			n <- sum(missing)
+			loc <- which(missing)
+			cli_abort(
+				c(
+					"Selections can't have missing values.",
+					"i" = "Got {.code {deparse(expr)}}.",
+					"*" = "{.code {deparse(expr[[2]])}} {qty(n)} {?is a/has {n}} missing value{?s}.",
+					if (n > 1) c("*" = "{qty(length(loc))}Location{?s}: {loc}.")
+				),
+				call = call
+			)
+		}
+
+		if (!is.null(names(res))) {
+			has_name <- names(res) != ""
+			if (any(has_name)) {
+				named <- res[has_name]
+				renames <- names(res)[has_name]
+				cli_abort(
+					c(
+						"Can't rename filters.",
+						"i" = "Got {.code {deparse(expr)}}.",
+						"*" = "Rename {.code {named}} to {.code {renames}} before calling {.fn shinyfilters}."
+					),
+					call = call
+				)
+			}
+		}
+	}
+
 	if (is.function(res)) {
 		.f <- res
 		res <- .f(data)
