@@ -149,30 +149,61 @@
 }
 
 ._parse_expr_column <- function(expr, mask, data, call, env) {
+	if (is.null(expr)) {
+		return(character(0))
+	}
+
+	if (is.atomic(expr) && length(expr) == 1 && is.na(expr)) {
+		cli_abort(c("Selections can't have missing values."), call = call)
+	}
+
 	if (is.symbol(expr)) {
 		char <- as.character(expr)
 		if (char %in% mask) {
 			return(char)
 		}
 		if (is.null(get0(char, env))) {
-			cli_abort("Can't find column {.field {char}}.", call = call)
+			cli_abort("Column {.code {char}} doesn't exist.", call = call)
 		}
 	}
 
 	# A single column name as a string
-	if (is.character(expr) && length(expr) == 1 && expr %in% mask) {
-		return(expr)
+	if (is.character(expr) && length(expr) == 1) {
+		if (expr == "") {
+			cli_abort(
+				c(
+					"Can't select columns.",
+					"i" = "Cannot select an empty string ({.val }).",
+					"*" = "Selection {.code {deparse(expr)}} is an empty string."
+				),
+				call = call
+			)
+		}
+		if (expr %in% mask) {
+			return(expr)
+		}
 	}
 
 	if (is.numeric(expr)) {
 		# A numeric index
+		expr_int <- as.integer(expr)
+		is_rounded <- as.numeric(expr_int) != expr
+		if (is_rounded) {
+			cli_abort(
+				c(
+					"Indices must be whole numbers.",
+					"*" = "Got {.code {expr}}."
+				),
+				call = call
+			)
+		}
 		if (expr <= length(mask)) {
 			return(mask[expr])
 		}
 		cli_abort(
 			c(
 				"Can't select columns past the end.",
-				"i" = "Location {expr} doesn't exist.",
+				"i" = "Column {expr} doesn't exist.",
 				"i" = "There are only {length(mask)} columns."
 			),
 			call = call
@@ -204,9 +235,9 @@
 			},
 			"c" = ,
 			"list" = {
-				# Bare c() or list() selects all columns
+				# Bare c() or list() selects nothing
 				if (length(expr) == 1) {
-					return(mask)
+					return(character(0))
 				}
 				elements <- c_elements(expr)
 				is_lgl <- vapply(elements, is.logical, logical(1))
@@ -235,10 +266,23 @@
 					if (length(missing) == 0) {
 						return(unique(cols))
 					}
+					blanks <- cols[cols == ""]
+					if (length(blanks) > 0) {
+						cli_abort(
+							c(
+								"Can't select columns.",
+								"i" = "Cannot select an empty string ({.val }).",
+								"*" = format_inline(
+									"Selection {.code {deparse(expr)}} contains {length(blanks)} empty string{?s}."
+								)
+							),
+							call = call
+						)
+					}
 					bad <- vapply(elements, is.character, logical(1L)) & missing_lgl
 					if (any(bad)) {
 						cli_abort(
-							"Can't find column{?s} {.field {cols[bad]}}.",
+							"Column{?s} {.code {cols[bad]}} {?doesn't/don't} exist.",
 							call = call
 						)
 					}
@@ -356,7 +400,10 @@
 				if (length(missing) == 0) {
 					return(cols)
 				}
-				cli_abort("Can't find column{?s} {.field {missing}}.", call = call)
+				cli_abort(
+					"Column{?s} {.code {missing}} {?doesn't/don't} exist.",
+					call = call
+				)
 			},
 			"all_of" = {
 				if (length(expr) != 2) {
@@ -449,11 +496,39 @@
 		if (length(missing) == 0) {
 			return(unique(res))
 		}
-		cli_abort("Can't find column{?s} {.field {missing}}.", call = call)
+		blanks <- res[res == ""]
+		if (length(blanks) > 0) {
+			cli_abort(
+				c(
+					"Can't select columns.",
+					"i" = "Cannot select an empty string ({.val }).",
+					"*" = format_inline(
+						"Selection {.code {deparse(expr)}} {qty(blanks)} {?is an/contains {length(blanks)}} empty string{?s}."
+					)
+				),
+				call = call
+			)
+		}
+		cli_abort(
+			"Column{?s} {.code {missing}} {?doesn't/don't} exist.",
+			call = call
+		)
 	}
 
 	if (is.numeric(res)) {
 		# A numeric index
+		res_int <- as.integer(res)
+		rounded <- res[as.numeric(res_int) != res]
+		if (length(rounded) > 0) {
+			cli_abort(
+				c(
+					"Indices must be whole numbers.",
+					"*" = "Got {.code {deparse(expr)}}.",
+					"*" = "{qty(length(rounded))}Invalid value{?s}: {.code {rounded}}"
+				),
+				call = call
+			)
+		}
 		res_oob <- as.character(res[res > length(mask)])
 		if (length(res_oob) == 0) {
 			return(mask[res])
@@ -461,7 +536,7 @@
 		cli_abort(
 			c(
 				"Can't select columns past the end.",
-				"i" = "Location{?s} {res_oob} {?doesn't/don't} exist.",
+				"i" = "Column{?s} {res_oob} {?doesn't/don't} exist.",
 				"i" = "There are only {length(mask)} columns."
 			),
 			call = call

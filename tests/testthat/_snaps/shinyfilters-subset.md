@@ -17,13 +17,13 @@
       cfg["nope"]
     Condition
       Error in `cfg["nope"]`:
-      ! Can't find column nope.
+      ! Column `nope` doesn't exist.
     Code
       cfg[9]
     Condition
       Error in `cfg[9]`:
       ! Can't select columns past the end.
-      i Location 9 doesn't exist.
+      i Column 9 doesn't exist.
       i There are only 4 columns.
     Code
       cfg[c(x, TRUE)]
@@ -53,7 +53,7 @@
       cfg[factros]
     Condition
       Error in `cfg[factros]`:
-      ! Can't find column factros.
+      ! Column `factros` doesn't exist.
     Code
       cfg[t]
     Condition
@@ -84,17 +84,17 @@
       cfg[["nope"]]
     Condition
       Error in `cfg[["nope"]]`:
-      ! Can't find column nope.
+      ! Column `nope` doesn't exist.
     Code
       cfg[[9]]
     Condition
       Error in `cfg[[9]]`:
       ! Can't select columns past the end.
-      i Location 9 doesn't exist.
+      i Column 9 doesn't exist.
       i There are only 4 columns.
     Code
       cfg[[c("x", "nope")]]
     Condition
       Error in `cfg[[c("x", "nope")]]`:
-      ! Can't find column nope.
+      ! Column `nope` doesn't exist.
 
