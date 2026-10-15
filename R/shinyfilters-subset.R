@@ -232,6 +232,11 @@
 				rhs <- eval(expr[[3]], env)
 				return(lhs - rhs)
 			},
+			"/" = {
+				lhs <- ._parse_expr_column(expr[[2]], mask, data, call, env)
+				rhs <- ._parse_expr_column(expr[[3]], mask, data, call, env)
+				return(lhs[!lhs %in% rhs])
+			},
 			"c" = ,
 			"list" = {
 				# Bare c() or list() selects nothing
