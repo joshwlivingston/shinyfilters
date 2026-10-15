@@ -333,9 +333,19 @@
 			},
 			"&" = {
 				res_lhs <- ._parse_expr_column(expr[[2]], mask, data, call, env)
-				return(res_lhs[
-					res_lhs %in% ._parse_expr_column(expr[[3]], mask, data, call, env)
-				])
+				res_rhs <- ._parse_expr_column(expr[[3]], mask, data, call, env)
+				if (
+					length(res_lhs) == 1 && length(res_rhs) == 1 && res_lhs != res_rhs
+				) {
+					cli_abort(
+						c(
+							"Can't take the intersection of two distinct columns",
+							"i" = "{.code {deparse(expr)}} is always an empty selection."
+						),
+						call = call
+					)
+				}
+				return(res_lhs[res_lhs %in% res_rhs])
 			},
 			"|" = return(unique(c(
 				._parse_expr_column(expr[[2]], mask, data, call, env),
