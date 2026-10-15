@@ -421,7 +421,13 @@
 			},
 			"all_of" = {
 				if (length(expr) != 2) {
-					cli_abort("{.fn all_of} takes exactly one argument.", call = call)
+					cli_abort(
+						c(
+							"{.fn all_of} takes exactly one argument.",
+							"i" = "Got {.code {deparse(expr)}}."
+						),
+						call = call
+					)
 				}
 				res <- eval(expr[[2]], env)
 				if (!is.character(res) && !is.numeric(res)) {
@@ -450,7 +456,13 @@
 			},
 			"any_of" = {
 				if (length(expr) != 2) {
-					cli_abort("{.fn any_of} takes exactly one argument.", call = call)
+					cli_abort(
+						c(
+							"{.fn any_of} takes exactly one argument.",
+							"i" = "Got {.code {deparse(expr)}}."
+						),
+						call = call
+					)
 				}
 				res <- eval(expr[[2]], env)
 				if (!is.character(res) && !is.numeric(res)) {
