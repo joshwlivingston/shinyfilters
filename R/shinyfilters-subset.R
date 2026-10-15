@@ -430,23 +430,52 @@
 						call = call
 					)
 				}
+				if (is.numeric(res)) {
+					is_negative <- res < 0
+					if (any(is_negative)) {
+						n <- sum(is_negative)
+						val <- res[is_negative]
+						loc <- which(is_negative)
+						cli_abort(
+							c(
+								"Selections provided to {.fn all_of} can't be negative.",
+								"i" = "{.code {deparse(expr[[2]])}} contains {n} negative value{?s}.",
+								"*" = "{qty(length(val))}Invalid value{?s}: {val}.",
+								"*" = "{qty(length(loc))}Invalid location{?s}: {loc}."
+							),
+							call = call
+						)
+					}
+				}
 			},
 			"any_of" = {
 				if (length(expr) != 2) {
 					cli_abort("{.fn any_of} takes exactly one argument.", call = call)
 				}
 				res <- eval(expr[[2]], env)
-				# unlike all_of(), missing columns are dropped
-				if (is.character(res)) {
-					return(unique(res[res %in% mask]))
+				if (!is.character(res) && !is.numeric(res)) {
+					cli_abort(
+						"{.fn any_of} needs a character or numeric vector, not {.obj_type_friendly {res}}.",
+						call = call
+					)
 				}
 				if (is.numeric(res)) {
-					return(mask[res[abs(res) <= length(mask)]])
+					is_negative <- res < 0
+					if (any(is_negative)) {
+						n <- sum(is_negative)
+						val <- res[is_negative]
+						loc <- which(is_negative)
+						cli_abort(
+							c(
+								"Selections provided to {.fn any_of} can't be negative.",
+								"i" = "{.code {deparse(expr[[2]])}} contains {n} negative value{?s}.",
+								"*" = "{qty(length(val))}Invalid value{?s}: {val}.",
+								"*" = "{qty(length(loc))}Invalid location{?s}: {loc}."
+							),
+							call = call
+						)
+					}
 				}
-				cli_abort(
-					"{.fn any_of} needs a character or numeric vector, not {.obj_type_friendly {res}}.",
-					call = call
-				)
 			},
 			"everything" = return(mask),
 			"last_col" = return(mask[length(mask)]),
