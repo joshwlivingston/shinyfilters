@@ -228,10 +228,9 @@
 					])
 				}
 				# binary
-				res <- ._parse_expr_column(expr[[2]], mask, data, call, env)
-				return(res[
-					!res %in% ._parse_expr_column(expr[[3]], mask, data, call, env)
-				])
+				lhs <- eval(expr[[2]], env)
+				rhs <- eval(expr[[3]], env)
+				return(lhs - rhs)
 			},
 			"c" = ,
 			"list" = {
