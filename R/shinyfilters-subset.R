@@ -447,7 +447,7 @@
 								"Selections provided to {.fn all_of} can't be negative.",
 								"i" = "{.code {deparse(expr[[2]])}} contains {n} negative value{?s}.",
 								"*" = "{qty(length(val))}Invalid value{?s}: {val}.",
-								"*" = "{qty(length(loc))}Invalid location{?s}: {loc}."
+								"*" = "{qty(length(loc))}Location{?s}: {loc}."
 							),
 							call = call
 						)
@@ -471,6 +471,20 @@
 						call = call
 					)
 				}
+				if (anyNA(res)) {
+					missing <- is.na(res)
+					n <- sum(missing)
+					loc <- which(missing)
+					cli_abort(
+						c(
+							"Selections can't have missing values.",
+							"i" = "Got {.code {deparse(expr)}}.",
+							"*" = "{.code {deparse(expr[[2]])}} {qty(n)} {?is a/has {n}} missing value{?s}.",
+							if (n > 1) c("*" = "{qty(length(loc))}Location{?s}: {loc}.")
+						),
+						call = call
+					)
+				}
 				if (is.numeric(res)) {
 					is_negative <- res < 0
 					if (any(is_negative)) {
@@ -482,12 +496,29 @@
 								"Selections provided to {.fn any_of} can't be negative.",
 								"i" = "{.code {deparse(expr[[2]])}} contains {n} negative value{?s}.",
 								"*" = "{qty(length(val))}Invalid value{?s}: {val}.",
-								"*" = "{qty(length(loc))}Invalid location{?s}: {loc}."
+								"*" = "{qty(length(loc))}Location{?s}: {loc}."
 							),
 							call = call
 						)
 					}
+					res_int <- as.integer(res)
+					is_rounded <- as.numeric(res_int) != res
+					if (any(is_rounded)) {
+						val <- res[is_rounded]
+						loc <- which(is_rounded)
+						cli_abort(
+							c(
+								"Indices must be whole numbers.",
+								"*" = "Got {.code {deparse(expr)}}.",
+								"*" = "{qty(length(val))}Invalid value{?s}: {val}.",
+								"*" = "{qty(length(loc))}Location{?s}: {loc}."
+							),
+							call = call
+						)
+					}
+					return(mask[res[res <= length(mask)]])
 				}
+				return(mask[mask %in% res])
 			},
 			"everything" = return(mask),
 			"last_col" = return(mask[length(mask)]),
@@ -606,13 +637,16 @@
 	if (is.numeric(res)) {
 		# A numeric index
 		res_int <- as.integer(res)
-		rounded <- res[as.numeric(res_int) != res]
-		if (length(rounded) > 0) {
+		is_rounded <- as.numeric(res_int) != res
+		if (any(is_rounded)) {
+			val <- res[is_rounded]
+			loc <- which(is_rounded)
 			cli_abort(
 				c(
 					"Indices must be whole numbers.",
 					"*" = "Got {.code {deparse(expr)}}.",
-					"*" = "{qty(length(rounded))}Invalid value{?s}: {.code {rounded}}"
+					"*" = "{qty(length(val))}Invalid value{?s}: {val}.",
+					"*" = "{qty(length(loc))}Location{?s}: {loc}."
 				),
 				call = call
 			)
