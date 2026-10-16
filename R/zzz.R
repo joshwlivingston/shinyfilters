@@ -1,7 +1,7 @@
 # nocov start
 .onLoad <- function(libname, pkgname) {
 	if ("S7_on_load" %in% getNamespaceExports("S7")) {
-		S7::S7_on_load()
+		getExportedValue("S7", "S7_on_load")()
 	} else {
 		S7::methods_register()
 	}
@@ -51,10 +51,10 @@ the$dry_run <- FALSE
 
 .onUnload <- function(...) {
 	if ("S7_on_unload" %in% getNamespaceExports("S7")) {
-		S7::S7_on_unload()
+		getExportedValue("S7", "S7_on_unload")()
 	}
 }
 
 if ("S7_on_build" %in% getNamespaceExports("S7")) {
-	S7::S7_on_build()
+	getExportedValue("S7", "S7_on_build")()
 }
