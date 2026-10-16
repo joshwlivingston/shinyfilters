@@ -359,17 +359,74 @@
 				!mask %in% ._parse_expr_column(expr[[2]], mask, data, call, env)
 			]),
 			"starts_with" = {
+				if (length(expr) != 2) {
+					cli_abort(
+						c(
+							"{.fn starts_with} takes exactly one argument.",
+							"i" = "Got {.code {deparse(expr)}}."
+						),
+						call = call
+					)
+				}
 				if (length(expr) > 2) {
 					cli_abort("too many argument starts_with", call = call)
 				}
-				if (!is.character(expr[[2]])) {
-					cli_abort("starts_with must be a single string", call = call)
+				res <- tryCatch(
+					suppressWarnings(as.character(eval(expr[[2]], env))),
+					error = function(e) {
+						cli_abort(
+							c(
+								"{.fn starts_with} requires a character vector.",
+								"i" = "Got {.code {deparse(expr)}}.",
+								"i" = "Unable to coerce {.code {deparse(expr[[2]])}} to a character vector."
+							)
+						)
+					}
+				)
+				if (anyNA(res) || any(res == "")) {
+					expr_str <- as.character(expr[[2]])
+					info <-
+						if (
+							!is.na(expr_str) &&
+								expr_str != "NA" &&
+								expr_str != "NA_character_" &&
+								expr_str != ""
+						) {
+							format_inline(
+								sprintf(
+									"{.code {deparse(expr[[2]])}} is {.obj_type_friendly {res}}%s.",
+									if (anyNA(res)) {
+										" with {sum(is.na(res))} missing value{?s} at location{?s} {which(is.na(res))}"
+									} else {
+										' with {sum(res == "")} empty string{?s} at location{?s} {which(res == "")}'
+									}
+								)
+							)
+						}
+					cli_abort(
+						c(
+							"{.fn starts_with} takes an object coercible to a vector of non empty strings.",
+							"i" = "Got {.code {deparse(expr)}}.",
+							"i" = info
+						),
+						call = call
+					)
 				}
-				return(grep(paste0("^", expr[[2]]), mask, value = TRUE))
+				return(grep(
+					sprintf("^(%s)", paste0(res, collapse = "|")),
+					mask,
+					value = TRUE
+				))
 			},
 			"ends_with" = {
-				if (length(expr) > 2) {
-					cli_abort("too many argument ends_with", call = call)
+				if (length(expr) != 2) {
+					cli_abort(
+						c(
+							"{.fn ends_with} takes exactly one argument.",
+							"i" = "Got {.code {deparse(expr)}}."
+						),
+						call = call
+					)
 				}
 				if (!is.character(expr[[2]])) {
 					cli_abort("ends_with must be a single string", call = call)
@@ -377,8 +434,14 @@
 				return(grep(paste0(expr[[2]], "$"), mask, value = TRUE))
 			},
 			"contains" = {
-				if (length(expr) > 2) {
-					cli_abort("too many argument contains", call = call)
+				if (length(expr) != 2) {
+					cli_abort(
+						c(
+							"{.fn contains} takes exactly one argument.",
+							"i" = "Got {.code {deparse(expr)}}."
+						),
+						call = call
+					)
 				}
 				if (!is.character(expr[[2]])) {
 					cli_abort("contains must be a single string", call = call)
@@ -386,8 +449,14 @@
 				return(grep(expr[[2]], mask, value = TRUE))
 			},
 			"matches" = {
-				if (length(expr) > 2) {
-					cli_abort("too many argument matches", call = call)
+				if (length(expr) != 2) {
+					cli_abort(
+						c(
+							"{.fn matches} takes exactly one argument.",
+							"i" = "Got {.code {deparse(expr)}}."
+						),
+						call = call
+					)
 				}
 				if (!is.character(expr[[2]])) {
 					cli_abort("matches must be a single string", call = call)
@@ -521,7 +590,51 @@
 				return(mask[mask %in% res])
 			},
 			"everything" = return(mask),
-			"last_col" = return(mask[length(mask)]),
+			"last_col" = {
+				if (length(expr) == 1) {
+					return(mask[length(mask)])
+				}
+				if (length(expr) > 2) {
+					cli_abort(
+						c(
+							"{.fn last_col} no arguments or exactly one argument.",
+							"i" = "Got {.code {deparse(expr)}}."
+						),
+						call = call
+					)
+				}
+				res <- eval(expr[[2]], env)
+				if (!is.numeric(res)) {
+					cli_abort(
+						c(
+							"{.fn last_col} no arguments or exactly one numeric argument.",
+							"i" = "Got {.code {deparse(expr)}}.",
+							"*" = "{.code deparse(expr[[2]])} is {.obj_type_friendly res}."
+						),
+						call = call
+					)
+				}
+				if (res < 0) {
+					cli_abort(
+						c(
+							"The argument provided to {.fn last_col} can't be negative.",
+							"i" = "Got {.code {res}}."
+						),
+						call = call
+					)
+				}
+				if (res > length(mask)) {
+					cli_abort(
+						c(
+							"Cannot select a filter before the beginning.",
+							"i" = "Got {.code {deparse(expr)}}.",
+							"i" = "There are only {length(mask)} filters."
+						),
+						call = call
+					)
+				}
+				return(mask[length(mask) - res])
+			},
 			"where" = {
 				.f <- eval(expr[[2]], env)
 				res <- lapply(data, .f)
