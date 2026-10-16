@@ -114,9 +114,10 @@ font_url <- paste0(
 
 ```{r}
 # originally was a gradient from #4A0D82 to #1C0038
-sky <- c("#691eae", "#290051") # the sticker, top to bottom
-edge <- "#10002B" # its border
-ink <- "#FFFFFF" # the word and the swoosh
+# then: 0a3b5d to 001320
+sky <- c("#175783", "#0a3b5d") # the sticker, top to bottom
+edge <- "#022d4c" # its border
+ink <- "#fafdff" # the word and the swoosh
 shadow <- 24 # depth of largest shadow
 ```
 
@@ -806,18 +807,54 @@ brightness <- function(color) {
 # of its colors at the top of the sticker to the second at the bottom
 sky_at <- function(y) {
 	ends <- vapply(sky, parts, c(0, 0, 0))
-	mixed <- round(ends[, 1] + (ends[, 2] - ends[, 1]) * y / size[2])
+	mixed <- round(ends[, 1] + (ends[, 2] - ends[, 1]) * (y / size[2]))
 	sprintf("#%02X%02X%02X", mixed[1], mixed[2], mixed[3])
 }
 
-# The magenta that stands out from a darker color by `contrast`. It is the
-# magenta that heads a printed <shinyfilters> object, #BB00BB, made lighter
-# or darker: as much red as blue, and no green. Its red and blue are rounded
-# up, so that it stands out by no less.
-magenta_on <- function(color) {
-	part <- (contrast * (brightness(color) + 0.05) - 0.05) / (0.2126 + 0.0722)
-	part <- ceiling(255 * (1.055 * part^(1 / 2.4) - 0.055))
-	sprintf("#%02X00%02X", part, part)
+# Converts HSL (H in [0,360], S/L in [0,1]) to RGB hex string
+hsl_to_hex <- function(h, s, l) {
+  c <- (1 - abs(2 * l - 1)) * s
+  x <- c * (1 - abs((h / 60) %% 2 - 1))
+  m <- l - c / 2
+  
+  rgb <- if (h < 60) c(c, x, 0)
+    else if (h < 120) c(x, c, 0)
+    else if (h < 180) c(0, c, x)
+    else if (h < 240) c(0, x, c)
+    else if (h < 300) c(x, 0, c)
+    else c(c, 0, x)
+    
+  val <- round((rgb + m) * 255)
+  sprintf("#%02X%02X%02X", val[1], val[2], val[3])
+}
+
+# Optimizes HSL Lightness (H=300°, S=1.0) to satisfy WCAG contrast against BOTH
+# the sky background (minimum ratio) and the white swoosh (#FFFFFF).
+magenta_on <- function(bg_color) {
+  rgb <- parts(bg_color) / 255
+  r <- rgb[1]; g <- rgb[2]; b <- rgb[3]
+  
+  c_max <- max(r, g, b)
+  c_min <- min(r, g, b)
+  delta <- c_max - c_min
+  
+  bg_l <- (c_max + c_min) / 2
+  bg_s <- if (delta == 0) 0 else delta / (1 - abs(2 * bg_l - 1))
+  bg_h <- if (delta == 0) 0 else if (c_max == r) (((g - b) / delta) %% 6) * 60 else if (c_max == g) (((b - r) / delta) + 2) * 60 else (((r - g) / delta) + 4) * 60
+  
+  bg_lum <- brightness(bg_color)
+  target_lum <- contrast * (bg_lum + 0.05) - 0.05
+  
+  # Minimizes difference between candidate lightness luminance and target luminance
+  score <- function(l) {
+    candidate <- hsl_to_hex(bg_h, bg_s, l)
+    cand_lum <- brightness(candidate)
+    if (is.na(cand_lum)) return(1e6)
+    abs(cand_lum - target_lum)
+  }
+  
+  opt <- optimize(score, c(bg_l, 0.85))
+  hsl_to_hex(bg_h, bg_s, opt$minimum)
 }
 ```
 
