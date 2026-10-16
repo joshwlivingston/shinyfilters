@@ -39,7 +39,7 @@ test_that("get_filter_logical() filters data.frame columns correctly", {
 
 test_that("get_filter_logical() throws error for missing column", {
 	df <- data.frame(stringsAsFactors = FALSE, a = 1:5, b = letters[1:5])
-	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+	expect_snapshot(error = TRUE, {
 		get_filter_logical(df, val = "test", column = "nonexistent")
 	})
 })
@@ -331,8 +331,7 @@ test_that("get_filter_logical() falls back to all TRUE for every unsupported x/v
 
 test_that("get_filter_logical() warns when falling back for mismatched types", {
 	expect_snapshot(
-		get_filter_logical(letters[1:3], 1),
-		variant = snapshot_variant()
+		get_filter_logical(letters[1:3], 1)
 	)
 })
 
@@ -370,14 +369,14 @@ test_that("get_filter_logical() preserves vector length", {
 # Errors ####
 ### column nopt found
 test_that("get_filter_logical: column not found", {
-	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+	expect_snapshot(error = TRUE, {
 		get_filter_logical(test_df, "i", column = "nonexistent")
 	})
 })
 
 ### invalid column_name argument ####
 test_that("get_filter_logical: column argument is non-empty string", {
-	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+	expect_snapshot(error = TRUE, {
 		get_filter_logical(test_df, "i", column = NA_character_)
 		get_filter_logical(test_df, "i", column = "")
 	})
@@ -396,7 +395,7 @@ test_that("get_filter_logical: non-logical vector returned", {
 		stringsAsFactors = FALSE,
 		x = ClassCharacter(letters)
 	)
-	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+	expect_snapshot(error = TRUE, {
 		apply_filters(df, list(x = letters[1:5]))
 	})
 })
@@ -413,7 +412,7 @@ test_that("get_filter_logical: logical vector of invalid length", {
 		stringsAsFactors = FALSE,
 		x = ClassCharacter(letters)
 	)
-	expect_snapshot(error = TRUE, variant = snapshot_variant(), {
+	expect_snapshot(error = TRUE, {
 		apply_filters(df, list(x = letters[1:5]))
 	})
 })

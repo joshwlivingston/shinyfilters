@@ -1,17 +1,9 @@
-# CI can override the variant for older R/testthat output. Only S7 diagnostics
-# select a versioned variant locally.
-snapshot_variant <- function(s7 = FALSE) {
-	variant <- Sys.getenv("SHINYFILTERS_SNAPSHOT_VARIANT")
-	if (!identical(variant, "")) {
-		return(variant)
+# Only S7 diagnostics need version-specific snapshots.
+s7_snapshot_variant <- function() {
+	if (utils::packageVersion("S7") > "0.2.2") {
+		return("s7-devel")
 	}
-	if (s7) {
-		if (utils::packageVersion("S7") > "0.2.2") {
-			return("s7-devel")
-		}
-		return("s7-release")
-	}
-	NULL
+	"s7-release"
 }
 
 # Calls `fn` the way user code does, from outside the package: test code itself

@@ -19,9 +19,7 @@ Imports:
     methods,
     rlang,
     S7,
-    shiny,
-    tidyselect (>= 1.2.0),
-    utils
+    shiny
 Suggests:
     bslib,
     data.table,
@@ -35,6 +33,7 @@ Suggests:
     shinyWidgets,
     testthat (>= 3.2.0),
     tibble,
+    tidyselect,
     withr
 VignetteBuilder: 
     knitr
