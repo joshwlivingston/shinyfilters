@@ -103,8 +103,8 @@ shiny_url <- paste0(
 )
 font_url <- paste0(
 	"https://raw.githubusercontent.com/google/fonts/",
-	"00ab40e1cdf29190ad0c1432c079f950185e11f4/",
-	"ofl/baloo2/Baloo2-Medium.ttf"
+	"633f3200539c52ee0aba2dfd7f46921417a81877/",
+	"ofl/ibmplexmono/IBMPlexMono-Regular.ttf"
 )
 ```
 
