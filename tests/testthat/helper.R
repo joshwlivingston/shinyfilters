@@ -1,3 +1,11 @@
+# Only S7 diagnostics need version-specific snapshots.
+s7_snapshot_variant <- function() {
+	if (utils::packageVersion("S7") > "0.2.2") {
+		return("s7-devel")
+	}
+	"s7-release"
+}
+
 # Calls `fn` the way user code does, from outside the package: test code itself
 # runs inside the package's namespace.
 call_as_user <- function(fn, ...) {
