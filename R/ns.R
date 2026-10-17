@@ -1,10 +1,10 @@
 ._resolve_ns <- new_generic("._resolve_ns", "ns")
 
-method(._resolve_ns, class_any) <- function(ns, call = caller_env()) {
+method(._resolve_ns, class_any) <- function(ns, call = there()) {
 	._resolve_ns(NS(ns), call = call)
 }
 
-method(._resolve_ns, class_function) <- function(ns, call = caller_env()) {
+method(._resolve_ns, class_function) <- function(ns, call = there()) {
 	._check_valid_shiny_ns(ns, call = call)
 	return(ns)
 }
@@ -17,7 +17,7 @@ method(._resolve_ns, class_function) <- function(ns, call = caller_env()) {
 	session$rootScope()$makeScope(._resolve_ns(config@ns)(character()))
 }
 
-._apply_ns <- function(ns, ..., call = caller_env()) {
+._apply_ns <- function(ns, ..., call = there()) {
 	ns <- ._resolve_ns(ns, call = call)
 	args <- list(...)
 

@@ -128,7 +128,7 @@ filterInput <- new_generic(
 
 ## Method: character ####
 method(filterInput, class_character) <- function(x, ...) {
-	local_error_call(caller_env())
+	local_error_call(there())
 	args <- list(...)
 	if (isTRUE(args$textbox)) {
 		if (isTRUE(args$area)) {
@@ -164,7 +164,7 @@ method(filterInput, class_data.frame) <- function(x, ...) {
 
 ## Method: Date ####
 method(filterInput, class_Date) <- function(x, ...) {
-	local_error_call(caller_env())
+	local_error_call(there())
 	args <- list(...)
 	if (isTRUE(args$range)) {
 		# `range = TRUE`
@@ -178,20 +178,20 @@ method(filterInput, class_Date) <- function(x, ...) {
 
 ## Method: factor | logical ####
 method(filterInput, class_factor | class_logical) <- function(x, ...) {
-	local_error_call(caller_env())
+	local_error_call(there())
 	._input_discrete_choice(x, ...)
 }
 
 ## Method: list ####
 method(filterInput, class_list) <- function(x, ...) {
-	local_error_call(caller_env())
+	local_error_call(there())
 	s7_check_is_valid_list_dispatch(x, function_name = "filterInput")
 	._input_discrete_choice(x, ...)
 }
 
 ## Method: numeric ####
 method(filterInput, class_numeric) <- function(x, ...) {
-	local_error_call(caller_env())
+	local_error_call(there())
 	args <- list(...)
 	if (isTRUE(args$slider)) {
 		# `slider = TRUE`
@@ -253,7 +253,7 @@ call_filter_input <- function(x, .f, ...) {
 	._call_filter_input(x, .f, ...)
 }
 
-._call_filter_input <- function(x, .f, ..., call = caller_env()) {
+._call_filter_input <- function(x, .f, ..., call = there()) {
 	args_prepared <- ._prepare_input_args(x, ..., call = call)
 	._call_input(.f, args_prepared, ...)
 }
@@ -303,7 +303,7 @@ call_filter_input <- function(x, .f, ...) {
 
 
 # Function: ._input_discrete_choice ####
-._input_discrete_choice <- function(x, ..., call = caller_env()) {
+._input_discrete_choice <- function(x, ..., call = there()) {
 	args <- list(...)
 	if (isTRUE(args$radio) && isTRUE(args$selectize)) {
 		cli_abort(

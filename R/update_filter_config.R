@@ -5,7 +5,7 @@
 
 ## Method: updateFilterInput() ####
 method(updateFilterInput, class_shinyfilters) <- function(x, ...) {
-	._config_update_inputs(x, names(x@data), list(...), call = caller_env())
+	._config_update_inputs(x, names(x@data), list(...), call = there())
 }
 
 # Updates the inputs of `cols` from the configuration's data. `call` reaches

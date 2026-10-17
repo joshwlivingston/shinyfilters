@@ -79,7 +79,7 @@ method(get_filter_logical, list(x = class_any, val = class_any)) <- function(
 			"!" = "No {.fn get_filter_logical} method for {.arg x} of class {.cls {class(x)}} and {.arg val} of class {.cls {class(val)}}.",
 			"i" = "Returning {.code TRUE} for all elements."
 		),
-		call = caller_env()
+		call = there()
 	)
 	return(rep(TRUE, length(x)))
 }
@@ -104,7 +104,7 @@ method(
 	column,
 	...
 ) {
-	local_error_call(caller_env())
+	local_error_call(there())
 	check_is_nonempty_string(column)
 	col <- x[[column]]
 	if (is.null(col)) {

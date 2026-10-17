@@ -782,27 +782,18 @@ test_that("print() names the input of a method that changes it", {
 	expect_snapshot(print(shinyfilters(df)))
 })
 
-test_that("`$`, `[[`, and names() access columns", {
+test_that("`$` and names() access columns", {
 	cfg <- with_filters(shinyfilters(df_config, ns = shiny::NS("m")), x = "radio")
 	res <- filterInput(cfg)
 	expect_identical(cfg$x, res[[3]])
-	expect_identical(cfg[["letters"]], res[[1]])
-	expect_identical(cfg[[4]], res[[4]])
-	expect_identical(
-		cfg[[c("letters", "x")]],
-		filterInput(cfg[c("letters", "x")])
-	)
 	expect_identical(names(cfg), names(df_config))
 	expect_identical(utils::.DollarNames(cfg, "^a_"), "a_very_very_long_name")
 })
 
-test_that("`$` and `[[` error on unknown columns", {
+test_that("`$` errors on unknown columns", {
 	cfg <- shinyfilters(df_config)
 	expect_snapshot(error = TRUE, {
 		cfg$nope
-		cfg[["nope"]]
-		cfg[[9]]
-		cfg[[c("x", "nope")]]
 	})
 })
 
@@ -829,55 +820,6 @@ test_that("a config placed in bslib::accordion() errors", {
 test_that("str() shows a config's structure", {
 	cfg <- shinyfilters(df_config)
 	expect_output(str(cfg), "<shinyfilters::shinyfilters>", fixed = TRUE)
-})
-
-test_that("`[` returns a config with the selected columns", {
-	cfg <- with_filters(shinyfilters(df_config, slider = TRUE), x = "radio")
-	sub <- cfg[c("x", "letters")]
-	expect_identical(names(sub), c("x", "letters"))
-	expect_identical(filterInput(sub)[[1]], filterInput(cfg)[[3]])
-	expect_identical(filterInput(sub)[[2]], filterInput(cfg)[[1]])
-	expect_identical(names(cfg[3:4]), c("x", "a_very_very_long_name"))
-	expect_identical(cfg[], cfg)
-	expect_identical(names(cfg[-1]), names(df_config)[-1])
-	expect_identical(names(cfg[c("x", "x")]), "x")
-	expect_identical(names(cfg[c(x, letters)]), c("x", "letters"))
-	cols <- c("factors", "x")
-	x <- "letters"
-	expect_identical(names(cfg[x]), "letters")
-	expect_snapshot(
-		print(cfg[c("letters", "x")])
-	)
-})
-
-test_that("`[` returns a config with the selected columns (tidyselect)", {
-	skip_if_not_installed("tidyselect")
-	cfg <- with_filters(shinyfilters(df_config, slider = TRUE), x = "radio")
-	sub <- cfg[c("x", "letters")]
-	cols <- c("factors", "x")
-	x <- "letters"
-	expect_identical(
-		names(cfg[tidyselect::where(is.numeric)]),
-		c("x", "a_very_very_long_name")
-	)
-	expect_identical(names(cfg[tidyselect::all_of(cols)]), cols)
-	expect_identical(names(cfg[tidyselect::all_of(x)]), "letters")
-})
-
-test_that("`[` errors on unknown columns", {
-	cfg <- shinyfilters(df_config)
-	expect_snapshot(error = TRUE, {
-		cfg["nope"]
-		cfg[9]
-		cfg[TRUE]
-		cfg[0]
-		cfg[character(0)]
-		cfg[, "x"]
-		cfg[1, 2]
-		cfg[[1, 2]]
-		cfg[factros]
-		cfg[t]
-	})
 })
 
 test_that("a shinyfilters object's properties are read-only", {
@@ -946,9 +888,4 @@ test_that("the `ns` property defaults to NULL", {
 	expect_null(
 		shinyfilters(data.frame(stringsAsFactors = FALSE, a = 1:3))@ns
 	)
-})
-
-test_that("double bracket with no arguments suppliued returns the object", {
-	cfg <- shinyfilters(df_config)
-	expect_identical(cfg[[]], cfg)
 })

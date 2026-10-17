@@ -5,7 +5,7 @@
 check_named_list_or_null <- function(
 	value,
 	arg = caller_arg(value),
-	call = caller_env()
+	call = there()
 ) {
 	if (is.null(value)) {
 		return(invisible())
@@ -24,7 +24,7 @@ check_named_list_or_null <- function(
 	}
 }
 
-check_shinyfilters <- function(x, arg = caller_arg(x), call = caller_env()) {
+check_shinyfilters <- function(x, arg = caller_arg(x), call = there()) {
 	if (!S7_inherits(x, class_shinyfilters)) {
 		cli_abort(
 			"{.arg {arg}} must be created by {.fn shinyfilters}, not {.obj_type_friendly {x}}.",
@@ -45,7 +45,7 @@ s7_check_is_valid_list_dispatch <- function(x, function_name) {
 	}
 }
 
-._check_valid_shiny_ns <- function(ns, call = caller_env()) {
+._check_valid_shiny_ns <- function(ns, call = there()) {
 	if (!._is_valid_ns_function(ns)) {
 		cli_abort(
 			"{.arg ns} must not be a custom function.",
@@ -102,7 +102,7 @@ len <- function(x) {
 check_is_nonempty_string <- function(
 	x,
 	arg = caller_arg(x),
-	call = caller_env()
+	call = there()
 ) {
 	if (
 		!identical(length(x), 1L) ||

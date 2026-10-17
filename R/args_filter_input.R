@@ -58,7 +58,7 @@ method(args_filter_input, class_character) <- function(
 	choices_asis = FALSE,
 	...
 ) {
-	local_error_call(caller_env())
+	local_error_call(there())
 	if (isTRUE(textbox)) {
 		return(NULL)
 	}
@@ -85,13 +85,13 @@ method(args_filter_input, class_factor | class_logical) <- function(
 	choices_asis = FALSE,
 	...
 ) {
-	local_error_call(caller_env())
+	local_error_call(there())
 	._discrete_choice_inputs(x = x, choices_asis = choices_asis, ...)
 }
 
 ## Method: list ####
 method(args_filter_input, class_list) <- function(x, choices_asis = TRUE, ...) {
-	local_error_call(caller_env())
+	local_error_call(there())
 	s7_check_is_valid_list_dispatch(x, function_name = "args_filter_input")
 	if (isFALSE(choices_asis)) {
 		cli_abort(
@@ -124,8 +124,8 @@ method(args_filter_input, class_POSIXt) <- function(x, ...) {
 	args_sort = NULL,
 	...
 ) {
-	check_supplied_arguments(args_unique, call = caller_env())
-	check_supplied_arguments(args_sort, call = caller_env())
+	check_supplied_arguments(args_unique, call = there())
+	check_supplied_arguments(args_sort, call = there())
 	args <- list(...)
 	if (isTRUE(args$server)) {
 		return(list(choices = ""))
@@ -156,7 +156,7 @@ method(as_discrete, class_POSIXt) <- function(x, ...) {
 check_supplied_arguments <- function(
 	args,
 	arg = caller_arg(args),
-	call = caller_env()
+	call = there()
 ) {
 	if (is.null(args) || identical(args, list())) {
 		return(invisible())

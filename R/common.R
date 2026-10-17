@@ -1,5 +1,5 @@
 # Function: ._prepare_input_args ####
-._prepare_input_args <- function(x, ..., call = caller_env()) {
+._prepare_input_args <- function(x, ..., call = there()) {
 	args_provided <- list(...)
 	args <- do.call(
 		args_filter_input,
@@ -23,7 +23,7 @@
 }
 
 # Function: ._prepare_update_input_args ####
-._prepare_update_input_args <- function(x, ..., call = caller_env()) {
+._prepare_update_input_args <- function(x, ..., call = there()) {
 	args_provided <- list(...)
 	args <- do.call(
 		args_update_filter_input,
@@ -38,7 +38,7 @@
 }
 
 # Function: error_input_args ####
-error_input_args <- function(x, unsupported_args, call = caller_env()) {
+error_input_args <- function(x, unsupported_args, call = there()) {
 	vector_class <- class(x)[[1L]]
 	cli_abort(
 		"The {qty(unsupported_args)}argument{?s} {.arg {unsupported_args}} {?is/are} not supported with {.cls {vector_class}} objects.",

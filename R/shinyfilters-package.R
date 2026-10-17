@@ -162,10 +162,8 @@ NULL
 #' @importFrom rlang call_match
 #' @importFrom rlang call2
 #' @importFrom rlang caller_arg
-#' @importFrom rlang caller_env
 #' @importFrom rlang cnd_signal
 #' @importFrom rlang current_call
-#' @importFrom rlang current_env
 #' @importFrom rlang enquo
 #' @importFrom rlang enquos
 #' @importFrom rlang eval_tidy
@@ -215,6 +213,7 @@ NULL
 #' @importFrom shiny NS
 #' @importFrom shiny observe
 #' @importFrom shiny reactiveValues
+#' @importFrom stats setNames
 #' @importFrom utils getS3method
 #' @importFrom utils methods
 #' @importFrom utils modifyList

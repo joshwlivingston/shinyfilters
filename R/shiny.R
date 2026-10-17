@@ -315,7 +315,7 @@ method(get_input_labels, class_data.frame) <- function(x) {
 method(._prepare_input, class_reactiveExpr) <- function(
 	input,
 	x,
-	call = caller_env()
+	call = there()
 ) {
 	res <- ._prepare_input_list(input())
 	names_res <- names(res)
