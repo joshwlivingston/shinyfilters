@@ -15,3 +15,10 @@
 [data-bs-theme="dark"] pre span[style*="color: #BB00BB"] {
   color: #e6a0ff !important;
 }
+
+/* used in logo.Rmd */
+img.no-dark-mode, .no-dark-mode img {
+  filter: none !important;
+  background-color: #ffffff !important;
+  color-scheme: light !important;
+}

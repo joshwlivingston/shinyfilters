@@ -15,8 +15,13 @@ navbar:
     articles:
       text: Articles
       menu:
+      - text: Advanced Usage
       - text: Extending shinyfilters
         href: articles/extending-shinyfilters.html
+      - text: "---------"
+      - text: Extra
+      - text: "How the hex sticker was created"
+        href: articles/logo.html
 reference:
 - title: Basic usage
 - contents: 
