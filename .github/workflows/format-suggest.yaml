@@ -1,0 +1,39 @@
+# Suggests air's formatting fixes as PR review comments, so authors without
+# air can commit them from the "Files changed" tab. The air stage of ci.yaml
+# fails until the code is formatted.
+#
+# Derived from https://github.com/posit-dev/setup-air/tree/main/examples
+on:
+  # `pull_request_target` gets a token that can comment on PRs from forks. It
+  # runs in the context of the base branch, so the PR head is checked out
+  # explicitly. Its code is only formatted, never run.
+  # https://securitylab.github.com/resources/github-actions-preventing-pwn-requests/
+  pull_request_target:
+
+name: format-suggest.yaml
+
+jobs:
+  format-suggest:
+    name: format-suggest
+    runs-on: ubuntu-latest
+
+    permissions:
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          allow-unsafe-pr-checkout: true
+
+      - uses: posit-dev/setup-air@v1
+
+      - name: Format
+        run: air format .
+
+      - name: Suggest
+        uses: reviewdog/action-suggester@v1
+        with:
+          level: error
+          fail_level: error
+          tool_name: air
