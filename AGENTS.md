@@ -200,7 +200,7 @@ There are three possible ways to run code, listed in rough order of desirability
 - When testing errors and warnings:
   - Only use `expect_error()` or `expect_warning()` if the error or warning has a known class.
   - Generally, prefer `expect_snapshot(error = TRUE)` for errors and `expect_snapshot()` for warnings because these allow the user to review the full text of the output.
-  - Write error snapshots in usethis style (see usethis's `tests/testthat/test-use_import_from.R`): `expect_snapshot(error = TRUE, variant = snapshot_variant(), { ... })` with `error = TRUE` first, and all of a test's erroring calls grouped in one braced block, with blank lines between unrelated groups. Always pass `variant = snapshot_variant()`: CI jobs whose output differs, such as R 3.5, set their own variant.
+  - Write error snapshots in usethis style (see usethis's `tests/testthat/test-use_import_from.R`): `expect_snapshot(error = TRUE, { ... })` with `error = TRUE` first, and all of a test's erroring calls grouped in one braced block, with blank lines between unrelated groups.
 - Avoid the `.package` argument to `local_mocked_bindings()`; this modifies the namespace of another package, which is not good practice. Instead create a mockable version of the function in the current package. See `?local_mocked_bindings` for more details.
 
 ### Documentation
