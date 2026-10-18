@@ -1,5 +1,9 @@
-# Workflow derived from https://github.com/r-lib/actions/tree/v2/examples
-# Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
+# Each stage runs only after the previous one passes:
+# air -> jarl -> R CMD check, check without Suggests, and coverage -> pkgdown
+# build -> pkgdown deploy. PRs and pushes check on Linux; releases also check
+# on Windows and macOS.
+#
+# Derived from https://github.com/r-lib/actions/tree/v2/examples
 on:
   push:
     branches: [main, master]
@@ -8,12 +12,173 @@ on:
     types: [published]
   workflow_dispatch:
 
-name: pkgdown.yaml
+name: ci.yaml
 
 permissions: read-all
 
 jobs:
+  air:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: posit-dev/setup-air@v1
+
+      - name: Check formatting
+        run: air format . --check
+
+  jarl:
+    needs: air
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: etiennebacher/setup-jarl@v0.1.1
+
+  R-CMD-check:
+    needs: jarl
+    runs-on: ${{ matrix.os }}
+
+    name: R-CMD-check ${{ matrix.os }} (${{ matrix.r }})
+
+    # R-devel failures are reported but don't block later stages.
+    continue-on-error: ${{ matrix.r == 'devel' }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ${{ fromJSON(github.event_name == 'release' && '["ubuntu-latest", "windows-latest", "macos-latest"]' || '["ubuntu-latest"]') }}
+        r: ['oldrel-1', 'release', 'devel']
+        include:
+          - r: 'devel'
+            http-user-agent: 'release'
+
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      R_KEEP_PKG_SOURCE: yes
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: r-lib/actions/setup-pandoc@v2
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: ${{ matrix.r }}
+          http-user-agent: ${{ matrix.http-user-agent }}
+          use-public-rspm: true
+
+      # LaTeX for the PDF manual
+      - uses: r-lib/actions/setup-tinytex@v2
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::rcmdcheck
+          needs: check
+
+      - uses: r-lib/actions/check-r-package@v2
+        with:
+          upload-snapshots: true
+          args: 'c("--as-cran")'
+          build_args: 'c("--compact-vignettes=gs+qpdf")'
+
+  # Only installs "hard" dependencies (Depends, Imports, LinkingTo), plus
+  # testthat, knitr, and rmarkdown. The cache is never used, so a cached
+  # Suggests package can't be restored.
+  check-no-suggests:
+    needs: jarl
+    runs-on: ${{ matrix.os }}
+
+    name: check-no-suggests ${{ matrix.os }} (release)
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ${{ fromJSON(github.event_name == 'release' && '["ubuntu-latest", "windows-latest", "macos-latest"]' || '["ubuntu-latest"]') }}
+
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      R_KEEP_PKG_SOURCE: yes
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: r-lib/actions/setup-pandoc@v2
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          dependencies: '"hard"'
+          cache: false
+          extra-packages: |
+            any::rcmdcheck
+            any::testthat
+            any::knitr
+            any::rmarkdown
+          needs: check
+
+      - uses: r-lib/actions/check-r-package@v2
+        with:
+          upload-snapshots: true
+          build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'
+
+  test-coverage:
+    needs: jarl
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::covr, any::xml2
+          needs: coverage
+
+      - name: Test coverage
+        run: |
+          cov <- covr::package_coverage(
+            quiet = FALSE,
+            clean = FALSE,
+            install_path = file.path(normalizePath(Sys.getenv("RUNNER_TEMP"), winslash = "/"), "package")
+          )
+          print(cov)
+          covr::to_cobertura(cov)
+        shell: Rscript {0}
+
+      - uses: codecov/codecov-action@v5
+        with:
+          # Fail if error if not on PR, or if on PR and token is given
+          fail_ci_if_error: ${{ github.event_name != 'pull_request' || secrets.CODECOV_TOKEN }}
+          files: ./cobertura.xml
+          plugins: noop
+          disable_search: true
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: Show testthat output
+        if: always()
+        run: |
+          ## --------------------------------------------------------------------
+          find '${{ runner.temp }}/package' -name 'testthat.Rout*' -exec cat '{}' \; || true
+        shell: bash
+
+      - name: Upload test results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-test-failures
+          path: ${{ runner.temp }}/package
+
   pkgdown:
+    needs: [R-CMD-check, check-no-suggests, test-coverage]
     runs-on: ubuntu-latest
     # Only restrict concurrency for non-PR jobs
     concurrency:
@@ -87,8 +252,8 @@ jobs:
         uses: actions/cache@v4
         with:
           path: releases
-          key: pkgdown-releases-${{ hashFiles('.github/workflows/pkgdown.yaml', 'pkgdown/templates/**') }}-${{ steps.releases.outputs.key }}
-          restore-keys: pkgdown-releases-${{ hashFiles('.github/workflows/pkgdown.yaml', 'pkgdown/templates/**') }}-
+          key: pkgdown-releases-${{ hashFiles('.github/workflows/ci.yaml', 'pkgdown/templates/**') }}-${{ steps.releases.outputs.key }}
+          restore-keys: pkgdown-releases-${{ hashFiles('.github/workflows/ci.yaml', 'pkgdown/templates/**') }}-
 
       - name: Build release sites
         if: env.DEPLOY == 'true'
