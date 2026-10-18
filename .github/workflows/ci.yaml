@@ -208,6 +208,15 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y make zlib1g-dev libicu-dev libxml2-dev libcurl4-openssl-dev libssl-dev
 
+      # R 3.5 builds from source, so it gets a cache of its own: it only ever
+      # holds what this job installs, never a Suggests package. No restore-keys:
+      # an older cache could hold a package that has since moved to Suggests.
+      - uses: actions/cache@v4
+        if: matrix.config.id == 'r-3.5'
+        with:
+          path: ${{ env.R_LIBS_USER }}
+          key: ${{ runner.os }}-no-suggests-r-3.5-ppm-${{ env.R35_SNAPSHOT }}-${{ hashFiles('DESCRIPTION') }}
+
       - name: Install R dependencies (R 3.5)
         if: matrix.config.id == 'r-3.5'
         shell: Rscript {0}
