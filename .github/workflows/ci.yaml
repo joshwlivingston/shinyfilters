@@ -455,7 +455,7 @@ jobs:
   # variable CRAN_ENVIRONMENT=true: GitHub creates a missing environment with
   # no protection, so the job refuses to submit without that variable.
   cran:
-    if: github.event_name == 'release' && !github.event.act
+    if: github.event_name == 'release' && !github.event.release.prerelease && !github.event.act
     needs: deploy
     runs-on: ubuntu-latest
     environment: cran
