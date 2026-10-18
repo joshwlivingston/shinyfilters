@@ -453,7 +453,8 @@ jobs:
   # environment's required reviewer, then CRAN emails the maintainer to confirm.
   # Set up the environment with a required reviewer and the environment
   # variable CRAN_ENVIRONMENT=true: GitHub creates a missing environment with
-  # no protection, so the job refuses to submit without that variable.
+  # no protection, so the job refuses to submit without that variable. Set it
+  # on the environment only, never on the repository: `vars` merges both.
   cran:
     if: github.event_name == 'release' && !github.event.release.prerelease && !github.event.act
     needs: deploy
