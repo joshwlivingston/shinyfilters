@@ -191,7 +191,7 @@ jobs:
           covr::to_cobertura(cov)
         shell: Rscript {0}
 
-      # Skipped under act (see .actrc), which has no Codecov token.
+      # Skipped under act: .github/act/event.json sets github.event.act.
       - uses: codecov/codecov-action@v5
         if: ${{ !github.event.act }}
         with:
