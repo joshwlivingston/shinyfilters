@@ -84,7 +84,7 @@
 #' accordion(shinyfilters(nyc_flights))
 #' #> Error:
 #' #> ! <shinyfilters> objects cannot be used in some shiny functions.
-#' #> ℹ Use `[[`, `$`, or `filterInput()` to render the filters directly.
+#' #> i Use `[[`, `$`, or `filterInput()` to render the filters directly.
 #' ```
 #' <br>
 #'
@@ -94,7 +94,7 @@
 #'
 #' ```
 #' shinyfilters(nyc_flights)
-#' #> <shinyfilters> • 7 filters
+#' #> <shinyfilters> * 7 filters
 #' #>
 #' #> Filters
 #' #>   date       <date>  dateRangeInput
@@ -113,10 +113,10 @@
 #' shinyfilters(nyc_flights, range = FALSE) |>
 #'   with_filters(date = "date") |>
 #'   with_ns("sidebar-mod")
-#' #> <shinyfilters> • 7 filters • namespace "sidebar-mod"
+#' #> <shinyfilters> * 7 filters * namespace "sidebar-mod"
 #' #>
 #' #> Filters
-#' #>   ●  date       <date>  dateInput
+#' #>   *  date       <date>  dateInput
 #' #>      carrier    <chr>   selectizeInput
 #' #>      origin     <fct>   selectizeInput
 #' #>      dest       <chr>   selectizeInput
@@ -127,7 +127,7 @@
 #' #> Default Overrides
 #' #>   range = FALSE
 #' #>
-#' #> ● Filter set by `with_filters()`
+#' #> * Filter set by `with_filters()`
 #' ```
 #'
 #' @name shinyfilters-class
