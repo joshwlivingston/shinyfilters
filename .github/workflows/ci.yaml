@@ -1,6 +1,7 @@
 # Each stage runs only after the previous one passes:
-# air -> jarl -> R CMD check, coverage, and (releases) R-hub -> pkgdown build
-# -> pkgdown deploy (not PRs) -> CRAN submission (releases, after approval).
+# air -> jarl -> R CMD check, check without Suggests, coverage, and (releases)
+# R-hub -> pkgdown build -> pkgdown deploy (not PRs) -> CRAN submission
+# (releases, after approval).
 # PRs and pushes check on Linux; releases also check on Windows and macOS.
 #
 # Derived from https://github.com/r-lib/actions/tree/v2/examples
@@ -58,10 +59,6 @@ jobs:
           # Installs the development versions of the Imports, listed in
           # DEV_IMPORTS.
           - {id: 'devel', r: 'devel', http-user-agent: 'release'}
-          # Installs only "hard" dependencies (Depends, Imports, LinkingTo),
-          # plus testthat, knitr, and rmarkdown, without the cache, so a
-          # cached Suggests package can't be restored.
-          - {id: 'no-suggests', r: 'release', no-suggests: true}
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
@@ -82,12 +79,10 @@ jobs:
 
       # LaTeX for the PDF manual
       - uses: r-lib/actions/setup-tinytex@v2
-        if: ${{ !matrix.config.no-suggests }}
 
       # TinyTeX doesn't include makeindex, which R-devel needs to build the
       # manual's index.
       - name: Install makeindex
-        if: ${{ !matrix.config.no-suggests }}
         run: tlmgr install makeindex
 
       - name: Check that DEV_IMPORTS lists every Import
@@ -104,9 +99,7 @@ jobs:
       - uses: r-lib/actions/setup-r-dependencies@v2
         if: matrix.config.id != 'r-3.5'
         with:
-          dependencies: ${{ matrix.config.no-suggests && '"hard"' || '"all"' }}
-          cache: ${{ !matrix.config.no-suggests }}
-          extra-packages: ${{ matrix.config.no-suggests && 'any::rcmdcheck, any::testthat, any::knitr, any::rmarkdown' || matrix.config.r == 'devel' && format('any::rcmdcheck, {0}', env.DEV_IMPORTS) || 'any::rcmdcheck' }}
+          extra-packages: ${{ matrix.config.r == 'devel' && format('any::rcmdcheck, {0}', env.DEV_IMPORTS) || 'any::rcmdcheck' }}
           needs: check
 
       - name: Install system dependencies (R 3.5)
@@ -157,10 +150,55 @@ jobs:
       - uses: r-lib/actions/check-r-package@v2
         with:
           upload-snapshots: true
-          args: ${{ matrix.config.no-suggests && 'c("--no-manual", "--as-cran")' || 'c("--as-cran")' }}
-          build_args: ${{ matrix.config.no-suggests && 'c("--no-manual", "--compact-vignettes=gs+qpdf")' || 'c("--compact-vignettes=gs+qpdf")' }}
+          args: 'c("--as-cran")'
+          build_args: 'c("--compact-vignettes=gs+qpdf")'
           artifact-name: R-CMD-check-${{ matrix.os }}-${{ matrix.config.id }}-results
           snapshot-artifact-name: R-CMD-check-${{ matrix.os }}-${{ matrix.config.id }}-testthat-snapshots
+
+  # Only installs "hard" dependencies (Depends, Imports, LinkingTo), plus
+  # testthat, knitr, and rmarkdown. The cache is never used, so a cached
+  # Suggests package can't be restored.
+  check-no-suggests:
+    needs: jarl
+    runs-on: ${{ matrix.os }}
+
+    name: check-no-suggests ${{ matrix.os }} (release)
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ${{ fromJSON(github.event_name == 'release' && '["ubuntu-latest", "windows-latest", "macos-latest"]' || '["ubuntu-latest"]') }}
+
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      R_KEEP_PKG_SOURCE: yes
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: r-lib/actions/setup-pandoc@v2
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          dependencies: '"hard"'
+          cache: false
+          extra-packages: |
+            any::rcmdcheck
+            any::testthat
+            any::knitr
+            any::rmarkdown
+          needs: check
+
+      - uses: r-lib/actions/check-r-package@v2
+        with:
+          upload-snapshots: true
+          build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'
+          artifact-name: check-no-suggests-${{ matrix.os }}-results
+          snapshot-artifact-name: check-no-suggests-${{ matrix.os }}-testthat-snapshots
 
   test-coverage:
     needs: jarl
@@ -227,11 +265,12 @@ jobs:
     secrets: inherit
 
   pkgdown:
-    needs: [R-CMD-check, test-coverage, rhub]
+    needs: [R-CMD-check, check-no-suggests, test-coverage, rhub]
     # rhub is skipped off releases, which would otherwise skip this job too.
     if: >-
       !cancelled() &&
       needs.R-CMD-check.result == 'success' &&
+      needs.check-no-suggests.result == 'success' &&
       needs.test-coverage.result == 'success' &&
       (needs.rhub.result == 'success' || needs.rhub.result == 'skipped')
     runs-on: ubuntu-latest
