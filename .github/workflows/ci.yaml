@@ -55,6 +55,8 @@ jobs:
           - {id: 'r-3.5', r: '3.5'}
           - {id: 'oldrel-1', r: 'oldrel-1'}
           - {id: 'release', r: 'release'}
+          # Installs the development versions of the Imports, listed in
+          # DEV_IMPORTS.
           - {id: 'devel', r: 'devel', http-user-agent: 'release'}
           # Installs only "hard" dependencies (Depends, Imports, LinkingTo),
           # plus testthat, knitr, and rmarkdown, without the cache, so a
@@ -65,6 +67,7 @@ jobs:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       R_KEEP_PKG_SOURCE: yes
       R35_SNAPSHOT: "2023-09-15"
+      DEV_IMPORTS: github::r-lib/cli, github::rstudio/htmltools, github::r-lib/rlang, github::RConsortium/S7, github::rstudio/shiny
 
     steps:
       - uses: actions/checkout@v4
@@ -87,12 +90,23 @@ jobs:
         if: ${{ !matrix.config.no-suggests }}
         run: tlmgr install makeindex
 
+      - name: Check that DEV_IMPORTS lists every Import
+        if: matrix.config.r == 'devel'
+        shell: Rscript {0}
+        run: |
+          imports <- trimws(strsplit(read.dcf("DESCRIPTION", "Imports"), ",")[[1]])
+          imports <- setdiff(sub("[ (].*", "", imports), rownames(installed.packages(priority = "base")))
+          dev <- sub(".*/", "", trimws(strsplit(Sys.getenv("DEV_IMPORTS"), ",")[[1]]))
+          if (!setequal(imports, dev)) {
+            stop("DEV_IMPORTS doesn't match Imports: ", paste(sort(union(setdiff(imports, dev), setdiff(dev, imports))), collapse = ", "))
+          }
+
       - uses: r-lib/actions/setup-r-dependencies@v2
         if: matrix.config.id != 'r-3.5'
         with:
           dependencies: ${{ matrix.config.no-suggests && '"hard"' || '"all"' }}
           cache: ${{ !matrix.config.no-suggests }}
-          extra-packages: ${{ matrix.config.no-suggests && 'any::rcmdcheck, any::testthat, any::knitr, any::rmarkdown' || 'any::rcmdcheck' }}
+          extra-packages: ${{ matrix.config.no-suggests && 'any::rcmdcheck, any::testthat, any::knitr, any::rmarkdown' || matrix.config.r == 'devel' && format('any::rcmdcheck, {0}', env.DEV_IMPORTS) || 'any::rcmdcheck' }}
           needs: check
 
       - name: Install system dependencies (R 3.5)
