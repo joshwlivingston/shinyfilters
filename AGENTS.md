@@ -161,6 +161,19 @@ pkgdown::check_pkgdown() # check website
 devtools::check()
 ```
 
+### Running CI locally
+
+[act](https://github.com/nektos/act) runs `.github/workflows/ci.yaml` in Docker, with the settings in `.actrc`:
+
+```sh
+act pull_request -s GITHUB_TOKEN="$(gh auth token)"          # the PR pipeline
+act pull_request -j air -s GITHUB_TOKEN="$(gh auth token)"   # one job and the stages before it
+```
+
+- Only Linux jobs run; Windows and macOS matrix entries need GitHub's runners.
+- `.github/act/event.json` sets `act: true`, which skips the Codecov upload, the Pages deploy, R-hub, and the CRAN submission.
+- Full runs take a long time. Agents shouldn't run act unless asked; `act -l` (which only parses the workflow) is fine.
+
 ### Running R
 
 There are three possible ways to run code, listed in rough order of desirability:
