@@ -49,11 +49,13 @@ the <- new.env(parent = emptyenv())
 # instead of calling it, so print() can show which input each column uses.
 the$dry_run <- FALSE
 
+# nocov start
 .onUnload <- function(...) {
 	if ("S7_on_unload" %in% getNamespaceExports("S7")) {
 		getExportedValue("S7", "S7_on_unload")()
 	}
 }
+# nocov end
 
 if ("S7_on_build" %in% getNamespaceExports("S7")) {
 	getExportedValue("S7", "S7_on_build")()
