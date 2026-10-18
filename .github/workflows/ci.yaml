@@ -191,7 +191,9 @@ jobs:
           covr::to_cobertura(cov)
         shell: Rscript {0}
 
+      # Skipped under act (see .actrc), which has no Codecov token.
       - uses: codecov/codecov-action@v5
+        if: ${{ !github.event.act }}
         with:
           # Fail if error if not on PR, or if on PR and token is given
           fail_ci_if_error: ${{ github.event_name != 'pull_request' || secrets.CODECOV_TOKEN }}
@@ -218,7 +220,7 @@ jobs:
   # rhub::rhub_setup().
   rhub:
     needs: jarl
-    if: github.event_name == 'release'
+    if: github.event_name == 'release' && !github.event.act
     uses: ./.github/workflows/rhub.yaml
     with:
       config: linux,windows,macos
@@ -238,7 +240,7 @@ jobs:
       group: pkgdown-${{ github.event_name != 'pull_request' || github.run_id }}
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
-      DEPLOY: ${{ github.event_name != 'pull_request' }}
+      DEPLOY: ${{ github.event_name != 'pull_request' && !github.event.act }}
       SITE_URL: https://joshwlivingston.github.io/shinyfilters
     steps:
       - uses: actions/checkout@v4
@@ -429,7 +431,8 @@ jobs:
     if: >-
       !cancelled() &&
       needs.pkgdown.result == 'success' &&
-      github.event_name != 'pull_request'
+      github.event_name != 'pull_request' &&
+      !github.event.act
     needs: pkgdown
     runs-on: ubuntu-latest
     concurrency:
@@ -449,7 +452,7 @@ jobs:
   # Submits the release to CRAN. Waits for approval through the `cran`
   # environment's required reviewer, then CRAN emails the maintainer to confirm.
   cran:
-    if: github.event_name == 'release'
+    if: github.event_name == 'release' && !github.event.act
     needs: deploy
     runs-on: ubuntu-latest
     environment: cran

@@ -17,3 +17,6 @@ renv.lock
 /.quarto/
 
 **/*.quarto_ipynb
+
+# act (local GitHub Actions runs)
+/.act/
