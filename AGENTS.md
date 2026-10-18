@@ -167,7 +167,7 @@ devtools::check()
 
 ```sh
 act pull_request -s GITHUB_TOKEN="$(gh auth token)"          # the PR pipeline
-act pull_request -j air -s GITHUB_TOKEN="$(gh auth token)"   # one job and the stages before it
+act pull_request -j R-CMD-check -s GITHUB_TOKEN="$(gh auth token)"   # one job and the stages before it
 ```
 
 - Only Linux jobs run; Windows and macOS matrix entries need GitHub's runners.
