@@ -209,7 +209,7 @@ There are three possible ways to run code, listed in rough order of desirability
 - If there are existing tests, place new tests next to similar existing tests.
 - Strive to keep your tests minimal with few comments.
 - Never put code in a `test-{name}.R` file outside of a `test_that()` block. Instead, use `tests/testthat/helper.R` or `tests/testthat/helper-{name}.R`.
-- Avoid `expect_true()` and `expect_false()` in favor of a specific expectation with a better failure message. The tests must run on testthat 3.1.10 (the version CI's R 3.5 check uses), so don't use expectations added later, such as `expect_all_true()`, `expect_all_equal()`, and `expect_r6_class()` (testthat 3.3.0).
+- Avoid `expect_true()` and `expect_false()` in favor of a specific expectation with a better failure message. The tests must run on testthat 3.1.10 (the minimum in `DESCRIPTION`, which CI's R 3.5 check installs), so don't use expectations added later, such as `expect_all_true()`, `expect_all_equal()`, and `expect_r6_class()` (testthat 3.3.0).
 - When testing errors and warnings:
   - Only use `expect_error()` or `expect_warning()` if the error or warning has a known class.
   - Generally, prefer `expect_snapshot(error = TRUE)` for errors and `expect_snapshot()` for warnings because these allow the user to review the full text of the output.
