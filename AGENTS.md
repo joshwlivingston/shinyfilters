@@ -54,7 +54,7 @@ Never add AI attribution to any of them: no "Generated with Claude Code" lines, 
 
 **Issues**
 
-- Title: `<type>: <description>`. After approval: `gh issue create --title "..." --label <label> --body "..."`
+- Title: a plain description with no `<type>:` prefix; the label carries the type. After approval: `gh issue create --title "..." --label <label> --body "..."`
 - The body states the problem and the desired outcome, with acceptance criteria as checkable items (except for small changes; see below).
 - Size the issue to the change. A small change (a doc tweak, a few lines) gets a one- or two-sentence body with no headings or criteria. If the issue is about as long as the diff, it's too long.
 
@@ -83,7 +83,7 @@ Never add AI attribution to any of them: no "Generated with Claude Code" lines, 
 
 ### Incidental findings
 
-If you notice an unrelated bug, gap, or improvement, draft an issue right away (title `<type>: ...`, body: what and where) and present it for approval, then keep going. Don't fix it in the current branch, and don't hold it until the end.
+If you notice an unrelated bug, gap, or improvement, draft an issue right away (plain title, type as the label, body: what and where) and present it for approval, then keep going. Don't fix it in the current branch, and don't hold it until the end.
 
 - This includes warnings, `R CMD check` NOTEs, and CI failures that already exist on `main`. Search existing issues first.
 - Before reporting a formatter or linter problem, confirm your local `air` and `jarl` match the latest releases, which CI installs.
