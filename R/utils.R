@@ -35,7 +35,7 @@ check_shinyfilters <- function(x, arg = caller_arg(x), call = caller_env()) {
 
 s7_check_is_valid_list_dispatch <- function(x, function_name) {
 	cls <- S7_class(x)
-	if (!is.null(cls)) {
+	if (S7_inherits(x, S7_object)) {
 		# Build the call from the name: older S7 dispatch inlines the generic and
 		# object into the frame's call, which can't be deparsed on R < 4.
 		cli_abort(

@@ -1,5 +1,7 @@
 # shinyfilters (development version)
 
+* Updates for compatibility with S7 > 0.2.2.
+
 ## New API
 
 `shinyfilters()` is a new function to configure filters. It displays an informative print and allows for configuration without extending methods directly. The functions listed here support `shinyfilters` objects (#111).
