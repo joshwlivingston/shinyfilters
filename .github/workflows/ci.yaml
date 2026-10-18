@@ -158,8 +158,8 @@ jobs:
           snapshot-artifact-name: R-CMD-check-${{ matrix.os }}-${{ matrix.config.id }}-testthat-snapshots
 
   # The same R versions as R CMD check, with only "hard" dependencies
-  # (Depends, Imports, LinkingTo) plus testthat, knitr, and rmarkdown. The
-  # cache is never used, so a cached Suggests package can't be restored.
+  # (Depends, Imports, LinkingTo) plus testthat, knitr, and rmarkdown. No
+  # shared cache is used, so a cached Suggests package can't be restored.
   check-no-suggests:
     needs: jarl
     runs-on: ${{ matrix.os }}
