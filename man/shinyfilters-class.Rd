@@ -92,7 +92,7 @@ error.
 \if{html}{\out{<div class="sourceCode">}}\preformatted{accordion(shinyfilters(nyc_flights))
 #> Error:
 #> ! <shinyfilters> objects cannot be used in some shiny functions.
-#> ℹ Use `[[`, `$`, or `filterInput()` to render the filters directly.
+#> i Use `[[`, `$`, or `filterInput()` to render the filters directly.
 }\if{html}{\out{</div>}}\if{html}{\out{
 <br>
 }}
@@ -106,7 +106,7 @@ error.
 Printing shows the input each column receives:
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{shinyfilters(nyc_flights)
-#> <shinyfilters> • 7 filters
+#> <shinyfilters> * 7 filters
 #>
 #> Filters
 #>   date       <date>  dateRangeInput
@@ -126,10 +126,10 @@ Any modifications will be displayed:
 \if{html}{\out{<div class="sourceCode">}}\preformatted{shinyfilters(nyc_flights, range = FALSE) |>
   with_filters(date = "date") |>
   with_ns("sidebar-mod")
-#> <shinyfilters> • 7 filters • namespace "sidebar-mod"
+#> <shinyfilters> * 7 filters * namespace "sidebar-mod"
 #>
 #> Filters
-#>   ●  date       <date>  dateInput
+#>   *  date       <date>  dateInput
 #>      carrier    <chr>   selectizeInput
 #>      origin     <fct>   selectizeInput
 #>      dest       <chr>   selectizeInput
@@ -140,7 +140,7 @@ Any modifications will be displayed:
 #> Default Overrides
 #>   range = FALSE
 #>
-#> ● Filter set by `with_filters()`
+#> * Filter set by `with_filters()`
 }\if{html}{\out{</div>}}
 }
 
