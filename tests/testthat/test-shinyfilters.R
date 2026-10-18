@@ -412,7 +412,10 @@ test_that("print() markers are one column wide in UTF-8 output", {
 	out <- capture.output(print(cfg))
 	legend <- grep(" Filter ", out, fixed = TRUE, value = TRUE)
 	expect_length(legend, 4)
-	expect_all_equal(nchar(sub(" Filter .*", "", legend), type = "width"), 1L)
+	expect_identical(
+		unique(nchar(sub(" Filter .*", "", legend), type = "width")),
+		1L
+	)
 })
 
 test_that("print() lines up rows with and without a marker", {
