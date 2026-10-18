@@ -214,8 +214,24 @@ jobs:
           name: coverage-test-failures
           path: ${{ runner.temp }}/package
 
+  # R-hub's platforms, on releases only. Needs the RHUB_TOKEN secret from
+  # rhub::rhub_setup().
+  rhub:
+    needs: jarl
+    if: github.event_name == 'release'
+    uses: ./.github/workflows/rhub.yaml
+    with:
+      config: linux,windows,macos
+    secrets: inherit
+
   pkgdown:
-    needs: [R-CMD-check, test-coverage]
+    needs: [R-CMD-check, test-coverage, rhub]
+    # rhub is skipped off releases, which would otherwise skip this job too.
+    if: >-
+      !cancelled() &&
+      needs.R-CMD-check.result == 'success' &&
+      needs.test-coverage.result == 'success' &&
+      (needs.rhub.result == 'success' || needs.rhub.result == 'skipped')
     runs-on: ubuntu-latest
     # Only restrict concurrency for non-PR jobs
     concurrency:
@@ -409,7 +425,11 @@ jobs:
           path: site
 
   deploy:
-    if: github.event_name != 'pull_request'
+    # Explicit: rhub, upstream of pkgdown, is skipped off releases.
+    if: >-
+      !cancelled() &&
+      needs.pkgdown.result == 'success' &&
+      github.event_name != 'pull_request'
     needs: pkgdown
     runs-on: ubuntu-latest
     concurrency:
