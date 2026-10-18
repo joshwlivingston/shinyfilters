@@ -451,6 +451,9 @@ jobs:
 
   # Submits the release to CRAN. Waits for approval through the `cran`
   # environment's required reviewer, then CRAN emails the maintainer to confirm.
+  # Set up the environment with a required reviewer and the environment
+  # variable CRAN_ENVIRONMENT=true: GitHub creates a missing environment with
+  # no protection, so the job refuses to submit without that variable.
   cran:
     if: github.event_name == 'release' && !github.event.act
     needs: deploy
@@ -459,6 +462,12 @@ jobs:
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     steps:
+      - name: Require the configured cran environment
+        if: vars.CRAN_ENVIRONMENT != 'true'
+        run: |
+          echo "::error::The cran environment isn't configured; see the comment on this job."
+          exit 1
+
       - uses: actions/checkout@v4
 
       - uses: r-lib/actions/setup-pandoc@v2
