@@ -1,0 +1,17 @@
+# Checks formatting with air.
+# Called by ci.yaml, which decides when it runs.
+on:
+  workflow_call:
+
+name: air.yaml
+
+jobs:
+  air:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: posit-dev/setup-air@v1
+
+      - name: Check formatting
+        run: air format . --check
