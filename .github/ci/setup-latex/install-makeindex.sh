@@ -5,8 +5,8 @@ set -euo pipefail
 
 # On Windows, TinyTeX ships tlmgr only as tlmgr.bat, which bash doesn't find
 # by its bare name.
-if command -v tlmgr > /dev/null 2>&1; then
-  tlmgr install makeindex
-else
+if [ "${RUNNER_OS:-}" = "Windows" ]; then
   tlmgr.bat install makeindex
+else
+  tlmgr install makeindex
 fi
