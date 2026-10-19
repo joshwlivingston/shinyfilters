@@ -29,6 +29,8 @@ jobs:
 
       - uses: posit-dev/setup-air@v1
 
+      # Inline, unlike ci.yaml's scripts: the checkout is the PR's code, so a
+      # script from it would run untrusted code with this job's write token.
       - name: Format
         run: air format .
 

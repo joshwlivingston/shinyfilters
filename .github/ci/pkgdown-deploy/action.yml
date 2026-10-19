@@ -1,0 +1,14 @@
+name: pkgdown deploy
+description: Deploys the site uploaded by pkgdown-build to GitHub Pages.
+
+outputs:
+  page_url:
+    description: The deployed site's URL.
+    value: ${{ steps.deployment.outputs.page_url }}
+
+runs:
+  using: composite
+  steps:
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v5
