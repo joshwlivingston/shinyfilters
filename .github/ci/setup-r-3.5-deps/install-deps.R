@@ -4,10 +4,13 @@
 split <- function(x) trimws(strsplit(x, ",")[[1]])
 
 options(
-  repos = c(
-    CRAN = paste0("https://packagemanager.posit.co/cran/", Sys.getenv("SNAPSHOT"))
-  ),
-  Ncpus = 4
+	repos = c(
+		CRAN = paste0(
+			"https://packagemanager.posit.co/cran/",
+			Sys.getenv("SNAPSHOT")
+		)
+	),
+	Ncpus = 4
 )
 
 fields <- read.dcf("DESCRIPTION", split(Sys.getenv("FIELDS")))
@@ -18,14 +21,14 @@ pkgs <- c(pkgs, split(Sys.getenv("EXTRA_PACKAGES")))
 
 needed <- setdiff(pkgs, rownames(installed.packages()))
 if (length(needed) > 0) {
-  install.packages(needed)
+	install.packages(needed)
 }
 missing <- setdiff(pkgs, rownames(installed.packages()))
 if (length(missing) > 0) {
-  stop("Failed to install: ", paste(missing, collapse = ", "))
+	stop("Failed to install: ", paste(missing, collapse = ", "))
 }
 
 if (packageVersion("S7") != "0.1.0") {
-  stop("Expected S7 0.1.0, got ", packageVersion("S7"))
+	stop("Expected S7 0.1.0, got ", packageVersion("S7"))
 }
 sessionInfo()

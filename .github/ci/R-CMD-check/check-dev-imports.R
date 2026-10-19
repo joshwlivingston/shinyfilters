@@ -9,11 +9,11 @@ imports <- setdiff(imports, rownames(installed.packages(priority = "base")))
 dev <- sub(".*/", "", split(Sys.getenv("DEV_IMPORTS")))
 
 if (!setequal(imports, dev)) {
-  stop(
-    "dev-imports doesn't match Imports: ",
-    paste(
-      sort(union(setdiff(imports, dev), setdiff(dev, imports))),
-      collapse = ", "
-    )
-  )
+	stop(
+		"dev-imports doesn't match Imports: ",
+		paste(
+			sort(union(setdiff(imports, dev), setdiff(dev, imports))),
+			collapse = ", "
+		)
+	)
 }

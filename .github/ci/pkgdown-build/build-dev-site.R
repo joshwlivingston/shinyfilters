@@ -6,11 +6,11 @@
 
 unlink("AGENTS.md")
 pkg <- pkgdown::as_pkgdown(
-  ".",
-  override = list(repo = list(branch = Sys.getenv("SOURCE_REF")))
+	".",
+	override = list(repo = list(branch = Sys.getenv("SOURCE_REF")))
 )
 pkgdown::build_site_github_pages(
-  pkg,
-  new_process = FALSE,
-  install = FALSE
+	pkg,
+	new_process = FALSE,
+	install = FALSE
 )

@@ -5,7 +5,7 @@
 desc <- readLines("DESCRIPTION")
 i <- grep("^[[:space:]]+rlang,$", desc)
 if (length(i) != 1) {
-  stop("Can't find the rlang dependency in DESCRIPTION")
+	stop("Can't find the rlang dependency in DESCRIPTION")
 }
 desc[i] <- sub("rlang,", "rlang (>= 1.0.0),", desc[i], fixed = TRUE)
 writeLines(desc, "DESCRIPTION")
