@@ -14,7 +14,7 @@ coverage](https://codecov.io/gh/joshwlivingston/shinyfilters/graph/badge.svg)](h
 [![tinyverse-status](https://tinyverse.netlify.app/badge/shinyfilters)](https://CRAN.R-project.org/package=shinyfilters)
 [![r-universe
 status](https://joshwlivingston.r-universe.dev/shinyfilters/badges/version)](https://joshwlivingston.r-universe.dev/shinyfilters)
-[![R-CMD-check](https://github.com/joshwlivingston/shinyfilters/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/joshwlivingston/shinyfilters/actions/workflows/R-CMD-check.yaml)
+[![CI](https://github.com/joshwlivingston/shinyfilters/actions/workflows/ci.yaml/badge.svg)](https://github.com/joshwlivingston/shinyfilters/actions/workflows/ci.yaml)
 <!-- badges: end -->
 
 ## Overview

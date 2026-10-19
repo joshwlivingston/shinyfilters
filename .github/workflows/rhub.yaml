@@ -5,6 +5,10 @@
 # rhub::rhub_setup()
 #
 # It is unlikely that you need to modify this file manually.
+#
+# Modified so ci.yaml can call it on releases: it also runs on `workflow_call`,
+# and reads `inputs.config` rather than `github.event.inputs.config`, which is
+# empty when called. Keep these changes when updating it with rhub_setup().
 
 name: R-hub
 run-name: "${{ github.event.inputs.id }}: ${{ github.event.inputs.name || format('Manually run by {0}', github.triggering_actor) }}"
@@ -22,6 +26,15 @@ on:
       id:
         description: 'Unique ID. You can leave this empty now.'
         type: string
+  workflow_call:
+    inputs:
+      config:
+        description: 'A comma separated list of R-hub platforms to use.'
+        type: string
+        default: 'linux,windows,macos'
+    secrets:
+      RHUB_TOKEN:
+        required: true
 
 jobs:
 
@@ -35,7 +48,7 @@ jobs:
     # NO NEED TO CHECKOUT HERE
     - uses: r-hub/actions/setup@v1
       with:
-        config: ${{ github.event.inputs.config }}
+        config: ${{ inputs.config }}
       id: rhub-setup
 
   linux-containers:

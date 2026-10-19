@@ -1,3 +1,3 @@
 [lint.per-file-ignores]
-"R/release.R" = ["unused_function"]
+".github/ci/cran/submit.R" = ["internal_function"]
 "tests/testthat/test-shinyfilters.R" = ["duplicated_arguments"]
