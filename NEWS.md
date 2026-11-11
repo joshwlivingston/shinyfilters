@@ -38,24 +38,28 @@
 
 ## Other new features
 
-* Error and warning messages use cli formatting.
 * `nyc_flights` is a new example dataset of [flights departing New York City](https://nycflights13.tidyverse.org/) (#36).
-
-## Minor improvements
-
-* shinyfilters now works with S7 0.1.0 (#113).
-* `arg_name_input_id()` and `arg_name_input_label()` now return `"inputId"` and `"label"` for an `x` of any class, so `with_filters()` can give a column of any class a radio or select input (#111).
 
 ## Bugfixes
 
 * `apply_filters()` now drops a row whose filtered value is missing, instead of returning a row of `NA`s, unless `NA` is one of the filter's values (#136).
 * `apply_filters()` now keeps the attributes of a data frame's columns, as it does for a tibble, so `serverFilterInput()` updates a column of a custom class with that class's `updateFilterInput()` method (#136).
 * `args_update_filter_input()` now leaves out `start` and `end` when `range = TRUE`, as it leaves out the value of every other input (#136).
-* `filterInput()` now errors when `x` is all missing.
-* `filterInput()`'s `ns` argument behaves like `shiny::NS()`, accepting any argument.
 * `get_filter_logical()` now filters a datetime `x` by a Date `val`, the value of a date input, instead of keeping every element (#136).
 * `get_filter_logical()` now filters an `x` that isn't a character, factor, or logical vector by a character `val`, the value of a select or radio input, instead of keeping every element (#136).
 * `serverFilterInput()` now leaves a radio input with no selection unselected when it updates its choices, instead of selecting the first one (#136).
+
+# shinyfilters 0.3.2
+
+## Minor improvements
+
+* shinyfilters no longer requires S7 0.2.0 or later (#113).
+* Error and warning messages now use cli with richer formatting.
+* The `ns` argument of `filterInput()` now behaves like `shiny::NS()`, accepting any argument.
+
+## Bugfixes
+
+* `filterInput()` now throws an error when the provided object is all missing.
 
 # shinyfilters 0.3.1
 
