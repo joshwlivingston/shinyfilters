@@ -1,4 +1,4 @@
-# shinyfilters (development version)
+# shinyfilters 0.3.2
 
 ## Minor improvements
 
