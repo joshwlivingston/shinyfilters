@@ -1,0 +1,11 @@
+name: air
+description: Fails if any file isn't formatted with air.
+
+runs:
+  using: composite
+  steps:
+    - uses: posit-dev/setup-air@v1
+
+    - name: Check formatting
+      shell: bash
+      run: bash "$GITHUB_ACTION_PATH/check.sh"

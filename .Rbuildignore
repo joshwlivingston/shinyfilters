@@ -19,3 +19,5 @@
 ^\.claude$
 ^data-raw$
 ^jarl\.toml$
+^\.actrc$
+^\.act$

@@ -161,6 +161,19 @@ pkgdown::check_pkgdown() # check website
 devtools::check()
 ```
 
+### Running CI locally
+
+[act](https://github.com/nektos/act) runs `.github/workflows/ci.yaml` in Docker, with the settings in `.actrc`:
+
+```sh
+act pull_request -s GITHUB_TOKEN="$(gh auth token)"          # the PR pipeline
+act pull_request -j R-CMD-check -s GITHUB_TOKEN="$(gh auth token)"   # one job and the stages before it
+```
+
+- Only Linux jobs run; Windows and macOS matrix entries need GitHub's runners.
+- `.github/act/event.json` sets `act: true`, which skips the Codecov upload, the Pages deploy, R-hub, and the CRAN submission.
+- Full runs take a long time. Agents shouldn't run act unless asked; `act -l` (which only parses the workflow) is fine.
+
 ### Running R
 
 There are three possible ways to run code, listed in rough order of desirability:
@@ -196,7 +209,7 @@ There are three possible ways to run code, listed in rough order of desirability
 - If there are existing tests, place new tests next to similar existing tests.
 - Strive to keep your tests minimal with few comments.
 - Never put code in a `test-{name}.R` file outside of a `test_that()` block. Instead, use `tests/testthat/helper.R` or `tests/testthat/helper-{name}.R`.
-- Avoid `expect_true()` and `expect_false()` in favor of a specific expectation with a better failure message. A few expectations in newer releases that you might not know about are `expect_all_true()`, `expect_all_equal()`, and `expect_r6_class()`.
+- Avoid `expect_true()` and `expect_false()` in favor of a specific expectation with a better failure message. The tests must run on testthat 3.1.10 (the minimum in `DESCRIPTION`, which CI's R 3.5 check installs), so don't use expectations added later, such as `expect_all_true()`, `expect_all_equal()`, and `expect_r6_class()` (testthat 3.3.0).
 - When testing errors and warnings:
   - Only use `expect_error()` or `expect_warning()` if the error or warning has a known class.
   - Generally, prefer `expect_snapshot(error = TRUE)` for errors and `expect_snapshot()` for warnings because these allow the user to review the full text of the output.

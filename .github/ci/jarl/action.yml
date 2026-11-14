@@ -1,0 +1,7 @@
+name: jarl
+description: Lints with jarl.
+
+runs:
+  using: composite
+  steps:
+    - uses: etiennebacher/setup-jarl@v0.1.1

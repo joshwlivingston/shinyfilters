@@ -6,3 +6,7 @@ tests/** -linguist-detectable
 
 # Ignore pkgdown from language graph
 pkgdown/** -linguist-detectable
+
+# Shell scripts run under bash, also on Windows runners, where autocrlf would
+# otherwise give them CRLF line endings
+*.sh text eol=lf

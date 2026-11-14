@@ -31,7 +31,7 @@ Suggests:
     rmarkdown,
     roxygen2,
     shinyWidgets,
-    testthat (>= 3.2.0),
+    testthat (>= 3.1.10),
     tibble,
     tidyselect,
     withr

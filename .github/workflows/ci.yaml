@@ -1,0 +1,179 @@
+# The CI pipeline. Each job runs one stage, whose steps live in
+# .github/ci/<stage>/ (an action plus its scripts); `needs` orders the
+# stages, and each starts only after the previous one passes:
+#
+#   air -> jarl -> R CMD check, check without Suggests, coverage, and
+#   (releases) R-hub -> pkgdown build -> pkgdown deploy (not PRs) -> CRAN
+#   submission (releases, after approval)
+#
+# PRs and pushes check on Linux; releases also check on Windows and macOS.
+# Under act, .github/act/event.json sets github.event.act, which skips the
+# stages that need GitHub's services.
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+name: ci.yaml
+
+permissions: read-all
+
+env:
+  GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+  R_KEEP_PKG_SOURCE: yes
+  # Its versions still install on R 3.5, including S7 0.1.0.
+  R35_SNAPSHOT: "2023-09-15"
+  # R-devel installs these development versions of the Imports.
+  DEV_IMPORTS: github::r-lib/cli, github::rstudio/htmltools, github::r-lib/rlang, github::RConsortium/S7, github::rstudio/shiny
+
+jobs:
+  air:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/ci/air
+
+  jarl:
+    needs: air
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/ci/jarl
+
+  R-CMD-check:
+    needs: jarl
+    runs-on: ${{ matrix.os }}
+    name: R-CMD-check ${{ matrix.os }} (${{ matrix.config.id }})
+    # R-devel failures are reported but don't block later stages.
+    continue-on-error: ${{ matrix.config.r == 'devel' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ${{ fromJSON(github.event_name == 'release' && '["ubuntu-latest", "windows-latest", "macos-latest"]' || '["ubuntu-latest"]') }}
+        config:
+          # The oldest supported R: 3.5.0, or 3.5.1 on Windows.
+          - {id: 'r-3.5', r: '3.5'}
+          - {id: 'oldrel-1', r: 'oldrel-1'}
+          - {id: 'release', r: 'release'}
+          - {id: 'devel', r: 'devel', http-user-agent: 'release'}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/ci/R-CMD-check
+        with:
+          id: ${{ matrix.config.id }}
+          r: ${{ matrix.config.r }}
+          http-user-agent: ${{ matrix.config.http-user-agent }}
+          r35-snapshot: ${{ env.R35_SNAPSHOT }}
+          dev-imports: ${{ env.DEV_IMPORTS }}
+
+  check-no-suggests:
+    needs: jarl
+    runs-on: ${{ matrix.os }}
+    name: check-no-suggests ${{ matrix.os }} (${{ matrix.config.id }})
+    # R-devel failures are reported but don't block later stages.
+    continue-on-error: ${{ matrix.config.r == 'devel' }}
+    strategy:
+      fail-fast: false
+      # The same OS and R versions as R-CMD-check.
+      matrix:
+        os: ${{ fromJSON(github.event_name == 'release' && '["ubuntu-latest", "windows-latest", "macos-latest"]' || '["ubuntu-latest"]') }}
+        config:
+          - {id: 'r-3.5', r: '3.5'}
+          - {id: 'oldrel-1', r: 'oldrel-1'}
+          - {id: 'release', r: 'release'}
+          - {id: 'devel', r: 'devel', http-user-agent: 'release'}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/ci/check-no-suggests
+        with:
+          id: ${{ matrix.config.id }}
+          r: ${{ matrix.config.r }}
+          http-user-agent: ${{ matrix.config.http-user-agent }}
+          r35-snapshot: ${{ env.R35_SNAPSHOT }}
+          dev-imports: ${{ env.DEV_IMPORTS }}
+
+  test-coverage:
+    needs: jarl
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/ci/test-coverage
+        with:
+          codecov-token: ${{ secrets.CODECOV_TOKEN }}
+
+  # R-hub's own reusable workflow. Needs the RHUB_TOKEN secret from
+  # rhub::rhub_setup().
+  rhub:
+    needs: jarl
+    if: github.event_name == 'release' && !github.event.act
+    uses: ./.github/workflows/rhub.yaml
+    with:
+      config: linux,windows,macos
+    secrets: inherit
+
+  pkgdown-build:
+    needs: [R-CMD-check, check-no-suggests, test-coverage, rhub]
+    # rhub is skipped off releases, which would otherwise skip this job too.
+    if: >-
+      !cancelled() &&
+      needs.R-CMD-check.result == 'success' &&
+      needs.check-no-suggests.result == 'success' &&
+      needs.test-coverage.result == 'success' &&
+      (needs.rhub.result == 'success' || needs.rhub.result == 'skipped')
+    runs-on: ubuntu-latest
+    # Only restrict concurrency for non-PR jobs
+    concurrency:
+      group: pkgdown-${{ github.event_name != 'pull_request' || github.run_id }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: ./.github/ci/pkgdown-build
+        with:
+          deploy: ${{ github.event_name != 'pull_request' && !github.event.act }}
+          site-url: https://joshwlivingston.github.io/shinyfilters
+
+  pkgdown-deploy:
+    needs: pkgdown-build
+    # Explicit: rhub, upstream, is skipped off releases.
+    if: >-
+      !cancelled() &&
+      needs.pkgdown-build.result == 'success' &&
+      github.event_name != 'pull_request' &&
+      !github.event.act
+    runs-on: ubuntu-latest
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: deploy
+        uses: ./.github/ci/pkgdown-deploy
+
+  # Waits for approval through the `cran` environment's required reviewer.
+  # Set the environment up with that reviewer, a `v*` tag rule, and the
+  # variable CRAN_ENVIRONMENT=true (on the environment only).
+  cran:
+    needs: pkgdown-deploy
+    if: >-
+      !cancelled() &&
+      needs.pkgdown-deploy.result == 'success' &&
+      github.event_name == 'release' &&
+      !github.event.release.prerelease &&
+      !github.event.act
+    runs-on: ubuntu-latest
+    environment: cran
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/ci/cran
+        with:
+          cran-environment: ${{ vars.CRAN_ENVIRONMENT }}

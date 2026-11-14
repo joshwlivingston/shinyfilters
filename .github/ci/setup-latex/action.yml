@@ -1,0 +1,13 @@
+name: Set up LaTeX
+description: Installs TinyTeX and makeindex, for building the PDF manual.
+
+runs:
+  using: composite
+  steps:
+    - uses: r-lib/actions/setup-tinytex@v2
+
+    # TinyTeX doesn't include makeindex, which R-devel needs to build the
+    # manual's index.
+    - name: Install makeindex
+      shell: bash
+      run: bash "$GITHUB_ACTION_PATH/install-makeindex.sh"

@@ -1,0 +1,17 @@
+{
+  "act": true,
+  "repository": {
+    "default_branch": "main"
+  },
+  "pull_request": {
+    "head": {
+      "ref": "local"
+    },
+    "base": {
+      "ref": "main"
+    }
+  },
+  "release": {
+    "tag_name": "v0.0.0-local"
+  }
+}
